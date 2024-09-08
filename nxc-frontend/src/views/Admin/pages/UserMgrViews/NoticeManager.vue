@@ -20,7 +20,7 @@ interface Notices {
   deleted_at?: string,
 }
 
-let noticesData = reactive([]<Notices>)
+// let noticesData = reactive([]<Notices>)
 
 // let fromData = reactive<Notices>({
 //   id: 2,
@@ -36,9 +36,14 @@ let noticesData = reactive([]<Notices>)
 
 let getAllNotices = async () => {
   let {data} = await instance.get('http://localhost:8080/api/admin/get-all-notices')
-  // console.log(data)
-  Object.assign(data, noticesData)
-  console.log(noticesData)
+  console.log(data)
+  // error
+  // console.log()
+  // for (let i = 0; i < data.length; i++) {
+  //   console.log(data[i])
+  // }
+  // Object.assign(data, noticesData)
+  // console.log(noticesData)
 }
 
 let handleAddNotice = () => {
@@ -92,7 +97,7 @@ onMounted(() => {
         <div style="margin-top: 30px"></div>
 
           <n-form-item path="age" label="标题">
-            <n-input @keydown.enter.prevent placeholder="输入通知标题" v-model:value="fromData.title"/>
+            <n-input @keydown.enter.prevent placeholder="输入通知标题" />
           </n-form-item>
 
           <n-form-item path="age" label="公告内容">
