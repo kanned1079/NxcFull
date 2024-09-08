@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GoORMHelperCache">
+    <option name="schemaMapping">
+      <map>
+        <entry key="AppSettings">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/SysSettings.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Auth">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/user/Auth.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Coupon">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/coupon.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Encryptor">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/encry/base.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Frontend">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="LoginMsg">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/LoginHandles.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Myapp">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Notice">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="OsInfo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/system/os.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Security">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Sendmail">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Server">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Site">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SiteSetting">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/settings.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Subscribe">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SystemSettingOptions">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/user/User.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="adminConfig">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/main/main.go" />
+            </set>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="scannedPathMapping">
+      <map>
+        <entry key="file://$PROJECT_DIR$/main.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725758315421" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/auth/JWT.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725776247796" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725776397877" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/coupon.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725776885237" />
+              <option name="schema">
+                <list>
+                  <option value="Coupon" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/dao/dao.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151714" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/encry/base.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151715" />
+              <option name="schema">
+                <list>
+                  <option value="Encryptor" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/handles/admin.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151715" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/main/main.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725783256370" />
+              <option name="schema">
+                <list>
+                  <option value="adminConfig" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/main/writeLog.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151748" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/routers/LoginHandles.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725758538741" />
+              <option name="schema">
+                <list>
+                  <option value="LoginMsg" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/routers/SysSettings.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725758575309" />
+              <option name="schema">
+                <list>
+                  <option value="AppSettings" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/routers/registerHandles.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151748" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725758575312" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151749" />
+              <option name="schema">
+                <list>
+                  <option value="SystemSettingOptions" />
+                  <option value="Site" />
+                  <option value="Security" />
+                  <option value="Frontend" />
+                  <option value="Subscribe" />
+                  <option value="Server" />
+                  <option value="Sendmail" />
+                  <option value="Notice" />
+                  <option value="Myapp" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/settings/settings.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151749" />
+              <option name="schema">
+                <list>
+                  <option value="SiteSetting" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/system/os.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151749" />
+              <option name="schema">
+                <list>
+                  <option value="OsInfo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/system/useage.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151749" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/user/Auth.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151749" />
+              <option name="schema">
+                <list>
+                  <option value="Auth" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/user/User.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151749" />
+              <option name="schema">
+                <list>
+                  <option value="User" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/user/code.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151749" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/user/crud.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725758575305" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-frontend/src/assets/main.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725700151829" />
+            </ScannedPath>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="tableStructMapping">
+      <map>
+        <entry key="admin_config" value="adminConfig" />
+        <entry key="app_settings" value="AppSettings" />
+        <entry key="auth" value="Auth" />
+        <entry key="coupon" value="Coupon" />
+        <entry key="encryptor" value="Encryptor" />
+        <entry key="frontend" value="Frontend" />
+        <entry key="login_msg" value="LoginMsg" />
+        <entry key="myapp" value="Myapp" />
+        <entry key="notice" value="Notice" />
+        <entry key="os_info" value="OsInfo" />
+        <entry key="security" value="Security" />
+        <entry key="sendmail" value="Sendmail" />
+        <entry key="server" value="Server" />
+        <entry key="site" value="Site" />
+        <entry key="site_setting" value="SiteSetting" />
+        <entry key="subscribe" value="Subscribe" />
+        <entry key="system_setting_options" value="SystemSettingOptions" />
+        <entry key="user" value="User" />
+      </map>
+    </option>
+    <option name="lastTimeChecked" value="1725761709699" />
+  </component>
+</project>

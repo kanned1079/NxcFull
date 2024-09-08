@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"MyFrontEndStudy/Vue3/nxc-backend/auth"
+	"NxcFull/nxc-backend/auth"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

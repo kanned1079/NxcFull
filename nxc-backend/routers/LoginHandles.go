@@ -1,10 +1,10 @@
 package routers
 
 import (
-	"MyFrontEndStudy/Vue3/nxc-backend/auth"
-	"MyFrontEndStudy/Vue3/nxc-backend/dao"
-	"MyFrontEndStudy/Vue3/nxc-backend/system"
-	"MyFrontEndStudy/Vue3/nxc-backend/user"
+	"NxcFull/nxc-backend/auth"
+	"NxcFull/nxc-backend/dao"
+	"NxcFull/nxc-backend/system"
+	"NxcFull/nxc-backend/user"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

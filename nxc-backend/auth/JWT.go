@@ -13,7 +13,7 @@ var jwtSecret = []byte("8+A4C/XDOzcPrrgSVT5ofKWk5xs58DlPRoxy+DW1hVQ=")
 func GenerateToken(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
-		"exp":      time.Now().Add(time.Minute * 10).Unix(), // 2小时有效期
+		"exp":      time.Now().Add(time.Hour * 6).Unix(), // 2小时有效期
 	})
 	return token.SignedString(jwtSecret)
 }

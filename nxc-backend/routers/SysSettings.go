@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"MyFrontEndStudy/Vue3/nxc-backend/dao"
-	"MyFrontEndStudy/Vue3/nxc-backend/settings"
+	"NxcFull/nxc-backend/dao"
+	"NxcFull/nxc-backend/settings"
 	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"

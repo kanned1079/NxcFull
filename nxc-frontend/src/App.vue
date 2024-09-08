@@ -20,7 +20,10 @@ onMounted(() => {
   <n-config-provider :theme="themeStore.getMainTheme" :theme-overrides="toRaw(themeStore.getTheme.selfOverride)">
     <n-message-provider>
       <n-notification-provider>
-        <RouterView></RouterView>
+        <n-dialog-provider>
+          <RouterView></RouterView>
+
+        </n-dialog-provider>
       </n-notification-provider>
     </n-message-provider>
   </n-config-provider>

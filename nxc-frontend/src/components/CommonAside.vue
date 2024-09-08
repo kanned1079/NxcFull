@@ -1,30 +1,29 @@
 <script setup lang="ts" name="CommonAside">
-import {defineComponent, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import useThemeStore from "@/stores/useThemeStore";
-const themeStore = useThemeStore();
 import renderIcon from "@/utils/iconFormator";
 import {
-  SpeedometerOutline as dashboardIcon,
-  PodiumOutline as queueIcon,
-  CogOutline as settingIcon,
   CardOutline as paymentIcon,
-  ColorPaletteOutline as themeIcon,
-  LayersOutline as nodeIcon,
-  ConstructOutline as privilegeIcon,
-  ShuffleOutline as routerIcon,
-  ClipboardOutline as subscriptionIcon,
-  ListOutline as orderIcon,
-  GiftOutline as ticketIcon,
-  PeopleOutline as usersIcon,
   ChatboxEllipsesOutline as noticeIcon,
+  ClipboardOutline as subscriptionIcon,
+  CogOutline as settingIcon,
+  ColorPaletteOutline as themeIcon,
+  ConstructOutline as privilegeIcon,
+  GiftOutline as ticketIcon,
   HelpBuoyOutline as helpIcon,
+  LayersOutline as nodeIcon,
   LibraryOutline as knowledgeIcon,
-
+  ListOutline as orderIcon,
+  PeopleOutline as usersIcon,
+  PodiumOutline as queueIcon,
+  ShuffleOutline as routerIcon,
+  SpeedometerOutline as dashboardIcon,
 } from '@vicons/ionicons5'
 
+const themeStore = useThemeStore();
+
 const router = useRouter();
-let MenuOption  = [
+let MenuOption = [
   {
     label: '仪表盘',
     key: 'dashboard',
@@ -117,7 +116,7 @@ let MenuOption  = [
       },
       {
         label: '公告管理',
-        key: 'public-manager',
+        key: 'notice-manager',
         icon: renderIcon(noticeIcon),
       },
       {
@@ -139,7 +138,7 @@ let MenuOption  = [
 //   console.info(`[onUpdate:expandedKeys]: ${JSON.stringify(keys)}`)
 // }
 let update = (key: string) => {
-console.log(key)
+  console.log(key)
   switch (key) {
     case 'dashboard': {
       router.push({path: '/admin/dashboard/summary'})
@@ -169,17 +168,22 @@ console.log(key)
       break
     }
 
-    // part2
+      // part2
     case 'router-config' : {
       themeStore.menuSelected = 'router-mgr'
       router.push({path: '/admin/dashboard/routermgr'})
       break
     }
 
-    // part4
+      // part4
     case 'user-manager': {
       themeStore.menuSelected = 'user-manager'
       router.push({path: '/admin/dashboard/usermanager'})
+      break
+    }
+    case 'notice-manager': {
+      themeStore.menuSelected = 'notice-manager'
+      router.push({path: '/admin/dashboard/noticemanager'})
       break
     }
   }

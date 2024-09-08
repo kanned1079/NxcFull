@@ -16,9 +16,7 @@ const useThemeStore = defineStore('theme', () => {
     const saveEnableDarkMode = () => localStorage.setItem('themeCode', JSON.stringify({code: enableDarkMode.value}));
 
     // 读取浏览器缓存中的配置 处理主题设置
-    const readEnableDarkMode = () => {
-        !localStorage.getItem('themeCode') ? saveEnableDarkMode() : enableDarkMode.value = JSON.parse(localStorage.getItem('themeCode') as string).code as boolean;
-    }
+    const readEnableDarkMode = () => !localStorage.getItem('themeCode') ? saveEnableDarkMode() : enableDarkMode.value = JSON.parse(localStorage.getItem('themeCode') as string).code as boolean;
 
     // 通用部分 计算属性
     const globeTheme = reactive({
@@ -42,6 +40,8 @@ const useThemeStore = defineStore('theme', () => {
             common: {
                 // 主题色相关
                 primaryColor: "#385894",
+                // primaryColor: computed(() => enableDarkMode.value ? '#374868' : '#385894'),
+
                 primaryColorHover: "#45639b",
                 primaryColorPressed: "#0c7a43",
                 primaryColorSuppl: "#36ad6a",
@@ -59,11 +59,27 @@ const useThemeStore = defineStore('theme', () => {
         selfOverride: {
             common: {
                 // 主题色相关
-                primaryColor: "#009693",
+                // primaryColor: "#009693",
+                primaryColor: computed(() => enableDarkMode.value ? '#2a6f6a' : '#009693'),
                 primaryColorHover: "#009693",
                 primaryColorPressed: "#0c7a43",
                 primaryColorSuppl: "#36ad6a",
             }
+        }
+    })
+
+    // 深色颜色覆盖
+    const darkBlueDay_darkThemeOverride = reactive({
+        selfOverride: {
+            common: {
+                primaryColor: "#385894",
+            }
+        }
+    })
+
+    const milkGreenDay_darkThemeOverride = reactive({
+        common: {
+            primaryColor: "#009693",
         }
     })
 
@@ -90,13 +106,18 @@ const useThemeStore = defineStore('theme', () => {
         switch (selectedTheme.value) {
             case 'darkBlueDay': {
                 return darkBlueDay;
+                // if (!enableDarkMode.value) {
+                //     return darkBlueDay;
+                // } else {
+                //     return darkBlueDay_darkThemeOverride
+                // }
             }
             case 'milkGreenDay': {
                 return milkGreenDay;
             }
             default: {
                 return darkBlueDay;
-                }
+            }
         }
     })
 

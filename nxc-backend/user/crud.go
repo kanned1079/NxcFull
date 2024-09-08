@@ -1,7 +1,7 @@
 package user
 
 import (
-	"MyFrontEndStudy/Vue3/nxc-backend/dao"
+	"NxcFull/nxc-backend/dao"
 	"log"
 )
 
