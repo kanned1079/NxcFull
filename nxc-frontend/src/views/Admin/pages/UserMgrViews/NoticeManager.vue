@@ -2,21 +2,51 @@
 import {onMounted, ref, reactive} from "vue";
 import useThemeStore from "@/stores/useThemeStore.ts"
 import {NButton} from "naive-ui";
+import instance from "@/axios";
 
 const themeStore = useThemeStore()
 
 let showModal = ref(false)
 
-let fromData = reactive({
-  title: '',
-  content: '',
-  tags: '',
-  img_url: '',
-})
+interface Notices {
+  id: int,
+  title: string,
+  content: string,
+  show: boolean,
+  img_url?: string,
+  tags?: string,
+  created_at: string,
+  updated_at?: string,
+  deleted_at?: string,
+}
+
+let noticesData = reactive([]<Notices>)
+
+// let fromData = reactive<Notices>({
+//   id: 2,
+//   title: '2024夏季优惠券发放 20%OFF',
+//   content: '优惠券码：HappySummer2024Pre\n\t\t\t此优惠码使用截至日期2024-08-31，主站点与常州站点同步皆可使用，请阁下在确认订单时在页面上方填入此优惠码。祝大家2024夏天快乐！',
+//   show: true,
+//   img_url: '',
+//   tags: "coupons",
+//   createdAt: "2024-09-08T21:23:43+08:00",
+//   updatedAt: "2024-09-08T21:23:43+08:00",
+//   deletedAt: null
+// })
+
+let getAllNotices = async () => {
+  let {data} = await instance.get('http://localhost:8080/api/admin/get-all-notices')
+  // console.log(data)
+  Object.assign(data, noticesData)
+  console.log(noticesData)
+}
 
 let handleAddNotice = () => {
   console.log('处理添加一条通知')
+  getAllNotices()
+
   showModal.value = true
+
 }
 
 let closeModal = () => {

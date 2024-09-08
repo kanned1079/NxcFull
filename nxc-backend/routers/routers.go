@@ -34,6 +34,7 @@ func StartAdminReq() {
 		authorized.POST("/admin/setSingleSetting", handleUpdateSingleOptions)
 		authorized.GET("/admin/get-setting", handleGetSystemSetting)
 		authorized.GET("/admin/getUserList", handleGetUserList)
+		authorized.GET("/admin/get-all-notices", HandleGetAllNotices)
 	}
 
 	r.Run("localhost:8080")

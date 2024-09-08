@@ -39,18 +39,18 @@ func main() {
 		panic("failed to migrate database")
 	}
 
-	if err := dao.Db.AutoMigrate(&coupon.Coupon{}); err != nil {
+	if err := dao.Db.AutoMigrate(&coupon.Notices{}); err != nil {
 		panic("failed to migrate database")
 	}
 
-	dao.Db.Model(&coupon.Coupon{}).Create(&coupon.Coupon{
-		Title: "2024夏季优惠券发放 20%OFF",
-		Content: `优惠券码：HappySummer2024Pre
-			此优惠码使用截至日期2024-08-31，主站点与常州站点同步皆可使用，请阁下在确认订单时在页面上方填入此优惠码。祝大家2024夏天快乐！`,
-		ImgUrl: "",
-		Tags:   "coupons",
-		Show:   true,
-	})
+	//dao.Db.Model(&coupon.Notices{}).Create(&coupon.Notices{
+	//	Title: "2024夏季优惠券发放 20%OFF",
+	//	Content: `优惠券码：HappySummer2024Pre
+	//		此优惠码使用截至日期2024-08-31，主站点与常州站点同步皆可使用，请阁下在确认订单时在页面上方填入此优惠码。祝大家2024夏天快乐！`,
+	//	ImgUrl: "",
+	//	Tags:   "coupons",
+	//	Show:   true,
+	//})
 
 	// 添加管理员
 	//func() {

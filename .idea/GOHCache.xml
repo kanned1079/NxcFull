@@ -59,6 +59,14 @@
             </set>
           </value>
         </entry>
+        <entry key="Notices">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go" />
+              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/coupon.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="OsInfo">
           <value>
             <set>
@@ -154,13 +162,25 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725802042049" />
+              <option name="schema">
+                <list>
+                  <option value="Notices" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/coupon.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725776885237" />
+              <option name="lastModified" value="1725801635258" />
               <option name="schema">
                 <list>
-                  <option value="Coupon" />
+                  <option value="Notices" />
                 </list>
               </option>
             </ScannedPath>
@@ -195,7 +215,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/main/main.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725783256370" />
+              <option name="lastModified" value="1725801838576" />
               <option name="schema">
                 <list>
                   <option value="adminConfig" />
@@ -223,6 +243,13 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/routers/NoticeHandles.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725810655241" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/SysSettings.go">
           <value>
             <ScannedPath>
@@ -245,7 +272,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725758575312" />
+              <option name="lastModified" value="1725801306190" />
             </ScannedPath>
           </value>
         </entry>
@@ -358,6 +385,7 @@
         <entry key="login_msg" value="LoginMsg" />
         <entry key="myapp" value="Myapp" />
         <entry key="notice" value="Notice" />
+        <entry key="notices" value="Notices" />
         <entry key="os_info" value="OsInfo" />
         <entry key="security" value="Security" />
         <entry key="sendmail" value="Sendmail" />
