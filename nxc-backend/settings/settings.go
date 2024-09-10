@@ -14,7 +14,7 @@ type SiteSetting struct {
 }
 
 func (SiteSetting) TableName() string {
-	return "site_settings"
+	return "x_site_settings"
 }
 
 func CreateSetting(db *gorm.DB) {

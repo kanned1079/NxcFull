@@ -35,6 +35,8 @@ func StartAdminReq() {
 		authorized.GET("/admin/get-setting", handleGetSystemSetting)
 		authorized.GET("/admin/getUserList", handleGetUserList)
 		authorized.GET("/admin/get-all-notices", HandleGetAllNotices)
+		authorized.POST("/admin/add-notice", HandleAddNotice)
+		authorized.DELETE("/admin/delete-notice", HandleDeleteNotice)
 	}
 
 	r.Run("localhost:8080")

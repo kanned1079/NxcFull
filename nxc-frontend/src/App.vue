@@ -37,4 +37,8 @@ onMounted(() => {
   margin: 0;
 }
 
+.n-card {
+  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+  border: 0;
+}
 </style>

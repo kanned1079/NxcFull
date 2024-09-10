@@ -3,6 +3,7 @@ package main
 import (
 	"NxcFull/nxc-backend/coupon"
 	"NxcFull/nxc-backend/dao"
+	"NxcFull/nxc-backend/finance"
 	"NxcFull/nxc-backend/routers"
 	"NxcFull/nxc-backend/settings"
 	"NxcFull/nxc-backend/user"
@@ -39,7 +40,11 @@ func main() {
 		panic("failed to migrate database")
 	}
 
-	if err := dao.Db.AutoMigrate(&coupon.Notices{}); err != nil {
+	if err := dao.Db.AutoMigrate(&finance.Subscribes{}); err != nil {
+		panic("failed to migrate database")
+	}
+
+	if err := dao.Db.AutoMigrate(&coupon.PublicNotices{}); err != nil {
 		panic("failed to migrate database")
 	}
 
@@ -114,7 +119,7 @@ func main() {
 	//})
 	//dao.Db.Create(&user.Auth{
 	//	Email:    "admin@ikanned.com",
-	//	Password: "cGFzc3dvcmQ=",
+	//	Password: "",
 	//})
 
 	routers.StartAdminReq()

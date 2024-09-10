@@ -11,6 +11,7 @@ import RouterMgr from "@/views/Admin/pages/ServerViews/RouterMgr.vue"
 import PrivilegeGroup from "@/views/Admin/pages/ServerViews/PrivilegeGroup.vue"
 import CouponMgr from "@/views/Admin/pages/FinanceViews/CouponMgr.vue";
 import NoticeManager from "@/views/Admin/pages/UserMgrViews/NoticeManager.vue";
+import SubscribeMgr from "@/views/Admin/pages/FinanceViews/SubscribeMgr.vue";
 import UserLogin from "@/views/User/Login/UserLogin.vue";
 
 const adminRoutes: RouteRecordRaw[] = [
@@ -75,6 +76,11 @@ const adminRoutes: RouteRecordRaw[] = [
                 name: 'notice-manager',
                 component: NoticeManager,
             },
+            {
+                path: '/admin/dashboard/subscribemanager',
+                name: 'subscribe-manager',
+                component: SubscribeMgr,
+            }
 
         ]
     },

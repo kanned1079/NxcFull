@@ -1,8 +1,5 @@
 import axios from 'axios';
 import useUserInfoStore from "@/stores/useUserInfoStore";
-// import {useRouter} from 'vue-router'
-import router from '@/router';  // 直接导入 router 实例
-// const userInfoStore = useUserInfoStore();
 
 // axios 实例
 const instance = axios.create( {
@@ -30,13 +27,8 @@ instance.interceptors.response.use(response => {
         let userInfoStore = useUserInfoStore();
         // token 过期
         console.error('Token expired or invalid. Please log in again.');
-        // 重定向
-        // router.push(userInfoStore.thisUser.isAdmin ? '/admin/login' : '/login').catch(err => {
-        //     console.error('Failed to navigate:', err);
-        // });
         // 登出操作
         userInfoStore.logout()
-
 
     }
     return Promise.reject(error);

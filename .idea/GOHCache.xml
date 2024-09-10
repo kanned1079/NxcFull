@@ -74,6 +74,13 @@
             </set>
           </value>
         </entry>
+        <entry key="PublicNotices">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Security">
           <value>
             <set>
@@ -116,6 +123,13 @@
             </set>
           </value>
         </entry>
+        <entry key="Subscribes">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/finance/subscribe.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="SystemSettingOptions">
           <value>
             <set>
@@ -137,6 +151,20 @@
             </set>
           </value>
         </entry>
+        <entry key="fromData">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/NoticeHandles.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="noticeFormData">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/NoticeHandles.go" />
+            </set>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="scannedPathMapping">
@@ -151,7 +179,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/auth/JWT.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725776247796" />
+              <option name="lastModified" value="1725976452357" />
             </ScannedPath>
           </value>
         </entry>
@@ -165,10 +193,10 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725802042049" />
+              <option name="lastModified" value="1725969049053" />
               <option name="schema">
                 <list>
-                  <option value="Notices" />
+                  <option value="PublicNotices" />
                 </list>
               </option>
             </ScannedPath>
@@ -205,6 +233,18 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/finance/subscribe.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1725952468075" />
+              <option name="schema">
+                <list>
+                  <option value="Subscribes" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/handles/admin.go">
           <value>
             <ScannedPath>
@@ -215,7 +255,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/main/main.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725801838576" />
+              <option name="lastModified" value="1725969122508" />
               <option name="schema">
                 <list>
                   <option value="adminConfig" />
@@ -234,7 +274,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/LoginHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725758538741" />
+              <option name="lastModified" value="1725972265898" />
               <option name="schema">
                 <list>
                   <option value="LoginMsg" />
@@ -246,7 +286,12 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/NoticeHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725810655241" />
+              <option name="lastModified" value="1725969467248" />
+              <option name="schema">
+                <list>
+                  <option value="noticeFormData" />
+                </list>
+              </option>
             </ScannedPath>
           </value>
         </entry>
@@ -272,7 +317,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725801306190" />
+              <option name="lastModified" value="1725883973973" />
             </ScannedPath>
           </value>
         </entry>
@@ -299,7 +344,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/settings/settings.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151749" />
+              <option name="lastModified" value="1725952613351" />
               <option name="schema">
                 <list>
                   <option value="SiteSetting" />
@@ -330,7 +375,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/Auth.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151749" />
+              <option name="lastModified" value="1725952494423" />
               <option name="schema">
                 <list>
                   <option value="Auth" />
@@ -342,7 +387,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/User.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151749" />
+              <option name="lastModified" value="1725952488295" />
               <option name="schema">
                 <list>
                   <option value="User" />
@@ -381,18 +426,22 @@
         <entry key="auth" value="Auth" />
         <entry key="coupon" value="Coupon" />
         <entry key="encryptor" value="Encryptor" />
+        <entry key="from_data" value="fromData" />
         <entry key="frontend" value="Frontend" />
         <entry key="login_msg" value="LoginMsg" />
         <entry key="myapp" value="Myapp" />
         <entry key="notice" value="Notice" />
+        <entry key="notice_form_data" value="noticeFormData" />
         <entry key="notices" value="Notices" />
         <entry key="os_info" value="OsInfo" />
+        <entry key="public_notices" value="PublicNotices" />
         <entry key="security" value="Security" />
         <entry key="sendmail" value="Sendmail" />
         <entry key="server" value="Server" />
         <entry key="site" value="Site" />
         <entry key="site_setting" value="SiteSetting" />
         <entry key="subscribe" value="Subscribe" />
+        <entry key="subscribes" value="Subscribes" />
         <entry key="system_setting_options" value="SystemSettingOptions" />
         <entry key="user" value="User" />
       </map>

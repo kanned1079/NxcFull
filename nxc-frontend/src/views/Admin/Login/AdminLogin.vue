@@ -7,6 +7,7 @@ import useThemeStore from "@/stores/useThemeStore";
 import type {NotificationType} from 'naive-ui'
 import {useNotification} from 'naive-ui'
 import { useMessage } from 'naive-ui'
+import {hashPassword, encodeToBase64} from '@/utils/encryptor'
 import axios from 'axios';
 
 const notification = useNotification()
@@ -40,12 +41,13 @@ let passwordInputStatus = ref()
 let enableLogin = ref<boolean>(true)
 
 // encodeToBase64 将密码进行base64加密
-let encodeToBase64 = (str: string): string => {
-  const utf8Encode = new TextEncoder();
-  const encoded = utf8Encode.encode(str);
-  const base64Encoded = btoa(String.fromCharCode(...encoded));
-  return base64Encoded;
-}
+// 移动到utils中
+// let encodeToBase64 = (str: string): string => {
+//   const utf8Encode = new TextEncoder();
+//   const encoded = utf8Encode.encode(str);
+//   const base64Encoded = btoa(String.fromCharCode(...encoded));
+//   return base64Encoded;
+// }
 
 interface DataWithAuth {
   isAuthed: boolean;
@@ -114,10 +116,12 @@ let handleLogin = async () => {
     return
   }
   enableLogin.value = false
+  console.log('管理员密码hash: ', hashPassword(password.value))
   try {
     let { data } = await axios.post('http://localhost:8080/api/admin/login', {
       email: username.value,
-      password: encodeToBase64(password.value),
+      // password: encodeToBase64(password.value),
+      password: hashPassword(password.value)
     })
     console.log(data)
     if (data.code === 200 && data.isAuthed === true) {
@@ -160,7 +164,8 @@ let noticeInfo = () => {
 
 let backgroundStyle = computed(() => ({
   backgroundSize: 'cover', // 或者 'contain' 根据你需要的效果选择
-  backgroundImage: `url(${themeStore.backgroundUrl})`
+  // backgroundImage: `url(${themeStore.backgroundUrl})`,
+  background: `linear-gradient(to right, rgb(167, 112, 239), rgb(207, 139, 243), rgb(253, 185, 155))`
 }))
 
 

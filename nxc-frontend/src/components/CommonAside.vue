@@ -186,6 +186,11 @@ let update = (key: string) => {
       router.push({path: '/admin/dashboard/noticemanager'})
       break
     }
+    case 'subscribe-manager': {
+      themeStore.menuSelected = 'subscribe-manager'
+      router.push({path: '/admin/dashboard/subscribemanager'})
+      break
+    }
   }
 }
 </script>

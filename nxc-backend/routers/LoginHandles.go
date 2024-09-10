@@ -35,6 +35,7 @@ func handleUserLogin(context *gin.Context) {
 				})
 			}
 			token, err := auth.GenerateToken(req.Email)
+			log.Println("用户Token: ", token)
 			if err != nil {
 				context.JSON(http.StatusInternalServerError, gin.H{
 					"code":     http.StatusInternalServerError,

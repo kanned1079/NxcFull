@@ -16,5 +16,5 @@ type Auth struct {
 }
 
 func (Auth) TableName() string {
-	return "auth"
+	return "x_auth"
 }

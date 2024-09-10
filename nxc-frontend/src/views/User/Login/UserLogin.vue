@@ -5,11 +5,39 @@ import useSiteInfo from "@/stores/siteInfo";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import type {NotificationType} from 'naive-ui'
-import {useNotification} from 'naive-ui'
-import axios from 'axios';
+import {FormInst, useMessage, useNotification} from 'naive-ui'
+import CryptoJS from 'crypto-js';
+import instance from '@/axios/index'
+import {GlobeOutline as LanguageIcon} from '@vicons/ionicons5'
 
 const notification = useNotification()
 const themeStore = useThemeStore()
+const message = useMessage()
+const siteInfo = useSiteInfo();
+const userInfoStore = useUserInfoStore();
+const router = useRouter();
+
+const formRef = ref<FormInst | null>(null)
+
+let formValue = ref({
+  user: {
+    email: '',
+    password: '',
+  }
+})
+let rules = {
+  user: {
+    email: {
+      required: true,
+      trigger: 'blur'
+    },
+    password: {
+      required: true,
+      trigger: 'blur'
+    }
+  }
+}
+
 let notifyErr = (type: NotificationType, msg: string) => {
   notification[type]({
     content: '登陆失败',
@@ -28,12 +56,9 @@ let notifyPass = (type: NotificationType) => {
   })
 }
 
-const siteInfo = useSiteInfo();
-const userInfoStore = useUserInfoStore();
-const router = useRouter();
-let username = ref<string>('')
-let password = ref<string>('')
+
 let enableLogin = ref<boolean>(true)
+let clickedCount = ref<number>(0)
 
 // encodeToBase64 将密码进行base64加密
 let encodeToBase64 = (str: string): string => {
@@ -41,6 +66,10 @@ let encodeToBase64 = (str: string): string => {
   const encoded = utf8Encode.encode(str);
   const base64Encoded = btoa(String.fromCharCode(...encoded));
   return base64Encoded;
+}
+
+let hashPassword = (password: string): string => {
+  return CryptoJS.SHA256(password).toString();
 }
 
 interface DataWithAuth {
@@ -60,7 +89,7 @@ interface UserData {
   last_login_ip: string;
 }
 
-let bindUserInfo =  (data: DataWithAuth) => {
+let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.isAuthed = data.isAuthed
   let {user_data} = data
 
@@ -76,13 +105,17 @@ let bindUserInfo =  (data: DataWithAuth) => {
 }
 
 
-
 let handleLogin = async () => {
-  enableLogin.value = false
+  // if (handleValidateClick())
+  //   return
+
+  console.log('用户数据')
+  console.log(formValue.value.user.email, formValue.value.user.password)
   try {
-    let { data } = await axios.post('http://localhost:8080/api/admin/login', {
-      email: username.value,
-      password: encodeToBase64(password.value),
+    let {data} = await instance.post('/api/v1/user/login', {
+      email: formValue.value.user.email,
+      // password: encodeToBase64(formValue.value.user.password),
+      password: hashPassword(formValue.value.user.password),
     })
     console.log(data)
     if (data.code === 200 && data.isAuthed === true) {
@@ -91,33 +124,46 @@ let handleLogin = async () => {
       // sessionStorage.setItem('isAuthed', JSON.stringify(true))
       notifyPass('success');
       await bindUserInfo(data)
-      await router.push({ path: '/admin/dashboard' });
+      await router.push({path: '/admin/dashboard'});
     } else {
       enableLogin.value = true
       switch (data.msg) {
         case 'incorrect_password': {
           notifyErr('error', '密码不正确')
+          enableLogin.value = true
           break
         }
         case 'user_not_exist': {
           notifyErr('error', '用户不存在 请注册')
+          enableLogin.value = true
           break
         }
       }
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error)
+    notifyErr('error', error.toString())
+    enableLogin.value = true
   }
+
+
 }
 
-let handleFrogetPassword = () => {
+let toRegister = () => {
+  console.log('跳转到注册页面')
+}
 
+// 处理忘记密码
+let handleForgetPassword = () => {
+  message.info('处理忘记密码')
 }
 
 let backgroundStyle = computed(() => ({
   backgroundSize: 'cover', // 或者 'contain' 根据你需要的效果选择
-  backgroundImage: `url(${themeStore.backgroundUrl})`
+  // backgroundImage: `url(${themeStore.backgroundUrl})`,
+  background: `linear-gradient(to right, rgb(190, 147, 197), rgb(123, 198, 204))`,
+
+
 }))
 
 onMounted(() => {
@@ -136,29 +182,110 @@ onMounted(() => {
   //   }
   // }
 })
+
+let handleValidateClick = () => {
+  // enableLogin.value = false
+  clickedCount.value += 1
+  console.log('clickedCount: ', clickedCount.value)
+  if (clickedCount.value == 5) {
+    enableLogin.value = false
+    setTimeout(() => {
+      enableLogin.value = true
+      clickedCount.value = 0
+    }, 60000)
+    return
+  }
+  if (formValue.value.user.email === '' || formValue.value.user.password === '') {
+    notifyErr('error', '邮箱或密码不能为空')
+    return
+  }
+  handleLogin()
+  // if (formValue.value.user.password === '') {
+  //   notifyErr('error', '密码不能为空')
+  //   return false
+  // }
+}
+
+
 </script>
 
 <template>
 
-  <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center" :style="backgroundStyle">
-    <n-flex justify="center" :vertical="true" align="center">
+  <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center"
+            :style="backgroundStyle">
+    <n-flex justify="center" :vertical="true" align="center" style="gap: 0">
       <n-card class="layer-up" :embedded="true">
         <p class="title">{{ siteInfo.siteName }}</p>
         <p class="sub-title">常州站点</p>
         <div class="inp">
-          <n-input secondary v-model:value="username" type="text" placeholder="邮箱" size="large"/>
-          <n-input v-model:value="password" type="password" placeholder="密码" size="large" style="margin-top: 20px"/>
+
+          <!--          <n-form-->
+          <!--           ref="formRef"-->
+          <!--           :model="formValue"-->
+          <!--           :rules="rules"-->
+          <!--           :validate-messages="{-->
+          <!--             required: 'required',-->
+          <!--           }"-->
+          <!--          >-->
+          <!--            <n-form-item label="Email" path="user.email">-->
+          <!--              <n-input secondary v-model:value="formValue.user.email" type="text" placeholder="邮箱" size="large"/>-->
+          <!--            </n-form-item>-->
+          <!--            <n-form-item label="Password" path="user.password">-->
+          <!--              <n-input v-model:value="formValue.user.password" type="password" placeholder="密码" size="large"/>-->
+
+          <!--            </n-form-item>-->
+          <!--          </n-form>-->
+
+
+          <n-form
+              ref="formRef"
+              :model="formValue"
+              :rules="rules"
+          >
+            <n-form-item path="user.email" :show-feedback="false">
+              <n-input v-model:value="formValue.user.email" placeholder="邮箱地址" size="large"
+                       style="user-select: none"/>
+            </n-form-item>
+
+            <n-form-item path="user.password" :show-feedback="false">
+              <n-input v-model:value="formValue.user.password" placeholder="密码" size="large"/>
+            </n-form-item>
+          </n-form>
+
+
+          <!--          <n-input secondary v-model:value="username" type="text" placeholder="邮箱" size="large"/>-->
+          <!--          <n-input v-model:value="password" type="password" placeholder="密码" size="large" style="margin-top: 20px"/>-->
         </div>
-        <n-button secondary type="info" class="login-btn" size="large" @click="handleLogin" :disabled="!enableLogin">
+        <n-button secondary type="info" class="login-btn" size="large" @click="handleValidateClick"
+                  :disabled="!enableLogin">
           登入
         </n-button>
-        <n-button strong tertiary type="warning" size="large" class="login-btn" @click="handleFrogetPassword">
-          忘记密码
-        </n-button>
-      </n-card>
-      <!--      <n-card class="layer-down">-->
+        <!--        <n-button strong tertiary type="warning" size="large" class="register-btn" @click="handleFrogetPassword">-->
+        <!--          忘记密码-->
+        <!--        </n-button>-->
 
-      <!--      </n-card>-->
+
+      </n-card>
+      <n-card class="layer-down" content-style="padding: 0;">
+        <div class="bottom-root">
+          <div class="l-con">
+            <n-button text @click="toRegister">注册</n-button>
+            <n-divider vertical/>
+            <n-button text @click="handleForgetPassword">忘记密码</n-button>
+          </div>
+
+          <div class="r-con">
+            <n-button text>
+              <n-icon style="margin-right: 5px;">
+                <LanguageIcon/>
+              </n-icon>
+              语言
+            </n-button>
+          </div>
+        </div>
+
+      </n-card>
+
     </n-flex>
   </n-layout>
 
@@ -176,8 +303,10 @@ onMounted(() => {
 
 .layer-up {
   width: 480px;
-  height: 400px;
+  height: 360px;
   border: 0;
+  border-radius: 5px 5px 0 0;
+  margin-bottom: 0;
 
   .title {
     font-size: 30px;
@@ -194,20 +323,60 @@ onMounted(() => {
   }
 
   .login-btn {
-    margin-top: 20px;
+    margin-top: 30px;
     width: 90%;
   }
+
+  .register-btn {
+    margin-top: 30px;
+    width: 90%;
+  }
+
+}
+
+.bottom-panel {
+  height: 50px;
+  width: 480px;
+  border-radius: 0 0 5px 5px;
+  padding: 0;
+  margin: 0;
 }
 
 .layer-down {
-  background-color: #2c3e50;
   width: 480px;
-  height: 40px;
+  height: 50px;
+  border-radius: 0 0 5px 5px;
+
+  .bottom-root {
+    border-radius: 0 0 5px 5px;
+    height: 100%;
+    display: flex;
+    backdrop-filter: blur(10px);
+    background-color: rgba(225, 225, 225, 0.2);
+    justify-content: space-between;
+
+    .l-con {
+      line-height: 50px;
+      margin-left: 20px;
+      opacity: 0.8;
+    }
+
+    .r-con {
+      line-height: 50px;
+      margin-right: 20px;
+
+    }
+  }
 }
 
 .n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+  background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
   border: 0;
 }
+
+//element.style {
+//  gap: 0;
+//}
 
 </style>

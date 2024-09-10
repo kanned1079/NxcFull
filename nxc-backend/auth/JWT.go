@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var jwtSecret = []byte("8+A4C/XDOzcPrrgSVT5ofKWk5xs58DlPRoxy+DW1hVQ=")
+var jwtSecret = []byte("Og6zf&J#OJTkw4blmpeQ_(hx~!1p%r%fCq%Stv&^fL%6@4kL0i#l$O7(4ZddI71s)_&+KuX")
 
 func GenerateToken(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
