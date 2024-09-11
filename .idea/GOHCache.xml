@@ -3,6 +3,13 @@
   <component name="GoORMHelperCache">
     <option name="schemaMapping">
       <map>
+        <entry key="AAA">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/aaaa.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="AppSettings">
           <value>
             <set>
@@ -78,6 +85,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SMTPConfig">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/MailHandles.go" />
             </set>
           </value>
         </entry>
@@ -176,6 +190,18 @@
     </option>
     <option name="scannedPathMapping">
       <map>
+        <entry key="file://$PROJECT_DIR$/aaaa.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1726061626637" />
+              <option name="schema">
+                <list>
+                  <option value="AAA" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/main.go">
           <value>
             <ScannedPath>
@@ -306,6 +332,18 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/routers/MailHandles.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1726070566072" />
+              <option name="schema">
+                <list>
+                  <option value="SMTPConfig" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/NoticeHandles.go">
           <value>
             <ScannedPath>
@@ -352,7 +390,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726060847076" />
+              <option name="lastModified" value="1726067852405" />
             </ScannedPath>
           </value>
         </entry>
@@ -456,6 +494,7 @@
     </option>
     <option name="tableStructMapping">
       <map>
+        <entry key="aaa" value="AAA" />
         <entry key="admin_config" value="adminConfig" />
         <entry key="app_settings" value="AppSettings" />
         <entry key="auth" value="Auth" />
@@ -475,6 +514,7 @@
         <entry key="server" value="Server" />
         <entry key="site" value="Site" />
         <entry key="site_setting" value="SiteSetting" />
+        <entry key="smtp_config" value="SMTPConfig" />
         <entry key="subscribe" value="Subscribe" />
         <entry key="subscribes" value="Subscribes" />
         <entry key="system_setting_options" value="SystemSettingOptions" />

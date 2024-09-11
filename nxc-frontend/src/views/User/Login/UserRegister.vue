@@ -203,8 +203,8 @@ let backgroundStyle = computed(() => ({
   backgroundSize: 'cover', // 或者 'contain' 根据你需要的效果选择
   // backgroundImage: `url(${themeStore.backgroundUrl})`,
   // background: `linear-gradient(to right, rgb(190, 147, 197), rgb(123, 198, 204))`,
-  // backgroundImage: `url(https://ikanned.com:24444/d/R730xd_SSD/13.jpeg)`,
-  backgroundImage: `linear-gradient(to top, #fad0c4 0%, #fad0c4 1%, #ffd1ff 100%)`
+  backgroundImage: `url(https://ikanned.com:24444/d/Upload/NXC/pexels-mads-thomsen-2739013-2.jpg)`,
+  // backgroundImage: `linear-gradient(to top, #fad0c4 0%, #fad0c4 1%, #ffd1ff 100%)`
 
 }))
 
@@ -418,8 +418,9 @@ let getUserIpAddress = async () => {
     border-radius: 0 0 5px 5px;
     height: 100%;
     display: flex;
-    backdrop-filter: blur(10px);
-    background-color: rgba(225, 225, 225, 0.2);
+    backdrop-filter: blur(20px);
+    //background-color: rgba(225, 225, 225, 0.0);
+    background-color: rgba(202, 202, 202, 0.1);
     justify-content: space-between;
 
     .l-con {
@@ -438,7 +439,7 @@ let getUserIpAddress = async () => {
 
 .n-card {
   //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(50px);
   background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
   border: 0;
 

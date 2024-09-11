@@ -21,7 +21,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
 
     let registerPageConfig = reactive<RegisterPageConfig>({
         app_name: 'Nxc Cloud International',
-        app_description: '常州站点',
+        app_description: '全球站点',
         app_url: 'https://ikanned.com/',
         email_whitelist_suffix: false,
         is_email_verify: true,  // 启用邮件验证

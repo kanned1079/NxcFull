@@ -2,12 +2,39 @@
 import {reactive} from "vue"
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
+import useApiAddrStore from "@/stores/useApiAddrStore";
+import instance from "@/axios/index";
+// import {makeNotify} from "@/utils/notify"
+import {type NotificationType, useNotification} from 'naive-ui'
 
+const notification = useNotification()
+const apiAddrStore = useApiAddrStore();
 const themeStore = useThemeStore()
 const settingStore = useSettingStore()
 
-let sendTestMail = () => {
+let makeNotify = (type: NotificationType, title: string, msg: string) => {
+  notification[type]({
+    content: title,
+    meta: msg,
+    duration: 2500,
+    keepAliveOnHover: true
+  })
+}
+
+let sendTestMail = async () => {
   console.log('发送测试邮件')
+  try {
+    let {data} = await instance.get(apiAddrStore.apiAddr.admin.sendTestMail)
+    if (data.code === 200) {
+      makeNotify('success', '发送邮件成功', '请查收该管理员邮箱')
+    } else {
+      makeNotify('error', '发送邮件失败', data.msg.toString())
+    }
+  }catch (error) {
+    console.log(error)
+  }
+
+
 }
 
 interface FormItem {

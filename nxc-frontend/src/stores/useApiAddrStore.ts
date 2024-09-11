@@ -21,6 +21,8 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             getAllNoticesList: '/api/admin/v1/notices/get',    // 获取所有通知列表
             addANotice: '/api/admin/v1/notice/add',     // 添加一条通知
             deleteANotice: '/api/admin/v1/notice/delete', // 删除一条通知
+            // 邮件测试部分
+            sendTestMail: '/api/admin/v1/mail/test'
         }
     })
 
