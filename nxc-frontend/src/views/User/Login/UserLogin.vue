@@ -60,18 +60,6 @@ let notifyPass = (type: NotificationType) => {
 let enableLogin = ref<boolean>(true)
 let clickedCount = ref<number>(0)
 
-// encodeToBase64 将密码进行base64加密
-let encodeToBase64 = (str: string): string => {
-  const utf8Encode = new TextEncoder();
-  const encoded = utf8Encode.encode(str);
-  const base64Encoded = btoa(String.fromCharCode(...encoded));
-  return base64Encoded;
-}
-
-let hashPassword = (password: string): string => {
-  return CryptoJS.SHA256(password).toString();
-}
-
 interface DataWithAuth {
   isAuthed: boolean;
   user_data: UserData;
@@ -151,6 +139,9 @@ let handleLogin = async () => {
 
 let toRegister = () => {
   console.log('跳转到注册页面')
+  router.push({
+    path: '/register',
+  })
 }
 
 // 处理忘记密码
@@ -167,20 +158,7 @@ let backgroundStyle = computed(() => ({
 }))
 
 onMounted(() => {
-  // console.log('UserLogin挂载')
-  // sessionStorage.setItem('isAuthed', JSON.stringify(false))
-  //
-  // if (sessionStorage.getItem('isAuthed') != null) {
-  //   if (JSON.parse(sessionStorage.getItem('isAuthed') as string) == true) {
-  //     setTimeout(() => {
-  //       notifyPass('success')
-  //       router.push({
-  //         path: '/admin/dashboard'
-  //       })
-  //     }, 500)
-  //
-  //   }
-  // }
+  console.log('挂载普通用户登录')
 })
 
 let handleValidateClick = () => {
@@ -219,24 +197,6 @@ let handleValidateClick = () => {
         <p class="sub-title">常州站点</p>
         <div class="inp">
 
-          <!--          <n-form-->
-          <!--           ref="formRef"-->
-          <!--           :model="formValue"-->
-          <!--           :rules="rules"-->
-          <!--           :validate-messages="{-->
-          <!--             required: 'required',-->
-          <!--           }"-->
-          <!--          >-->
-          <!--            <n-form-item label="Email" path="user.email">-->
-          <!--              <n-input secondary v-model:value="formValue.user.email" type="text" placeholder="邮箱" size="large"/>-->
-          <!--            </n-form-item>-->
-          <!--            <n-form-item label="Password" path="user.password">-->
-          <!--              <n-input v-model:value="formValue.user.password" type="password" placeholder="密码" size="large"/>-->
-
-          <!--            </n-form-item>-->
-          <!--          </n-form>-->
-
-
           <n-form
               ref="formRef"
               :model="formValue"
@@ -251,19 +211,12 @@ let handleValidateClick = () => {
               <n-input v-model:value="formValue.user.password" placeholder="密码" size="large"/>
             </n-form-item>
           </n-form>
-
-
-          <!--          <n-input secondary v-model:value="username" type="text" placeholder="邮箱" size="large"/>-->
-          <!--          <n-input v-model:value="password" type="password" placeholder="密码" size="large" style="margin-top: 20px"/>-->
+->
         </div>
         <n-button secondary type="info" class="login-btn" size="large" @click="handleValidateClick"
                   :disabled="!enableLogin">
           登入
         </n-button>
-        <!--        <n-button strong tertiary type="warning" size="large" class="register-btn" @click="handleFrogetPassword">-->
-        <!--          忘记密码-->
-        <!--        </n-button>-->
-
 
       </n-card>
       <n-card class="layer-down" content-style="padding: 0;">

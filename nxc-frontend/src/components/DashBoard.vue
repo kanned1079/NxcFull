@@ -54,7 +54,9 @@ onMounted(() => {
       <n-layout-content content-style="padding: 0" class="content">
         <!--        平山道-->
         <n-scrollbar style="max-height: 100vh">
-          <RouterView></RouterView>
+          <n-loading-bar-provider>
+            <RouterView></RouterView>
+          </n-loading-bar-provider>
           <div style="height: 3rem"></div>
         </n-scrollbar>
 
