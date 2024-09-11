@@ -2,9 +2,11 @@
 import {onMounted, toRaw} from 'vue';
 import {RouterView} from 'vue-router';
 import useThemeStore from "@/stores/useThemeStore";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import type {NConfigProvider} from 'naive-ui'
 
 const themeStore = useThemeStore();
+const appInfosStore = useAppInfosStore()
 
 onMounted(() => {
   console.log('app挂载');
@@ -12,6 +14,8 @@ onMounted(() => {
   themeStore.readEnableDarkMode()
   // 从总设置中获取主题并应用
   themeStore.setThemeFromSetting()
+
+  // 获取总体
 
 });
 </script>

@@ -7,6 +7,8 @@ import {h} from 'vue'
 import {PersonAddOutline as addUserIcon,} from '@vicons/ionicons5'
 import useThemeStore from "@/stores/useThemeStore";
 import instance from "@/axios";
+import useApiAddrStore from "@/stores/useApiAddrStore";
+const apiAddrStore = useApiAddrStore();
 
 const themeStore = useThemeStore();
 
@@ -199,7 +201,7 @@ let pagination =  {
 }
 
 let getAllUsers = async () => {
-  let {data} = await instance.get('http://localhost:8080/api/admin/getUserList')
+  let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllUsersList)
   console.log(data)
 }
 

@@ -1,6 +1,7 @@
 import {reactive} from 'vue'
 import {defineStore} from "pinia";
 import instance from "@/axios";
+import useApiAddrStore from "@/stores/useApiAddrStore";
 
 const useSettingStore = defineStore('SettingStore', () => {
     // 管理员系统设置界面所有设置
@@ -76,15 +77,17 @@ const useSettingStore = defineStore('SettingStore', () => {
     }
 
     let saveSetting = async () => {
+        let apiAddrStore = useApiAddrStore()
         console.log('保存数据到数据库')
-        let { data } = await instance.post('http://localhost:8080/api/admin/save-setting', settings)
+        let { data } = await instance.post(apiAddrStore.apiAddr.admin.getAllSystemConfig, settings)
         console.log('设置保存到服务器的返回结果', data)
         // console.log(JSON.stringify(settings))
     }
 
     let saveOption = async (category: string, key: string, value: any) => {
+        let apiAddrStore = useApiAddrStore()
         console.log('保存单个键值到数据库', key, value)
-        let {data} = await instance.post('http://localhost:8080/api/admin/setSingleSetting', {
+        let {data} = await instance.post(apiAddrStore.apiAddr.admin.saveSingleConfig, {
             category,
             key,
             value
@@ -97,8 +100,9 @@ const useSettingStore = defineStore('SettingStore', () => {
     }
 
     let loadSetting = async () => {
+        let apiAddrStore = useApiAddrStore()
         console.log('从数据库读取配置')
-        let { data } = await instance.get('http://localhost:8080/api/admin/get-setting')
+        let { data } = await instance.get(apiAddrStore.apiAddr.admin.getAllSystemConfig)
         console.log(data)
         Object.assign(settings, data)
     }

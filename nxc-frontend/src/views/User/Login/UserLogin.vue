@@ -9,7 +9,9 @@ import {FormInst, useMessage, useNotification} from 'naive-ui'
 import CryptoJS from 'crypto-js';
 import instance from '@/axios/index'
 import {GlobeOutline as LanguageIcon} from '@vicons/ionicons5'
+import useApiAddrStore from "@/stores/useApiAddrStore";
 
+const apiAddrStore = useApiAddrStore();
 const notification = useNotification()
 const themeStore = useThemeStore()
 const message = useMessage()
@@ -100,7 +102,7 @@ let handleLogin = async () => {
   console.log('用户数据')
   console.log(formValue.value.user.email, formValue.value.user.password)
   try {
-    let {data} = await instance.post('/api/v1/user/login', {
+    let {data} = await instance.post(apiAddrStore.apiAddr.user.userLogin, {
       email: formValue.value.user.email,
       // password: encodeToBase64(formValue.value.user.password),
       password: hashPassword(formValue.value.user.password),
@@ -211,7 +213,6 @@ let handleValidateClick = () => {
               <n-input v-model:value="formValue.user.password" placeholder="密码" size="large"/>
             </n-form-item>
           </n-form>
-->
         </div>
         <n-button secondary type="info" class="login-btn" size="large" @click="handleValidateClick"
                   :disabled="!enableLogin">
@@ -256,12 +257,13 @@ let handleValidateClick = () => {
 
 .layer-up {
   width: 480px;
-  height: 360px;
+  height: auto;
   border: 0;
   border-radius: 5px 5px 0 0;
   margin-bottom: 0;
 
   .title {
+    margin-top: 20px;
     font-size: 30px;
   }
 
@@ -278,6 +280,7 @@ let handleValidateClick = () => {
   .login-btn {
     margin-top: 30px;
     width: 90%;
+    margin-bottom: 30px;
   }
 
   .register-btn {

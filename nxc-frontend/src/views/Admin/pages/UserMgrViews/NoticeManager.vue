@@ -5,7 +5,8 @@ import instance from "@/axios";
 import type {DataTableColumns} from 'naive-ui'
 import {NButton, NSwitch, useMessage} from 'naive-ui'
 import useNoticesStore from "@/stores/useNoticesStore";
-
+import useApiAddrStore from "@/stores/useApiAddrStore";
+const apiAddrStore = useApiAddrStore();
 
 const themeStore = useThemeStore()
 const noticesStore = useNoticesStore()
@@ -59,7 +60,7 @@ let closeModal = () => {
 let submitModal = async () => {
   console.log('submit')
   console.log(formData)
-  let {data} = await instance.post('/api/admin/add-notice', formData)
+  let {data} = await instance.post(apiAddrStore.apiAddr.admin.addANotice, formData)
   if (data.code === 200) {
     message.success("添加成功")
   }
@@ -123,7 +124,7 @@ let pagination = {
 // 获取所有的通知
 let getAllNotices = async () => {
   try {
-    let {data} = await instance.get('/api/admin/get-all-notices')
+    let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllNoticesList)
     if (data.code === 200) {
       // console.log(data.notices)
       noticesStore.noticesArr = data.notices
@@ -141,7 +142,7 @@ let getAllNotices = async () => {
 let deleteNotice = async (id: number) => {
   const message = useMessage()
   try {
-    let {data} = await instance.delete('/api/admin/delete-notice',
+    let {data} = await instance.delete(apiAddrStore.apiAddr.admin.deleteANotice,
         {
           params: {notice_id: notice_id,},
         },

@@ -21,7 +21,7 @@ var (
 	err error
 )
 
-func init() {
+func InitMysqlServer() {
 	Db, err = gorm.Open(mysql.New(mysql.Config{
 		DSN:                       fmt.Sprintf("%s:%s@%s(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPass, dbProto, dbHost, dbPort, dbName),
 		DefaultStringSize:         256,
@@ -38,19 +38,11 @@ func init() {
 	} else {
 		log.Println("初始化数据库成功")
 	}
+}
 
-	//// 自动迁移
-	//if err := Db.AutoMigrate(&settings.SiteSetting{}); err != nil {
-	//	panic("failed to migrate database")
-	//}
-	//
-	//if err := Db.AutoMigrate(&user.User{}); err != nil {
-	//	panic("failed to migrate database")
-	//}
-	//
-	//if err := Db.AutoMigrate(&user.Auth{}); err != nil {
-	//	panic("failed to migrate database")
-	//}
-
-	//settings.CreateSetting(Db)
+func init() {
+	log.Println("初始化Mysql")
+	InitMysqlServer() // 初始化主数据库
+	log.Println("初始化Redis")
+	InitRedisServer() // 初始化Redis
 }

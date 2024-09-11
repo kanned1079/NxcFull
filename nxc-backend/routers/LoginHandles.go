@@ -10,13 +10,18 @@ import (
 	"net/http"
 )
 
-type LoginMsg struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+//type LoginMsg struct {
+//	Email    string `json:"email"`
+//	Password string `json:"password"`
+//	Role     string `json:"role"`
+//}
 
 func handleUserLogin(context *gin.Context) {
-	var req LoginMsg
+	var req = struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Role     string `json:"role"`
+	}{}
 	if err := context.ShouldBind(&req); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
@@ -34,7 +39,7 @@ func handleUserLogin(context *gin.Context) {
 					"msg":      result.Error.Error(),
 				})
 			}
-			token, err := auth.GenerateToken(req.Email)
+			token, err := auth.GenerateToken(req.Email, req.Role)
 			log.Println("用户Token: ", token)
 			if err != nil {
 				context.JSON(http.StatusInternalServerError, gin.H{

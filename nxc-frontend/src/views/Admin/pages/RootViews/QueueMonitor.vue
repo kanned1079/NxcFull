@@ -4,6 +4,9 @@ import type {NumberAnimationInst} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
 import axios from '@/axios';
 import instance from "@/axios"; // 导入配置好的 axios 实例
+import useApiAddrStore from "@/stores/useApiAddrStore";
+const apiAddrStore = useApiAddrStore();
+
 // const titlePart1 = ['当前作业量', '近一小时处理量', '7日内报错数量']
 const themeStore = useThemeStore()
 let status = ref(true)
@@ -86,7 +89,7 @@ let getSysInfo = async () => {
 
   // const token = sessionStorage.getItem('token');
 
-  let {data} = await instance.get('/api/admin/getSysInfo');
+  let {data} = await instance.get(apiAddrStore.apiAddr.admin.getSystemStatus);
   console.log(data)
   serverLoad.cpu = Number(data.osInfo.cpu_percent.toFixed(1))
   serverLoad.mem = Number(data.osInfo.mem_percent.toFixed(1))

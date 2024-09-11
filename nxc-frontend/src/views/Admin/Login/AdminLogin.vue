@@ -9,6 +9,10 @@ import {useNotification} from 'naive-ui'
 import { useMessage } from 'naive-ui'
 import {hashPassword, encodeToBase64} from '@/utils/encryptor'
 import axios from 'axios';
+import useApiAddrStore from "@/stores/useApiAddrStore";
+import instance from "@/axios";
+
+const apiAddrStore = useApiAddrStore();
 
 const notification = useNotification()
 const themeStore = useThemeStore()
@@ -118,10 +122,11 @@ let handleLogin = async () => {
   enableLogin.value = false
   console.log('管理员密码hash: ', hashPassword(password.value))
   try {
-    let { data } = await axios.post('http://localhost:8080/api/admin/login', {
+    let { data } = await instance.post(apiAddrStore.apiAddr.admin.adminLogin, {
       email: username.value,
       // password: encodeToBase64(password.value),
-      password: hashPassword(password.value)
+      password: hashPassword(password.value),
+      role: 'admin', // 限制权限
     })
     console.log(data)
     if (data.code === 200 && data.isAuthed === true) {
