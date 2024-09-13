@@ -3,14 +3,21 @@ import {reactive} from "vue"
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
+import useUserInfoStore from "@/stores/useUserInfoStore";
 import instance from "@/axios/index";
 // import {makeNotify} from "@/utils/notify"
-import {type NotificationType, useNotification} from 'naive-ui'
+import { HourglassOutline as waitIcon } from '@vicons/ionicons5'
+import {type NotificationType, useNotification, useDialog, useMessage, NIcon} from 'naive-ui'
 
 const notification = useNotification()
+const userInfoStore = useUserInfoStore()
 const apiAddrStore = useApiAddrStore();
 const themeStore = useThemeStore()
 const settingStore = useSettingStore()
+const message = useMessage()
+const dialog = useDialog()
+
+let show = ref<boolean>(false)
 
 let makeNotify = (type: NotificationType, title: string, msg: string) => {
   notification[type]({
@@ -22,11 +29,27 @@ let makeNotify = (type: NotificationType, title: string, msg: string) => {
 }
 
 let sendTestMail = async () => {
-  console.log('发送测试邮件')
+  show.value = true
+  message.warning('发送邮件中', {
+    icon: () => h(NIcon, null, { default: () => h(waitIcon) })
+  })
   try {
-    let {data} = await instance.get(apiAddrStore.apiAddr.admin.sendTestMail)
+    let {data} = await instance.post(apiAddrStore.apiAddr.admin.sendTestMail,{
+      email: userInfoStore.thisUser.email
+    })
+    show.value = false
     if (data.code === 200) {
-      makeNotify('success', '发送邮件成功', '请查收该管理员邮箱')
+      // makeNotify('success', '发送邮件成功', '请查收该管理员邮箱')
+      console.log(data)
+      let {info} = data
+      dialog.info({
+        title: '成功',
+        content: `收信地址: ${userInfoStore.thisUser.email}\t\n
+                  发信服务器: ${info.host}
+                  发信端口: ${info.port}
+                  发信加密方式: ${info.use_ssl?'SSL':'TLS'}
+                  发信用户名: ${info.username}`
+      })
     } else {
       makeNotify('error', '发送邮件失败', data.msg.toString())
     }
@@ -58,23 +81,13 @@ interface SendmailSettings {
 
 let options = reactive([
   {
-    label: '默认',
+    label: 'default',
     value: 'default',
     disabled: false,
   },
   {
-    label: '模版1',
-    value: 'template1',
-    disabled: false,
-  },
-  {
-    label: '模版2',
-    value: 'template2',
-    disabled: false,
-  },
-  {
-    label: '模版3',
-    value: 'template3',
+    label: 'classic',
+    value: 'classic',
     disabled: false,
   },
 ])
@@ -296,8 +309,10 @@ let saveOption = (category: string, key: string, value: any) => {
           </div>
         </span>
       <span class="r-content to-right">
-<!--          <n-input size="large" placeholder="请输入" @blur="handok"></n-input>-->
+        <n-spin :show="show" :delay="100" size="small">
         <n-button @click="sendTestMail" size="large" type="primary">发送测试邮件</n-button>
+        </n-spin>
+<!--          <n-input size="large" placeholder="请输入" @blur="handok"></n-input>-->
         </span>
     </div>
 

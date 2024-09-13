@@ -10,7 +10,8 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             userLogin: '/api/user/v1/login',    // 用户登录
             sendAuthMail: '/api/user/v1/register/vc/get',    // 发送验证码
             verifyAuthMail: '/api/user/v1/register/vc/verify',    // 验证代码
-            newUserRegister: '/api/user/v1/register/register'   // 新用户注册
+            newUserRegister: '/api/user/v1/register/register',   // 新用户注册
+            getAllNoticesList: '/api/user/v1/notices/get'
         },
         admin: {
             adminLogin: '/api/admin/v1/login',  // 管理员登录

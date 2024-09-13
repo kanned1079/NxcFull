@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Table测试</title>
+  <script>
+    let updateHTML = () => document.getElementById('dbclk').innerHTML = '双击测试成功'
+
+    var TableDblClick = function (evt) {
+      evt = evt.target || event.srcElement;
+      if (evt.tagName == 'TD' && evt.parentNode.tagName == 'TR') {
+        var rowIndex = evt.parentNode. rowIndex + 1;
+        var cellIndex = evt. cellIndex + 1;
+        document.getRlementById('result').innerHTNL='当前双击的是：第'+rowLndex+'行，第'+cellIndex +'列<br/><br/>单元格的内容是：'+evt.innerHTNL
+      }
+    }
+    window.onload = () => {
+      document. getElementById('tb'). ondblclick = function (evt) {
+        return function() { TableDblClick(evt) ; }
+      }(event)
+    }
+  </script>
+</head>
+<body>
+
+</body>
+</html>

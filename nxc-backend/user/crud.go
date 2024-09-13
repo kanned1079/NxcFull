@@ -26,6 +26,7 @@ func AuthUserInfo(email string, password string) (code int) {
 	if result.Error != nil {
 		log.Println("未知错误")
 	}
+	log.Println("查询到的用户凭证", userAuth)
 	if password == userAuth.Password {
 		code = Auth_Pass
 	} else {

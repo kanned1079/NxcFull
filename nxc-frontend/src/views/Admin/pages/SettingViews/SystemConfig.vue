@@ -57,7 +57,9 @@ onMounted(() => {
           <BackendConfig></BackendConfig>
         </n-tab-pane>
         <n-tab-pane name="chap6" tab="邮件">
-          <SendMail></SendMail>
+          <n-message-provider>
+            <SendMail></SendMail>
+          </n-message-provider>
         </n-tab-pane>
         <n-tab-pane name="chap7" tab="通知">
           <Notice></Notice>

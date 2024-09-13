@@ -57,7 +57,7 @@ func StartAdminReq() {
 		adminAuthorized.GET("/users/get", handleGetUserList)             // 获取所有用户的列表
 		adminAuthorized.GET("/notices/get", HandleGetAllNotices)         // 获取所有通知列表
 		adminAuthorized.POST("/notice/add", HandleAddNotice)             // 添加一条新的通知
-		adminAuthorized.GET("/mail/test", HandleSendTestMail)            // 发送测试邮件
+		adminAuthorized.POST("/mail/test", HandleSendTestMail)           // 发送测试邮件
 		adminAuthorized.DELETE("/notice/delete", HandleDeleteNotice)     // 删除一条通知
 
 	}
@@ -67,6 +67,8 @@ func StartAdminReq() {
 		// 用户特定的路由
 		userAuthorized.GET("/profile")
 		//...其他用户路由
+		// 开始首页
+		userAuthorized.GET("/notices/get", HandleGetAllNotices)
 	}
 
 	r.Run("localhost:8080")

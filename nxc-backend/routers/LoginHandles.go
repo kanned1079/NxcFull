@@ -26,7 +26,7 @@ func handleUserLogin(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 	//log.Println(req)
-	//log.Println("输入 ", req.Email, req.Password)
+	log.Println("用户输入凭证 ", req.Email, req.Password)
 	if user.IsUserExist(req.Email) == user.User_Exist {
 		//log.Println("验证密码")
 		// 验证用户密码
@@ -40,7 +40,7 @@ func handleUserLogin(context *gin.Context) {
 				})
 			}
 			token, err := auth.GenerateToken(req.Email, req.Role)
-			log.Println("用户Token: ", token)
+			log.Println("Token: ", token)
 			if err != nil {
 				context.JSON(http.StatusInternalServerError, gin.H{
 					"code":     http.StatusInternalServerError,

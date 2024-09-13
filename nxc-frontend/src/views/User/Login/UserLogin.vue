@@ -6,10 +6,10 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import type {NotificationType} from 'naive-ui'
 import {FormInst, useMessage, useNotification} from 'naive-ui'
-import CryptoJS from 'crypto-js';
 import instance from '@/axios/index'
 import {GlobeOutline as LanguageIcon} from '@vicons/ionicons5'
 import useApiAddrStore from "@/stores/useApiAddrStore";
+import {hashPassword} from "@/utils/encryptor";
 
 const apiAddrStore = useApiAddrStore();
 const notification = useNotification()
@@ -80,6 +80,7 @@ interface UserData {
 }
 
 let bindUserInfo = (data: DataWithAuth) => {
+  console.log('绑定数据', data)
   userInfoStore.isAuthed = data.isAuthed
   let {user_data} = data
 
@@ -88,10 +89,17 @@ let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.thisUser.name = user_data.name
   userInfoStore.thisUser.email = user_data.email
   userInfoStore.thisUser.isAdmin = user_data.is_admin
-  userInfoStore.thisUser.isStaff = user_data.is_staff
+  userInfoStore.thisUser.isStaff = user_data.is_staffx
   userInfoStore.thisUser.balance = user_data.balance
-  userInfoStore.thisUser.lastLogin = user_data.last_login.toString()
+  userInfoStore.thisUser.lastLogin = user_data.last_login ? user_data.last_login.toString() : ''
   userInfoStore.thisUser.lastLoginIp = user_data.last_login_ip
+  userInfoStore.thisUser.licenseActive = user_data.license_active
+  userInfoStore.thisUser.licenseExpiration = user_data.license_expiration
+  console.log('绑定结束')
+}
+
+let enterDashboard = (data) => {
+
 }
 
 
@@ -106,6 +114,7 @@ let handleLogin = async () => {
       email: formValue.value.user.email,
       // password: encodeToBase64(formValue.value.user.password),
       password: hashPassword(formValue.value.user.password),
+      role: 'user',
     })
     console.log(data)
     if (data.code === 200 && data.isAuthed === true) {
@@ -113,8 +122,11 @@ let handleLogin = async () => {
       sessionStorage.setItem('token', data.token)
       // sessionStorage.setItem('isAuthed', JSON.stringify(true))
       notifyPass('success');
-      await bindUserInfo(data)
-      await router.push({path: '/admin/dashboard'});
+      console.log('绑定用户数据到pinia')
+      bindUserInfo(data)
+      console.log("结束")
+      console.log('跳转到用户仪表板')
+      await router.push({path: '/dashboard'});
     } else {
       enableLogin.value = true
       switch (data.msg) {
@@ -132,7 +144,7 @@ let handleLogin = async () => {
     }
   } catch (error) {
     console.log(error)
-    notifyErr('error', error.toString())
+    // notifyErr('error', error.toString())
     enableLogin.value = true
   }
 
@@ -179,6 +191,7 @@ let handleValidateClick = () => {
     notifyErr('error', '邮箱或密码不能为空')
     return
   }
+  console.log('验证完成 调用登录')
   handleLogin()
   // if (formValue.value.user.password === '') {
   //   notifyErr('error', '密码不能为空')
@@ -194,7 +207,7 @@ let handleValidateClick = () => {
   <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center"
             :style="backgroundStyle">
     <n-flex justify="center" :vertical="true" align="center" style="gap: 0">
-      <n-card class="layer-up" :embedded="true">
+      <n-card class="layer-up" :embedded="true" hoverable>
         <p class="title">{{ siteInfo.siteName }}</p>
         <p class="sub-title">常州站点</p>
         <div class="inp">
