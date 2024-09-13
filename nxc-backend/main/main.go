@@ -109,17 +109,45 @@ func main() {
 	//	}
 	//}()
 
+	//t1 := time.Date(2019, time.October, 16, 7, 45, 0, 0, time.UTC)
+	//t2 := time.Date(2019, time.October, 16, 7, 46, 0, 0, time.UTC)
 	//dao.Db.Create(&user.User{
 	//	Name:              "kanna",
 	//	Email:             "admin@ikanned.com",
 	//	IsAdmin:           true,
 	//	Balance:           29.8,
-	//	LastLogin:         time.Date(2019, time.October, 16, 7, 45, 0, 0, time.UTC),
-	//	LicenseExpiration: time.Date(2029, time.October, 16, 7, 45, 0, 0, time.UTC),
+	//	LastLogin:         &t1,
+	//	LicenseExpiration: &t2,
 	//})
 	//dao.Db.Create(&user.Auth{
 	//	Email:    "admin@ikanned.com",
-	//	Password: "",
+	//	Password: "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+	//})
+	//
+	//t3 := time.Now()
+	//dao.Db.Create(&user.User{
+	//	Email:     "kanned1079@gmail.com",
+	//	IsAdmin:   false,
+	//	Balance:   0.01,
+	//	LastLogin: &t3,
+	//})
+	//dao.Db.Create(&user.Auth{
+	//	Email:    "kanned1079@gmail.com",
+	//	Password: "f98204ba6963009734f0398a80f8e44f9d3ef74ebb9c49e5d4f000bd1c102d29",
+	//})
+	//
+	//t4 := time.Date(2029, time.October, 31, 23, 59, 59, 0, time.UTC)
+	//dao.Db.Create(&user.User{
+	//	Email:             "test@ikanned.com",
+	//	LicenseExpiration: &t4,
+	//	LicenseActive:     true,
+	//	IsAdmin:           false,
+	//	Balance:           41.07,
+	//	LastLogin:         &t1,
+	//})
+	//dao.Db.Create(&user.Auth{
+	//	Email:    "test@ikanned.com",
+	//	Password: "f98204ba6963009734f0398a80f8e44f9d3ef74ebb9c49e5d4f000bd1c102d29",
 	//})
 
 	routers.StartAdminReq()

@@ -84,10 +84,10 @@ const adminRoutes: RouteRecordRaw[] = [
 
         ]
     },
-    {
-        path: '/dashboard',
-        component: DashBoard,
-    },
+    // {
+    //     path: '/dashboard',
+    //     component: DashBoard,
+    // },
     {
         path: '/admin/login',
         name: 'admin-login',

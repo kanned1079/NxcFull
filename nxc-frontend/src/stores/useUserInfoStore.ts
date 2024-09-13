@@ -18,6 +18,8 @@ const useUserInfoStore = defineStore('userInfoS',() => {
         balance: 0.00,
         lastLogin: '',
         lastLoginIp: '0.0.0.0',
+        licenseActive: false,
+        licenseExpiration: '',
         token: 'ewfesrflhweaifuhiesagfesrgfegfesgfvliehsguu',
     })
 
@@ -32,6 +34,7 @@ const useUserInfoStore = defineStore('userInfoS',() => {
     let logout = () => {
         setAndSaveAuthStatus(false)
         let isAdminBak = thisUser.isAdmin
+        sessionStorage.removeItem('tokeni')
         Object.assign(thisUser, {
             id: 0,
             inviteUserId: 0,
@@ -42,6 +45,8 @@ const useUserInfoStore = defineStore('userInfoS',() => {
             balance: 0.00,
             lastLogin: '',
             lastLoginIp: '0.0.0.0',
+            licenseActive: false,
+            licenseExpiration: '',
             token: '',
         });
         console.log('是否是管理员:', isAdminBak)

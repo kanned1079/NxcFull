@@ -122,6 +122,7 @@ const useThemeStore = defineStore('theme', () => {
     })
 
     // 当前访问的位置
+    let userPath = ref('/dashboard/summary')
     let contentPath = ref('/admin/dashboard/summary')
     let menuSelected = ref('dashboard')
 
@@ -139,7 +140,8 @@ const useThemeStore = defineStore('theme', () => {
         setThemeFromSetting,
         backgroundUrl,
         contentPath,
-        menuSelected
+        menuSelected,
+        userPath
     }
 
 }, {

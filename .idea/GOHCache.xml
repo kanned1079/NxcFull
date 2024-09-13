@@ -24,10 +24,10 @@
             </set>
           </value>
         </entry>
-        <entry key="Coupon">
+        <entry key="EmailData">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/coupon.go" />
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/MailHandles.go" />
             </set>
           </value>
         </entry>
@@ -45,13 +45,6 @@
             </set>
           </value>
         </entry>
-        <entry key="LoginMsg">
-          <value>
-            <set>
-              <option value="file://$PROJECT_DIR$/nxc-backend/routers/LoginHandles.go" />
-            </set>
-          </value>
-        </entry>
         <entry key="Myapp">
           <value>
             <set>
@@ -66,14 +59,6 @@
             </set>
           </value>
         </entry>
-        <entry key="Notices">
-          <value>
-            <set>
-              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go" />
-              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/coupon.go" />
-            </set>
-          </value>
-        </entry>
         <entry key="OsInfo">
           <value>
             <set>
@@ -85,6 +70,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="RemindExpireMail">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/MailHandles.go" />
             </set>
           </value>
         </entry>
@@ -161,7 +153,15 @@
         <entry key="VerifyEmail">
           <value>
             <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/MailHandles.go" />
               <option value="file://$PROJECT_DIR$/nxc-backend/routers/VerifyEmail.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="VerifyEmailData">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/MailHandles.go" />
             </set>
           </value>
         </entry>
@@ -169,13 +169,6 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/nxc-backend/main/main.go" />
-            </set>
-          </value>
-        </entry>
-        <entry key="fromData">
-          <value>
-            <set>
-              <option value="file://$PROJECT_DIR$/nxc-backend/routers/NoticeHandles.go" />
             </set>
           </value>
         </entry>
@@ -202,24 +195,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/main.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1725758315421" />
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/auth/JWT.go">
           <value>
             <ScannedPath>
               <option name="lastModified" value="1726060991025" />
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1725776397877" />
             </ScannedPath>
           </value>
         </entry>
@@ -230,18 +209,6 @@
               <option name="schema">
                 <list>
                   <option value="PublicNotices" />
-                </list>
-              </option>
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/coupon.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1725801635258" />
-              <option name="schema">
-                <list>
-                  <option value="Notices" />
                 </list>
               </option>
             </ScannedPath>
@@ -295,7 +262,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/main/main.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725969122508" />
+              <option name="lastModified" value="1726193808813" />
               <option name="schema">
                 <list>
                   <option value="adminConfig" />
@@ -318,27 +285,22 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/nxc-backend/redis/redis.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1726040473288" />
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/LoginHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726058155681" />
+              <option name="lastModified" value="1726117729271" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/MailHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726070566072" />
+              <option name="lastModified" value="1726109850097" />
               <option name="schema">
                 <list>
                   <option value="SMTPConfig" />
+                  <option value="VerifyEmailData" />
+                  <option value="RemindExpireMail" />
                 </list>
               </option>
             </ScannedPath>
@@ -371,7 +333,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/VerifyEmail.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726046798630" />
+              <option name="lastModified" value="1726116223435" />
               <option name="schema">
                 <list>
                   <option value="VerifyEmail" />
@@ -383,14 +345,14 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/registerHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726043268552" />
+              <option name="lastModified" value="1726117178415" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726067852405" />
+              <option name="lastModified" value="1726137120980" />
             </ScannedPath>
           </value>
         </entry>
@@ -460,7 +422,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/User.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725952488295" />
+              <option name="lastModified" value="1726193092471" />
               <option name="schema">
                 <list>
                   <option value="User" />
@@ -479,7 +441,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/crud.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725758575305" />
+              <option name="lastModified" value="1726117786857" />
             </ScannedPath>
           </value>
         </entry>
@@ -498,17 +460,15 @@
         <entry key="admin_config" value="adminConfig" />
         <entry key="app_settings" value="AppSettings" />
         <entry key="auth" value="Auth" />
-        <entry key="coupon" value="Coupon" />
+        <entry key="email_data" value="EmailData" />
         <entry key="encryptor" value="Encryptor" />
-        <entry key="from_data" value="fromData" />
         <entry key="frontend" value="Frontend" />
-        <entry key="login_msg" value="LoginMsg" />
         <entry key="myapp" value="Myapp" />
         <entry key="notice" value="Notice" />
         <entry key="notice_form_data" value="noticeFormData" />
-        <entry key="notices" value="Notices" />
         <entry key="os_info" value="OsInfo" />
         <entry key="public_notices" value="PublicNotices" />
+        <entry key="remind_expire_mail" value="RemindExpireMail" />
         <entry key="security" value="Security" />
         <entry key="sendmail" value="Sendmail" />
         <entry key="server" value="Server" />
@@ -520,8 +480,9 @@
         <entry key="system_setting_options" value="SystemSettingOptions" />
         <entry key="user" value="User" />
         <entry key="verify_email" value="VerifyEmail" />
+        <entry key="verify_email_data" value="VerifyEmailData" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1725761709699" />
+    <option name="lastTimeChecked" value="1726099230501" />
   </component>
 </project>

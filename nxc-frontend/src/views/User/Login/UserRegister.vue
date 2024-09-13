@@ -11,6 +11,8 @@ import {GlobeOutline as LanguageIcon} from '@vicons/ionicons5'
 import authInstance from '@/axios/authInstance'
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
+import {hashPassword} from "@/utils/encryptor";
+import instance from "@/axios";
 
 const apiAddrStore = useApiAddrStore();
 const appInfosStore = useAppInfosStore()
@@ -75,18 +77,18 @@ let rules = {
   }
 }
 
-let notifyErr = (type: NotificationType, msg: string) => {
+let notifyErr = (type: NotificationType, title: string, msg: string) => {
   notification[type]({
-    content: '注册',
+    content: title,
     meta: msg,
     duration: 2500,
     keepAliveOnHover: true
   })
 }
 
-let notifyPass = (type: NotificationType, msg: string) => {
+let notifyPass = (type: NotificationType, title: string, msg: string) => {
   notification[type]({
-    content: '成功',
+    content: title,
     meta: msg,
     duration: 2500,
     keepAliveOnHover: true
@@ -122,7 +124,7 @@ let validateEmail = (email: string): boolean => {
 let sendVerifyCode = async () => {
   console.log(formValue.value.user.email.trim())
   if (formValue.value.user.email === '' || validateEmail(formValue.value.user.email.trim())) {
-    notifyErr('error', '邮件格式不合法')
+    notifyErr('error', '注册', '邮件格式不合法')
     return
   } else {
     console.log("邮件校验通过 发送邮箱验证")
@@ -133,9 +135,9 @@ let sendVerifyCode = async () => {
       if (data.code === 200) {
         enableSendCode.value = false
         startWait(60)
-        notifyPass('success', '邮件发送成功 请查看邮箱')
+        notifyPass('success', '注册', '邮件发送成功 请查看邮箱')
       } else {
-        notifyErr('error', data.error.toString())
+        notifyErr('error', '注册', data.error.toString())
       }
     } catch (error) {
       // notifyErr('error', error.toString())
@@ -187,9 +189,9 @@ let handleRegister = async () => {
     })
     console.log(data)
     if (data.code === 200) {
-      notifyPass('注册成功')
+      notifyPass('success', '注册', '注册成功')
     } else {
-      notifyErr('error', data.msg.toString())
+      notifyErr('error', '注册', data.msg.toString())
     }
   } catch (error) {
     // notifyErr('error',error.toString())
@@ -233,11 +235,11 @@ let handleValidateClick = async () => {
   }
 
   if (formValue.value.user.email === '' || formValue.value.user.password === '' || formValue.value.user.password_confirmation === '') {
-    notifyErr('error', '缺少有效信息')
+    notifyErr('error', '注册', '缺少有效信息')
     return
   } else {  // 有效信息完整
     if (formValue.value.user.password !== formValue.value.user.password_confirmation) {
-      notifyErr('error', '密码不一致')
+      notifyErr('error', '注册', '密码不一致')
       return
     }
     if (appInfosStore.registerPageConfig.is_email_verify) { // 如果启用了邮箱验证
@@ -246,9 +248,30 @@ let handleValidateClick = async () => {
         // 验证码正确
         console.log('验证码正确')
         // handleRegister()  // 注册并写入数据库
+        try {
+          let {data} = await instance.post(apiAddrStore.apiAddr.user.newUserRegister, {
+            email: formValue.value.user.email,
+            password: hashPassword(formValue.value.user.password),
+            invite_user_id: formValue.value.user.invite_user_id,
+          })
+          if (data.code === 200) {
+            console.log("注册成功")
+            notifyPass('success', '注册', '注册成功 返回登录')
+            setTimeout(async () => {
+              await router.push({
+                path: '/login'
+              })
+            }, 1000)
+          } else {
+            notifyPass('error', '注册失败', data.msg)
+
+          }
+        } catch (error) {
+          notifyPass('error', '未知错误', error.toString())
+        }
         return;
       } else {
-        notifyErr('error', '验证码错误')
+        notifyErr('error', '注册', '验证码错误')
         return
       }
 
@@ -275,7 +298,7 @@ let getUserIpAddress = async () => {
     let {data} = await authInstance.get('https://2024.ipchaxun.com/')
     userIp.value.ip_address = data.ip.toString()
     // userIp.value.position = `${response.data.data[0]} + ${response.data.data[1]} + ${response.data.data[2]}`
-    message.info('你的ip地址为' +  userIp.value.ip_address)
+    message.info('你的ip地址为' + userIp.value.ip_address)
   } catch (error) {
     console.log(error)
   }
@@ -319,7 +342,7 @@ let getUserIpAddress = async () => {
             </n-form-item>
             <n-form-item path="user.invest_code" :show-feedback="false"
                          v-if="appInfosStore.registerPageConfig.is_invite_force">
-              <n-input v-model:value="formValue.user.invite_user_id" placeholder="邀请码（选填）" size="large"/>
+              <n-input v-model:value.number="formValue.user.invite_user_id" placeholder="邀请码（选填）" size="large"/>
             </n-form-item>
           </n-form>
           <n-form>

@@ -1,6 +1,7 @@
 <script setup lang="ts" name="CommonAside">
 import {useRouter} from 'vue-router'
 import useThemeStore from "@/stores/useThemeStore";
+import useUserInfoStore from "@/stores/useUserInfoStore";
 import renderIcon from "@/utils/iconFormator";
 import {
   CardOutline as paymentIcon,
@@ -20,9 +21,22 @@ import {
   SpeedometerOutline as dashboardIcon,
 } from '@vicons/ionicons5'
 
+import {
+  BookOutline as manualIcon,
+  CartOutline as buyIcon,
+  ListOutline as myOrderIcon,
+  PeopleOutline as inviteIcon,
+  PersonOutline as profileIcon,
+  HelpBuoyOutline as supportIcon,
+  KeyOutline as activeIcon,
+} from '@vicons/ionicons5'
+
 const themeStore = useThemeStore();
+const userInfoStore = useUserInfoStore();
 
 const router = useRouter();
+
+// 管理员 ----------------------------------
 let MenuOption = [
   {
     label: '仪表盘',
@@ -193,17 +207,101 @@ let update = (key: string) => {
     }
   }
 }
+
+
+// 普通用户 ----------------------------------
+let UserMenuOption = [
+  {
+    label: '仪表盘',
+    key: 'user-dashboard',
+    icon: renderIcon(dashboardIcon)
+  },
+  {
+    label: '使用文档',
+    key: 'user-manual',
+    icon: renderIcon(manualIcon)
+  },
+  {
+    label: '订阅',
+    key: 'user-sub',
+    // icon: renderIcon(settingIcon),
+    disabled: false,
+    children: [
+      {
+        label: '购买订阅',
+        key: 'user-buy-subscription',
+        icon: renderIcon(buyIcon),
+      },
+      {
+        label: '余量查询',
+        key: 'user-margin-query',
+        icon: renderIcon(paymentIcon),
+      },
+    ]
+  },
+  {
+    label: '财务',
+    key: 'user-fiance',
+    // icon: renderIcon(settingIcon),
+    disabled: false,
+    children: [
+      {
+        label: '我的订单',
+        key: 'user-order',
+        icon: renderIcon(myOrderIcon),
+      },
+      {
+        label: '我的邀请',
+        key: 'user-invited',
+        icon: renderIcon(inviteIcon),
+      },
+    ]
+  },
+  {
+    label: '用户',
+    key: 'my-profile',
+    // icon: renderIcon(settingIcon),
+    disabled: false,
+    children: [
+      {
+        label: '个人中心',
+        key: 'user-profile',
+        icon: renderIcon(profileIcon),
+      },
+      {
+        label: '我的工单',
+        key: 'user-post',
+        icon: renderIcon(supportIcon),
+      },
+      {
+        label: '激活记录',
+        key: 'user-active-record',
+        icon: renderIcon(activeIcon),
+      },
+    ]
+  },
+]
+
+
 </script>
 
 <template>
   <div class="root">
     <n-menu
+        v-if="userInfoStore.thisUser.isAdmin"
         class="menu"
         :accordion="true"
         :options="MenuOption"
         @update:value="update"
         :value="themeStore.menuSelected"
-
+    />
+    <n-menu
+        v-else
+        class="menu"
+        :default-expand-all="true"
+        :options="UserMenuOption"
+        @update:value="update"
+        :value="themeStore.menuSelected"
     />
   </div>
 </template>

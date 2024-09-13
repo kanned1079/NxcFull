@@ -54,6 +54,15 @@ func SendVerifyEmail(context *gin.Context) {
 	}
 	// 发送邮件
 	log.Println("发送邮件", vEmail)
+	err = HandSendEmailCode(postForm.Email, vEmail.VerifyCode, "../sendmail/template/default/verifyMail.html", "verifyMail")
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code":  http.StatusInternalServerError,
+			"msg":   "邮件发送失败",
+			"error": err.Error(),
+		})
+	}
 	// pass
 
 	context.JSON(http.StatusOK, gin.H{
@@ -107,22 +116,6 @@ func HandleVerifyEmailCode(context *gin.Context) {
 		"code": http.StatusOK,
 		"msg":  "验证码正确",
 	})
-}
-
-func HandleUserRegister(context *gin.Context) {
-	postForm := &struct {
-		Email        string `json:"email"`
-		Password     string `json:"password"`
-		InviteUserId string `json:"invite_user_id"`
-	}{}
-	if err := context.ShouldBind(&postForm); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"code":  http.StatusBadRequest,
-			"msg":   "数据绑定错误",
-			"error": err.Error(),
-		})
-	}
-	log.Println("最终注册", postForm)
 }
 
 // RandCode 生成验证码
