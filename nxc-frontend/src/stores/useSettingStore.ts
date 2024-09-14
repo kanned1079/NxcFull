@@ -17,7 +17,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             tos_url: '',            // 用户条款TOS
             stop_register: false,   // 停止新用户注册
             trial_time: 6,          // 试用时间
-            trial_subscribe: '',    // 注册试用
+            trial_subscribe: 1,    // 注册试用
             currency: '',           // 货币单位
             currency_symbol: '',    // 货币符号
         },
@@ -61,7 +61,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             bark_host: '',      // bark接入点
             bark_group: '',     // Bark群组
         },
-        myapp: {
+        my_app: {
             win_download: '',       // windows端软件下载地址
             osx_download: '',       // osx端软件下载地址
             android_download: '',   // 安卓端软件下载地址

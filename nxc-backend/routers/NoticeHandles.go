@@ -15,8 +15,8 @@ func HandleGetAllNotices(context *gin.Context) {
 	if result.Error != nil {
 		log.Print(result.Error)
 	}
-	//log.Println("通知条数", len(notices))
-	//log.Println(notices)
+	//log.Println("通知条数", len(Document))
+	//log.Println(Document)
 	context.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
 		"notices": notices,

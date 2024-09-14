@@ -23,10 +23,10 @@ const useNoticesStore = defineStore('NoticesStore', () => {
     // // 获取所有的通知
     // let getAllNotices = async () => {
     //     try {
-    //         let {data} = await instance.get('/api/admin/get-all-notices')
+    //         let {data} = await instance.get('/api/admin/get-all-Document')
     //         if (data.code === 200) {
-    //             // console.log(data.notices)
-    //             noticesArr = data.notices
+    //             // console.log(data.Document)
+    //             noticesArr = data.Document
     //             console.log('axios获取的数据', noticesArr)
     //             // createData()
     //         } else {

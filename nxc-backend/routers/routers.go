@@ -1,7 +1,9 @@
 package routers
 
 import (
+	"NxcFull/nxc-backend/Document"
 	"NxcFull/nxc-backend/auth"
+	"NxcFull/nxc-backend/subscribePlan"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -52,13 +54,14 @@ func StartAdminReq() {
 		// 管理员特定的路由
 		adminAuthorized.GET("/os/status/get", handleGetServerInfo) // 获取当前系统的负载
 		// adminAuthorized.POST("admin/save-setting", handleUpdateSystemSettings)
-		adminAuthorized.POST("/settings/set", handleUpdateSingleOptions) // 设置单个配置项目
-		adminAuthorized.GET("/settings/get", handleGetSystemSetting)     // 获取所有的系统设置
-		adminAuthorized.GET("/users/get", handleGetUserList)             // 获取所有用户的列表
-		adminAuthorized.GET("/notices/get", HandleGetAllNotices)         // 获取所有通知列表
-		adminAuthorized.POST("/notice/add", HandleAddNotice)             // 添加一条新的通知
-		adminAuthorized.POST("/mail/test", HandleSendTestMail)           // 发送测试邮件
-		adminAuthorized.DELETE("/notice/delete", HandleDeleteNotice)     // 删除一条通知
+		adminAuthorized.POST("/settings/set", handleUpdateSingleOptions)   // 设置单个配置项目
+		adminAuthorized.GET("/settings/get", handleGetSystemSetting)       // 获取所有的系统设置
+		adminAuthorized.GET("/users/get", handleGetUserList)               // 获取所有用户的列表
+		adminAuthorized.GET("/notices/get", HandleGetAllNotices)           // 获取所有通知列表
+		adminAuthorized.POST("/notice/add", HandleAddNotice)               // 添加一条新的通知
+		adminAuthorized.POST("/mail/test", HandleSendTestMail)             // 发送测试邮件
+		adminAuthorized.DELETE("/notice/delete", HandleDeleteNotice)       // 删除一条通知
+		adminAuthorized.GET("/plans/get", subscribePlan.HandleGetAllPlans) // 获取所有的订阅
 
 	}
 
@@ -69,6 +72,7 @@ func StartAdminReq() {
 		//...其他用户路由
 		// 开始首页
 		userAuthorized.GET("/notices/get", HandleGetAllNotices)
+		userAuthorized.GET("/document/get", Document.HandleGetAllDocument)
 	}
 
 	r.Run("localhost:8080")

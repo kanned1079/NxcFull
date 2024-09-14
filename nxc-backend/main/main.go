@@ -1,11 +1,13 @@
 package main
 
 import (
+	"NxcFull/nxc-backend/Document"
 	"NxcFull/nxc-backend/coupon"
 	"NxcFull/nxc-backend/dao"
 	"NxcFull/nxc-backend/finance"
 	"NxcFull/nxc-backend/routers"
 	"NxcFull/nxc-backend/settings"
+	"NxcFull/nxc-backend/subscribePlan"
 	"NxcFull/nxc-backend/user"
 )
 
@@ -45,6 +47,14 @@ func main() {
 	}
 
 	if err := dao.Db.AutoMigrate(&coupon.PublicNotices{}); err != nil {
+		panic("failed to migrate database")
+	}
+
+	if err := dao.Db.AutoMigrate(subscribePlan.Plan{}); err != nil {
+		panic("failed to migrate database")
+	}
+
+	if err := dao.Db.AutoMigrate(Document.Document{}); err != nil {
 		panic("failed to migrate database")
 	}
 

@@ -6,10 +6,10 @@ import (
 )
 
 type User struct {
-	Id           int64  `json:"id" gorm:"primary_key"` // 用户id
-	InviteUserID string `json:"invite_user_id"`        // 邀请人id
-	Name         string `json:"name" `                 // 用户名
-	Email        string `json:"email" gorm:"unique"`   // 登录邮箱
+	Id           int64  `json:"id" gorm:"primary_key;AUTO_INCREMENT"` // 用户id
+	InviteUserID string `json:"invite_user_id"`                       // 邀请人id
+	Name         string `json:"name" `                                // 用户名
+	Email        string `json:"email" gorm:"unique"`                  // 登录邮箱
 
 	IsAdmin           bool           `json:"isAdmin"`            // 是否是管理员
 	IsStaff           bool           `json:"is_staff"`           // 是否是员工

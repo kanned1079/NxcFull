@@ -78,12 +78,10 @@ let getAllNotices = async () => {
     let {data} = await instance.get(apiAddrStore.apiAddr.user.getAllNoticesList)
     if (data.code === 200) {
       thisNotices.value = data.notices
-      console.log(thisNotices)
     }
   } catch (error) {
     console.log(error)
   }
-
 }
 
 let goCartPage = () => {
@@ -92,6 +90,8 @@ let goCartPage = () => {
 
 onMounted(() => {
   console.log('用户summary挂载')
+  themeStore.userPath = '/dashboard/summary'
+  themeStore.menuSelected = 'user-dashboard'
 
   getAllNotices()
 
@@ -341,6 +341,12 @@ onMounted(() => {
 
 .help-night:hover {
   background-color: rgba(69, 69, 69, 0.1);
+}
+
+
+.n-card {
+  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+  border: 0;
 }
 
 </style>

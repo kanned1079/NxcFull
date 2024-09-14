@@ -17,6 +17,7 @@
     "echarts": "^5.5.1",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
+    "markdown-it": "^14.1.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.3",
     "unplugin-auto-import": "^0.18.2",

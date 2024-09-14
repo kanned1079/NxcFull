@@ -16,7 +16,7 @@ type Site struct {
 	AppURL         string `json:"app_url"`
 	ForceHTTPS     bool   `json:"force_https"`
 	LogoURL        string `json:"logo_url"`
-	SubscribeURL   string `json:"subscribe_url"`
+	SubscribeURL   int    `json:"subscribe_url"`
 	TosURL         string `json:"tos_url"`
 	StopRegister   bool   `json:"stop_register"`
 	TrialTime      int    `json:"trial_time"`

@@ -126,7 +126,7 @@ let getAllNotices = async () => {
   try {
     let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllNoticesList)
     if (data.code === 200) {
-      // console.log(data.notices)
+      // console.log(data.Document)
       noticesStore.noticesArr = data.notices
       console.log('axios获取的数据', noticesStore.noticesArr)
       // createData()

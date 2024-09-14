@@ -52,6 +52,7 @@ let sendTestMail = async () => {
       })
     } else {
       makeNotify('error', '发送邮件失败', data.msg.toString())
+
     }
   }catch (error) {
     console.log(error)
@@ -92,63 +93,50 @@ let options = reactive([
   },
 ])
 
-
-let formItems = [
+let smtpSettings = [
   {
-    title: "SMTP服务器地址",
+    title: "SMTP 服务器地址",
     shallow: "由邮件服务商提供的服务地址",
     model: "email_host",
-    type: "input",
-    placeholder: "请输入"
+    type: "input"
   },
   {
-    title: "SMTP服务端口",
-    shallow: "常见的端口有25, 465, 587",
+    title: "SMTP 服务端口",
+    shallow: "常见的端口有 25, 465, 587",
     model: "email_port",
-    type: "input-number",
-    placeholder: "请输入"
+    type: "input-number"
   },
   {
-    title: "SMTP加密方式",
-    shallow: "465端口加密方式一般为SSL，587端口加密方式一般为TLS",
+    title: "SMTP 加密方式",
+    shallow: "465 端口加密方式一般为 SSL，587 端口加密方式一般为 TLS",
     model: "email_encryption",
-    type: "input",
-    placeholder: "请输入"
+    type: "input"
   },
   {
-    title: "SMTP账号",
+    title: "SMTP 账号",
     shallow: "由邮件服务商提供的账号",
     model: "email_username",
-    type: "input",
-    placeholder: "请输入"
+    type: "input"
   },
   {
-    title: "SMTP密码",
+    title: "SMTP 密码",
     shallow: "由邮件服务商提供的密码",
     model: "email_password",
-    type: "input",
-    placeholder: "请输入"
+    type: "input"
   },
   {
     title: "发件地址",
     shallow: "由邮件服务商提供的发件地址",
     model: "email_from_address",
-    type: "input",
-    placeholder: "请输入"
+    type: "input"
   },
   {
     title: "邮件模版",
     shallow: "你可以在文档查看如何自定义邮件模板",
     model: "email_template",
-    type: "select",
-    options: "options"
-  },
+    type: "select"
+  }
 ]
-
-let saveOption = (category: string, key: string, value: any) => {
-  // 保存逻辑
-
-}
 
 </script>
 
@@ -160,146 +148,158 @@ let saveOption = (category: string, key: string, value: any) => {
     </n-alert>
 
 
-        <div class="item">
-            <span class="l-content">
-              <div class="describe">
-                <p class="title">SMTP服务器地址</p>
-                <p class="shallow">由邮件服务商提供的服务地址</p>
-              </div>
-            </span>
-          <span class="r-content">
-              <n-input
-                  size="large"
-                  placeholder="请输入"
-                  v-model:value="settingStore.settings.sendmail.email_host"
-                  @blur="settingStore.saveOption('sendmail','email_host', settingStore.settings.sendmail.email_host)"
-              ></n-input>
-            </span>
-        </div>
-
-        <div class="item">
-            <span class="l-content">
-              <div class="describe">
-                <p class="title">SMTP服务端口</p>
-                <p class="shallow">常见的端口有25, 465, 587</p>
-              </div>
-            </span>
-          <span class="r-content">
-              <n-input-number
-                  size="large"
-                  placeholder="请输入"
-                  v-model:value.number="settingStore.settings.sendmail.email_port"
-                  @blur="settingStore.saveOption('sendmail','email_port', settingStore.settings.sendmail.email_port)"
-              ></n-input-number>
-            </span>
-        </div>
-
-        <div class="item">
-            <span class="l-content">
-              <div class="describe">
-                <p class="title">SMTP加密方式</p>
-                <p class="shallow">465端口加密方式一般为SSL，587端口加密方式一般为TLS</p>
-              </div>
-            </span>
-          <span class="r-content">
-              <n-input
-                  size="large"
-                  placeholder="请输入"
-                  v-model:value="settingStore.settings.sendmail.email_encryption"
-                  @blur="settingStore.saveOption('sendmail','email_encryption', settingStore.settings.sendmail.email_encryption)"
-              ></n-input>
-            </span>
-        </div>
-
-        <div class="item">
-            <span class="l-content">
-              <div class="describe">
-                <p class="title">SMTP账号</p>
-                <p class="shallow">由邮件服务商提供的账号</p>
-              </div>
-            </span>
-          <span class="r-content">
-              <n-input
-                  size="large"
-                  placeholder="请输入"
-                  v-model:value="settingStore.settings.sendmail.email_username"
-                  @blur="settingStore.saveOption('sendmail','email_username', settingStore.settings.sendmail.email_username)"
-              ></n-input>
-            </span>
-        </div>
-
-        <div class="item">
-            <span class="l-content">
-              <div class="describe">
-                <p class="title">SMTP密码</p>
-                <p class="shallow">由邮件服务商提供的密码</p>
-              </div>
-            </span>
-          <span class="r-content">
-              <n-input
-                  size="large"
-                  placeholder="请输入"
-                  v-model:value="settingStore.settings.sendmail.email_password"
-                  @blur="settingStore.saveOption('sendmail','email_password', settingStore.settings.sendmail.email_password)"
-              ></n-input>
-            </span>
-        </div>
-
-        <div class="item">
-            <span class="l-content">
-              <div class="describe">
-                <p class="title">发件地址</p>
-                <p class="shallow">由邮件服务商提供的发件地址</p>
-              </div>
-            </span>
-          <span class="r-content">
-              <n-input
-                  size="large"
-                  placeholder="请输入"
-                  v-model:value="settingStore.settings.sendmail.email_from_address"
-                  @blur="settingStore.saveOption('sendmail','email_from_address', settingStore.settings.sendmail.email_from_address)"
-              ></n-input>
-            </span>
-        </div>
-
-        <div class="item">
-            <span class="l-content">
-              <div class="describe">
-                <p class="title">邮件模版</p>
-                <p class="shallow">你可以在文档查看如何自定义邮件模板</p>
-              </div>
-            </span>
-          <span class="r-content">
-    <!--          <n-input size="large" placeholder="请输入" @blur="handok"></n-input>-->
-            <n-select
-                size="large"
-                :options="options"
-                v-model:value="settingStore.settings.sendmail.email_template"
-                @update:value="settingStore.saveOption('sendmail','email_template', settingStore.settings.sendmail.email_template)"
-            />
-            </span>
-        </div>
+    <div v-for="setting in smtpSettings" :key="setting.title" class="item">
+    <span class="l-content">
+      <div class="describe">
+        <p class="title">{{ setting.title }}</p>
+        <p class="shallow">{{ setting.shallow }}</p>
+      </div>
+    </span>
+      <span class="r-content" v-if="setting.type === 'input'">
+      <n-input
+          size="large"
+          placeholder="请输入"
+          v-model:value="settingStore.settings.sendmail[setting.model]"
+          @blur="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
+      />
+    </span>
+      <span class="r-content" v-if="setting.type === 'input-number'">
+      <n-input-number
+          size="large"
+          placeholder="请输入"
+          v-model:value.number="settingStore.settings.sendmail[setting.model]"
+          @blur="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
+      />
+    </span>
+      <span class="r-content" v-if="setting.type === 'select'">
+      <n-select
+          size="large"
+          :options="options"
+          v-model:value="settingStore.settings.sendmail[setting.model]"
+          @update:value="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
+      />
+    </span>
+    </div>
 
 
-<!--    <div v-for="item in formItems" :key="item.model" class="item">-->
-<!--      <span class="l-content">-->
-<!--        <div class="describe">-->
-<!--          <p class="title">{{ item.title }}</p>-->
-<!--          <p class="shallow">{{ item.shallow }}</p>-->
+<!--        <div class="item">-->
+<!--            <span class="l-content">-->
+<!--              <div class="describe">-->
+<!--                <p class="title">SMTP服务器地址</p>-->
+<!--                <p class="shallow">由邮件服务商提供的服务地址</p>-->
+<!--              </div>-->
+<!--            </span>-->
+<!--          <span class="r-content">-->
+<!--              <n-input-->
+<!--                  size="large"-->
+<!--                  placeholder="请输入"-->
+<!--                  v-model:value="settingStore.settings.sendmail.email_host"-->
+<!--                  @blur="settingStore.saveOption('sendmail','email_host', settingStore.settings.sendmail.email_host)"-->
+<!--              ></n-input>-->
+<!--            </span>-->
 <!--        </div>-->
-<!--      </span>-->
-<!--      <span class="r-content">-->
-<!--        <component-->
-<!--            :is="item.type === 'input' ? 'n-input' : (item.type === 'input-number' ? 'n-input-number' : 'n-select')"-->
-<!--            :size="'large'"-->
-<!--            :placeholder="item.placeholder"-->
-<!--            v-model:value="settingStore.settings[item.model]"-->
-<!--            @blur="settingStore.saveOption('sendmail', item.model, settingStore.settings[item.model])"-->
-<!--            :options="item.options ? item.options : undefined"-->
-<!--        ></component>-->
-<!--      </span>-->
-<!--    </div>-->
 
+<!--        <div class="item">-->
+<!--            <span class="l-content">-->
+<!--              <div class="describe">-->
+<!--                <p class="title">SMTP服务端口</p>-->
+<!--                <p class="shallow">常见的端口有25, 465, 587</p>-->
+<!--              </div>-->
+<!--            </span>-->
+<!--          <span class="r-content">-->
+<!--              <n-input-number-->
+<!--                  size="large"-->
+<!--                  placeholder="请输入"-->
+<!--                  v-model:value.number="settingStore.settings.sendmail.email_port"-->
+<!--                  @blur="settingStore.saveOption('sendmail','email_port', settingStore.settings.sendmail.email_port)"-->
+<!--              ></n-input-number>-->
+<!--            </span>-->
+<!--        </div>-->
+
+<!--        <div class="item">-->
+<!--            <span class="l-content">-->
+<!--              <div class="describe">-->
+<!--                <p class="title">SMTP加密方式</p>-->
+<!--                <p class="shallow">465端口加密方式一般为SSL，587端口加密方式一般为TLS</p>-->
+<!--              </div>-->
+<!--            </span>-->
+<!--          <span class="r-content">-->
+<!--              <n-input-->
+<!--                  size="large"-->
+<!--                  placeholder="请输入"-->
+<!--                  v-model:value="settingStore.settings.sendmail.email_encryption"-->
+<!--                  @blur="settingStore.saveOption('sendmail','email_encryption', settingStore.settings.sendmail.email_encryption)"-->
+<!--              ></n-input>-->
+<!--            </span>-->
+<!--        </div>-->
+
+<!--        <div class="item">-->
+<!--            <span class="l-content">-->
+<!--              <div class="describe">-->
+<!--                <p class="title">SMTP账号</p>-->
+<!--                <p class="shallow">由邮件服务商提供的账号</p>-->
+<!--              </div>-->
+<!--            </span>-->
+<!--          <span class="r-content">-->
+<!--              <n-input-->
+<!--                  size="large"-->
+<!--                  placeholder="请输入"-->
+<!--                  v-model:value="settingStore.settings.sendmail.email_username"-->
+<!--                  @blur="settingStore.saveOption('sendmail','email_username', settingStore.settings.sendmail.email_username)"-->
+<!--              ></n-input>-->
+<!--            </span>-->
+<!--        </div>-->
+
+<!--        <div class="item">-->
+<!--            <span class="l-content">-->
+<!--              <div class="describe">-->
+<!--                <p class="title">SMTP密码</p>-->
+<!--                <p class="shallow">由邮件服务商提供的密码</p>-->
+<!--              </div>-->
+<!--            </span>-->
+<!--          <span class="r-content">-->
+<!--              <n-input-->
+<!--                  size="large"-->
+<!--                  placeholder="请输入"-->
+<!--                  v-model:value="settingStore.settings.sendmail.email_password"-->
+<!--                  @blur="settingStore.saveOption('sendmail','email_password', settingStore.settings.sendmail.email_password)"-->
+<!--              ></n-input>-->
+<!--            </span>-->
+<!--        </div>-->
+
+<!--        <div class="item">-->
+<!--            <span class="l-content">-->
+<!--              <div class="describe">-->
+<!--                <p class="title">发件地址</p>-->
+<!--                <p class="shallow">由邮件服务商提供的发件地址</p>-->
+<!--              </div>-->
+<!--            </span>-->
+<!--          <span class="r-content">-->
+<!--              <n-input-->
+<!--                  size="large"-->
+<!--                  placeholder="请输入"-->
+<!--                  v-model:value="settingStore.settings.sendmail.email_from_address"-->
+<!--                  @blur="settingStore.saveOption('sendmail','email_from_address', settingStore.settings.sendmail.email_from_address)"-->
+<!--              ></n-input>-->
+<!--            </span>-->
+<!--        </div>-->
+
+<!--        <div class="item">-->
+<!--            <span class="l-content">-->
+<!--              <div class="describe">-->
+<!--                <p class="title">邮件模版</p>-->
+<!--                <p class="shallow">你可以在文档查看如何自定义邮件模板</p>-->
+<!--              </div>-->
+<!--            </span>-->
+<!--          <span class="r-content">-->
+<!--            <n-select-->
+<!--                size="large"-->
+<!--                :options="options"-->
+<!--                v-model:value="settingStore.settings.sendmail.email_template"-->
+<!--                @update:value="settingStore.saveOption('sendmail','email_template', settingStore.settings.sendmail.email_template)"-->
+<!--            />-->
+<!--            </span>-->
+<!--        </div>-->
 
     <div class="item">
         <span class="l-content">
@@ -312,7 +312,6 @@ let saveOption = (category: string, key: string, value: any) => {
         <n-spin :show="show" :delay="100" size="small">
         <n-button @click="sendTestMail" size="large" type="primary">发送测试邮件</n-button>
         </n-spin>
-<!--          <n-input size="large" placeholder="请输入" @blur="handok"></n-input>-->
         </span>
     </div>
 

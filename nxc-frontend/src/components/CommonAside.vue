@@ -218,7 +218,7 @@ let UserMenuOption = [
   },
   {
     label: '使用文档',
-    key: 'user-manual',
+    key: 'user-doc',
     icon: renderIcon(manualIcon)
   },
   {
@@ -283,6 +283,20 @@ let UserMenuOption = [
 ]
 
 
+let userUpdate = (key: string) => {
+  switch (key) {
+    case 'user-dashboard': {
+      themeStore.menuSelected = 'user-dashboard'
+      router.push({path: '/dashboard/summary'})
+      break
+    }
+    case 'user-doc': {
+      themeStore.menuSelected = 'user-doc'
+      router.push({path: '/dashboard/document'})
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -300,7 +314,7 @@ let UserMenuOption = [
         class="menu"
         :default-expand-all="true"
         :options="UserMenuOption"
-        @update:value="update"
+        @update:value="userUpdate"
         :value="themeStore.menuSelected"
     />
   </div>

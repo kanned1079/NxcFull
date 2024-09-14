@@ -32,6 +32,14 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         tos_url: 'https://ikanned.com:24444/',  // 用户条款url
     })
 
+    let subscribeList = ref([
+        {
+            label: 'Everybody\'s Got Something to Hide Except Me and My Monkey',
+            value: 'song0',
+            disabled: true
+        }
+    ])
+
 
     return {
         registerPageConfig,
