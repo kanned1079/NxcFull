@@ -1,4 +1,4 @@
-<script setup lang="ts" name="UserLogin">
+<script setup lang="ts">
 import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import useSiteInfo from "@/stores/siteInfo";
@@ -202,6 +202,13 @@ let handleValidateClick = () => {
 
 </script>
 
+
+<script lang="ts">
+export default {
+  name: "UserLogin",
+}
+</script>
+
 <template>
 
   <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center"
@@ -223,7 +230,7 @@ let handleValidateClick = () => {
             </n-form-item>
 
             <n-form-item path="user.password" :show-feedback="false">
-              <n-input v-model:value="formValue.user.password" placeholder="密码" size="large"/>
+              <n-input type="password" v-model:value="formValue.user.password" placeholder="密码" size="large"/>
             </n-form-item>
           </n-form>
         </div>

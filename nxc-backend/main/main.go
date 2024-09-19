@@ -160,5 +160,17 @@ func main() {
 	//	Password: "f98204ba6963009734f0398a80f8e44f9d3ef74ebb9c49e5d4f000bd1c102d29",
 	//})
 
+	//dao.Db.Model(&subscribePlan.Plan{}).Create(&subscribePlan.Plan{
+	//	Name:          "S1小流量",
+	//	IsSale:        true,
+	//	IsRenew:       true,
+	//	CapacityLimit: 48,
+	//	Describe:      "### 这是标题",
+	//	MonthPrice:    12,
+	//	QuarterPrice:  36,
+	//	HalfYearPrice: 49,
+	//	YearPrice:     99,
+	//})
+
 	routers.StartAdminReq()
 }

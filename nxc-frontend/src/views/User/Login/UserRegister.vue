@@ -1,7 +1,7 @@
-<script setup lang="ts" name="UserRegister">
+<script setup lang="ts">
 import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import useSiteInfo from "@/stores/siteInfo";
+// import useSiteInfo from "@/stores/siteInfo";
 // import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import type {NotificationType} from 'naive-ui'
@@ -19,7 +19,7 @@ const appInfosStore = useAppInfosStore()
 const notification = useNotification()
 const themeStore = useThemeStore()
 const message = useMessage()
-const siteInfo = useSiteInfo();
+// const siteInfo = useSiteInfo();
 // const userInfoStore = useUserInfoStore();
 const router = useRouter();
 
@@ -36,10 +36,10 @@ let waitSendMail = ref<number>(0)
 
 // 通用配置移动到pinia中
 
-let userIp = ref({
-  ip_address: '',
-  position: '',
-})
+// let userIp = ref({
+//   ip_address: '',
+//   position: '',
+// })
 
 let formValue = ref({
   user: {
@@ -96,22 +96,22 @@ let notifyPass = (type: NotificationType, title: string, msg: string) => {
 }
 
 
-interface DataWithAuth {
-  isAuthed: boolean;
-  user_data: UserData;
-}
+// interface DataWithAuth {
+//   isAuthed: boolean;
+//   user_data: UserData;
+// }
 
-interface UserData {
-  id: number;
-  invite_user_id: number;
-  name: string;
-  email: string;
-  is_admin: boolean;
-  is_staff: boolean;
-  balance: number;
-  last_login: Date;
-  last_login_ip: string;
-}
+// interface UserData {
+//   id: number;
+//   invite_user_id: number;
+//   name: string;
+//   email: string;
+//   is_admin: boolean;
+//   is_staff: boolean;
+//   balance: number;
+//   last_login: Date;
+//   last_login_ip: string;
+// }
 
 // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -281,7 +281,7 @@ let handleValidateClick = async () => {
 }
 
 let startWait = (sec: number) => {
-  let countdown = 3;
+  let countdown = sec;
   let intervalId = setInterval(async () => {
     if (countdown >= 0) {
       waitSendMail.value = countdown;
@@ -293,19 +293,24 @@ let startWait = (sec: number) => {
   }, 1000);
 };
 
-let getUserIpAddress = async () => {
-  try {
-    let {data} = await authInstance.get('https://2024.ipchaxun.com/')
-    userIp.value.ip_address = data.ip.toString()
-    // userIp.value.position = `${response.data.data[0]} + ${response.data.data[1]} + ${response.data.data[2]}`
-    message.info('你的ip地址为' + userIp.value.ip_address)
-  } catch (error) {
-    console.log(error)
-  }
+// let getUserIpAddress = async () => {
+//   try {
+//     let {data} = await authInstance.get('https://2024.ipchaxun.com/')
+//     userIp.value.ip_address = data.ip.toString()
+//     // userIp.value.position = `${response.data.data[0]} + ${response.data.data[1]} + ${response.data.data[2]}`
+//     message.info('你的ip地址为' + userIp.value.ip_address)
+//   } catch (error) {
+//     console.log(error)
+//   }
+//
+// }
 
+</script>
 
+<script lang="ts">
+export default {
+  name: 'UserRegister',
 }
-
 </script>
 
 <template>

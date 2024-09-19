@@ -3,6 +3,9 @@ import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
+import { useDialog, useMessage } from 'naive-ui'
+const message = useMessage()
+const dialog = useDialog()
 import {
   ArrowBack,
   ArrowForward,
@@ -84,6 +87,14 @@ let getAllNotices = async () => {
   }
 }
 
+let handleConfirm = (title:string, content: string) => {
+  dialog.success({
+    showIcon: false,
+    title: title,
+    content: content,
+  })
+}
+
 let goCartPage = () => {
   console.log('to cart page')
 }
@@ -110,7 +121,7 @@ onMounted(() => {
             :key="item.id"
             class="item"
             :style="item.img_url===''?({backgroundImage: `url('https://ikanned.com:24444/d/Upload/NXC/noticeUniversalBgDay.svg')`,}):({backgroundImage: `url(${item.img_url})`,backgroundSize: 'cover'})"
-            @click="showDetail"
+            @click="handleConfirm(item.title, item.content)"
         >
           <div class="content">
             <n-tag class="tag" type="warning">{{ item.tags }}</n-tag>
@@ -208,7 +219,6 @@ onMounted(() => {
 
 .root {
   padding: 20px;
-  min-width: 650px;
 
   .my-subscribe {
     margin-top: 20px;

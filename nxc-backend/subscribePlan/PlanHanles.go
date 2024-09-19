@@ -16,6 +16,7 @@ func HandleGetAllPlans(context *gin.Context) {
 			"msg":  "获取订阅列表失败",
 		})
 	}
+	log.Println(plans)
 	context.JSON(http.StatusOK, gin.H{
 		"code":  http.StatusOK,
 		"plans": plans,

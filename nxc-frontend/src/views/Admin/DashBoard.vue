@@ -34,48 +34,31 @@ onMounted(() => {
 
 <template>
 
-
   <n-layout has-sider style="width: 100%; position: fixed; left: 0; top: 0; z-index: 1000">
-    <div>
-      <n-layout-header class="logo" >
-        <CommonLogo></CommonLogo>
-      </n-layout-header>
-
-    </div>
-
+    <n-layout-sider
+        v-show="!themeStore.menuCollapsed"
+        content-style="padding: 0px;"
+        :collapsed-width="64"
+        :width="240"
+        :collapsed="themeStore.menuCollapsed"
+    >
+      <CommonAside></CommonAside>
+    </n-layout-sider>
     <n-layout>
-      <n-layout-header>
-        <!--        颐和园路-->
+      <n-layout-header style="position: fixed; z-index: 1001;">
         <CommonHeader></CommonHeader>
       </n-layout-header>
-
-      <!--      <n-layout-footer>成府路</n-layout-footer>-->
-    </n-layout>
-  </n-layout>
-
-
-  <n-layout has-sider style="width: 100%; position: fixed; left: 0; top: 52px; z-index: 1001">
-    <div>
-
-      <n-layout-sider content-style="" width="240px">
-        <!--        海淀桥-->
-        <CommonAside></CommonAside>
-      </n-layout-sider>
-    </div>
-
-    <n-layout>
-
       <n-layout-content content-style="padding: 0" class="content">
-        <!--        平山道-->
         <n-scrollbar style="max-height: 100vh">
           <RouterView></RouterView>
           <div style="height: 3rem"></div>
         </n-scrollbar>
-
       </n-layout-content>
       <!--      <n-layout-footer>成府路</n-layout-footer>-->
     </n-layout>
   </n-layout>
+
+
 </template>
 
 <style lang="less" scoped>
@@ -87,6 +70,12 @@ onMounted(() => {
   overflow: hidden
 }
 
+@media screen and (min-width: 768px) {
+  .n-layout-header {
+    width: calc(100% - 240px);
+  }
+}
+
 .n-layout-sider {
   //background-color: v-bind('nowTheme.commonAsideBgColor');
   height: 100vh;
@@ -96,16 +85,19 @@ onMounted(() => {
 
 .n-layout-content {
   //background-color: v-bind('nowTheme.commonContentBgColor');
-  height: 100%;
+
+  height: 100vh;
+
 }
 
 .logo {
-  width: 240px;
+  //width: 240px;
   padding: 0;
   overflow: hidden
 }
 
 .content {
+  margin-top: 52px;
   background-color: v-bind('themeStore.getTheme.globeTheme.contentBgColor');
 }
 

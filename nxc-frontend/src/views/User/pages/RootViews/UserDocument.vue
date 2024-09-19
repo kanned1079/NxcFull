@@ -1,85 +1,111 @@
-<script setup lang="ts" name="UserDocument">
+<script setup lang="ts">
 import {ref, reactive, onMounted, computed} from "vue";
 import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
-import MarkdownIt from 'markdown-it';
-
+import useApiAddrStore from "@/stores/useApiAddrStore";
+import type { DrawerPlacement, useMessage } from 'naive-ui'
+const placement = ref<DrawerPlacement>('right')
+// import MarkdownIt from 'markdown-it';
+import {convertMd} from "@/utils/markdown";
 import instance from "@/axios";
+import {MdPreview} from "md-editor-v3";
+import 'md-editor-v3/lib/style.css';
 
-const renderedMarkdown = (mdText: string) => {
-  const md = new MarkdownIt();
-  return md.render(mdText);
-}
+const message = useMessage()
+const apiAddrStore = useApiAddrStore();
 
+
+let search = ref('')
 let text = ref('')
+let active = ref<boolean>(false)
+
+const activate = (place: DrawerPlacement, title:string, body: string) => {
+  drawTitle.value = title
+  drawBody.value = body
+  active.value = true
+  placement.value = place
+}
 
 const themeStore = useThemeStore();
 const router = useRouter();
 
-let showData = [
-  {
-    category: '使用方式',
-    data: [
-      {
-        title: '配置旁路由实现科学上网',
-        body: `#### 什么是审计？
+let drawTitle = ref<string>('')
+let drawBody = ref<string>('')
 
->审计，指封锁特定的关键词、域名的方式，让用户无法接触到互联网的某一部分。
-
-#### NxcNetworks 是否会进行审计？
-
->是的，NxcNetworks 会进行审计。<br>我们尽力保护每一位用户的自由，但部分的审计是维持我们的服务稳定运作的必要条件。<br>NxcNetworks 审计（不允许访问）的内容仅包含：<br>  **1. 种子/磁力链/BT/PT/迅雷下载（正常的文件下载不在此类）<br> 2. 极端宗教组织，极端政治派别势力宣传网站（容易导致我们的服务被追查）**
-
-#### 地区特例
-> 为了配合台湾警方防止电信诈骗及洗钱活动，台湾地区的线路屏蔽了一些用于进行电信诈骗洗钱的网络游戏和用于行骗的社交媒体。<br>我们不保留这些网站的访问记录。`
-      },
-      {
-
-      }
-    ]
-  }
-]
-
+let doc_list = reactive([])
 
 let getAllDocuments = async () => {
   console.log('拉取所有文档列表')
-  let {data} = await instance.get('')
-  if (data.code === 200) {
-    console.log(data)
+  try {
+    let {data} = await instance.get(apiAddrStore.apiAddr.user.getAllDocumentList, {
+      params: {
+        lang: 'zh_CN',
+        find: search.value
+      }
+    })
+    if (data.code === 200) {
+      console.log(data)
+      Object.assign(doc_list, data.doc_list)
+    } else {
+      message.error(data.msg)
+    }
+  }catch (error) {
+    message.error(error)
   }
+
+}
+
+let showDetail = () => {
+
 }
 
 onMounted(() => {
   console.log('document挂载');
   themeStore.menuSelected = 'user-doc'
   themeStore.userPath = '/dashboard/document'
+  getAllDocuments()
   // getAllDocuments()
-
-
-
 
 })
 
 
 </script>
 
+<script lang="ts">
+export default {
+  name: "UserDocument",
+}
+</script>
+
 <template>
 <div class="root">
   <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root">
-<!--    <n-input size="large" class="search-input" placeholder="请输入要搜索的内容（模糊查询）"></n-input>-->
-<!--    <n-button :bordered="false" type="primary" size="large" class="search-btn">搜索</n-button>-->
-
     <n-input-group>
-      <n-input :bordered="false" size="large" class="search-input" placeholder="请输入要搜索的内容（模糊查询）"></n-input>
-      <n-button strong :bordered="false" type="primary" size="large" class="search-btn">搜索</n-button>
+      <n-input v-model="search" :bordered="false" size="large" class="search-input" placeholder="请输入要搜索的内容（模糊查询）"></n-input>
+      <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="large" class="search-btn">搜索</n-button>
     </n-input-group>
-
   </n-card>
 
-  <n-card class="card" hoverable :embedded="true" title="使用">
-    <n-input type="textarea" :rows="10" v-model:value="text"></n-input>
-    <div v-html="renderedMarkdown(text)"></div>
+  <n-card v-for="item in doc_list" :key="item.category" class="doc-card" hoverable :embedded="true" :title="item.category" content-style="padding: 0;">
+    <div
+        class="doc-item"
+        v-for="item in item.data"
+        :key="item.category"
+        @click="activate('right', item.title, item.body)"
+    >
+      <p class="doc-title">{{ item.title }}</p>
+      <p class="doc-release">{{ item.date }}</p>
+
+    </div>
   </n-card>
+
+  <n-drawer v-model:show="active" width="80%" :placement="placement">
+    <n-drawer-content :title="drawTitle">
+<!--      <div v-html="convertMd(drawBody as string)"></div>-->
+      <MdPreview :theme="themeStore.enableDarkMode?'dark':'light'" style="background-color: rgba(0,0,0,0.0)" v-model="drawBody"></MdPreview>
+    </n-drawer-content>
+  </n-drawer>
+
 </div>
 </template>
 
@@ -99,6 +125,25 @@ onMounted(() => {
       height: 50px;
       width: 100px;
       margin-left: 20px;
+    }
+  }
+
+  .doc-card {
+    margin-bottom: 20px;
+    .doc-item {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0 10px 25px;
+      .doc-title {
+        font-weight: bold;
+        font-size: 1rem;
+      }
+      .doc-release {
+        opacity: 0.8;
+      }
+    }
+    .doc-item:hover {
+      background-color: rgba(220, 220, 220, 0.2);
     }
   }
 }

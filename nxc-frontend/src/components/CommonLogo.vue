@@ -31,6 +31,7 @@ let backDashBoard = () => {
 .root {
   text-align: center;
   justify-content: center;
+  height: 52px;
   line-height: 52px;
   background-color: v-bind('themeStore.getTheme.topLogoBgColor');
   .txt-root {

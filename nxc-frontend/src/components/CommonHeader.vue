@@ -1,23 +1,31 @@
 <script setup lang="ts" name="CommonHeader">
 import {ref} from 'vue'
-import {Sunny as sunIcon, MoonSharp as moonIcon, PersonCircle as userIcon} from '@vicons/ionicons5'
+import {
+  Sunny as sunIcon,
+  MoonSharp as moonIcon,
+  PersonCircle as userIcon,
+  List as menuIcon,
+} from '@vicons/ionicons5'
 import useThemeStore from "@/stores/useThemeStore";
 // import type {GlobalTheme} from 'naive-ui'
 import { useRouter } from 'vue-router';
-
+import type { DrawerPlacement } from 'naive-ui'
 import useUserDropDown from "@/stores/userDropdownItems";
 import useUserInfoStore from "@/stores/useUserInfoStore";
+import CommonAside from "@/components/CommonAside.vue";
+
 const userDropdownStore = useUserDropDown()
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
 let thisUser = userInfoStore.thisUser;
 
 const theme = themeStore.getTheme;
+const active = ref(false)
+const placement = ref<DrawerPlacement>('right')
 
 let options = userDropdownStore.options
 
 const router = useRouter();
-
 
 let handleSelect = (key: string | number) => {
   switch (key) {
@@ -42,6 +50,11 @@ let handleSelect = (key: string | number) => {
   }
 }
 
+const activateMenu = (place: DrawerPlacement) => {
+  active.value = true
+  placement.value = place
+}
+
 let handleChangeTheme = () => {
   console.log('修改主题颜色')
   themeStore.enableDarkMode = !themeStore.enableDarkMode;
@@ -52,6 +65,14 @@ let handleChangeTheme = () => {
 <template>
   <div class="root">
     <div class="l-content">
+      <n-button
+          quaternary
+          class="show-menu-btn"
+          size="medium"
+          @click="activateMenu('left')">
+          <n-icon v-if="themeStore.menuSelected" size="20"><menuIcon/></n-icon>
+      </n-button>
+
       <p class="txt">
         仪表板
       </p>
@@ -72,7 +93,6 @@ let handleChangeTheme = () => {
             :options="options"
             placement="bottom"
             size="large"
-            style="width: 180px;"
             content-style="{backgroundColor='#e3e5e7'}"
             class="dd">
 
@@ -85,6 +105,10 @@ let handleChangeTheme = () => {
 
     </div>
   </div>
+
+  <n-drawer v-model:show="active" :width="320" :placement="placement">
+    <CommonAside></CommonAside>
+  </n-drawer>
 </template>
 
 <style lang="less" scoped>
@@ -94,22 +118,24 @@ let handleChangeTheme = () => {
   background-color: v-bind("themeStore.getTheme.topHeaderBgColor");
 
   .l-content {
+    display: flex;
+    align-items: center;
     width: 100px;
     line-height: 52px;
-    padding-left: 30px;
-
+    padding-left: 10px;
+    .show-menu-btn {
+      color: white;
+    }
     .txt {
       color: v-bind('theme.topHeaderTextColor')
     }
   }
 
+
   .r-content {
-    width: 280px;
-    min-width: 240px;
     display: flex;
     align-items: center;
-    margin-right: 20px;
-
+    margin-right: 15px;
     .all {
       display: flex;
       align-items: center; /* 使子元素上下居中 */
@@ -122,7 +148,7 @@ let handleChangeTheme = () => {
       }
 
       .info {
-        width: 240px;
+
         .dd {
           display: flex;
           align-items: center;

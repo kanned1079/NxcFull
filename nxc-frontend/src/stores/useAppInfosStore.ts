@@ -19,6 +19,17 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         tos_url: string
     }
 
+    interface AppCommonConfig {
+        app_name: string
+        app_description: string
+        app_url: string
+        logo: string
+        user_bg: string
+        admin_bg: string
+        currency: string
+        currency_symbol: string
+    }
+
     let registerPageConfig = reactive<RegisterPageConfig>({
         app_name: 'Nxc Cloud International',
         app_description: '全球站点',
@@ -30,7 +41,19 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         logo: 'logo.svg',   // 头部logo
         recaptcha_site_key: 'password',
         tos_url: 'https://ikanned.com:24444/',  // 用户条款url
+
     })
+
+    let appCommonConfig: AppCommonConfig = {
+        app_name: 'Nxc Cloud International',
+        app_description: '全球站点',
+        app_url: '',
+        logo: 'logo.svg',
+        user_bg: '',
+        admin_bg: '',
+        currency: 'DSDT',
+        currency_symbol: '$',
+    }
 
     let subscribeList = ref([
         {
@@ -43,6 +66,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
 
     return {
         registerPageConfig,
+        appCommonConfig
         // getAllNotices,
         // deleteNotice,
         // aa

@@ -5,6 +5,8 @@ import CommonAside from "@/components/CommonAside.vue";
 import UserDashBoard from "@/views/User/UserDashBoard.vue";
 import UserSummary from "@/views/User/pages/RootViews/UserSummary.vue";
 import UserDocument from "@/views/User/pages/RootViews/UserDocument.vue";
+import NewPurchase from "@/views/User/pages/Purchase/NewPurchase.vue";
+import NewSettlement from "@/views/User/pages/Purchase/NewSettlement.vue";
 
 const userRoutes: RouteRecordRaw[] = [
     {
@@ -36,6 +38,14 @@ const userRoutes: RouteRecordRaw[] = [
             {
                 path: '/dashboard/document',
                 component: UserDocument,
+            },
+            {
+                path: '/dashboard/purchase',
+                component: NewPurchase,
+            },
+            {
+                path: '/dashboard/purchase/settlement',
+                component: NewSettlement,
             }
         ]
     }

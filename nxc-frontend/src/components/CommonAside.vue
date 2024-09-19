@@ -3,8 +3,11 @@ import {useRouter} from 'vue-router'
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import renderIcon from "@/utils/iconFormator";
+import CommonLogo from "@/components/CommonLogo.vue";
 import {
+  BookOutline as manualIcon,
   CardOutline as paymentIcon,
+  CartOutline as buyIcon,
   ChatboxEllipsesOutline as noticeIcon,
   ClipboardOutline as subscriptionIcon,
   CogOutline as settingIcon,
@@ -12,23 +15,18 @@ import {
   ConstructOutline as privilegeIcon,
   GiftOutline as ticketIcon,
   HelpBuoyOutline as helpIcon,
+  HelpBuoyOutline as supportIcon,
+  KeyOutline as activeIcon,
   LayersOutline as nodeIcon,
   LibraryOutline as knowledgeIcon,
   ListOutline as orderIcon,
+  ListOutline as myOrderIcon,
   PeopleOutline as usersIcon,
+  PeopleOutline as inviteIcon,
+  PersonOutline as profileIcon,
   PodiumOutline as queueIcon,
   ShuffleOutline as routerIcon,
   SpeedometerOutline as dashboardIcon,
-} from '@vicons/ionicons5'
-
-import {
-  BookOutline as manualIcon,
-  CartOutline as buyIcon,
-  ListOutline as myOrderIcon,
-  PeopleOutline as inviteIcon,
-  PersonOutline as profileIcon,
-  HelpBuoyOutline as supportIcon,
-  KeyOutline as activeIcon,
 } from '@vicons/ionicons5'
 
 const themeStore = useThemeStore();
@@ -140,7 +138,7 @@ let MenuOption = [
       },
       {
         label: '知识库管理',
-        key: 'knowledge-manager',
+        key: 'doc-manager',
         icon: renderIcon(knowledgeIcon),
       },
     ]
@@ -205,6 +203,11 @@ let update = (key: string) => {
       router.push({path: '/admin/dashboard/subscribemanager'})
       break
     }
+    case 'doc-manager': {
+      themeStore.menuSelected = 'doc-manager'
+      router.push({path: '/admin/dashboard/document'})
+      break
+    }
   }
 }
 
@@ -229,7 +232,7 @@ let UserMenuOption = [
     children: [
       {
         label: '购买订阅',
-        key: 'user-buy-subscription',
+        key: 'user-buy-plan',
         icon: renderIcon(buyIcon),
       },
       {
@@ -293,6 +296,12 @@ let userUpdate = (key: string) => {
     case 'user-doc': {
       themeStore.menuSelected = 'user-doc'
       router.push({path: '/dashboard/document'})
+      break
+    }
+    case 'user-buy-plan': {
+      themeStore.menuSelected = 'user-buy-plan'
+      router.push({path: '/dashboard/purchase'})
+      break
     }
   }
 }
@@ -301,28 +310,52 @@ let userUpdate = (key: string) => {
 
 <template>
   <div class="root">
-    <n-menu
-        v-if="userInfoStore.thisUser.isAdmin"
-        class="menu"
-        :accordion="true"
-        :options="MenuOption"
-        @update:value="update"
-        :value="themeStore.menuSelected"
-    />
-    <n-menu
-        v-else
-        class="menu"
-        :default-expand-all="true"
-        :options="UserMenuOption"
-        @update:value="userUpdate"
-        :value="themeStore.menuSelected"
-    />
+    <CommonLogo class="logo"></CommonLogo>
+
+<!--    <n-layout-sider-->
+<!--        bordered-->
+<!--        collapse-mode="width"-->
+<!--        :collapsed-width="64"-->
+<!--        :width="240"-->
+<!--        :collapsed="collapsed"-->
+<!--        show-trigger-->
+<!--        @collapse="collapsed = true"-->
+<!--        @expand="collapsed = false"-->
+<!--    >-->
+
+      <n-menu
+          v-if="userInfoStore.thisUser.isAdmin"
+          class="menu"
+          :accordion="true"
+          :options="MenuOption"
+          @update:value="update"
+          :value="themeStore.menuSelected"
+          :collapsed-width="64"
+          :collapsed="themeStore.menuCollapsed"
+      />
+      <n-menu
+          v-else
+          class="menu"
+          :default-expand-all="true"
+          :options="UserMenuOption"
+          @update:value="userUpdate"
+          :value="themeStore.menuSelected"
+      />
+
+<!--    </n-layout-sider>-->
+
+
   </div>
 </template>
 
 <style lang="less" scoped>
 .root {
-  padding: 6px;
-
+  display: flex;
+  flex-direction: column;
+  .logo {
+  }
+  .menu {
+    padding: 15px;
+  }
 }
 </style>

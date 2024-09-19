@@ -11,8 +11,9 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             sendAuthMail: '/api/user/v1/register/vc/get',    // 发送验证码
             verifyAuthMail: '/api/user/v1/register/vc/verify',    // 验证代码
             newUserRegister: '/api/user/v1/register/register',   // 新用户注册
-            getAllNoticesList: '/api/user/v1/notices/get',
-            getAllDocumentList: '/api/user/v1/document/get'
+            getAllNoticesList: '/api/user/v1/notices/get',  // 获取所有的通知
+            getAllDocumentList: '/api/user/v1/document/get', // 获取所有的文档列表
+            getAllPlanList: '/api/user/v1/plan/get' // 获取所有的订阅计划列表
         },
         admin: {
             adminLogin: '/api/admin/v1/login',  // 管理员登录
@@ -24,7 +25,9 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             addANotice: '/api/admin/v1/notice/add',     // 添加一条通知
             deleteANotice: '/api/admin/v1/notice/delete', // 删除一条通知
             // 邮件测试部分
-            sendTestMail: '/api/admin/v1/mail/test'
+            sendTestMail: '/api/admin/v1/mail/test',
+            // 添加新文档
+            addNewDocument: '/api/admin/v1/document/add',
         }
     })
 

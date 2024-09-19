@@ -121,6 +121,9 @@ const useThemeStore = defineStore('theme', () => {
         }
     })
 
+    // 菜单折叠
+    let menuCollapsed = ref<boolean>(false)
+
     // 当前访问的位置
     let userPath = ref('/dashboard/summary')
     let contentPath = ref('/admin/dashboard/summary')
@@ -141,7 +144,8 @@ const useThemeStore = defineStore('theme', () => {
         backgroundUrl,
         contentPath,
         menuSelected,
-        userPath
+        userPath,
+        menuCollapsed
     }
 
 }, {
