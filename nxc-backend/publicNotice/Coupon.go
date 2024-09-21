@@ -1,4 +1,4 @@
-package coupon
+package publicNotice
 
 import (
 	"gorm.io/gorm"

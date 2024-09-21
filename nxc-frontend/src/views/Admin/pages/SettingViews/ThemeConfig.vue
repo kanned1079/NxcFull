@@ -166,7 +166,17 @@ onMounted(() => {
       }
 
     }
+
+
   }
+  .theme-card:hover {
+    transform: translateY(-5px);
+  }
+
+  //.n-card:hover {
+  //  transform: translateY(-2px);
+  //  transition: ease 200ms;
+  //}
 
   .test {
     width: 100%;
@@ -178,5 +188,6 @@ onMounted(() => {
 .n-card {
   background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
   padding: 0;
+  transition: transform 200ms ease;
 }
 </style>

@@ -82,7 +82,7 @@ let MenuOption = [
       },
       {
         label: '权限组管理',
-        key: 'privilege-manager',
+        key: 'privilege-group-mgr',
         icon: renderIcon(privilegeIcon),
       },
       {
@@ -110,7 +110,7 @@ let MenuOption = [
       },
       {
         label: '优惠券管理',
-        key: 'ticket-manager',
+        key: 'publicNotice-manager',
         icon: renderIcon(ticketIcon),
       },
     ]
@@ -206,6 +206,16 @@ let update = (key: string) => {
     case 'doc-manager': {
       themeStore.menuSelected = 'doc-manager'
       router.push({path: '/admin/dashboard/document'})
+      break
+    }
+    case 'publicNotice-manager': {
+      themeStore.menuSelected = 'publicNotice-manager'
+      router.push({path: '/admin/dashboard/publicNotice'})
+      break
+    }
+    case 'privilege-group-mgr': {
+      themeStore.menuSelected = 'privilege-group-mgr'
+      router.push({path: '/admin/dashboard/group'})
       break
     }
   }
@@ -330,8 +340,7 @@ let userUpdate = (key: string) => {
           :options="MenuOption"
           @update:value="update"
           :value="themeStore.menuSelected"
-          :collapsed-width="64"
-          :collapsed="themeStore.menuCollapsed"
+
       />
       <n-menu
           v-else
@@ -340,6 +349,7 @@ let userUpdate = (key: string) => {
           :options="UserMenuOption"
           @update:value="userUpdate"
           :value="themeStore.menuSelected"
+
       />
 
 <!--    </n-layout-sider>-->

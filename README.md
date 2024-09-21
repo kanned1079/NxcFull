@@ -9,9 +9,9 @@
 ### 技术棧
 
 - 前端
-    - Vue3 + pinia + NaiveUI + md-editor
+    - Vue3 + TypeScript + pinia + NaiveUI + md-editor
 - 后端
-    - golang + gin + gorm + Mysql + Redis + RabbitMq
+    - golang + gin + gorm + gRPC + Mysql + Redis + RabbitMq
 
 ### 使用说明
 

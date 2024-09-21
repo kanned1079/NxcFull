@@ -24,6 +24,20 @@
             </set>
           </value>
         </entry>
+        <entry key="Coupon">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Coupon.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CouponUsage">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/CouponUseage.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Document">
           <value>
             <set>
@@ -42,6 +56,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Group">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/privilege/Group.go" />
             </set>
           </value>
         </entry>
@@ -76,7 +97,7 @@
         <entry key="PublicNotices">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go" />
+              <option value="file://$PROJECT_DIR$/nxc-backend/publicNotice/Coupon.go" />
             </set>
           </value>
         </entry>
@@ -234,13 +255,32 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/Notices.go">
+        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/Coupon.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725969049053" />
+              <option name="lastModified" value="1726801626837" />
               <option name="schema">
                 <list>
-                  <option value="PublicNotices" />
+                  <option value="Coupon" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/CouponHandles.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1726804528767" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/CouponUseage.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1726802124813" />
+              <option name="schema">
+                <list>
+                  <option value="CouponUsage" />
                 </list>
               </option>
             </ScannedPath>
@@ -294,7 +334,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/main/main.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726727429255" />
+              <option name="lastModified" value="1726815115301" />
               <option name="schema">
                 <list>
                   <option value="adminConfig" />
@@ -307,6 +347,37 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1725700151748" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/privilege/Group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1726814643232" />
+              <option name="schema">
+                <list>
+                  <option value="Group" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/privilege/GroupHandles.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1726815709074" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/publicNotice/Coupon.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1726796329889" />
+              <option name="schema">
+                <list>
+                  <option value="PublicNotices" />
+                </list>
+              </option>
             </ScannedPath>
           </value>
         </entry>
@@ -341,7 +412,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/NoticeHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726327560162" />
+              <option name="lastModified" value="1726796330076" />
               <option name="schema">
                 <list>
                   <option value="noticeFormData" />
@@ -384,7 +455,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726726663939" />
+              <option name="lastModified" value="1726816803620" />
             </ScannedPath>
           </value>
         </entry>
@@ -423,14 +494,14 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/subscribePlan/PlanHanles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726726645642" />
+              <option name="lastModified" value="1726820125148" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/subscribePlan/plan.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726726066231" />
+              <option name="lastModified" value="1726819146812" />
               <option name="schema">
                 <list>
                   <option value="Plan" />
@@ -523,9 +594,12 @@
         <entry key="admin_config" value="adminConfig" />
         <entry key="app_settings" value="AppSettings" />
         <entry key="auth" value="Auth" />
+        <entry key="coupon" value="Coupon" />
+        <entry key="coupon_usage" value="CouponUsage" />
         <entry key="document" value="Document" />
         <entry key="encryptor" value="Encryptor" />
         <entry key="frontend" value="Frontend" />
+        <entry key="group" value="Group" />
         <entry key="myapp" value="Myapp" />
         <entry key="notice" value="Notice" />
         <entry key="notice_form_data" value="noticeFormData" />
@@ -548,6 +622,6 @@
         <entry key="verify_email_data" value="VerifyEmailData" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1726726084737" />
+    <option name="lastTimeChecked" value="1726886684994" />
   </component>
 </project>

@@ -1,4 +1,4 @@
-import { type RouteRecordRaw } from 'vue-router';
+import {type RouteRecordRaw} from 'vue-router';
 import DashBoard from "@/views/Admin/DashBoard.vue";
 import Summary from "@/views/Admin/pages/RootViews/Summary.vue";
 import QueueMonitor from "@/views/Admin/pages/RootViews/QueueMonitor.vue";
@@ -8,12 +8,12 @@ import ThemeConfig from "@/views/Admin/pages/SettingViews/ThemeConfig.vue";
 import UserManager from "@/views/Admin/pages/UserMgrViews/UserManager.vue";
 import AdminLogin from "@/views/Admin/Login/AdminLogin.vue";
 import RouterMgr from "@/views/Admin/pages/ServerViews/RouterMgr.vue"
-import PrivilegeGroup from "@/views/Admin/pages/ServerViews/PrivilegeGroup.vue"
+import PrivilegeGroup from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue"
 import CouponMgr from "@/views/Admin/pages/FinanceViews/CouponMgr.vue";
 import NoticeManager from "@/views/Admin/pages/UserMgrViews/NoticeManager.vue";
 import SubscribeMgr from "@/views/Admin/pages/FinanceViews/SubscribeMgr.vue";
 import DocumentMgr from "@/views/Admin/pages/UserMgrViews/DocumentMgr.vue";
-import UserLogin from "@/views/User/Login/UserLogin.vue";
+import PrivilegeGroupMgr from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue";
 
 const adminRoutes: RouteRecordRaw[] = [
     {
@@ -86,6 +86,16 @@ const adminRoutes: RouteRecordRaw[] = [
                 path: '/admin/dashboard/document',
                 name: 'document-mgr',
                 component: DocumentMgr,
+            },
+            {
+                path: '/admin/dashboard/publicNotice',
+                name: 'publicNotice-mgr',
+                component: CouponMgr,
+            },
+            {
+                path: '/admin/dashboard/group',
+                name: 'privilege-group-mgr',
+                component: PrivilegeGroupMgr,
             }
 
         ]
@@ -99,11 +109,7 @@ const adminRoutes: RouteRecordRaw[] = [
         name: 'admin-login',
         component: AdminLogin
     },
-    {
-        path: '/admin/dashboard/couponmgr',
-        name: 'coupon-mgr',
-        component: CouponMgr,
-    },
+
 
     // {
     //     path: '/login',

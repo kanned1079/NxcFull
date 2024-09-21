@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"NxcFull/nxc-backend/coupon"
 	"NxcFull/nxc-backend/dao"
+	"NxcFull/nxc-backend/publicNotice"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -10,8 +10,8 @@ import (
 )
 
 func HandleGetAllNotices(context *gin.Context) {
-	var notices []coupon.PublicNotices
-	result := dao.Db.Model(&coupon.PublicNotices{}).Where("deleted_at is null").Find(&notices)
+	var notices []publicNotice.PublicNotices
+	result := dao.Db.Model(&publicNotice.PublicNotices{}).Where("deleted_at is null").Find(&notices)
 	if result.Error != nil {
 		log.Print(result.Error)
 	}
@@ -41,12 +41,12 @@ func HandleAddNotice(context *gin.Context) {
 		})
 	}
 	log.Println(fromData)
-	var notice coupon.PublicNotices
+	var notice publicNotice.PublicNotices
 	notice.Title = fromData.Title
 	notice.Content = fromData.Content
 	notice.Tags = fromData.Tags
 	notice.ImgUrl = fromData.ImgUrl
-	if result := dao.Db.Model(&coupon.PublicNotices{}).Create(&notice); result.Error != nil {
+	if result := dao.Db.Model(&publicNotice.PublicNotices{}).Create(&notice); result.Error != nil {
 		log.Println("新建通知错误", result.Error)
 	} else {
 		context.JSON(http.StatusOK, gin.H{
@@ -66,7 +66,7 @@ func HandleDeleteNotice(context *gin.Context) {
 
 	log.Println("消息id: ", deleteNotice.NoticeId)
 
-	if err = dao.Db.Model(&coupon.PublicNotices{}).Where("id = ?", deleteNotice.NoticeId).Delete(&coupon.PublicNotices{}).Error; err != nil {
+	if err = dao.Db.Model(&publicNotice.PublicNotices{}).Where("id = ?", deleteNotice.NoticeId).Delete(&publicNotice.PublicNotices{}).Error; err != nil {
 		log.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"code":  http.StatusInternalServerError,

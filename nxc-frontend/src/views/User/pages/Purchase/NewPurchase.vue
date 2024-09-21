@@ -171,8 +171,7 @@ export default {
     }
     .plan-detail:hover {
       transform: translateY(-5px);
-      transition: ease 200ms ;
-
+      //transition: ease 200ms ;
     }
 
   }
@@ -189,5 +188,6 @@ export default {
 .n-card {
   background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
   border: 0;
+  transition: transform 200ms ease;
 }
 </style>

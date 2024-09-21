@@ -3,6 +3,8 @@ package routers
 import (
 	"NxcFull/nxc-backend/Document"
 	"NxcFull/nxc-backend/auth"
+	"NxcFull/nxc-backend/coupon"
+	"NxcFull/nxc-backend/privilege"
 	"NxcFull/nxc-backend/subscribePlan"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -62,7 +64,11 @@ func StartAdminReq() {
 		adminAuthorized.POST("/mail/test", HandleSendTestMail)               // 发送测试邮件
 		adminAuthorized.DELETE("/notice/delete", HandleDeleteNotice)         // 删除一条通知
 		adminAuthorized.GET("/plans/get", subscribePlan.HandleGetAllPlans)   // 获取所有的订阅
+		adminAuthorized.POST("/plans/add", subscribePlan.HandleAddNewPlan)   // 添加新的订阅
 		adminAuthorized.POST("/document/add", Document.HandleAddNewDocument) // 添加一条说明文档
+		adminAuthorized.POST("/coupon/add", coupon.HandleAddNewCoupon)       // 新建优惠券
+		adminAuthorized.POST("/groups/add", privilege.HandleAddNewGroup)     // 添加权限组
+		adminAuthorized.GET("/groups/get", privilege.HandleGetAllGroups)     // 获取所有权限组列表
 
 	}
 
@@ -72,9 +78,10 @@ func StartAdminReq() {
 		userAuthorized.GET("/profile")
 		//...其他用户路由
 		// 开始首页
-		userAuthorized.GET("/notices/get", HandleGetAllNotices)
-		userAuthorized.GET("/document/get", Document.HandleGetAllDocument)
-		userAuthorized.GET("/plan/get", subscribePlan.HandleGetAllPlans)
+		userAuthorized.GET("/notices/get", HandleGetAllNotices)            // 获取所有的通知列表
+		userAuthorized.GET("/document/get", Document.HandleGetAllDocument) // 按照分类获取所有的文档列表
+		userAuthorized.GET("/plan/get", subscribePlan.HandleGetAllPlans)   // 获取所有的有效订阅
+		userAuthorized.POST("/coupon/verify", coupon.HandleVerifyCoupon)   // 验证优惠券可用性
 	}
 
 	r.Run("localhost:8080")

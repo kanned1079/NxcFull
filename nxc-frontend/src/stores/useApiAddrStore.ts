@@ -13,7 +13,10 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             newUserRegister: '/api/user/v1/register/register',   // 新用户注册
             getAllNoticesList: '/api/user/v1/notices/get',  // 获取所有的通知
             getAllDocumentList: '/api/user/v1/document/get', // 获取所有的文档列表
-            getAllPlanList: '/api/user/v1/plan/get' // 获取所有的订阅计划列表
+            getAllPlanList: '/api/user/v1/plan/get', // 获取所有的订阅计划列表
+            verifyCoupon: '/api/user/v1/coupon/verify',
+            saveOrder: '/api/user/v1/order/save',  // 提交订单
+
         },
         admin: {
             adminLogin: '/api/admin/v1/login',  // 管理员登录
@@ -28,6 +31,10 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             sendTestMail: '/api/admin/v1/mail/test',
             // 添加新文档
             addNewDocument: '/api/admin/v1/document/add',
+            addNewCoupon: '/api/admin/v1/coupon/add',   // 添加新的优惠券
+            addNewPrivilegeGroup: '/api/admin/v1/groups/add',   // 添加新的权限组
+            getAllPrivilegeGroups: '/api/admin/v1/groups/get', // 获取所有的权限组列表
+            addNewPlan: '/api/admin/v1/plans/add'   // 添加新的订阅信息
         }
     })
 

@@ -5,6 +5,8 @@ import (
 	"NxcFull/nxc-backend/coupon"
 	"NxcFull/nxc-backend/dao"
 	"NxcFull/nxc-backend/finance"
+	"NxcFull/nxc-backend/privilege"
+	"NxcFull/nxc-backend/publicNotice"
 	"NxcFull/nxc-backend/routers"
 	"NxcFull/nxc-backend/settings"
 	"NxcFull/nxc-backend/subscribePlan"
@@ -46,7 +48,7 @@ func main() {
 		panic("failed to migrate database")
 	}
 
-	if err := dao.Db.AutoMigrate(&coupon.PublicNotices{}); err != nil {
+	if err := dao.Db.AutoMigrate(&publicNotice.PublicNotices{}); err != nil {
 		panic("failed to migrate database")
 	}
 
@@ -58,7 +60,15 @@ func main() {
 		panic("failed to migrate database")
 	}
 
-	//dao.Db.Model(&coupon.Notices{}).Create(&coupon.Notices{
+	if err := dao.Db.AutoMigrate(coupon.Coupon{}); err != nil {
+		panic("failed to migrate database")
+	}
+
+	if err := dao.Db.AutoMigrate(privilege.Group{}); err != nil {
+		panic("failed to migrate database")
+	}
+
+	//dao.Db.Model(&publicNotice.Notices{}).Create(&publicNotice.Notices{
 	//	Title: "2024夏季优惠券发放 20%OFF",
 	//	Content: `优惠券码：HappySummer2024Pre
 	//		此优惠码使用截至日期2024-08-31，主站点与常州站点同步皆可使用，请阁下在确认订单时在页面上方填入此优惠码。祝大家2024夏天快乐！`,

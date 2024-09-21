@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onBeforeMount, onMounted, ref} from "vue"
-import type {MenuOption, NotificationType} from 'naive-ui'
-import {NIcon, useNotification} from 'naive-ui'
+import type {MenuOption} from 'naive-ui'
+import {NIcon} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore"
 import usePaymentStore from "@/stores/usePaymentStore";
@@ -11,10 +11,7 @@ import {MdPreview} from 'md-editor-v3';
 import 'md-editor-v3/lib/preview.css';
 import {CheckmarkCircleOutline as settlementIcon, TicketOutline as ticketIcon} from "@vicons/ionicons5"
 import instance from "@/axios";
-import useUserInfoStore from "@/stores/useUserInfoStore";
 
-const notification = useNotification()
-const userInfoStore = useUserInfoStore();
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
 const apiAddrStore = useApiAddrStore();
@@ -43,10 +40,7 @@ const id = 'preview-only';
 let plan: Plan = paymentStore.plan_list[paymentStore.plan_id_selected]
 let selectedCycle = ref<string>('month')
 let resultPrice = ref<number>(0)
-// let ticketVerified = ref<boolean>(false)
-
-let couponCode = ref<string>('')
-
+let ticketVerified = ref<boolean>(false)
 
 let showCycleName = computed(() => {
   if (selectedCycle.value === 'month') {
@@ -110,88 +104,28 @@ let handleUpdateExpandedKeys = (keys: string) => {
   console.log(keys)
 }
 
-// 优惠券信息
-let couponInfo = ref({
-  name: '测试优惠券',
-  verified: true,
-  percent_off: 10.0,
-})
-
 let verifyTicket = async () => {
   console.log('验证优惠券')
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.user.verifyCoupon, {
-      coupon_code: couponCode.value,  // 优惠券码
-      plan_id: plan.id,               // 订阅计划id
-      user_id: userInfoStore.thisUser.id  // 用户id 判断是否使用过
-    });
-
+    let {data} = await instance.post()
     if (data.code === 200) {
       if (data.verified) {
-        console.log('验证码有效');
-        // ticketVerified.value = true;
-        couponInfo.value.verified = true;
-        couponInfo.value.percent_off = data.percent_off;
-        await notify('success', '验证通过', '优惠券有效');
-      } else {
-        console.log('未知错误', data.msg);
-        await notify('error', '无效', data.msg);
+        console.log('验证码有效')
+        ticketVerified.value = true
       }
     } else {
-      // 处理非200状态码的错误
-      console.log('后端错误返回', data.msg);
-      await notify('error', '错误', data.msg);
+      console.log('未知错误')
     }
   } catch (error) {
-    // 处理网络错误或后端500错误
-    if (error.response) {
-      // 服务器错误，可能是500等
-      console.log('捕获的服务器错误', error.response.data);
-      await notify('error', '服务器错误', `错误码: ${error.response.status}，消息: ${error.response.data.msg || '未知错误'}`);
-    } else if (error.request) {
-      // 请求发出后未收到任何响应
-      console.log('没有收到服务器响应', error.request);
-      await notify('error', '网络错误', '无法连接到服务器，请检查网络');
-    } else {
-      // 其他错误
-      console.log('请求配置错误', error.message);
-      await notify('error', '错误', `请求错误: ${error.message}`);
-    }
+    console.log('未知错误')
   }
 }
 
-// 抵折金额
-let discountPrice = computed(()  => couponInfo.value.verified ? ((couponInfo.value.percent_off / 100) * resultPrice.value) : 0)
-
-
-
-let saveOrder = async () => {
+let saveOrder = () => {
   console.log('提交订单准备支付')
-
-
-  // try{
-  //   let {data} = await instance.post(apiAddrStore.apiAddr.user.saveOrder, {
-  //     plan_id: plan.id,
-  //   })
-  //   if (data.code === 200) {
-  //     console.log('订单创建成功')
-  //   }
-  // }catch (error) {
-  //   console.log(error)
-  // }
-}
-
-let notify = (type: NotificationType, title: string, meta: string) => {
-  notification[type]({
-    content: title,
-    meta: meta,
-    duration: 2500,
-    keepAliveOnHover: true
-  })
 }
 
 onMounted(() => {
-
   console.log('settlement挂载', paymentStore.plan_id_selected)
   // appendCycleOptions()
   // themeStore.userPath = '/dashboard/purchase/settlement'
@@ -209,7 +143,7 @@ onBeforeMount(() => {
 
 <script lang="ts">
 export default {
-  name: 'NewSettlement',
+  name: 'ConfirmOrder',
 }
 </script>
 
@@ -246,7 +180,6 @@ export default {
                 :bordered="true"
                 class="ticket-input"
                 style="margin-right: 10px"
-                v-model:value="couponCode"
                 placeholder="有优惠券？"
             />
             <n-button
@@ -272,14 +205,6 @@ export default {
             <p class="price-small">{{ resultPrice }} {{ appInfosStore.appCommonConfig.currency }}</p>
           </div>
           <n-hr></n-hr>
-          <div class="price-discount" v-if="couponInfo.verified">
-            <p class="coupon-title">优惠券</p>
-            <div class="coupon-detail">
-              <p class="coupon-name">{{ couponInfo.name }}</p>
-              <p class="discount">- {{ discountPrice.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
-            </div>
-            <n-hr></n-hr>
-          </div>
           <p class="total-title">总计</p>
           <p class="price-large">{{ resultPrice }} {{ appInfosStore.appCommonConfig.currency }}</p>
           <n-button
@@ -343,18 +268,15 @@ export default {
           border: rgba(62, 151, 195, 0.0) 1px solid;
 
         }
-
         .r-border:hover {
           //border: rgba(62, 151, 195, 0.5) 1px solid;
         }
       }
-
       .r-part-btn {
         //background-color: rgba(145, 145, 145, 0.2);
         background-color: v-bind(rightSideCardBgColor);
         color: white;
         margin-top: 20px;
-
         .r-title {
           font-size: 1.2rem;
           font-weight: 600;
@@ -372,24 +294,6 @@ export default {
           }
 
           .price-small {
-          }
-        }
-
-        .price-discount {
-          margin-bottom: 10px;
-
-          .coupon-title {
-            font-size: 1rem;
-            font-weight: 400;
-            opacity: 0.6;
-            margin-bottom: 20px;
-          }
-
-          .coupon-detail {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            margin-bottom: 5px;
           }
         }
 
@@ -436,12 +340,6 @@ export default {
 .n-card {
   background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
   border: 0;
-  transition: transform 200ms ease;
-}
-
-.n-card:hover {
-  transform: translateY(-5px);
-
 }
 
 //.n-input {

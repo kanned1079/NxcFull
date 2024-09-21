@@ -1,10 +1,15 @@
 <script setup lang="ts" name="SubscribeMgr">
 import {onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
+import useApiAddrStore from "@/stores/useApiAddrStore";
+import type { NotificationType } from 'naive-ui'
+import { useNotification } from 'naive-ui'
 import instance from "@/axios";
 import type {DrawerPlacement, FormInst, useMessage} from 'naive-ui'
 import {MdEditor} from "md-editor-v3";
 
+const notification = useNotification()
+const apiAddrStore = useApiAddrStore();
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 let formValue = ref({
@@ -19,6 +24,7 @@ let formValue = ref({
     quarter_price: null,
     half_year_price: null,
     year_price: null,
+    sort: null,
   }
 })
 
@@ -60,24 +66,13 @@ let rules = {
     year_price: {
       required: false,
     },
+    sort: {
+      required: false,
+    }
   }
 }
 
-let groupOptions = [
-  {
-    label: 'GP1',
-    value: 0,
-    disabled: true
-  },
-  {
-    label: 'GP2',
-    value: 1,
-  },
-  {
-    label: 'GP3',
-    value: 2
-  },
-]
+let groupOptions = []
 
 const themeStore = useThemeStore();
 
@@ -90,7 +85,8 @@ const activate = (place: DrawerPlacement) => {
 
 let handleAddSubscribe = () => {
   console.log('处理添加一个订阅')
-  active.value = true
+  getAllGroups()  // 拉取群组信息
+  active.value = true // 打开模态框
 }
 
 let getAllSubscribeItems = async () => {
@@ -102,8 +98,61 @@ let cancelAdd = () => {
   active.value = false
 }
 
-let submitNewPlan = () => {
+interface RespData {
+  code: number
+  msg?: string
+  error?: string
+  [key: string]: any; // 允许其他字段，键是字符串，值可以是任意类型
+}
+
+let submitNewPlan = async () => {
   console.log(formValue.value)
+  try {
+    let {data} = await instance.post(apiAddrStore.apiAddr.admin.addNewPlan, {
+      ...formValue.value.plan,
+    })
+    if (data.code === 200) {
+      notify('success', '成功', '成功添加新的订阅')
+    } else {
+      notify('error', '添加出错', data.error)
+    }
+  }catch (error) {
+    console.log(error)
+  }
+}
+
+interface GroupItem {
+  id: number
+  name: string
+  created_at?: string
+  updated_at?: string
+  deleted_at?: string
+}
+
+let getAllGroups = async () => {
+  try {
+    // groupList.value = []
+    let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllPrivilegeGroups)
+    if (data.code === 200) {
+      console.log('获取到的权限组列表', data)
+      // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
+      data.group_list.forEach((group: GroupItem) => groupOptions.push({
+        label: group.name,
+        value: group.id,
+      }))
+    }
+  }catch (error) {
+    console.log(error)
+  }
+}
+
+let notify = (type: NotificationType, title: string, meta: string) => {
+  notification[type]({
+    content: title,
+    meta: meta,
+    duration: 2500,
+    keepAliveOnHover: true
+  })
 }
 
 onMounted(() => {
@@ -112,6 +161,7 @@ onMounted(() => {
 
   themeStore.menuSelected = 'subscribe-manager'
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
+
 
   // themeStore.
 })
@@ -148,6 +198,9 @@ onMounted(() => {
           </n-form-item>
           <n-form-item label="最大允许用户数目" path="plan.capacity_limit">
             <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.capacity_limit" placeholder="输入最大承载的用户数"/>
+          </n-form-item>
+          <n-form-item label="排序" path="plan.sort">
+            <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.sort" placeholder="用于前端排序"/>
           </n-form-item>
           <n-form-item label="月付价格" path="plan.month_price">
             <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.month_price" placeholder="输入月付价格"/>
