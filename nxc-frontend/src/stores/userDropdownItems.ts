@@ -9,7 +9,7 @@ import {
 const useUserDropDown = defineStore('userdropdown', {
     state: () => {  // state 需要是一个函数 有返回值
         return {
-            options: [
+            user_options: [
                 {
                     label: '用户资料',
                     key: 'profile',
@@ -20,6 +20,13 @@ const useUserDropDown = defineStore('userdropdown', {
                     key: 'editProfile',
                     icon: renderIcon(EditIcon)
                 },
+                {
+                    label: '退出登录',
+                    key: 'logout',
+                    icon: renderIcon(LogoutIcon)
+                }
+            ],
+            admin_options: [
                 {
                     label: '退出登录',
                     key: 'logout',

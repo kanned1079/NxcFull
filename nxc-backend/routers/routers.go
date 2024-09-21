@@ -6,7 +6,9 @@ import (
 	"NxcFull/nxc-backend/coupon"
 	"NxcFull/nxc-backend/privilege"
 	"NxcFull/nxc-backend/subscribePlan"
+	"NxcFull/nxc-backend/user"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -82,7 +84,12 @@ func StartAdminReq() {
 		userAuthorized.GET("/document/get", Document.HandleGetAllDocument) // 按照分类获取所有的文档列表
 		userAuthorized.GET("/plan/get", subscribePlan.HandleGetAllPlans)   // 获取所有的有效订阅
 		userAuthorized.POST("/coupon/verify", coupon.HandleVerifyCoupon)   // 验证优惠券可用性
+		userAuthorized.POST("/auth/passcode/verify", user.HandleCheckOldPassword)
+		userAuthorized.POST("/auth/passcode/update", user.HandleApplyNewPassword)
 	}
 
-	r.Run("localhost:8080")
+	if err := r.Run("localhost:8080"); err != nil {
+		log.Fatal(err)
+	}
+
 }

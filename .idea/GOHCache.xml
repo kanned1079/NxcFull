@@ -270,7 +270,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/CouponHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726804528767" />
+              <option name="lastModified" value="1726890424753" />
             </ScannedPath>
           </value>
         </entry>
@@ -455,7 +455,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726816803620" />
+              <option name="lastModified" value="1726916413250" />
             </ScannedPath>
           </value>
         </entry>
@@ -575,7 +575,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/crud.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726117786857" />
+              <option name="lastModified" value="1726916847515" />
             </ScannedPath>
           </value>
         </entry>

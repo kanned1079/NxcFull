@@ -112,51 +112,46 @@ let handleUpdateExpandedKeys = (keys: string) => {
 
 // 优惠券信息
 let couponInfo = ref({
-  name: '测试优惠券',
-  verified: true,
-  percent_off: 10.0,
+  name: '',
+  verified: false,
+  percent_off: 0.0,
 })
 
 let verifyTicket = async () => {
+  if (couponCode.value.trim() === '') {
+    notify('error', '错误', '输入的优惠券码不能为空')
+    return
+  }
   console.log('验证优惠券')
   try {
     let {data} = await instance.post(apiAddrStore.apiAddr.user.verifyCoupon, {
-      coupon_code: couponCode.value,  // 优惠券码
+      coupon_code: couponCode.value.trim(),  // 优惠券码
       plan_id: plan.id,               // 订阅计划id
       user_id: userInfoStore.thisUser.id  // 用户id 判断是否使用过
     });
-
     if (data.code === 200) {
       if (data.verified) {
         console.log('验证码有效');
         // ticketVerified.value = true;
         couponInfo.value.verified = true;
         couponInfo.value.percent_off = data.percent_off;
+        couponInfo.value.name = data.name;
         await notify('success', '验证通过', '优惠券有效');
       } else {
-        console.log('未知错误', data.msg);
-        await notify('error', '无效', data.msg);
+        couponInfo.value.verified = false
+        // console.log('未知错误', data.msg);
+        await notify('error', '优惠券不可用', data.msg);
       }
     } else {
+      couponInfo.value.verified = false
       // 处理非200状态码的错误
-      console.log('后端错误返回', data.msg);
-      await notify('error', '错误', data.msg);
+      await notify('error', '优惠券不可用', data.msg);
     }
   } catch (error) {
     // 处理网络错误或后端500错误
-    if (error.response) {
-      // 服务器错误，可能是500等
-      console.log('捕获的服务器错误', error.response.data);
-      await notify('error', '服务器错误', `错误码: ${error.response.status}，消息: ${error.response.data.msg || '未知错误'}`);
-    } else if (error.request) {
-      // 请求发出后未收到任何响应
-      console.log('没有收到服务器响应', error.request);
-      await notify('error', '网络错误', '无法连接到服务器，请检查网络');
-    } else {
-      // 其他错误
-      console.log('请求配置错误', error.message);
-      await notify('error', '错误', `请求错误: ${error.message}`);
-    }
+    couponInfo.value.verified = false
+    await notify('error', '优惠券不可用', error.toString());
+
   }
 }
 
@@ -194,15 +189,18 @@ onMounted(() => {
 
   console.log('settlement挂载', paymentStore.plan_id_selected)
   // appendCycleOptions()
-  // themeStore.userPath = '/dashboard/purchase/settlement'
+  themeStore.userPath = '/dashboard/purchase/settlement'
 
 })
 
 onBeforeMount(() => {
+  console.log('settlement挂载前', paymentStore.plan_id_selected)
   if (paymentStore.plan_id_selected < 0) {
     router.back(-1)
+  } else{
+    appendCycleOptions()
+
   }
-  appendCycleOptions()
 })
 
 </script>
@@ -256,7 +254,7 @@ export default {
                 type="primary"
                 @click="verifyTicket"
             >
-              <n-icon style="margin-right: 5px">
+              <n-icon style="margin-right: 10px">
                 <ticketIcon/>
               </n-icon>
               验证
@@ -281,7 +279,7 @@ export default {
             <n-hr></n-hr>
           </div>
           <p class="total-title">总计</p>
-          <p class="price-large">{{ resultPrice }} {{ appInfosStore.appCommonConfig.currency }}</p>
+          <p class="price-large">{{ (resultPrice - discountPrice).toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
           <n-button
               @click="saveOrder"
               class="settleBtn"
@@ -400,14 +398,14 @@ export default {
         }
 
         .price-large {
-          margin-top: 20px;
+          margin-top: 10px;
           font-size: 2rem;
           font-weight: 600;
         }
 
         .settleBtn {
           width: 100%;
-          margin-top: 20px;
+          margin-top: 10px;
           color: white;
         }
       }

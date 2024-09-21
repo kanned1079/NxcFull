@@ -7,6 +7,7 @@ import UserSummary from "@/views/User/pages/RootViews/UserSummary.vue";
 import UserDocument from "@/views/User/pages/RootViews/UserDocument.vue";
 import NewPurchase from "@/views/User/pages/Purchase/NewPurchase.vue";
 import NewSettlement from "@/views/User/pages/Purchase/NewSettlement.vue";
+import UserProfile from "@/views/User/pages/Profile/UserProfile.vue";
 
 const userRoutes: RouteRecordRaw[] = [
     {
@@ -46,7 +47,12 @@ const userRoutes: RouteRecordRaw[] = [
             {
                 path: '/dashboard/purchase/settlement',
                 component: NewSettlement,
+            },
+            {
+                path: '/dashboard/profile',
+                component: UserProfile,
             }
+
         ]
     }
 

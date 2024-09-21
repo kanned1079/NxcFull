@@ -91,7 +91,7 @@ export default {
         class="doc-item"
         v-for="item in item.data"
         :key="item.category"
-        @click="activate('right', item.title, item.body)"
+        @click="activate(themeStore.menuCollapsed?'bottom':'right', item.title, item.body)"
     >
       <p class="doc-title">{{ item.title }}</p>
       <p class="doc-release">{{ item.date }}</p>
@@ -99,7 +99,7 @@ export default {
     </div>
   </n-card>
 
-  <n-drawer v-model:show="active" width="80%" :placement="placement">
+  <n-drawer v-model:show="active" width="80%" height="80%" :placement="placement">
     <n-drawer-content :title="drawTitle">
 <!--      <div v-html="convertMd(drawBody as string)"></div>-->
       <MdPreview :theme="themeStore.enableDarkMode?'dark':'light'" style="background-color: rgba(0,0,0,0.0)" v-model="drawBody"></MdPreview>

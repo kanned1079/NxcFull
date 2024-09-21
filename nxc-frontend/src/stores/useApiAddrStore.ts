@@ -16,6 +16,8 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             getAllPlanList: '/api/user/v1/plan/get', // 获取所有的订阅计划列表
             verifyCoupon: '/api/user/v1/coupon/verify',
             saveOrder: '/api/user/v1/order/save',  // 提交订单
+            verifyOldPassword: '/api/user/v1/auth/passcode/verify',
+            applyNewPassword: '/api/user/v1/auth/passcode/update',
 
         },
         admin: {

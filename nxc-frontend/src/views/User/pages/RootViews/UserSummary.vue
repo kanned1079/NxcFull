@@ -50,25 +50,48 @@ let thisNotices = ref([])
 
 let helpData = [
   {
+    id: 0,
     title: '查看教程',
     content: '学习如何使用 Nxc Network International',
     icon_id: 1,
   },
   {
+    id: 1,
     title: '一键订阅',
     content: '快速将节点导入对应客户端进行使用',
     icon_id: 2,
   },
   {
+    id: 2,
     title: '续费订阅',
     content: '对您当前的订阅进行续费',
     icon_id: 3,
   },
   {
+    id: 3,
     title: '遇到问题',
     content: '遇到问题可以通过工单与我们的人机沟通',
     icon_id: 4,
   }
+]
+
+let pathById = [
+  {
+    id: 0,
+    path: '/dashboard/document',
+  },
+  {
+    id: 1,
+    path: '/dashboard/purchase',
+  },
+  {
+    id: 2,
+    path: '/dashboard/purchase',
+  },
+  {
+    id: 3,
+    path: '/dashboard/support',
+  },
 ]
 
 let showDetail = () => {
@@ -112,8 +135,6 @@ onMounted(() => {
 
 <template>
   <div class="root">
-
-
     <n-card content-style="padding: 0;" :embedded="true" hoverable>
       <n-carousel show-arrow autoplay style="border-radius: 3px">
         <n-card
@@ -197,7 +218,13 @@ onMounted(() => {
     </n-card>
 
     <n-card style="margin: 20px 0; padding-right: 20px" :embedded="true" hoverable title="捷径" content-style="padding: 0;">
-      <div :class="themeStore.enableDarkMode?'help-day':'help-night'" v-for="item in helpData" :key="item.title" style="display: flex; justify-content: space-between; width: 100%; height: auto; padding: 10px">
+      <div
+          :class="themeStore.enableDarkMode?'help-day':'help-night'"
+          v-for="item in helpData"
+          :key="item.id"
+          style="display: flex; justify-content: space-between; width: 100%; height: auto; padding: 10px"
+        @click="router.push({ path: pathById[item.id].path})"
+      >
         <div style="height: 100%; text-align: left; padding-left: 20px">
           <p style="font-size: 16px;">{{ item.title }}</p>
           <p style="font-size: 12px; margin-top: 5px; opacity: 0.5">{{ item.content }}</p>

@@ -52,6 +52,8 @@ const usePaymentStore = defineStore('paymentStore', () => {
         plan_id_selected,
     }
 
+}, {
+    persist: true,
 })
 
 export default usePaymentStore;

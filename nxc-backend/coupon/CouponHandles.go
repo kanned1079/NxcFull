@@ -141,5 +141,6 @@ func HandleVerifyCoupon(context *gin.Context) {
 		"verified":    true,
 		"msg":         "优惠券有效",
 		"percent_off": coupon.PercentOff,
+		"name":        coupon.Name,
 	})
 }

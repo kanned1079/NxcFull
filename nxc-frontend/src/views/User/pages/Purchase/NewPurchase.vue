@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import {onMounted, reactive, ref, computed} from "vue";
+import {onMounted, onBeforeMount, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import {useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
 // import VueMarkdown from 'vue-markdown';
-import { MdPreview, MdCatalog } from 'md-editor-v3';
-import 'md-editor-v3/lib/preview.css';
-import instance from "@/axios";
+import { MdPreview } from 'md-editor-v3';
+// import instance from "@/axios";
 import usePaymentStore from "@/stores/usePaymentStore";
+import 'md-editor-v3/lib/preview.css';
 
 const id = 'preview-only';
 const text = ref('# Hello Editor');
@@ -20,25 +20,22 @@ const apiAddrStore = useApiAddrStore();
 const themeStore = useThemeStore();
 const router = useRouter();
 
-// let id = ref<number>(1)
-
-// let medText = ref<string>('')
-
-// let plans = ref([])
-
-// let getAllPlans = async () => {
-//   try {
-//     let {data} = await instance.get(apiAddrStore.apiAddr.user.getAllPlanList)
-//     if (data.code === 200) {
-//       plans.value = data.plans
-//       console.log(plans.value)
-//     } else {
-//       message.error("获取数据失败")
-//     }
-//   } catch (error) {
-//     message.error(error)
-//   }
-// }
+interface Plan {
+  id: number
+  group_id?: number
+  is_renew?: boolean
+  is_sale?: boolean
+  name: string
+  capacity: number
+  describe?: string
+  month_price?: number
+  quarter_price?: number
+  half_year_price?: number
+  year_price?: number
+  created_at: string
+  updated_at?: number
+  deleted_at?: string
+}
 
 let shadowBg = () => {
   if (themeStore.enableDarkMode) {
@@ -60,10 +57,13 @@ let toPurchase = (plan_id: number) => {
   })
 }
 
-onMounted(() => {
+onMounted( () => {
   themeStore.menuSelected = 'user-buy-plan'
   themeStore.userPath = '/dashboard/purchase'
+  // paymentStore.getAllPlans()
+})
 
+onBeforeMount(() => {
   paymentStore.getAllPlans()
 })
 
@@ -78,7 +78,7 @@ export default {
 <template>
   <div class="root">
     <n-card
-        v-for="(item, index) in paymentStore.plan_list"
+        v-for="(item, index) in paymentStore.plan_list as Plan[]"
         :key="item.id"
         class="plan-item"
         content-style="padding: 0;"
@@ -101,8 +101,8 @@ export default {
         <MdPreview
             style="background-color: rgba(0,0,0,0)"
             :theme="themeStore.enableDarkMode?'dark':'light'"
-            :editorId="id"
-            :modelValue="item.describe"
+            :editorId="`preview-${index}`"
+            :modelValue="item.describe || ''"
         />
         <n-button
             @click="toPurchase(index)"
@@ -112,8 +112,6 @@ export default {
       </n-card>
 
     </n-card>
-
-
   </div>
 </template>
 

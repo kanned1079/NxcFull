@@ -1,18 +1,22 @@
 <script setup lang="ts" name="CommonHeader">
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import {
-  Sunny as sunIcon,
+  ChevronDownOutline as downIcon,
+  List as menuIcon,
   MoonSharp as moonIcon,
   PersonCircle as userIcon,
-  List as menuIcon,
+  Sunny as sunIcon,
 } from '@vicons/ionicons5'
 import useThemeStore from "@/stores/useThemeStore";
 // import type {GlobalTheme} from 'naive-ui'
-import { useRouter } from 'vue-router';
-import type { DrawerPlacement } from 'naive-ui'
+import {useRouter} from 'vue-router';
+import type {DrawerPlacement} from 'naive-ui'
 import useUserDropDown from "@/stores/userDropdownItems";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import CommonAside from "@/components/CommonAside.vue";
+
+let dropDownBtn = ref(null)
+let dropDownWidth = ref(0)
 
 const userDropdownStore = useUserDropDown()
 const themeStore = useThemeStore();
@@ -23,7 +27,7 @@ const theme = themeStore.getTheme;
 const active = ref(false)
 const placement = ref<DrawerPlacement>('right')
 
-let options = userDropdownStore.options
+let options = userInfoStore.thisUser.isAdmin ? userDropdownStore.admin_options : userDropdownStore.user_options;
 
 const router = useRouter();
 
@@ -60,20 +64,30 @@ let handleChangeTheme = () => {
   themeStore.enableDarkMode = !themeStore.enableDarkMode;
   themeStore.saveEnableDarkMode();
 }
+
+onMounted(() => {
+  dropDownWidth.value = dropDownBtn.value.getBoundingClientRect().width || dropDownBtn.value.offsetWidth;
+
+})
+
 </script>
 
 <template>
   <div class="root">
     <div class="l-content">
       <n-button
+          v-if="themeStore.menuCollapsed"
           quaternary
           class="show-menu-btn"
           size="medium"
           @click="activateMenu('left')">
-          <n-icon v-if="themeStore.menuSelected" size="20"><menuIcon/></n-icon>
+        <n-icon size="20" style="margin-right: 5px">
+          <menuIcon/>
+        </n-icon>
+        菜单
       </n-button>
 
-      <p class="txt">
+      <p class="txt" v-if="!themeStore.menuCollapsed">
         仪表板
       </p>
     </div>
@@ -87,17 +101,24 @@ let handleChangeTheme = () => {
         </template>
       </n-button>
     </div>
-      <div class="info">
+      <div ref="dropDownBtn" class="info">
         <n-dropdown
             @select="handleSelect"
             :options="options"
             placement="bottom"
             size="large"
-            content-style="{backgroundColor='#e3e5e7'}"
-            class="dd">
-
+            :content-style="{backgroundColor:'#e3e5e7', width:'320px'}"
+            class="dd"
+            :width="themeStore.menuCollapsed?'100%':dropDownWidth"
+        >
           <n-button quaternary style="font-size: 1rem; color: white; align-items: center">
-            <n-icon size="20" style="padding-right: 10px"><userIcon/></n-icon> {{ thisUser.email }}
+            <n-icon size="20" style="padding-right: 10px"><userIcon/></n-icon>
+
+            <n-p v-if="!themeStore.menuCollapsed" :style="{color:theme.topHeaderTextColor}" style="margin-right: 10px">{{
+                thisUser.email
+              }}</n-p>
+            <n-icon size="16" style="font-weight: 800"><downIcon/></n-icon>
+
           </n-button>
         </n-dropdown>
       </div>
@@ -106,7 +127,7 @@ let handleChangeTheme = () => {
     </div>
   </div>
 
-  <n-drawer v-model:show="active" :width="320" :placement="placement">
+  <n-drawer v-model:show="active" :width="themeStore.menuCollapsed?'80%':'320px'" :placement="placement">
     <CommonAside></CommonAside>
   </n-drawer>
 </template>
@@ -120,13 +141,16 @@ let handleChangeTheme = () => {
   .l-content {
     display: flex;
     align-items: center;
-    width: 100px;
     line-height: 52px;
+    height: 52px;
     padding-left: 10px;
+
     .show-menu-btn {
       color: white;
     }
+
     .txt {
+      margin-left: 10px;
       color: v-bind('theme.topHeaderTextColor')
     }
   }
@@ -136,12 +160,14 @@ let handleChangeTheme = () => {
     display: flex;
     align-items: center;
     margin-right: 15px;
+
     .all {
       display: flex;
       align-items: center; /* 使子元素上下居中 */
 
       .color-switch {
         margin-right: 5px;
+
         .btn {
           color: white;
         }
@@ -152,10 +178,15 @@ let handleChangeTheme = () => {
         .dd {
           display: flex;
           align-items: center;
+
           .btn {
             font-size: 3rem;
             color: white;
           }
+        }
+
+        .n-dropdown-menu {
+          margin-top: 20px;
         }
       }
     }

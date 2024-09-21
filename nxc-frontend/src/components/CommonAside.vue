@@ -313,6 +313,13 @@ let userUpdate = (key: string) => {
       router.push({path: '/dashboard/purchase'})
       break
     }
+
+
+    case 'user-profile': {
+      // themeStore.menuSelected = 'user-profile'
+      router.push({path: '/dashboard/profile'})
+      break
+    }
   }
 }
 
