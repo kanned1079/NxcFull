@@ -10,21 +10,10 @@
 
 - 前端
     - Vue3 + TypeScript + pinia + NaiveUI + md-editor
-
-    - Vue3 + TS
 - 后端
     - golang + gin + gorm + gRPC + Mysql + Redis + RabbitMq
-    - golang + gin + gorm + gRPC + Mysql + Redis + RabbitMq
-
-
-- 前端
-    - Vue3 + TS
-- 后端
-    - golang + gin + gorm + Mysql + Redis
 
 ### 使用说明
-
-#### 前端
 
 ```shell 
   # 安装运行依赖
