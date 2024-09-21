@@ -2,6 +2,7 @@
 import {onMounted, onBeforeMount, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
 // import VueMarkdown from 'vue-markdown';
@@ -18,6 +19,7 @@ const paymentStore = usePaymentStore();
 const message = useMessage()
 const apiAddrStore = useApiAddrStore();
 const themeStore = useThemeStore();
+const appInfosStore = useAppInfosStore();
 const router = useRouter();
 
 interface Plan {
@@ -76,6 +78,7 @@ export default {
 </script>
 
 <template>
+  <n-p style="font-size: 1.2rem; margin: 20px 0 0 30px; font-weight: 600;">选择最适合您的计划</n-p>
   <div class="root">
     <n-card
         v-for="(item, index) in paymentStore.plan_list as Plan[]"
@@ -93,7 +96,7 @@ export default {
         <div class="price-item">
           <div class="price-blk">
             <p class="price">{{ item.month_price }}</p>
-            <p class="price-symbol">USD</p>
+            <p class="price-symbol">{{ appInfosStore.appCommonConfig.currency }}</p>
           </div>
           <p class="pay-method">{{ item.month_price?'月付':'更多选择' }}</p>
         </div>

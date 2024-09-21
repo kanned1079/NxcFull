@@ -51,7 +51,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         logo: 'logo.svg',
         user_bg: '',
         admin_bg: '',
-        currency: 'DSDT',
+        currency: 'USDT',
         currency_symbol: '$',
     }
 
