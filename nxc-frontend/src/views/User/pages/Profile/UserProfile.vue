@@ -139,6 +139,7 @@ export default {
         :embedded="true"
         hoverable
         content-style="padding: 0"
+        :bordered="false"
     >
       <div class="wallet-header">
         <p class="wallet-title">{{ t('userProfile.myWallet') }}</p>
@@ -160,6 +161,7 @@ export default {
         :embedded="true"
         hoverable
         content-style="padding: 0"
+        :bordered="false"
     >
       <n-p class="title">{{ t('userProfile.alertPwd') }}</n-p>
       <div class="form">
@@ -184,6 +186,7 @@ export default {
         :embedded="true"
         hoverable
         content-style="padding: 0"
+        :bordered="false"
     >
       <n-p class="title">{{ t('userProfile.notify') }}</n-p>
       <div class="form">
@@ -201,10 +204,11 @@ export default {
         :embedded="true"
         hoverable
         content-style="padding: 0"
+        :bordered="false"
     >
       <n-p class="title">{{ t('userProfile.deleteAccount') }}</n-p>
       <div class="form">
-        <n-alert type="warning">
+        <n-alert type="warning" :bordered="false">
           {{ t('userProfile.deleteAccountSub') }}
         </n-alert>
         <n-button strong style="margin-top: 20px; color: #e3e4e7" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
@@ -323,10 +327,10 @@ export default {
 
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 
 
 </style>

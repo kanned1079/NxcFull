@@ -3,7 +3,7 @@ import {onMounted, toRaw, onBeforeUnmount} from 'vue';
 import {RouterView} from 'vue-router';
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
-import type {NConfigProvider} from 'naive-ui'
+import {type NConfigProvider, NThemeEditor} from 'naive-ui'
 
 const themeStore = useThemeStore();
 const appInfosStore = useAppInfosStore()
@@ -33,15 +33,28 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <n-config-provider :theme="themeStore.getMainTheme" :theme-overrides="toRaw(themeStore.getTheme.selfOverride)">
-    <n-message-provider>
-      <n-notification-provider>
-        <n-dialog-provider>
-          <RouterView></RouterView>
 
-        </n-dialog-provider>
-      </n-notification-provider>
-    </n-message-provider>
+
+
+  <n-config-provider
+      :theme="themeStore.getMainTheme"
+      :theme-overrides="toRaw(themeStore.getTheme.selfOverride)"
+  >
+
+
+<!--    <n-theme-editor>-->
+      <n-message-provider>
+        <n-notification-provider>
+          <n-dialog-provider>
+            <RouterView></RouterView>
+          </n-dialog-provider>
+        </n-notification-provider>
+      </n-message-provider>
+<!--    </n-theme-editor>-->
+
+
+
+
   </n-config-provider>
 
 </template>

@@ -255,6 +255,7 @@ export default {
                 :keyboard="true"
                 type="primary"
                 @click="verifyTicket"
+                :bordered="false"
             >
               <n-icon style="margin-right: 10px">
                 <ticketIcon/>
@@ -286,8 +287,10 @@ export default {
               @click="saveOrder"
               class="settleBtn"
               type="primary"
+              :bordered="false"
+              size="large"
           >
-            <n-icon>
+            <n-icon style="margin-right: 5px">
               <settlementIcon/>
             </n-icon>
             {{ t('newSettlement.submitOrder') }}
@@ -434,7 +437,7 @@ export default {
 }
 
 .n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
   border: 0;
   transition: transform 200ms ease;
 }

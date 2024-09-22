@@ -81,14 +81,14 @@ export default {
 
 <template>
 <div class="root">
-  <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root">
+  <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root" :bordered="false">
     <n-input-group>
       <n-input v-model="search" :bordered="false" size="medium" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
       <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="medium" class="search-btn">{{ t('userDocument.searchBtn') }}</n-button>
     </n-input-group>
   </n-card>
 
-  <n-card v-for="item in doc_list" :key="item.category" class="doc-card" hoverable :embedded="true" :title="item.category" content-style="padding: 0;">
+  <n-card v-for="item in doc_list" :key="item.category" class="doc-card" hoverable :embedded="true" :title="item.category" content-style="padding: 0;" :bordered="false">
     <div
         class="doc-item"
         v-for="item in item.data"
@@ -150,9 +150,9 @@ export default {
   }
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 
 </style>

@@ -1,9 +1,17 @@
 import {computed, reactive, ref} from 'vue'
 import {defineStore} from "pinia";
-import {darkTheme} from 'naive-ui';
+import {darkTheme, type GlobalThemeOverrides} from 'naive-ui';
 import useSettingStore from "@/stores/useSettingStore"
 
 const useThemeStore = defineStore('theme', () => {
+
+    // const darkOverride: GlobalThemeOverrides = {
+    //     Notification: {
+    //         tex
+    //     }
+    // }
+
+
     // 是否启用深色模式
     const enableDarkMode = ref(false)
     const selectedTheme = ref('darkBlueDay')
@@ -21,9 +29,9 @@ const useThemeStore = defineStore('theme', () => {
     // 通用部分 计算属性
     const globeTheme = reactive({
         asideBgColor: computed(() => enableDarkMode.value ? '#282929' : '#fff'),
-        contentBgColor: computed(() => enableDarkMode.value ? '#2d2f2f' : '#eff2f7'),
-        cardBgColor: computed(() => enableDarkMode.value ? 'rgba(40, 41, 41, 1)' : '#fff'),
-        loginCardBgColor: computed(() => enableDarkMode.value ? 'rgba(40, 41, 41, 0.7)' : 'rgba(255, 255, 255, 0.7)'),
+        //contentBgColor: computed(() => enableDarkMode.value ? '#2d2f2f' : '#eff2f7'),
+        //cardBgColor: computed(() => enableDarkMode.value ? 'rgba(40, 41, 41, 1)' : '#fff'),
+        //loginCardBgColor: computed(() => enableDarkMode.value ? 'rgba(40, 41, 41, 0.7)' : 'rgba(255, 255, 255, 0.7)'),
     })
 
     // 等六j
@@ -36,17 +44,72 @@ const useThemeStore = defineStore('theme', () => {
         topHeaderBgColor: computed(() => enableDarkMode.value ? '#3b4e72' : '#385894'),
         topHeaderTextColor: '#fff',
         globeTheme, // 通用部分
-        selfOverride: {
-            common: {
-                // 主题色相关
-                primaryColor: "#385894",
-                // primaryColor: computed(() => enableDarkMode.value ? '#374868' : '#385894'),
+        // selfOverride1: {
+        //     common: {
+        //         // 主题色相关
+        //         primaryColor: "#385894",
+        //         // primaryColor: computed(() => enableDarkMode.value ? '#374868' : '#385894'),
+        //
+        //         primaryColorHover: "#45639b",
+        //         primaryColorPressed: "#0c7a43",
+        //         primaryColorSuppl: "#36ad6a",
+        //         cardColor: "#ffffff",
+        //         bodyColor: '#e3e5e7',
+        //         // baseColor: '#7ecf8f',
+        //         modalColor: '#ffffff',
+        //         tableColor: '#e3e5e7',
+        //     },
+        //     Button: {
+        //         colorPressed: '#fff',
+        //         colorPressedPrimary: '#537fd1',
+        //         borderPressedPrimary: '#537fd1',
+        //         textColorPrimary: '#fff',
+        //         textColorPressedPrimary: '#fff',
+        //         textColorHoverPrimary: '#fff',
+        //         textColorFocusPrimary: '#fff',
+        //     },
+        //
+        // } as GlobalThemeOverrides,
 
-                primaryColorHover: "#45639b",
-                primaryColorPressed: "#0c7a43",
-                primaryColorSuppl: "#36ad6a",
+        selfOverride: computed(() => enableDarkMode.value ? {
+            // 深色模式
+            common: {
+                primaryColor: '#3b4e72',
+                bodyColor: '#2d2f2f',
+                modalColor: '#2d2f2f'
             },
-        }
+            Button: {
+                color: '#3b4e72',
+                colorFocusPrimary: '#3b4e72',
+                colorHoverPrimary: '#496097',
+                colorPressedPrimary: '#496097',
+
+                textColorPrimary: '#fff',
+                textColorHoverPrimary: '#fff',
+                textColorPressedPrimary: '#fff',
+                textColorFocusPrimary: '#fff',
+            },
+            Input: {
+                borderHover: '1px solid #3b4e72',
+                borderFocus: '1px solid #3b4e72',
+            },
+            Card: {
+                colorEmbedded: 'rgba(40, 41, 41, 1)',
+            },
+            Switch: {
+                railColorActive: '#3b4e72'
+            }
+        } as GlobalThemeOverrides : {
+            // 浅色模式
+            common: {
+                primaryColor: '#385894',
+                bodyColor: '#eff2f7',
+                modalColor: '#eff2f7',
+            },
+            Card: {
+                colorEmbedded: '#fff',
+            },
+        } as GlobalThemeOverrides)
     })
 
     // 主题配置 奶绿色
@@ -64,24 +127,11 @@ const useThemeStore = defineStore('theme', () => {
                 primaryColorHover: "#009693",
                 primaryColorPressed: "#0c7a43",
                 primaryColorSuppl: "#36ad6a",
+                cardColor: computed(() => enableDarkMode.value ? '#2a6f6a' : '#008784'),
             }
-        }
+        } as GlobalThemeOverrides
     })
 
-    // 深色颜色覆盖
-    const darkBlueDay_darkThemeOverride = reactive({
-        selfOverride: {
-            common: {
-                primaryColor: "#385894",
-            }
-        }
-    })
-
-    const milkGreenDay_darkThemeOverride = reactive({
-        common: {
-            primaryColor: "#009693",
-        }
-    })
 
     // 主题配置 默认
     const defaultDay = reactive({
@@ -106,11 +156,6 @@ const useThemeStore = defineStore('theme', () => {
         switch (selectedTheme.value) {
             case 'darkBlueDay': {
                 return darkBlueDay;
-                // if (!enableDarkMode.value) {
-                //     return darkBlueDay;
-                // } else {
-                //     return darkBlueDay_darkThemeOverride
-                // }
             }
             case 'milkGreenDay': {
                 return milkGreenDay;

@@ -61,7 +61,15 @@ export default {
       </n-layout-header>
       <n-layout-content content-style="padding: 0" class="content">
         <n-scrollbar style="max-height: 100vh">
-          <RouterView></RouterView>
+
+
+<!--          <n-config-provider>-->
+
+            <RouterView></RouterView>
+
+<!--          </n-config-provider>-->
+
+
           <div style="height: 3rem"></div>
         </n-scrollbar>
       </n-layout-content>

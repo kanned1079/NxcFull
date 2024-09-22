@@ -168,7 +168,7 @@ onMounted(() => {
 
 <template>
   <div class="root">
-    <n-card content-style="padding: 0;" :embedded="true" hoverable>
+    <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
       <n-carousel show-arrow autoplay style="border-radius: 3px">
         <n-card
             v-for="item in thisNotices"
@@ -176,6 +176,7 @@ onMounted(() => {
             class="item"
             :style="item.img_url===''?({backgroundImage: `url('https://ikanned.com:24444/d/Upload/NXC/noticeUniversalBgDay.svg')`,}):({backgroundImage: `url(${item.img_url})`,backgroundSize: 'cover'})"
             @click="handleConfirm(item.title, item.content)"
+            :bordered="false"
         >
           <div class="content">
             <n-tag class="tag" type="warning">{{ item.tags }}</n-tag>
@@ -221,6 +222,7 @@ onMounted(() => {
         hoverable
         :title="t('userSummary.myPlan')"
         content-style="padding: 0"
+        :bordered="false"
     >
 
       <!--      <h1 v-for="i in 3" :key="i">{{i}}</h1>-->
@@ -231,6 +233,7 @@ onMounted(() => {
           class="no-license"
           content-style="padding: 0;"
           @click="goCartPage"
+          :bordered="false"
       >
         <div
             style="display: flex;text-align: center;justify-content: flex-end;line-height: 20px;flex-direction: column;align-items: center;padding-bottom: 20px;">
@@ -248,6 +251,7 @@ onMounted(() => {
           class="license-active"
           content-style="padding: 0;"
           style="padding: 0 25px 0 25px"
+          :bordered="false"
       >
         <div class="plan-item">
           <p style="font-size: 1.1rem; font-weight: bold;opacity: 0.9;">{{ plan.plan_name }}</p>
@@ -265,7 +269,9 @@ onMounted(() => {
         :embedded="true"
         hoverable
         :title="t('userSummary.shortcut')"
-        content-style="padding: 0;">
+        content-style="padding: 0;"
+        :bordered="false"
+    >
       <div
           :class="themeStore.enableDarkMode?'help-day':'help-night'"
           v-for="item in helpData"
@@ -415,10 +421,10 @@ onMounted(() => {
   background: #fff;
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 
 .help-day:hover {
   background-color: rgba(220, 220, 220, 0.1);
@@ -429,10 +435,10 @@ onMounted(() => {
 }
 
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 
 .plan-item {
   transition: transform 200ms ease;

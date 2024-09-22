@@ -87,6 +87,7 @@ export default {
         :key="item.id"
         class="plan-item"
         content-style="padding: 0;"
+        :bordered="false"
     >
       <n-card
           class="plan-detail"
@@ -94,6 +95,7 @@ export default {
           :title="item.name"
           content-style="padding: 0;"
           :style="shadowBg"
+          :bordered="false"
       >
         <div class="price-item">
           <div class="price-blk">
@@ -113,6 +115,7 @@ export default {
             @click="toPurchase(index)"
             type="primary"
             class="purchase"
+            :bordered="false"
         >
           {{ t('newPurchase.purchaseBtn') }}
         </n-button>
@@ -170,7 +173,7 @@ export default {
       }
 
       .purchase {
-        width: 100px;
+        width: auto;
         margin: 20px 0 20px 20px;
       }
     }
@@ -191,8 +194,8 @@ export default {
 }
 
 .n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
+  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+  //border: 0;
   transition: transform 200ms ease;
 }
 </style>

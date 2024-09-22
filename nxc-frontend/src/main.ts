@@ -16,6 +16,7 @@ import { createApp } from 'vue'
 
 import App from './App.vue'
 import router from './router'
+import naive from "naive-ui";
 
 const messages = {
     en_US,
@@ -37,6 +38,8 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 const app = createApp(App)
+
+app.use(naive)
 
 app.use(pinia)
 app.use(i18n)

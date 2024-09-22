@@ -371,6 +371,8 @@ export default {
           :options="UserMenuOption"
           @update:value="userUpdate"
           :value="themeStore.menuSelected"
+          :root-indent="36"
+          :indent="0"
 
       />
 
