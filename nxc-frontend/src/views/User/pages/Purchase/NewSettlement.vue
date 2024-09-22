@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {onBeforeMount, onMounted, ref} from "vue"
 import type {MenuOption, NotificationType} from 'naive-ui'
 import {NIcon, useNotification} from 'naive-ui'
@@ -13,6 +14,7 @@ import {CheckmarkCircleOutline as settlementIcon, TicketOutline as ticketIcon} f
 import instance from "@/axios";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 
+const {t} = useI18n();
 const notification = useNotification()
 const userInfoStore = useUserInfoStore();
 const appInfosStore = useAppInfosStore();
@@ -51,19 +53,19 @@ let couponCode = ref<string>('')
 let showCycleName = computed(() => {
   if (selectedCycle.value === 'month') {
     resultPrice.value = plan.month_price
-    return '月付'
+    return computed(() => t('newSettlement.monthPay'))
   }
   if (selectedCycle.value === 'quarter') {
     resultPrice.value = plan.quarter_price
-    return '季付'
+    return computed(() => t('newSettlement.quarterPay'))
   }
   if (selectedCycle.value === 'half-year') {
     resultPrice.value = plan.half_year_price
-    return '半年付'
+    return computed(() => t('newSettlement.halfYearPay'))
   }
   if (selectedCycle.value === 'year') {
     resultPrice.value = plan.year_price
-    return '年付'
+    return computed(() => t('newSettlement.yearPay'))
   }
 })
 
@@ -77,28 +79,28 @@ const menuOptions: MenuOption[] = []
 let appendCycleOptions = () => {
   if (plan.month_price) {
     menuOptions.push({
-      label: '月付',
+      label: t('newSettlement.monthPay'),
       key: 'month',
       disabled: false,
     })
   }
   if (plan.quarter_price) {
     menuOptions.push({
-      label: '季付',
+      label: t('newSettlement.quarterPay'),
       key: 'quarter',
       disabled: false,
     })
   }
   if (plan.half_year_price) {
     menuOptions.push({
-      label: '半年付',
+      label: t('newSettlement.halfYearPay'),
       key: 'half-year',
       disabled: false,
     })
   }
   if (plan.year_price) {
     menuOptions.push({
-      label: '年付',
+      label: t('newSettlement.yearPay'),
       key: 'year',
       disabled: false,
     })
@@ -119,7 +121,7 @@ let couponInfo = ref({
 
 let verifyTicket = async () => {
   if (couponCode.value.trim() === '') {
-    notify('error', '错误', '输入的优惠券码不能为空')
+    notify('error', t('newSettlement.err'), t('newSettlement.notify.couponIsNull'))
     return
   }
   console.log('验证优惠券')
@@ -136,21 +138,21 @@ let verifyTicket = async () => {
         couponInfo.value.verified = true;
         couponInfo.value.percent_off = data.percent_off;
         couponInfo.value.name = data.name;
-        await notify('success', '验证通过', '优惠券有效');
+        await notify('success', t('newSettlement.notify.passTitle'), t('newSettlement.notify.couponVerified'));
       } else {
         couponInfo.value.verified = false
         // console.log('未知错误', data.msg);
-        await notify('error', '优惠券不可用', data.msg);
+        await notify('error', t('newSettlement.notify.couponInvalid'), data.msg);
       }
     } else {
       couponInfo.value.verified = false
       // 处理非200状态码的错误
-      await notify('error', '优惠券不可用', data.msg);
+      await notify('error', t('newSettlement.notify.couponInvalid'), data.msg);
     }
   } catch (error) {
     // 处理网络错误或后端500错误
     couponInfo.value.verified = false
-    await notify('error', '优惠券不可用', error.toString());
+    await notify('error', t('newSettlement.notify.couponInvalid'), error.toString());
 
   }
 }
@@ -225,7 +227,7 @@ export default {
           />
         </n-card>
         <n-card class="l-info-btn" :embedded="true" hoverable content-style="padding: 0;">
-          <p class="detail-title">付款周期</p>
+          <p class="detail-title">{{ t('newSettlement.payCycle') }}</p>
           <n-menu
               :options="menuOptions"
               @update:value="cycleSelect"
@@ -245,7 +247,7 @@ export default {
                 class="ticket-input"
                 style="margin-right: 10px"
                 v-model:value="couponCode"
-                placeholder="有优惠券？"
+                :placeholder="t('newSettlement.couponPlaceholder')"
             />
             <n-button
                 style="color: white"
@@ -257,28 +259,28 @@ export default {
               <n-icon style="margin-right: 10px">
                 <ticketIcon/>
               </n-icon>
-              验证
+              {{ t('newSettlement.verifyBtn') }}
             </n-button>
           </div>
 
           <!--          </n-input-group>-->
         </n-card>
         <n-card style="color: white" class="r-part-btn" :embedded="true" hoverable>
-          <p class="r-title">订单总额</p>
+          <p class="r-title">{{ t('newSettlement.orderTotalTitle') }}</p>
           <div class="price-small">
             <p class="summary">{{ plan.name }} x {{ showCycleName }}</p>
             <p class="price-small">{{ resultPrice }} {{ appInfosStore.appCommonConfig.currency }}</p>
           </div>
           <n-hr></n-hr>
           <div class="price-discount" v-if="couponInfo.verified">
-            <p class="coupon-title">优惠券</p>
+            <p class="coupon-title">{{ t('newSettlement.coupon') }}</p>
             <div class="coupon-detail">
               <p class="coupon-name">{{ couponInfo.name }}</p>
               <p class="discount">- {{ discountPrice.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
             </div>
             <n-hr></n-hr>
           </div>
-          <p class="total-title">总计</p>
+          <p class="total-title">{{ t('newSettlement.total') }}</p>
           <p class="price-large">{{ (resultPrice - discountPrice).toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
           <n-button
               @click="saveOrder"
@@ -288,7 +290,7 @@ export default {
             <n-icon>
               <settlementIcon/>
             </n-icon>
-            下单
+            {{ t('newSettlement.submitOrder') }}
           </n-button>
         </n-card>
       </div>

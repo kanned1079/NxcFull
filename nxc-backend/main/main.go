@@ -5,6 +5,8 @@ import (
 	"NxcFull/nxc-backend/coupon"
 	"NxcFull/nxc-backend/dao"
 	"NxcFull/nxc-backend/finance"
+	"NxcFull/nxc-backend/keys"
+	"NxcFull/nxc-backend/orders"
 	"NxcFull/nxc-backend/privilege"
 	"NxcFull/nxc-backend/publicNotice"
 	"NxcFull/nxc-backend/routers"
@@ -65,6 +67,18 @@ func main() {
 	}
 
 	if err := dao.Db.AutoMigrate(privilege.Group{}); err != nil {
+		panic("failed to migrate database")
+	}
+
+	if err := dao.Db.AutoMigrate(orders.Orders{}); err != nil {
+		panic("failed to migrate database")
+	}
+
+	if err := dao.Db.AutoMigrate(orders.ActiveOrders{}); err != nil {
+		panic("failed to migrate database")
+	}
+
+	if err := dao.Db.AutoMigrate(keys.Keys{}); err != nil {
 		panic("failed to migrate database")
 	}
 

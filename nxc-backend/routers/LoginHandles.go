@@ -71,6 +71,11 @@ func handleUserLogin(context *gin.Context) {
 	}
 }
 
+//func HandleGetUserPlan(context *gin.Context) {
+//	// 使用get方法 请求示例 http://localhost:8080/user/v1/plan/info/fetch?sub_id=3
+//	// 使用sub_id查询
+//}
+
 func handleGetServerInfo(context *gin.Context) {
 	var systemOverLook system.OsInfo
 	systemOverLook.GetOsInfo()

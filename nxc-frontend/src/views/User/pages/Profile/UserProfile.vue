@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -16,6 +17,7 @@ interface ModelType {
   new_password_again: string | null
 }
 
+const {t} = useI18n()
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 const modelRef = ref<ModelType>({
@@ -64,12 +66,12 @@ let verifyOldPassword = async (): Promise<boolean> => {
     if (data.code === 200) {
       return data.verified as boolean;
     } else {
-      notify('error', '旧密码验证失败', data.msg)
+      notify('error', t('userProfile.oldPwdVerifiedFailure'), data.msg)
       console.log(data);
       return false;
     }
   } catch (error) {
-    notify('error', '旧密码验证失败', error.toString())
+    notify('error', t('userProfile.oldPwdVerifiedFailure'), error.toString())
     console.log(error.toString());
     return false;
   }
@@ -91,27 +93,27 @@ let saveNewPassword = async () => {
               modelRef.value.new_password = ''
               modelRef.value.new_password_again = ''
               console.log('修改成功', data);
-              notify('success', '修改成功', '请使用新密码登录')
+              notify('success', t('userProfile.alertSuccess'), t('userProfile.alertSuccessSub'))
 
             }
           } catch (error) {
-            notify('error', '密码修改失败', error.toString())
+            notify('error', t('userProfile.alertFailure'), error.toString())
           }
         } else {
           console.log('旧密码验证失败');
         }
       } else {
-        notify('error', '两次密码输入不一致')
+        notify('error', t('userProfile.pwdNotMatch'))
         console.log('两次输入密码不一致');
       }
     } else {
       console.log('新密码格式错误');
-      notify('error', '新密码格式错误')
+      notify('error', t('userProfile.errorPwdFormat'))
 
     }
   } else {
     console.log('旧密码不能为空');
-    notify('error', '旧密码不能为空')
+    notify('error', t('userProfile.oldPwdNotNull'))
   }
 }
 
@@ -139,7 +141,7 @@ export default {
         content-style="padding: 0"
     >
       <div class="wallet-header">
-        <p class="wallet-title">我的钱包</p>
+        <p class="wallet-title">{{ t('userProfile.myWallet') }}</p>
         <n-icon size="30" style="opacity: 0.1">
           <walletIcon/>
         </n-icon>
@@ -149,7 +151,7 @@ export default {
         <p class="unit">{{ appInfosStore.appCommonConfig.currency }}</p>
       </div>
       <div class="wallet-bottom">
-        <p class="sub">账户余额（仅消费）</p>
+        <p class="sub">{{ t('userProfile.walletSub') }}</p>
       </div>
     </n-card>
 
@@ -159,21 +161,21 @@ export default {
         hoverable
         content-style="padding: 0"
     >
-      <n-p class="title">修改密码</n-p>
+      <n-p class="title">{{ t('userProfile.alertPwd') }}</n-p>
       <div class="form">
         <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
-          <n-form-item path="old_password" label="旧密码">
-            <n-input v-model:value="modelRef.old_password" @keydown.enter.prevent placeholder="请输入旧密码"/>
+          <n-form-item path="old_password" :label="t('userProfile.oldPwd')">
+            <n-input v-model:value="modelRef.old_password" @keydown.enter.prevent :placeholder="t('userProfile.oldPwdSub')"/>
           </n-form-item>
-          <n-form-item path="new_password" label="新密码">
-            <n-input v-model:value="modelRef.new_password" @keydown.enter.prevent placeholder="请输入新密码"/>
+          <n-form-item path="new_password" :label="t('userProfile.newPwd')">
+            <n-input v-model:value="modelRef.new_password" @keydown.enter.prevent :placeholder="t('userProfile.newPwdSub')"/>
           </n-form-item>
-          <n-form-item path="new_password_again" label="确认密码">
+          <n-form-item path="new_password_again" :label="t('userProfile.newPwdAgain')">
             <n-input v-model:value="modelRef.new_password_again" @keydown.enter.prevent
-                     placeholder="请再输入一遍新密码"/>
+                     :placeholder="t('userProfile.newPwdAgainSub')"/>
           </n-form-item>
         </n-form>
-        <n-button class="alert-btn" type="primary" @click="saveNewPassword">保存</n-button>
+        <n-button class="alert-btn" type="primary" @click="saveNewPassword">{{ t('userProfile.saveBtn') }}</n-button>
       </div>
     </n-card>
 
@@ -183,10 +185,10 @@ export default {
         hoverable
         content-style="padding: 0"
     >
-      <n-p class="title">通知</n-p>
+      <n-p class="title">{{ t('userProfile.notify') }}</n-p>
       <div class="form">
         <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
-          <n-form-item path="old_password" label="启用到期通知">
+          <n-form-item path="old_password" :label="t('userProfile.enableNotify')">
             <n-switch />
           </n-form-item>
         </n-form>
@@ -200,12 +202,12 @@ export default {
         hoverable
         content-style="padding: 0"
     >
-      <n-p class="title">注销账号</n-p>
+      <n-p class="title">{{ t('userProfile.deleteAccount') }}</n-p>
       <div class="form">
         <n-alert type="warning">
-          您的此账户将被标记为删除，如果需要重新使用我们的服务，请重新注册。
+          {{ t('userProfile.deleteAccountSub') }}
         </n-alert>
-        <n-button strong style="margin-top: 20px; color: #e3e4e7" type="error">注销我的账号</n-button>
+        <n-button strong style="margin-top: 20px; color: #e3e4e7" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
       </div>
     </n-card>
 

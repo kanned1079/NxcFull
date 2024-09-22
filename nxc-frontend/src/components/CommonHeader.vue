@@ -1,10 +1,15 @@
-<script setup lang="ts" name="CommonHeader">
-import {onMounted, ref} from 'vue'
+<script setup lang="ts">
+import {useI18n} from 'vue-i18n'
+import {computed, onMounted, reactive, ref} from 'vue'
 import {
   ChevronDownOutline as downIcon,
+  Language as langIcon,
   List as menuIcon,
+  LogOutOutline as LogoutIcon,
   MoonSharp as moonIcon,
+  Pencil as EditIcon,
   PersonCircle as userIcon,
+  PersonCircleOutline as UserIcon,
   Sunny as sunIcon,
 } from '@vicons/ionicons5'
 import useThemeStore from "@/stores/useThemeStore";
@@ -14,6 +19,9 @@ import type {DrawerPlacement} from 'naive-ui'
 import useUserDropDown from "@/stores/userDropdownItems";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import CommonAside from "@/components/CommonAside.vue";
+import renderIcon from "@/utils/iconFormator";
+
+const {t, locale} = useI18n()
 
 let dropDownBtn = ref(null)
 let dropDownWidth = ref(0)
@@ -27,7 +35,7 @@ const theme = themeStore.getTheme;
 const active = ref(false)
 const placement = ref<DrawerPlacement>('right')
 
-let options = userInfoStore.thisUser.isAdmin ? userDropdownStore.admin_options : userDropdownStore.user_options;
+// let options = userInfoStore.thisUser.isAdmin ? userDropdownStore.admin_options : userDropdownStore.user_options;
 
 const router = useRouter();
 
@@ -54,6 +62,66 @@ let handleSelect = (key: string | number) => {
   }
 }
 
+let langOptions = ref([
+  {
+    label: '简体中文',
+    key: 'zh_CN',
+    disabled: false
+  },
+  {
+    label: '繁體中文',
+    key: 'zh_HK',
+    disabled: false
+  },
+  {
+    label: 'English',
+    key: 'en_US',
+    disabled: false
+  },
+  {
+    label: '日本語',
+    key: 'ja_JP',
+    disabled: false
+  },
+])
+
+let user_options = reactive([
+  {
+    // label: '用户资料',
+    label: computed(() => t('commonHeader.userData')),
+    key: 'profile',
+    icon: renderIcon(UserIcon)
+  },
+  {
+    label: computed(() => t('commonHeader.editUserData')),
+    key: 'editProfile',
+    icon: renderIcon(EditIcon)
+  },
+  {
+    label: computed(() => t('commonHeader.logout')),
+    key: 'logout',
+    icon: renderIcon(LogoutIcon)
+  }
+])
+
+let admin_options = ref([
+  {
+    label: '退出登录',
+    key: 'logout',
+    icon: renderIcon(LogoutIcon)
+  }
+])
+
+// 设置切换语言
+let handleSelectLang = (lang: string) => {
+  console.log(lang)
+  // lang: en_US, zh_CN, zh_HK, ja_JP
+  // const { locale } = useI18n()
+  // 动态切换语言
+  locale.value = lang
+  localStorage.setItem('locale', lang)  // 保存语言到 localStorage
+}
+
 const activateMenu = (place: DrawerPlacement) => {
   active.value = true
   placement.value = place
@@ -72,6 +140,12 @@ onMounted(() => {
 
 </script>
 
+<script lang="ts">
+export default {
+  name: 'CommonHeader',
+}
+</script>
+
 <template>
   <div class="root">
     <div class="l-content">
@@ -84,7 +158,8 @@ onMounted(() => {
         <n-icon size="20" style="margin-right: 5px">
           <menuIcon/>
         </n-icon>
-        菜单
+        <!--        菜单-->
+        {{ $t('commonHeader.menuTxt') }}
       </n-button>
 
       <p class="txt" v-if="!themeStore.menuCollapsed">
@@ -93,18 +168,27 @@ onMounted(() => {
     </div>
     <div class="r-content">
     <span class="all">
-      <div class="color-switch">
+      <span class="color-switch">
       <n-button quaternary class="btn" size="medium" @click="handleChangeTheme">
         <template #icon>
           <n-icon v-if="!themeStore.enableDarkMode" size="20"><sunIcon/></n-icon>
           <n-icon v-else size="18"><moonIcon/></n-icon>
         </template>
       </n-button>
-    </div>
-      <div ref="dropDownBtn" class="info">
+    </span>
+      <span class="lang-switch">
+        <n-dropdown trigger="hover" :options="langOptions" @select="handleSelectLang">
+          <n-button quaternary class="btn" size="medium">
+            <template #icon>
+              <n-icon size="20"><langIcon/></n-icon>
+            </template>
+          </n-button>
+        </n-dropdown>
+    </span>
+      <span ref="dropDownBtn" class="info">
         <n-dropdown
             @select="handleSelect"
-            :options="options"
+            :options="userInfoStore.thisUser.isAdmin?admin_options:user_options"
             placement="bottom"
             size="large"
             :content-style="{backgroundColor:'#e3e5e7', width:'320px'}"
@@ -113,15 +197,17 @@ onMounted(() => {
         >
           <n-button quaternary style="font-size: 1rem; color: white; align-items: center">
             <n-icon size="20" style="padding-right: 10px"><userIcon/></n-icon>
-
-            <n-p v-if="!themeStore.menuCollapsed" :style="{color:theme.topHeaderTextColor}" style="margin-right: 10px">{{
-                thisUser.email
-              }}</n-p>
+            <n-p
+                v-if="!themeStore.menuCollapsed"
+                :style="{color:theme.topHeaderTextColor}"
+                style="margin-right: 10px"
+            >
+              {{ thisUser.email }}
+            </n-p>
             <n-icon size="16" style="font-weight: 800"><downIcon/></n-icon>
-
           </n-button>
         </n-dropdown>
-      </div>
+      </span>
     </span>
 
     </div>
@@ -164,6 +250,14 @@ onMounted(() => {
     .all {
       display: flex;
       align-items: center; /* 使子元素上下居中 */
+
+      .lang-switch {
+        margin-right: 5px;
+
+        .btn {
+          color: white;
+        }
+      }
 
       .color-switch {
         margin-right: 5px;

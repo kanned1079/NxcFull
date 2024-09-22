@@ -10,17 +10,17 @@ type User struct {
 	InviteUserID string `json:"invite_user_id"`                       // 邀请人id
 	Name         string `json:"name" `                                // 用户名
 	Email        string `json:"email" gorm:"unique"`                  // 登录邮箱
-
-	IsAdmin           bool           `json:"isAdmin"`            // 是否是管理员
-	IsStaff           bool           `json:"is_staff"`           // 是否是员工
-	LicenseActive     bool           `json:"license_active"`     // 订阅是否有效
-	LicenseExpiration *time.Time     `json:"license_expiration"` // 订阅是否有效
-	Balance           float32        `json:"balance"`            // 余额
-	LastLogin         *time.Time     `json:"last_login"`         // 上一次登录时间
-	LastLoginIp       string         `json:"last_login_ip"`      // 上一次登录Ip
-	CreatedAt         time.Time      `json:"createdAt"`          // 账户创建日期
-	UpdatedAt         time.Time      `json:"updatedAt"`          // 更新日期
-	DeletedAt         gorm.DeletedAt `json:"deletedAt"`          // 账户删除日期
+	IsAdmin      bool   `json:"isAdmin"`                              // 是否是管理员
+	IsStaff      bool   `json:"is_staff"`                             // 是否是员工
+	//LicenseActive     bool           `json:"license_active"`                       // 订阅是否有效
+	//LicenseId         int64          `json:"license_id"`                           // 订阅Id
+	//LicenseExpiration *time.Time     `json:"license_expiration"`                   // 订阅到期日期
+	Balance     float32        `json:"balance"`       // 余额
+	LastLogin   *time.Time     `json:"last_login"`    // 上一次登录时间
+	LastLoginIp string         `json:"last_login_ip"` // 上一次登录Ip
+	CreatedAt   time.Time      `json:"createdAt"`     // 账户创建日期
+	UpdatedAt   time.Time      `json:"updatedAt"`     // 更新日期
+	DeletedAt   gorm.DeletedAt `json:"deletedAt"`     // 账户删除日期
 }
 
 func (User) TableName() string {

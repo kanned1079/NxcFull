@@ -1,7 +1,9 @@
 <script setup lang="ts" name="UserSummary">
+import {useI18n} from 'vue-i18n'
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import { useDialog, useMessage } from 'naive-ui'
 const message = useMessage()
@@ -9,6 +11,7 @@ const dialog = useDialog()
 import {
   ArrowBack,
   ArrowForward,
+  KeyOutline as keyIcon,
   CartOutline as cartIcon,
   BookOutline as bookIcon,
   ArrowForwardCircleOutline as subIcon,
@@ -18,9 +21,11 @@ import {
 import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 
+const {t, locale} = useI18n()
+const apiAddrStore = useApiAddrStore();
+const appInfoStore = useAppInfosStore();
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
-const apiAddrStore = useApiAddrStore();
 const router = useRouter();
 
 let thisNotices = ref([])
@@ -51,26 +56,26 @@ let thisNotices = ref([])
 let helpData = [
   {
     id: 0,
-    title: '查看教程',
-    content: '学习如何使用 Nxc Network International',
+    title: computed(() => t('userSummary.tutorial.title')),
+    content: computed(() => t('userSummary.tutorial.content', {name: appInfoStore.appCommonConfig.app_name})),
     icon_id: 1,
   },
   {
     id: 1,
-    title: '一键订阅',
-    content: '快速将节点导入对应客户端进行使用',
+    title: computed(() => t('userSummary.checkKey.title')),
+    content: computed(() => t('userSummary.checkKey.content')),
     icon_id: 2,
   },
   {
     id: 2,
-    title: '续费订阅',
-    content: '对您当前的订阅进行续费',
+    title: computed(() => t('userSummary.renewPlan.title')),
+    content: computed(() => t('userSummary.renewPlan.content')),
     icon_id: 3,
   },
   {
     id: 3,
-    title: '遇到问题',
-    content: '遇到问题可以通过工单与我们的人机沟通',
+    title: computed(() => t('userSummary.support.title')),
+    content: computed(() => t('userSummary.support.content')),
     icon_id: 4,
   }
 ]
@@ -118,6 +123,33 @@ let handleConfirm = (title:string, content: string) => {
   })
 }
 
+interface MyActivePlans {
+  expiration_date: string
+  plan_name: string
+}
+
+let myActivePlans = ref<MyActivePlans[]>([]);
+let haveActive = ref<boolean>(false)
+
+let getActivePlanList = async () => {
+  try {
+    let {data} = await instance.get(apiAddrStore.apiAddr.user.getMyPlanList, {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        // user_id: 3,
+      }
+    })
+    if (data.code === 200) {
+      haveActive.value = true
+      myActivePlans.value = data.my_plans
+      console.log(myActivePlans.value)
+    }
+  }catch (error) {
+    haveActive.value = false
+    console.log(error)
+  }
+}
+
 let goCartPage = () => {
   console.log('to cart page')
 }
@@ -128,6 +160,7 @@ onMounted(() => {
   themeStore.menuSelected = 'user-dashboard'
 
   getAllNotices()
+  getActivePlanList()
 
 
 })
@@ -182,13 +215,19 @@ onMounted(() => {
     </n-card>
 
 
-    <n-card class="my-subscribe" :embedded="true" hoverable title="我的订阅">
+    <n-card
+        class="my-subscribe"
+        :embedded="true"
+        hoverable
+        :title="t('userSummary.myPlan')"
+        content-style="padding: 0"
+    >
 
       <!--      <h1 v-for="i in 3" :key="i">{{i}}</h1>-->
       <!--      {{userInfoStore.thisUser}}-->
 
       <n-card
-          v-if="!userInfoStore.thisUser.licenseExpiration"
+          v-if="!haveActive"
           class="no-license"
           content-style="padding: 0;"
           @click="goCartPage"
@@ -198,26 +237,35 @@ onMounted(() => {
           <n-icon style="text-align: center;font-size: 30px;">
             <cartIcon/>
           </n-icon>
-          <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">购买订阅</p>
+          <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">{{ t('userSummary.toPurchase') }}</p>
         </div>
       </n-card>
 
       <n-card
-          v-else-if="userInfoStore.thisUser.licenseExpiration && userInfoStore.thisUser.licenseActive"
-          class="license-inactive"
+          v-else-if="haveActive"
+          v-for="(plan, index) in myActivePlans"
+          :key="index"
+          class="license-active"
           content-style="padding: 0;"
-          style="padding-bottom: 10px"
+          style="padding: 0 25px 0 25px"
       >
-        <p style="font-size: 1.2rem; font-weight: bold;opacity: 0.9;">{{ userInfoStore.thisUser.email }}</p>
-        <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">订阅有效，将在
-          {{ userInfoStore.thisUser.licenseExpiration }} 过期。</p>
+        <div class="plan-item">
+          <p style="font-size: 1.1rem; font-weight: bold;opacity: 0.9;">{{ plan.plan_name }}</p>
+          <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">{{ t('userSummary.timeLeft', {msg: plan.expiration_date, })}}</p>
+        </div>
 
+        <n-hr v-if="!(index === (myActivePlans.length - 1))"></n-hr>
       </n-card>
 
 
     </n-card>
 
-    <n-card style="margin: 20px 0; padding-right: 20px" :embedded="true" hoverable title="捷径" content-style="padding: 0;">
+    <n-card
+        style="margin: 20px 0; padding-right: 20px"
+        :embedded="true"
+        hoverable
+        :title="t('userSummary.shortcut')"
+        content-style="padding: 0;">
       <div
           :class="themeStore.enableDarkMode?'help-day':'help-night'"
           v-for="item in helpData"
@@ -231,7 +279,7 @@ onMounted(() => {
         </div>
         <div style="width: 40px; font-size: 30px; margin-right: 20px; display: flex; flex-direction: column; justify-content: center">
           <n-icon v-if="item.icon_id===1" style="opacity: 0.5; width: 40px; "><bookIcon/></n-icon>
-          <n-icon v-if="item.icon_id===2" style="opacity: 0.5; width: 40px; "><subIcon/></n-icon>
+          <n-icon v-if="item.icon_id===2" style="opacity: 0.5; width: 40px; "><keyIcon/></n-icon>
           <n-icon v-if="item.icon_id===3" style="opacity: 0.5; width: 40px; "><buyIcon/></n-icon>
           <n-icon v-if="item.icon_id===4" style="opacity: 0.5; width: 40px; "><supportIcon/></n-icon>
         </div>
@@ -249,7 +297,7 @@ onMounted(() => {
 
   .my-subscribe {
     margin-top: 20px;
-
+    padding-bottom: 20px;
   }
 }
 
@@ -384,6 +432,14 @@ onMounted(() => {
 .n-card {
   background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
   border: 0;
+}
+
+.plan-item {
+  transition: transform 200ms ease;
+}
+
+.plan-item:hover {
+  transform: translateY(-3px);
 }
 
 </style>

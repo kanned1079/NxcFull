@@ -18,8 +18,9 @@ const useUserInfoStore = defineStore('userInfoS',() => {
         balance: 0.00,
         lastLogin: '',
         lastLoginIp: '0.0.0.0',
-        licenseActive: false,
-        licenseExpiration: '',
+        // licenseActive: false,
+        // licenseExpiration: '',
+        // licenseId: 0,
         token: 'ewfesrflhweaifuhiesagfesrgfegfesgfvliehsguu',
     })
 
@@ -45,8 +46,9 @@ const useUserInfoStore = defineStore('userInfoS',() => {
             balance: 0.00,
             lastLogin: '',
             lastLoginIp: '0.0.0.0',
-            licenseActive: false,
-            licenseExpiration: '',
+            // licenseActive: false,
+            // licenseExpiration: '',
+            // licenseId: 0,
             token: '',
         });
         console.log('是否是管理员:', isAdminBak)

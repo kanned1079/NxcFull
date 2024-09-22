@@ -31,10 +31,12 @@ let rules = {
   user: {
     email: {
       required: true,
+      message: '邮件地址是必填的',
       trigger: 'blur'
     },
     password: {
       required: true,
+      message: '你还没有输入密码',
       trigger: 'blur'
     }
   }
@@ -89,12 +91,13 @@ let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.thisUser.name = user_data.name
   userInfoStore.thisUser.email = user_data.email
   userInfoStore.thisUser.isAdmin = user_data.is_admin
-  userInfoStore.thisUser.isStaff = user_data.is_staffx
+  userInfoStore.thisUser.isStaff = user_data.is_staff
   userInfoStore.thisUser.balance = user_data.balance
   userInfoStore.thisUser.lastLogin = user_data.last_login ? user_data.last_login.toString() : ''
   userInfoStore.thisUser.lastLoginIp = user_data.last_login_ip
-  userInfoStore.thisUser.licenseActive = user_data.license_active
-  userInfoStore.thisUser.licenseExpiration = user_data.license_expiration
+  // userInfoStore.thisUser.licenseActive = user_data.license_active
+  // userInfoStore.thisUser.licenseExpiration = user_data.license_expiration
+  // userInfoStore.thisUser.licenseId = user_data.license_id
   console.log('绑定结束')
 }
 
@@ -104,9 +107,6 @@ let enterDashboard = (data) => {
 
 
 let handleLogin = async () => {
-  // if (handleValidateClick())
-  //   return
-
   console.log('用户数据')
   console.log(formValue.value.user.email, formValue.value.user.password)
   try {

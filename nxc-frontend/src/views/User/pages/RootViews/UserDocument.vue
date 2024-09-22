@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {ref, reactive, onMounted, computed} from "vue";
 import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
@@ -11,6 +12,7 @@ import instance from "@/axios";
 import {MdPreview} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 
+const {t} = useI18n()
 const message = useMessage()
 const apiAddrStore = useApiAddrStore();
 
@@ -81,8 +83,8 @@ export default {
 <div class="root">
   <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root">
     <n-input-group>
-      <n-input v-model="search" :bordered="false" size="large" class="search-input" placeholder="请输入要搜索的内容（模糊查询）"></n-input>
-      <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="large" class="search-btn">搜索</n-button>
+      <n-input v-model="search" :bordered="false" size="large" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
+      <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="large" class="search-btn">{{ t('userDocument.searchBtn') }}</n-button>
     </n-input-group>
   </n-card>
 

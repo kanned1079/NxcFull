@@ -4,6 +4,7 @@ import (
 	"NxcFull/nxc-backend/Document"
 	"NxcFull/nxc-backend/auth"
 	"NxcFull/nxc-backend/coupon"
+	"NxcFull/nxc-backend/orders"
 	"NxcFull/nxc-backend/privilege"
 	"NxcFull/nxc-backend/subscribePlan"
 	"NxcFull/nxc-backend/user"
@@ -86,6 +87,7 @@ func StartAdminReq() {
 		userAuthorized.POST("/coupon/verify", coupon.HandleVerifyCoupon)   // 验证优惠券可用性
 		userAuthorized.POST("/auth/passcode/verify", user.HandleCheckOldPassword)
 		userAuthorized.POST("/auth/passcode/update", user.HandleApplyNewPassword)
+		userAuthorized.GET("plan/info/fetch", orders.GetActivePlanListByUserId)
 	}
 
 	if err := r.Run("localhost:8080"); err != nil {

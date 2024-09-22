@@ -1,4 +1,6 @@
-<script setup lang="ts" name="CommonAside">
+<script setup lang="ts">
+import {useI18n} from "vue-i18n";
+import {computed, ref} from "vue";
 import {useRouter} from 'vue-router'
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -29,6 +31,7 @@ import {
   SpeedometerOutline as dashboardIcon,
 } from '@vicons/ionicons5'
 
+const {t} = useI18n()
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
 
@@ -223,77 +226,77 @@ let update = (key: string) => {
 
 
 // 普通用户 ----------------------------------
-let UserMenuOption = [
+let UserMenuOption = ref([
   {
-    label: '仪表盘',
+    label: computed(() => t('commonAside.user.dashboard')),
     key: 'user-dashboard',
     icon: renderIcon(dashboardIcon)
   },
   {
-    label: '使用文档',
+    label: computed(() => t('commonAside.user.document')),
     key: 'user-doc',
     icon: renderIcon(manualIcon)
   },
   {
-    label: '订阅',
+    label: computed(() => t('commonAside.user.subscribe')),
     key: 'user-sub',
     // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
       {
-        label: '购买订阅',
+        label: computed(() => t('commonAside.user.purchase')),
         key: 'user-buy-plan',
         icon: renderIcon(buyIcon),
       },
       {
-        label: '余量查询',
+        label: computed(() => t('commonAside.user.surplus')),
         key: 'user-margin-query',
         icon: renderIcon(paymentIcon),
       },
     ]
   },
   {
-    label: '财务',
+    label: computed(() => t('commonAside.user.fiance')),
     key: 'user-fiance',
     // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
       {
-        label: '我的订单',
+        label: computed(() => t('commonAside.user.myOrder')),
         key: 'user-order',
         icon: renderIcon(myOrderIcon),
       },
       {
-        label: '我的邀请',
+        label: computed(() => t('commonAside.user.myInvite')),
         key: 'user-invited',
         icon: renderIcon(inviteIcon),
       },
     ]
   },
   {
-    label: '用户',
+    label: computed(() => t('commonAside.user.user')),
     key: 'my-profile',
     // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
       {
-        label: '个人中心',
+        label: computed(() => t('commonAside.user.profile')),
         key: 'user-profile',
         icon: renderIcon(profileIcon),
       },
       {
-        label: '我的工单',
+        label: computed(() => t('commonAside.user.support')),
         key: 'user-post',
         icon: renderIcon(supportIcon),
       },
       {
-        label: '激活记录',
+        label: computed(() => t('commonAside.user.activateLog')),
         key: 'user-active-record',
         icon: renderIcon(activeIcon),
       },
     ]
   },
-]
+])
 
 
 let userUpdate = (key: string) => {
@@ -323,6 +326,12 @@ let userUpdate = (key: string) => {
   }
 }
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'CommonAside',
+}
 </script>
 
 <template>

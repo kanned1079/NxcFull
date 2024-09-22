@@ -9,7 +9,7 @@
 ### 技术棧
 
 - 前端
-    - Vue3 + TypeScript + pinia + NaiveUI + md-editor
+    - Vue3 + TypeScript + pinia + NaiveUI + md-editor + i18next
 - 后端
     - golang + gin + gorm + gRPC + Mysql + Redis + RabbitMq
 

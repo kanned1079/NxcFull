@@ -23,9 +23,9 @@ func HandleUserRegister(context *gin.Context) {
 	}
 	log.Println("最终注册", postForm)
 	var newUserInfo user.User = user.User{
-		Email:             postForm.Email,
-		InviteUserID:      postForm.InviteUserId,
-		LicenseExpiration: nil,
+		Email:        postForm.Email,
+		InviteUserID: postForm.InviteUserId,
+		//LicenseExpiration: nil,
 	}
 	var newUserAuth user.Auth = user.Auth{
 		Email:    postForm.Email,

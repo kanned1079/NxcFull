@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {onMounted, onBeforeMount, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
@@ -11,6 +12,7 @@ import { MdPreview } from 'md-editor-v3';
 import usePaymentStore from "@/stores/usePaymentStore";
 import 'md-editor-v3/lib/preview.css';
 
+const {t} = useI18n();
 const id = 'preview-only';
 const text = ref('# Hello Editor');
 // const scrollElement = document.documentElement;
@@ -78,7 +80,7 @@ export default {
 </script>
 
 <template>
-  <n-p style="font-size: 1.2rem; margin: 20px 0 0 30px; font-weight: 600;">选择最适合您的计划</n-p>
+  <n-p style="font-size: 1.2rem; margin: 20px 0 0 30px; font-weight: 600;">{{ t('newPurchase.headerPlaceholder') }}</n-p>
   <div class="root">
     <n-card
         v-for="(item, index) in paymentStore.plan_list as Plan[]"
@@ -98,7 +100,7 @@ export default {
             <p class="price">{{ item.month_price }}</p>
             <p class="price-symbol">{{ appInfosStore.appCommonConfig.currency }}</p>
           </div>
-          <p class="pay-method">{{ item.month_price?'月付':'更多选择' }}</p>
+          <p class="pay-method">{{ item.month_price?t('newPurchase.monthPay'):t('newPurchase.moreMethod') }}</p>
         </div>
 
         <MdPreview
@@ -111,7 +113,9 @@ export default {
             @click="toPurchase(index)"
             type="primary"
             class="purchase"
-        >订购</n-button>
+        >
+          {{ t('newPurchase.purchaseBtn') }}
+        </n-button>
       </n-card>
 
     </n-card>
