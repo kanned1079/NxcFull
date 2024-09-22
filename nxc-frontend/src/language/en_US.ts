@@ -11,7 +11,7 @@ export default {
             dashboard: 'Dashboard',
             document: 'Manual',
             subscribe: 'Subscribe',
-            purchase: 'Purchase',
+            purchase: 'PurchaseViews',
             surplus: 'Balance',
             fiance: 'Finance',
             myOrder: 'Order',
@@ -26,7 +26,7 @@ export default {
         myPlan: 'My Subscription',
         shortcut: 'Shortcut',
         timeLeft: 'Subscription is valid and will expire in {msg}.',
-        toPurchase: 'Purchase Subscription',
+        toPurchase: 'PurchaseViews Subscription',
         tutorial: {
             title: 'View Tutorial',
             content: 'Learn how to use {name}',
@@ -50,7 +50,7 @@ export default {
     },
     newPurchase: {
         headerPlaceholder: 'Choose the plan that suits you best',
-        purchaseBtn: 'Purchase',
+        purchaseBtn: 'PurchaseViews',
         monthPay: 'Monthly payment',
         moreMethod: 'More options',
     },

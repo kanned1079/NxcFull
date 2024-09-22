@@ -87,6 +87,13 @@
             </set>
           </value>
         </entry>
+        <entry key="Message">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/ticket/Ticket.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Myapp">
           <value>
             <set>
@@ -210,6 +217,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/nxc-backend/themes/themes.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Ticket">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/ticket/Ticket.go" />
             </set>
           </value>
         </entry>
@@ -619,6 +633,19 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-backend/ticket/Ticket.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1727005580209" />
+              <option name="schema">
+                <list>
+                  <option value="Ticket" />
+                  <option value="Message" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/Auth.go">
           <value>
             <ScannedPath>
@@ -681,6 +708,7 @@
         <entry key="frontend" value="Frontend" />
         <entry key="group" value="Group" />
         <entry key="keys" value="Keys" />
+        <entry key="message" value="Message" />
         <entry key="myapp" value="Myapp" />
         <entry key="notice" value="Notice" />
         <entry key="notice_form_data" value="noticeFormData" />
@@ -700,6 +728,7 @@
         <entry key="subscribes" value="Subscribes" />
         <entry key="system_setting_options" value="SystemSettingOptions" />
         <entry key="themes" value="Themes" />
+        <entry key="ticket" value="Ticket" />
         <entry key="user" value="User" />
         <entry key="verify_email" value="VerifyEmail" />
         <entry key="verify_email_data" value="VerifyEmailData" />

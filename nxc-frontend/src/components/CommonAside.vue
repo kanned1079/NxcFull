@@ -286,7 +286,7 @@ let UserMenuOption = ref([
       },
       {
         label: computed(() => t('commonAside.user.support')),
-        key: 'user-post',
+        key: 'user-tickets',
         icon: renderIcon(supportIcon),
       },
       {
@@ -321,6 +321,12 @@ let userUpdate = (key: string) => {
     case 'user-profile': {
       // themeStore.menuSelected = 'user-profile'
       router.push({path: '/dashboard/profile'})
+      break
+    }
+
+
+    case 'user-tickets': {
+      router.push({path: '/dashboard/tickets'})
       break
     }
   }

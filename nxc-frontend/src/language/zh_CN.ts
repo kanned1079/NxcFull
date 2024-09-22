@@ -101,4 +101,8 @@ export default {
         pwdNotMatch: '兩次密碼輸入不一致',
         oldPwdNotNull: '舊密碼不能為空',
     },
+    tickets: {
+        userTickets: '歷史工單',
+        addTicket: '新建工單',
+    }
 }

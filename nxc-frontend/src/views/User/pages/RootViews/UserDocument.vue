@@ -83,8 +83,8 @@ export default {
 <div class="root">
   <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root">
     <n-input-group>
-      <n-input v-model="search" :bordered="false" size="large" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
-      <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="large" class="search-btn">{{ t('userDocument.searchBtn') }}</n-button>
+      <n-input v-model="search" :bordered="false" size="medium" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
+      <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="medium" class="search-btn">{{ t('userDocument.searchBtn') }}</n-button>
     </n-input-group>
   </n-card>
 
