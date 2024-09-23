@@ -94,9 +94,9 @@ export default {
 
 <template>
   <div class="root">
-    <n-card class="body-card" hoverable :embedded="true" title="知识库管理">
+    <n-card class="body-card" hoverable :embedded="true" title="知识库管理" :bordered="false">
 
-      <n-button type="primary" @click="activate('right')">添加文档</n-button>
+      <n-button type="primary" :bordered="false" @click="activate('right')">添加文档</n-button>
 
       <!--      <MdEditor v-model="text" :theme="themeStore.enableDarkMode?'dark':'light'"/>-->
     </n-card>

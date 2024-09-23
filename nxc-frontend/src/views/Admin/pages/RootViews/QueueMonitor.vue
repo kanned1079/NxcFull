@@ -339,7 +339,7 @@ onUnmounted(() => {
 }
 
 .n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
   border: 0;
 }
 </style>

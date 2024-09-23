@@ -14,7 +14,7 @@ export default {
             document: '使用文檔',
             subscribe: '訂閱',
             purchase: '購買訂閱',
-            surplus: '餘量查詢',
+            surplus: '我的密鑰',
             fiance: '財務',
             myOrder: '我的訂單',
             myInvite: '我的邀請',
@@ -104,5 +104,8 @@ export default {
     tickets: {
         userTickets: '歷史工單',
         addTicket: '新建工單',
+    },
+    userKeys: {
+        myKeys: '我的密鑰'
     }
 }

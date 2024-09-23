@@ -142,13 +142,13 @@ let smtpSettings = [
 
 <template>
 
-  <n-card class="root" :embedded="true" title="邮件设置">
+  <n-card class="root" :embedded="true" title="邮件设置" :bordered="false">
     <n-alert type="warning" style="margin-bottom: 30px" :bordered="false">
       如果你更改了本页配置，需要对队列服务进行重启。&nbsp;另外本页配置优先级高于.env中邮件配置。
     </n-alert>
 
 
-    <div v-for="setting in smtpSettings" :key="setting.title" class="item">
+    <div v-for="setting in smtpSettings" :key="setting.title" class="item" >
     <span class="l-content">
       <div class="describe">
         <p class="title">{{ setting.title }}</p>
@@ -367,8 +367,8 @@ let smtpSettings = [
   text-align: right;
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>

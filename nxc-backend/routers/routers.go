@@ -72,6 +72,9 @@ func StartAdminReq() {
 		adminAuthorized.POST("/coupon/add", coupon.HandleAddNewCoupon)       // 新建优惠券
 		adminAuthorized.POST("/groups/add", privilege.HandleAddNewGroup)     // 添加权限组
 		adminAuthorized.GET("/groups/get", privilege.HandleGetAllGroups)     // 获取所有权限组列表
+		adminAuthorized.GET("/coupon/fetch", coupon.HandleGetAllCoupons)
+		adminAuthorized.POST("/coupon/status/update", coupon.HandleActiveCoupon)
+		adminAuthorized.GET("/plans/kv/fetch", subscribePlan.HandleGetAllPlanKeyName)
 
 	}
 

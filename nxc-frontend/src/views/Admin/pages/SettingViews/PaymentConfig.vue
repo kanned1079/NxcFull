@@ -63,8 +63,8 @@ let paymentMethods = [
 <template>
   <div class="root-root">
     <n-infinite-scroll style="height: 100vh" :distance="10">
-      <n-card hoverable class="root" :embedded="true" title="支付设置">
-        <n-button class="add-btn" @click="handleAddPaymentMethods">添加支付方式</n-button>
+      <n-card hoverable class="root" :embedded="true" title="支付设置" :bordered="false">
+        <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddPaymentMethods">添加支付方式</n-button>
         <div class="table">
           <n-table :single-line="false">
             <thead>
@@ -129,7 +129,6 @@ let paymentMethods = [
 }
 .root {
   min-width: 900px;
-  padding: 20px;
 
   .add-btn {
     margin-top: 10px;
@@ -152,9 +151,5 @@ let paymentMethods = [
     }
   }
 }
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  padding: 0;
-  border: 0;
-}
+
 </style>

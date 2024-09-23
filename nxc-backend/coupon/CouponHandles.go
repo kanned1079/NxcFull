@@ -41,7 +41,7 @@ func HandleAddNewCoupon(context *gin.Context) {
 	}
 	log.Println(postData)
 	if err := dao.Db.Model(&Coupon{}).Create(&newCoupon).Error; err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code":  http.StatusInternalServerError,
 			"msg":   "插入数据失败",
 			"error": err.Error(),
@@ -64,7 +64,7 @@ func HandleVerifyCoupon(context *gin.Context) {
 
 	// 数据绑定错误处理
 	if err := context.ShouldBind(&postData); err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code":  http.StatusInternalServerError,
 			"msg":   "请求数据无效",
 			"error": err.Error(),
@@ -77,7 +77,7 @@ func HandleVerifyCoupon(context *gin.Context) {
 	// 查找优惠券
 	var coupon Coupon
 	if err := dao.Db.Model(&Coupon{}).First(&coupon, "code = ?", postData.CouponCode).Error; err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code":  http.StatusInternalServerError,
 			"msg":   "优惠券无效或不存在",
 			"error": err.Error(),
@@ -85,9 +85,16 @@ func HandleVerifyCoupon(context *gin.Context) {
 		return
 	}
 
+	if !coupon.Enabled {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"meg":  "优惠券未启用",
+		})
+	}
+
 	// 检查优惠券是否有指定的订阅计划限制
 	if coupon.PlanLimit != 0 && coupon.PlanLimit != postData.PlanId {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  "优惠券不适用于此订阅计划",
 		})
@@ -97,7 +104,7 @@ func HandleVerifyCoupon(context *gin.Context) {
 	// 检查优惠券是否已过期或未开始
 	now := time.Now()
 	if (coupon.StartTime != nil && now.Before(*coupon.StartTime)) || (coupon.EndTime != nil && now.After(*coupon.EndTime)) {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  "优惠券不在有效期内",
 		})
@@ -106,7 +113,7 @@ func HandleVerifyCoupon(context *gin.Context) {
 
 	// 检查优惠券的剩余数量
 	if coupon.Residue <= 0 {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  "优惠券已使用完",
 		})
@@ -128,7 +135,7 @@ func HandleVerifyCoupon(context *gin.Context) {
 	var usedCount int64
 	dao.Db.Model(&CouponUsage{}).Where("user_id = ? AND coupon_id = ?", postData.UserId, coupon.Id).Count(&usedCount)
 	if coupon.PerUserLimit > 0 && usedCount >= coupon.PerUserLimit {
-		context.JSON(http.StatusBadRequest, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusBadRequest,
 			"msg":  "您已达到优惠券的使用次数限制",
 		})
@@ -142,5 +149,61 @@ func HandleVerifyCoupon(context *gin.Context) {
 		"msg":         "优惠券有效",
 		"percent_off": coupon.PercentOff,
 		"name":        coupon.Name,
+	})
+}
+
+func HandleGetAllCoupons(context *gin.Context) {
+	var coupons []Coupon
+	if err := dao.Db.Model(&Coupon{}).Find(&coupons).Error; err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "获取优惠券列表失败",
+		})
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":        http.StatusOK,
+		"coupon_list": coupons,
+	})
+}
+
+// 修改优惠券的 Enabled字段
+func HandleActiveCoupon(context *gin.Context) {
+	postData := &struct {
+		Id     int64 `json:"id"`
+		Status bool  `json:"status"`
+	}{}
+
+	// Bind the incoming JSON to postData
+	if err := context.ShouldBind(&postData); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"code":  http.StatusBadRequest,
+			"error": "Invalid request body",
+		})
+		return
+	}
+
+	log.Println(postData.Id, postData.Status)
+
+	// Find the coupon by Id
+	var coupon Coupon
+	if err := dao.Db.First(&coupon, postData.Id).Error; err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"error": "Coupon not found"})
+		return
+	}
+
+	// Update the Enabled field
+	coupon.Enabled = postData.Status
+	log.Println(coupon)
+
+	// Save the updated coupon
+	if err := dao.Db.Model(&Coupon{}).Where("id = ?", coupon.Id).Save(&coupon).Error; err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update coupon status"})
+		return
+	}
+
+	// Return success response
+	context.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": "Coupon status updated successfully",
 	})
 }

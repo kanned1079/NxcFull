@@ -93,7 +93,7 @@ let securitySettingsData = [
 
 <template>
   <div class="root">
-    <n-card :embedded="true" class="security-panel" title="安全设置">
+    <n-card :embedded="true" class="security-panel" title="安全设置" :bordered="false">
 
 <!--      <div class="item">-->
 <!--        <span class="l-content">-->
@@ -321,9 +321,9 @@ let securitySettingsData = [
   text-align: right;
 }
 
-
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>

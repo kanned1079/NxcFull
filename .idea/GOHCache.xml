@@ -42,6 +42,7 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Coupon.go" />
+              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/CouponHandles.go" />
             </set>
           </value>
         </entry>
@@ -262,6 +263,13 @@
             </set>
           </value>
         </entry>
+        <entry key="planInfo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/subscribePlan/PlanHanles.go" />
+            </set>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="scannedPathMapping">
@@ -307,7 +315,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/Coupon.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726801626837" />
+              <option name="lastModified" value="1727087080978" />
               <option name="schema">
                 <list>
                   <option value="Coupon" />
@@ -319,7 +327,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/CouponHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726890424753" />
+              <option name="lastModified" value="1727091193366" />
             </ScannedPath>
           </value>
         </entry>
@@ -547,7 +555,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726988075116" />
+              <option name="lastModified" value="1727089913900" />
             </ScannedPath>
           </value>
         </entry>
@@ -586,7 +594,12 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/subscribePlan/PlanHanles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726820125148" />
+              <option name="lastModified" value="1727090169692" />
+              <option name="schema">
+                <list>
+                  <option value="planInfo" />
+                </list>
+              </option>
             </ScannedPath>
           </value>
         </entry>
@@ -716,6 +729,7 @@
         <entry key="orders" value="Orders" />
         <entry key="os_info" value="OsInfo" />
         <entry key="plan" value="Plan" />
+        <entry key="plan_info" value="planInfo" />
         <entry key="public_notices" value="PublicNotices" />
         <entry key="remind_expire_mail" value="RemindExpireMail" />
         <entry key="security" value="Security" />

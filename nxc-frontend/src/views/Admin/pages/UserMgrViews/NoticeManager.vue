@@ -1,4 +1,4 @@
-<script setup lang="ts" name="NoticeManager">
+<script setup lang="ts">
 import {onMounted, reactive, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore.ts"
 import instance from "@/axios";
@@ -166,41 +166,23 @@ onMounted(() => {
 })
 
 
-// watch(noticesStore.noticesArr, () => {
-//   console.log('sssss')
-//   getAllNotices()
-//
-// }, {
-//   deep: true
-// })
-
-// let test = async (notice_id: number) => {
-//   let {data} = await instance.delete('/api/admin/delete-notice',
-//       {
-//         params: {
-//           notice_id: notice_id,
-//         },
-//       },
-//   )
-//   if (data.code === 200) {
-//     message.success("删除成功")
-//   } else {
-//     message.error("出现错误")
-//   }
-//   console.log(data)
-// }
-
 let handleDeleteNotice = async () => {
   await deleteNotice(2)
 }
 
 </script>
 
+<script lang="ts">
+export default {
+  name: 'NoticeManager',
+}
+</script>
+
 <template>
   <div class="root">
-    <n-card title="公告管理" hoverable :embedded="true" class="card">
-      <n-button class="add-btn" @click="handleAddNotice">添加公告</n-button>
-      <n-button style="margin-left: 20px" type="default" @click="handleDeleteNotice">测试</n-button>
+    <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">
+      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>
+      <n-button type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试</n-button>
       <n-data-table
           style="margin-top: 20px"
           :bordered="false"
@@ -279,8 +261,4 @@ let handleDeleteNotice = async () => {
   }
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
 </style>

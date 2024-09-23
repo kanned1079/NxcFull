@@ -48,7 +48,31 @@ let ticketList = ref<TicketItem[]>([
     status: true,
     created_at: '2024-09-18 16:10',
     last_response: '2024-09-19 11:30'
-  }
+  },
+  {
+    id: 3,
+    title: '支付问题',
+    urgency: 3,
+    status: true,
+    created_at: '2024-09-18 16:10',
+    last_response: '2024-09-19 11:30'
+  },
+  {
+    id: 3,
+    title: '支付问题',
+    urgency: 3,
+    status: true,
+    created_at: '2024-09-18 16:10',
+    last_response: '2024-09-19 11:30'
+  },
+  {
+    id: 3,
+    title: '支付问题',
+    urgency: 3,
+    status: true,
+    created_at: '2024-09-18 16:10',
+    last_response: '2024-09-19 11:30'
+  },
 ])
 
 // 点击打开工单后 单独打开一个聊天窗口
@@ -85,21 +109,30 @@ const columns = [
           level = '高';
           break;
       }
-      return h(NTag, {type: row.urgency === 3 ? 'error' : row.urgency === 2 ? 'warning' : 'success'}, {default: () => level});
+      return h(NTag, {
+        type: row.urgency === 3 ? 'error' : row.urgency === 2 ? 'warning' : 'success',
+        bordered: false,
+      }, {default: () => level});
     }
   },
   {
     title: '工单状态', key: 'status', render(row: TicketItem) {
-      return h(NTag, {type: row.status ? 'info' : 'default'}, {default: () => row.status ? '未关闭' : '已关闭'});
+      return h(NTag, {
+        type: row.status ? 'info' : 'default',
+        bordered: false,
+      }, {default: () => row.status ? '未关闭' : '已关闭'});
     }
   },
   {title: '创建时间', key: 'created_at'},
   {title: '最后回复', key: 'last_response'},
   {
-    title: '操作', key: 'actions', render(row: TicketItem) {
-      return h('div', null, [
+    title: '操作', key: 'actions', fixed: 'right', render(row: TicketItem) {
+      return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
+          type: 'primary',
+          bordered: false,
+          style: {marginLeft: '10px'},
           onClick: () => openTicket(row)
         }, {default: () => '查看工单'}),
         h(NButton, {
@@ -127,13 +160,13 @@ const columns = [
 
     <n-card :embedded="true" hoverable content-style="padding: 0;" :bordered="false">
       <n-data-table
-          striped
           class="table"
           :columns="columns"
           :data="ticketList"
           :pagination="false"
-          :bordered="false"
-          style="background-color: rgba(0,0,0,0)"
+          :bordered="true"
+          style=""
+          :scroll-x="800"
       />
     </n-card>
   </div>
@@ -157,6 +190,7 @@ const columns = [
         opacity: 0.8;
       }
     }
+
     margin-bottom: 20px;
   }
 }

@@ -39,7 +39,7 @@ onMounted(() => {
 <template>
 
   <div class="root" style="margin: 20px">
-    <n-card hoverable style="padding: 0">
+    <n-card hoverable style="padding: 0" :bordered="false" :embedded="true">
       <n-tabs type="segment" animated>
         <n-tab-pane name="chap1" tab="站点">
           <Site></Site>
@@ -82,8 +82,8 @@ onMounted(() => {
 </template>
 
 <style lang="less" scoped>
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>

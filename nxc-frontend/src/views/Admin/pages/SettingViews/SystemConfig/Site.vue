@@ -157,7 +157,7 @@ onMounted(() => {
 
 <template>
   <div class="root">
-    <n-card :embedded="true" class="security-panel" title="站点">
+    <n-card :embedded="true" class="security-panel" title="站点" :bordered="false">
       <div v-for="setting in appSettings" :key="setting.title" class="item">
         <span class="l-content">
           <div class="describe">
@@ -455,8 +455,8 @@ onMounted(() => {
   }
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>

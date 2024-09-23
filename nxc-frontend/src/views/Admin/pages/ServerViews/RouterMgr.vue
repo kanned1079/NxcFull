@@ -16,8 +16,8 @@ onMounted(() => {
 
 <template>
   <div class="root">
-    <n-card hoverable :embedded="true" title="路由管理">
-      <n-button class="add-btn" @click="handleAddRouter">添加路由</n-button>
+    <n-card hoverable :embedded="true" title="路由管理" :bordered="false">
+      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddRouter">添加路由</n-button>
     </n-card>
   </div>
 </template>
@@ -30,9 +30,5 @@ onMounted(() => {
     margin-top: 10px;
   }
 }
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  padding: 0;
-  border: 0;
-}
+
 </style>

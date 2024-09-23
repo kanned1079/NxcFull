@@ -5,7 +5,7 @@ import {
 </script>
 
 <template>
-  <n-card hoverable class="root" content-style="padding: 0" :embedded="true">
+  <n-card hoverable class="root" content-style="padding: 0" :embedded="true" :bordered="false">
     <div class="layer-up">
       <p class="txt">今日收入</p>
       <n-icon size="40" style="opacity: 10%; margin: 10px 10px 0 0 ">

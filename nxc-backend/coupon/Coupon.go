@@ -9,6 +9,7 @@ type Coupon struct {
 	Id           int64          `json:"id" gorm:"primary_key;AUTO_INCREMENT"` // 优惠券Id
 	Name         string         `json:"name"`                                 // 优惠券名称
 	Code         string         `json:"code"`                                 // 优惠码
+	Enabled      bool           `json:"enabled"`                              // 启用优惠券
 	PercentOff   float64        `json:"percent_off"`                          // 优惠百分比
 	StartTime    *time.Time     `json:"start_time"`                           // 可用起始时间
 	EndTime      *time.Time     `json:"end_time"`                             // 过期时间

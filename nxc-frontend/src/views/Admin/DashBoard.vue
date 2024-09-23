@@ -98,7 +98,7 @@ onMounted(() => {
 
 .content {
   margin-top: 52px;
-  background-color: v-bind('themeStore.getTheme.globeTheme.contentBgColor');
+  //background-color: v-bind('themeStore.getTheme.globeTheme.contentBgColor');
 }
 
 </style>

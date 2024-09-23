@@ -347,7 +347,7 @@ export default {
 
 .n-card {
   //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
+  //background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
   border: 0;
 }
 

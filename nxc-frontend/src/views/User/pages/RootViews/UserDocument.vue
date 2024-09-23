@@ -137,22 +137,17 @@ export default {
       flex-direction: column;
       padding: 10px 0 10px 25px;
       .doc-title {
-        font-weight: bold;
+        font-weight: 400;
         font-size: 1rem;
       }
       .doc-release {
-        opacity: 0.8;
+        opacity: 0.5;
       }
     }
     .doc-item:hover {
-      background-color: rgba(220, 220, 220, 0.2);
+      background-color: rgba(220, 220, 220, 0.15);
     }
   }
 }
-
-//.n-card {
-//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-//  border: 0;
-//}
 
 </style>

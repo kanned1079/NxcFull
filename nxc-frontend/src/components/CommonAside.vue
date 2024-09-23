@@ -113,7 +113,7 @@ let MenuOption = [
       },
       {
         label: '优惠券管理',
-        key: 'publicNotice-manager',
+        key: 'coupon-mgr',
         icon: renderIcon(ticketIcon),
       },
     ]
@@ -211,9 +211,9 @@ let update = (key: string) => {
       router.push({path: '/admin/dashboard/document'})
       break
     }
-    case 'publicNotice-manager': {
-      themeStore.menuSelected = 'publicNotice-manager'
-      router.push({path: '/admin/dashboard/publicNotice'})
+    case 'coupon-mgr': {
+      // themeStore.menuSelected = 'publicNotice-manager'
+      router.push({path: '/admin/dashboard/coupon'})
       break
     }
     case 'privilege-group-mgr': {
@@ -250,7 +250,7 @@ let UserMenuOption = ref([
       },
       {
         label: computed(() => t('commonAside.user.surplus')),
-        key: 'user-margin-query',
+        key: 'user-keys',
         icon: renderIcon(paymentIcon),
       },
     ]
@@ -327,6 +327,10 @@ let userUpdate = (key: string) => {
 
     case 'user-tickets': {
       router.push({path: '/dashboard/tickets'})
+      break
+    }
+    case 'user-keys': {
+      router.push({path: '/dashboard/keys'})
       break
     }
   }

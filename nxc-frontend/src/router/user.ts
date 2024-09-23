@@ -9,6 +9,7 @@ import NewPurchase from "@/views/User/pages/PurchaseViews/NewPurchase.vue";
 import NewSettlement from "@/views/User/pages/PurchaseViews/NewSettlement.vue";
 import UserProfile from "@/views/User/pages/Profile/UserProfile.vue";
 import Tickets from "@/views/User/pages/UserViews/Tickets.vue"
+import UserKeys from "@/views/User/pages/PurchaseViews/UserKeys.vue";
 
 // test
 import ThemeEditor from "@/views/ThemeEditor.vue";
@@ -60,9 +61,13 @@ const userRoutes: RouteRecordRaw[] = [
                 path: '/dashboard/tickets',
                 component: Tickets,
             },
+            // {
+            //     path: '/dashboard/themeeditor',
+            //     component: ThemeEditor,
+            // },
             {
-                path: '/dashboard/themeeditor',
-                component: ThemeEditor,
+                path: '/dashboard/keys',
+                component: UserKeys
             }
 
         ]

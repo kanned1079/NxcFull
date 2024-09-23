@@ -104,8 +104,8 @@ export default {
 
 <template>
   <div class="root">
-    <n-card hoverable :embedded="true" title="权限组管理">
-      <n-button class="add-btn" @click="handleAddGroup">添加权限组</n-button>
+    <n-card hoverable :embedded="true" title="权限组管理" :bordered="false">
+      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddGroup">添加权限组</n-button>
     </n-card>
     <n-modal
         title="新建权限组"
@@ -113,7 +113,7 @@ export default {
         preset="dialog"
         positive-text="确认添加"
         negative-text="算了"
-        style="width: 480px"
+        style="width: 480px; border: 0"
         @positive-click="submitNewGroup"
         @negative-click="closeModal"
         :show-icon="false"
@@ -150,9 +150,9 @@ export default {
   }
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  padding: 0;
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  padding: 0;
+//  border: 0;
+//}
 </style>

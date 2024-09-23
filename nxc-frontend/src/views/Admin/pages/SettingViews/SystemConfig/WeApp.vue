@@ -29,7 +29,7 @@ let appDownloadSettings = [
 </script>
 
 <template>
-  <n-card :embedded="true" class="root" title="APP">
+  <n-card :embedded="true" class="root" title="APP" :bordered="false">
     <n-alert type="info" style="margin-bottom: 30px" :bordered="false">
       用于自有客户端(APP)的版本管理及更新
     </n-alert>
@@ -138,8 +138,8 @@ let appDownloadSettings = [
     }
 
 }
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>

@@ -170,8 +170,8 @@ onMounted(() => {
 
 <template>
   <div class="root">
-    <n-card class="card" hoverable :embedded="true" title="订阅管理">
-      <n-button class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>
+    <n-card class="card" hoverable :embedded="true" title="订阅管理" :bordered="false">
+      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>
     </n-card>
 
     <n-drawer v-model:show="active" width="60%" :placement="placement">

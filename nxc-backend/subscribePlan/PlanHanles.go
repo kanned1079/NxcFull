@@ -76,6 +76,22 @@ func HandleAddNewPlan(context *gin.Context) {
 	})
 }
 
+func HandleGetAllPlanKeyName(context *gin.Context) {
+	type planInfo struct {
+		Id   int64  `json:"id"`
+		Name string `json:"name"`
+	}
+	var planArr = []planInfo{}
+	if result := dao.Db.Model(&Plan{}).Select("id, name").Order("sort ASC").Find(&planArr); result.Error != nil {
+		log.Println(result.Error)
+	}
+	log.Println(planArr)
+	context.JSON(http.StatusOK, gin.H{
+		"code":  http.StatusOK,
+		"plans": planArr,
+	})
+}
+
 //func HandleAddNewPlan(context *gin.Context) {
 //	postData := &struct {
 //		Name          string  `json:"name"`

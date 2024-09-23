@@ -3,7 +3,7 @@ import DashBoard from "@/views/Admin/DashBoard.vue";
 import Summary from "@/views/Admin/pages/RootViews/Summary.vue";
 import QueueMonitor from "@/views/Admin/pages/RootViews/QueueMonitor.vue";
 import SystemConfig from "@/views/Admin/pages/SettingViews/SystemConfig.vue";
-import PaymentConfig from "@/views/Admin/pages/SettingViews/SystemConfig/PaymentConfig.vue";
+import PaymentConfig from "@/views/Admin/pages/SettingViews/PaymentConfig.vue";
 import ThemeConfig from "@/views/Admin/pages/SettingViews/ThemeConfig.vue";
 import UserManager from "@/views/Admin/pages/UserMgrViews/UserManager.vue";
 import AdminLogin from "@/views/Admin/Login/AdminLogin.vue";
@@ -88,8 +88,8 @@ const adminRoutes: RouteRecordRaw[] = [
                 component: DocumentMgr,
             },
             {
-                path: '/admin/dashboard/publicNotice',
-                name: 'publicNotice-mgr',
+                path: '/admin/dashboard/coupon',
+                name: 'coupon',
                 component: CouponMgr,
             },
             {

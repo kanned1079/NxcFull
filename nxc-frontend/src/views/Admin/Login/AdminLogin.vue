@@ -205,7 +205,7 @@ onMounted(() => {
 
   <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center" :style="backgroundStyle">
     <n-flex justify="center" :vertical="true" align="center">
-      <n-card class="layer-up" :embedded="true" hoverable>
+      <n-card class="layer-up" :embedded="true" hoverable :bordered="false">
         <p class="title">{{ siteInfo.siteName }}</p>
         <p class="sub-title">登陆到管理中心</p>
         <div class="inp">
@@ -288,11 +288,11 @@ onMounted(() => {
   height: 40px;
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
-  //background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(50px);
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
+//  //background-color: rgba(0, 0, 0, 0.7);
+//  backdrop-filter: blur(50px);
+//  border: 0;
+//}
 
 </style>

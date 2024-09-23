@@ -148,7 +148,7 @@ export default {
         </n-icon>
       </div>
       <div class="wallet-content">
-        <p class="balance">30.20</p>
+        <p class="balance">{{ userInfoStore.thisUser.balance }}</p>
         <p class="unit">{{ appInfosStore.appCommonConfig.currency }}</p>
       </div>
       <div class="wallet-bottom">
@@ -177,7 +177,7 @@ export default {
                      :placeholder="t('userProfile.newPwdAgainSub')"/>
           </n-form-item>
         </n-form>
-        <n-button class="alert-btn" type="primary" @click="saveNewPassword">{{ t('userProfile.saveBtn') }}</n-button>
+        <n-button class="alert-btn" type="primary" @click="saveNewPassword" :bordered="false">{{ t('userProfile.saveBtn') }}</n-button>
       </div>
     </n-card>
 
@@ -211,7 +211,7 @@ export default {
         <n-alert type="warning" :bordered="false">
           {{ t('userProfile.deleteAccountSub') }}
         </n-alert>
-        <n-button strong style="margin-top: 20px; color: #e3e4e7" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
+        <n-button strong style="margin-top: 20px;" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
       </div>
     </n-card>
 

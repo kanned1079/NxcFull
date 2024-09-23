@@ -19,6 +19,7 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             verifyOldPassword: '/api/user/v1/auth/passcode/verify',
             applyNewPassword: '/api/user/v1/auth/passcode/update',
             getMyPlanList: '/api/user/v1/plan/info/fetch',
+            getAllMyKeys: '/api/user/v1/keys/fetch',
 
         },
         admin: {
@@ -37,7 +38,12 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             addNewCoupon: '/api/admin/v1/coupon/add',   // 添加新的优惠券
             addNewPrivilegeGroup: '/api/admin/v1/groups/add',   // 添加新的权限组
             getAllPrivilegeGroups: '/api/admin/v1/groups/get', // 获取所有的权限组列表
-            addNewPlan: '/api/admin/v1/plans/add'   // 添加新的订阅信息
+            addNewPlan: '/api/admin/v1/plans/add',   // 添加新的订阅信息
+            getAllCoupons: '/api/admin/v1/coupon/fetch',    // 获取所有的优惠券列表
+            updateCoupon: '/api/admin/v1/coupon/update', // 更新优惠券信息
+            updateCouponStatus: '/api/admin/v1/coupon/status/update',    // 优惠券是否启用
+            deleteCoupon: '/api/admin/v1/coupon/delete',    // 删除优惠券
+            getPlanKVList: 'api/admin/v1/plans/kv/fetch',
         }
     })
 

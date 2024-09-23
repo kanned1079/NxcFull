@@ -47,7 +47,7 @@ onMounted(() => {
 
 <template>
   <div class="root">
-    <n-card :embedded="true" class="security-panel" title="个性化">
+    <n-card :embedded="true" class="security-panel" title="个性化" :bordered="false">
       <div class="item">
         <span class="l-content">
           <div class="describe">
@@ -149,8 +149,8 @@ onMounted(() => {
   }
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>

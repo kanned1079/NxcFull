@@ -29,7 +29,7 @@ let noticeSettings = [
 </script>
 
 <template>
-  <n-card :embedded="true" class="root" title="通知">
+  <n-card :embedded="true" class="root" title="通知" :bordered="false">
 
 
     <div v-for="setting in noticeSettings" :key="setting.title" class="item">
@@ -135,8 +135,8 @@ let noticeSettings = [
     }
 
 }
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>

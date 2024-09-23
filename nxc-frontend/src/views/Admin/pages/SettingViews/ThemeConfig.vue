@@ -66,7 +66,7 @@ onMounted(() => {
 
 <template>
   <div class="root">
-    <n-card hoverable :embedded="true" class="root-card" title="主题设置">
+    <n-card hoverable :embedded="true" class="root-card" title="主题设置" :bordered="false">
     </n-card>
 
     <n-alert type="warning" :bordered="false" style="margin-bottom: 20px">
@@ -97,7 +97,6 @@ onMounted(() => {
   padding: 20px;
 
   .root-card {
-    border: 0;
     margin-bottom: 10px;
   }
 
@@ -170,6 +169,7 @@ onMounted(() => {
 
   }
   .theme-card:hover {
+    transition: transform 200ms ease;
     transform: translateY(-5px);
   }
 
@@ -185,9 +185,4 @@ onMounted(() => {
 
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  padding: 0;
-  transition: transform 200ms ease;
-}
 </style>

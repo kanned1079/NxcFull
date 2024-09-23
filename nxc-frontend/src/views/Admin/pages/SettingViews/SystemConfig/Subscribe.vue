@@ -15,7 +15,7 @@ let sendTestMail = () => {
 
 <template>
 
-  <n-card class="root" :embedded="true" title="订阅管理">
+  <n-card class="root" :embedded="true" title="订阅管理" :bordered="false">
 <!--    <n-alert title="Warning 警告" type="warning" style="margin-bottom: 30px" :bordered="false">-->
 <!--      如果你更改了本页配置，需要对队列服务进行重启。&nbsp;另外本页配置优先级高于.env中邮件配置。-->
 <!--    </n-alert>-->
@@ -105,8 +105,8 @@ let sendTestMail = () => {
   text-align: right;
 }
 
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>

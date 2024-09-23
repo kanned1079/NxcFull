@@ -21,7 +21,7 @@ let enterSetting = () => {
 
   <n-card hoverable @click="router.push({
     path: '/admin/dashboard/systemconfig',
-  })" :embedded="true">
+  })" :embedded="true" :bordered="false">
     <div>
       <n-icon size="25">
         <settingIcon/>
@@ -30,7 +30,7 @@ let enterSetting = () => {
     </div>
   </n-card>
 
-  <n-card hoverable :embedded="true">
+  <n-card hoverable :embedded="true" :bordered="false">
     <div>
       <n-icon size="25">
         <SubIcon/>
@@ -39,7 +39,7 @@ let enterSetting = () => {
     </div>
   </n-card>
 
-  <n-card hoverable :embedded="true">
+  <n-card hoverable :embedded="true" :bordered="false">
     <div>
       <n-icon size="25">
         <OrderIcon/>
@@ -48,7 +48,7 @@ let enterSetting = () => {
     </div>
   </n-card>
 
-  <n-card hoverable style="margin-right: 20px" :embedded="true">
+  <n-card hoverable style="margin-right: 20px" :embedded="true" :bordered="false">
     <div>
       <n-icon size="25">
         <UserIcon/>
@@ -66,8 +66,8 @@ let enterSetting = () => {
   //background-color: #4cae4c;
   height: 100px;
 }
-.n-card {
-  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+//.n-card {
+//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
+//  border: 0;
+//}
 </style>
