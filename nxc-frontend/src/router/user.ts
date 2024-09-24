@@ -34,7 +34,10 @@ const userRoutes: RouteRecordRaw[] = [
     },
     {
         path: '/',
-        // redirect: '/login',
+        redirect: '/welcome',
+    },
+    {
+        path: '/welcome',
         component: WhyChooseUsA,
     },
     {

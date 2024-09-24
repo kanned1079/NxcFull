@@ -107,5 +107,15 @@ export default {
     },
     userKeys: {
         myKeys: '我的密鑰'
+    },
+    welcome: {
+        A: {
+            aboutUs: '關於我們',
+            pricing: '定價',
+            login: '登錄',
+            register: '註冊帳號',
+            welcomeTo: '歡迎來到',
+            startingUse: '開始使用',
+        }
     }
 }
