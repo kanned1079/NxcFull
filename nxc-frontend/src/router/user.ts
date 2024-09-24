@@ -11,8 +11,11 @@ import UserProfile from "@/views/User/pages/Profile/UserProfile.vue";
 import Tickets from "@/views/User/pages/UserViews/Tickets.vue"
 import UserKeys from "@/views/User/pages/PurchaseViews/UserKeys.vue";
 
+// WhyChooseUs页面
+import WhyChooseUsA from "@/views/Welcome/A/WhyChooseUsA.vue";
+
 // test
-import ThemeEditor from "@/views/ThemeEditor.vue";
+// import ThemeEditor from "@/views/ThemeEditor.vue";
 
 const userRoutes: RouteRecordRaw[] = [
     {
@@ -31,7 +34,8 @@ const userRoutes: RouteRecordRaw[] = [
     },
     {
         path: '/',
-        redirect: '/login',
+        // redirect: '/login',
+        component: WhyChooseUsA,
     },
     {
         path: '/dashboard',

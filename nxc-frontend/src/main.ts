@@ -9,6 +9,7 @@ import { createI18n } from 'vue-i18n';
 import en_US from "@/language/en_US";
 import zh_CN from "@/language/zh_CN";
 import ja_JP from "@/language/ja_JP";
+import zh_HK from "@/language/zh_HK";
 
 // auto
 import { createPinia } from 'pinia'
@@ -16,12 +17,14 @@ import { createApp } from 'vue'
 
 import App from './App.vue'
 import router from './router'
-import naive from "naive-ui";
+import naive, {zhCN} from "naive-ui";
 
 const messages = {
     en_US,
     zh_CN,
     ja_JP,
+    zh_HK,
+
 }
 
 const savedLocale = localStorage.getItem('locale') || 'zh_CN'

@@ -10,13 +10,6 @@
             </set>
           </value>
         </entry>
-        <entry key="ActiveOrder">
-          <value>
-            <set>
-              <option value="file://$PROJECT_DIR$/nxc-backend/orders/ActiveOrder.go" />
-            </set>
-          </value>
-        </entry>
         <entry key="ActiveOrders">
           <value>
             <set>
@@ -42,7 +35,6 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/nxc-backend/coupon/Coupon.go" />
-              <option value="file://$PROJECT_DIR$/nxc-backend/coupon/CouponHandles.go" />
             </set>
           </value>
         </entry>
@@ -106,13 +98,6 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go" />
-            </set>
-          </value>
-        </entry>
-        <entry key="Order">
-          <value>
-            <set>
-              <option value="file://$PROJECT_DIR$/nxc-backend/orders/Order.go" />
             </set>
           </value>
         </entry>
@@ -697,19 +682,11 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/nxc-frontend/src/assets/main.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1725700151829" />
-            </ScannedPath>
-          </value>
-        </entry>
       </map>
     </option>
     <option name="tableStructMapping">
       <map>
         <entry key="aaa" value="AAA" />
-        <entry key="active_order" value="ActiveOrder" />
         <entry key="active_orders" value="ActiveOrders" />
         <entry key="admin_config" value="adminConfig" />
         <entry key="app_settings" value="AppSettings" />
@@ -725,7 +702,6 @@
         <entry key="myapp" value="Myapp" />
         <entry key="notice" value="Notice" />
         <entry key="notice_form_data" value="noticeFormData" />
-        <entry key="order" value="Order" />
         <entry key="orders" value="Orders" />
         <entry key="os_info" value="OsInfo" />
         <entry key="plan" value="Plan" />
@@ -748,6 +724,6 @@
         <entry key="verify_email_data" value="VerifyEmailData" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1726886684994" />
+    <option name="lastTimeChecked" value="1727137777556" />
   </component>
 </project>

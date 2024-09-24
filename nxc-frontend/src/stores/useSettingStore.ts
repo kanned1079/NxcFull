@@ -32,10 +32,10 @@ const useSettingStore = defineStore('SettingStore', () => {
             ip_register_limit_times: 5,         // 显示次数
             ip_register_lock_time: 120,         // 惩罚时间
         },
-        frontend: {
+        frontend:    {
             frontend_theme_sidebar: false,  // 边栏风格
             frontend_theme_header: false,   // 头部风格
-            frontend_theme: 'bambooGreen',  // 主题色
+            frontend_theme: 'bambooGreen ',  // 主题色
             frontend_background_url: '',    // 背景
         },
         subscribe: {
