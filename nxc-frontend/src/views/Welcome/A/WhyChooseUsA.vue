@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-  <n-space vertical size="large">
+<!--  <n-space vertical size="large">-->
     <n-layout>
       <n-layout-header style="position: fixed; top: 0; left: 0; right: 0; z-index: 2000; background-color: rgba(0,0,0,0)">
         <HeaderA/>
@@ -27,7 +27,7 @@ export default {
         <FooterA/>
       </n-layout-footer>
     </n-layout>
-  </n-space>
+<!--  </n-space>-->
 </template>
 
 <style scoped lang="less">
