@@ -35,7 +35,7 @@ const useSettingStore = defineStore('SettingStore', () => {
         frontend:    {
             frontend_theme_sidebar: false,  // 边栏风格
             frontend_theme_header: false,   // 头部风格
-            frontend_theme: 'bambooGreen ',  // 主题色
+            frontend_theme: '',  // 主题色
             frontend_background_url: '',    // 背景
         },
         subscribe: {
@@ -76,18 +76,18 @@ const useSettingStore = defineStore('SettingStore', () => {
         }
     }
 
-    let saveSetting = async () => {
-        let apiAddrStore = useApiAddrStore()
-        console.log('保存数据到数据库')
-        let { data } = await instance.post(apiAddrStore.apiAddr.admin.getAllSystemConfig, settings)
-        console.log('设置保存到服务器的返回结果', data)
-        // console.log(JSON.stringify(settings))
-    }
+    // let saveSetting = async () => {
+    //     let apiAddrStore = useApiAddrStore()
+    //     console.log('保存数据到数据库')
+    //     let { data } = await instance.post(apiAddrStore.apiAddr.admin.getAllSystemConfig, settings)
+    //     console.log('设置保存到服务器的返回结果', data)
+    //     // console.log(JSON.stringify(settings))
+    // }
 
     let saveOption = async (category: string, key: string, value: any) => {
         let apiAddrStore = useApiAddrStore()
         console.log('保存单个键值到数据库', key, value)
-        let {data} = await instance.post(apiAddrStore.apiAddr.admin.saveSingleConfig, {
+        let {data} = await instance.put('/api/admin/v1/settings', {
             category,
             key,
             value
@@ -102,14 +102,14 @@ const useSettingStore = defineStore('SettingStore', () => {
     let loadSetting = async () => {
         let apiAddrStore = useApiAddrStore()
         console.log('从数据库读取配置')
-        let { data } = await instance.get(apiAddrStore.apiAddr.admin.getAllSystemConfig)
+        let { data } = await instance.get('/api/admin/v1/settings')
         console.log(data)
         Object.assign(settings, data)
     }
 
     return {
         settings,
-        saveSetting,
+        // saveSetting,
         loadSetting,
         saveOption
     }

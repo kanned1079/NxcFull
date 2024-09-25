@@ -59,9 +59,12 @@ func StartAdminReq() {
 		// 管理员特定的路由
 		adminAuthorized.GET("/os/status/get", handleGetServerInfo) // 获取当前系统的负载
 		// adminAuthorized.POST("admin/save-setting", handleUpdateSystemSettings)
-		adminAuthorized.POST("/settings/set", handleUpdateSingleOptions)     // 设置单个配置项目
-		adminAuthorized.GET("/settings/get", handleGetSystemSetting)         // 获取所有的系统设置
-		adminAuthorized.GET("/users/get", handleGetUserList)                 // 获取所有用户的列表
+
+		adminAuthorized.PUT("/settings", handleUpdateSingleOptions) // 修改单个配置项目
+		adminAuthorized.GET("/settings", handleGetSystemSetting)    // 获取所有的系统设置
+
+		adminAuthorized.GET("/users", handleGetUserList) // 获取所有用户的列表
+
 		adminAuthorized.GET("/notices/get", HandleGetAllNotices)             // 获取所有通知列表
 		adminAuthorized.POST("/notice/add", HandleAddNotice)                 // 添加一条新的通知
 		adminAuthorized.POST("/mail/test", HandleSendTestMail)               // 发送测试邮件
@@ -70,8 +73,12 @@ func StartAdminReq() {
 		adminAuthorized.POST("/plans/add", subscribePlan.HandleAddNewPlan)   // 添加新的订阅
 		adminAuthorized.POST("/document/add", Document.HandleAddNewDocument) // 添加一条说明文档
 		adminAuthorized.POST("/coupon/add", coupon.HandleAddNewCoupon)       // 新建优惠券
-		adminAuthorized.POST("/groups/add", privilege.HandleAddNewGroup)     // 添加权限组
-		adminAuthorized.GET("/groups/get", privilege.HandleGetAllGroups)     // 获取所有权限组列表
+
+		adminAuthorized.POST("/groups", privilege.HandleAddNewGroup) // 添加权限组
+		adminAuthorized.GET("/groups", privilege.HandleGetAllGroups) // 获取所有权限组列表
+		adminAuthorized.PUT("/groups", privilege.HandleUpdateGroup)
+		adminAuthorized.DELETE("/groups", privilege.HandleDeleteGroup)
+
 		adminAuthorized.GET("/coupon/fetch", coupon.HandleGetAllCoupons)
 		adminAuthorized.POST("/coupon/status/update", coupon.HandleActiveCoupon)
 		adminAuthorized.GET("/plans/kv/fetch", subscribePlan.HandleGetAllPlanKeyName)

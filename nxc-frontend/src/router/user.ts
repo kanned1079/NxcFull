@@ -13,6 +13,7 @@ import UserKeys from "@/views/User/pages/PurchaseViews/UserKeys.vue";
 
 // WhyChooseUs页面
 import WhyChooseUsA from "@/views/Welcome/A/WhyChooseUsA.vue";
+import WhyChooseUsB from "@/views/Welcome/B/WhyChooseUsB.vue";
 
 // test
 // import ThemeEditor from "@/views/ThemeEditor.vue";
@@ -39,6 +40,10 @@ const userRoutes: RouteRecordRaw[] = [
     {
         path: '/welcome',
         component: WhyChooseUsA,
+    },
+    {
+        path: '/welcome2',
+        component: WhyChooseUsB,
     },
     {
         path: '/dashboard',

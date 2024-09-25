@@ -31,7 +31,7 @@ let contactMethods = reactive([
 
 <script lang="ts">
 export default {
-  name: 'FooterA',
+  name: 'FooterB',
 }
 </script>
 

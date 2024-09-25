@@ -12,7 +12,7 @@ const apiAddrStore = useApiAddrStore();
 
 <script lang="ts">
 export default {
-  name: 'HeaderA',
+  name: 'HeaderB',
 }
 </script>
 

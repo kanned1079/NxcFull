@@ -53,7 +53,7 @@ let backDashBoard = () => {
         height: 2px;
         bottom: 0;
         left: 0;
-        background-color: #7995c6;
+        background-color: #fff;
         transform-origin: bottom right;
         transition: transform 0.25s ease-out;
       }

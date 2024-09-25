@@ -438,7 +438,7 @@ const useThemeStore = defineStore('theme', () => {
                 return bambooGreen;
             }
             default: {
-                return milkGreenDay;
+                return bambooGreen;
             }
         }
     })

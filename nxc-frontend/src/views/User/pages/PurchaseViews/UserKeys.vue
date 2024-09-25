@@ -97,6 +97,7 @@ let getAllMyKeys = async () => {
 
 onMounted(() => {
   themeStore.userPath = '/dashboard/keys'
+  themeStore.menuSelected = 'user-keys'
   getAllMyKeys()
 })
 

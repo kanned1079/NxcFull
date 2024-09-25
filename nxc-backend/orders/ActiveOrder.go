@@ -8,6 +8,7 @@ import (
 type ActiveOrders struct {
 	ID             int64          `json:"id" gorm:"primary_key;AUTO_INCREMENT"` // 订阅记录 ID
 	UserId         int64          `json:"user_id"`                              // 用户 ID
+	GroupId        int64          `json:"group_id"`                             // 對應權限組
 	Email          string         `json:"email"`                                // 邮箱地址
 	PlanId         int64          `json:"plan_id"`                              // 购买的订阅计划 ID
 	KeyId          int64          `json:"key_id"`                               // 对应表x_keys的密钥Id

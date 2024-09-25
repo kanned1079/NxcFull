@@ -29,6 +29,7 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             getAllSystemConfig: '/api/admin/v1/settings/get',     // 获取所有系统设置
             getAllUsersList: '/api/admin/v1/users/get',     // 获取所有用户列表
             getAllNoticesList: '/api/admin/v1/Document/get',    // 获取所有通知列表
+
             addANotice: '/api/admin/v1/notice/add',     // 添加一条通知
             deleteANotice: '/api/admin/v1/notice/delete', // 删除一条通知
             // 邮件测试部分
@@ -36,8 +37,10 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             // 添加新文档
             addNewDocument: '/api/admin/v1/document/add',
             addNewCoupon: '/api/admin/v1/coupon/add',   // 添加新的优惠券
-            addNewPrivilegeGroup: '/api/admin/v1/groups/add',   // 添加新的权限组
-            getAllPrivilegeGroups: '/api/admin/v1/groups/get', // 获取所有的权限组列表
+            addNewPrivilegeGroup: '/api/admin/v1/groups',   // 添加新的权限组
+            getAllPrivilegeGroups: '/api/admin/v1/groups', // 获取所有的权限组列表
+            updatePrivilegeGroup: '/api/admin/v1/groups',
+            deletePrivilegeGroup: '/api/admin/v1/groups/delete',
             addNewPlan: '/api/admin/v1/plans/add',   // 添加新的订阅信息
             getAllCoupons: '/api/admin/v1/coupon/fetch',    // 获取所有的优惠券列表
             updateCoupon: '/api/admin/v1/coupon/update', // 更新优惠券信息

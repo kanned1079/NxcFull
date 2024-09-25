@@ -124,6 +124,9 @@ router.beforeEach((to, from, next) => {
         } else if (to.path === '/welcome') {
             // 允许未登录用户访问注册页面
             next();
+        } else if (to.path === '/welcome2') {
+            // 允许未登录用户访问注册页面
+            next();
         } else {
             // 非管理员路径，且不是注册页面，重定向到普通用户登录页面
             if (to.path !== '/login') {

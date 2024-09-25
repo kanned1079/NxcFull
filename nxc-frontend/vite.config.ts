@@ -10,10 +10,13 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 // 第一步导入插件
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 
+import svgLoader from 'vite-svg-loader';
+
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
         vue(),
+        svgLoader(),
         VueSetupExtend(), // 第二步使用插件
         AutoImport({
             imports: [

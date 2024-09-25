@@ -468,8 +468,8 @@ export default {
 .n-card {
   //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
   backdrop-filter: blur(50px);
-  background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
-  border: 0;
+  //background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
+  //border: 0;
 
 }
 

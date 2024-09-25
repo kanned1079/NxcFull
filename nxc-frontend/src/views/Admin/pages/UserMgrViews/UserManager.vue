@@ -201,14 +201,14 @@ let pagination =  {
 }
 
 let getAllUsers = async () => {
-  let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllUsersList)
+  let {data} = await instance.get('/api/admin/v1/users')
   console.log(data)
 }
 
 onMounted(() => {
   themeStore.menuSelected = 'user-manager'
   themeStore.contentPath = '/admin/dashboard/usermanager'
-  // getAllUsers()
+  getAllUsers()
 
 })
 

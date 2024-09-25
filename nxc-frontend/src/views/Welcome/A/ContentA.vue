@@ -13,6 +13,8 @@ import {
 
 const {t} = useI18n();
 
+let iconSize = ref<number>(40)
+
 const rootRef = ref<HTMLElement | null>(null);
 
 // let page = rootRef.value
@@ -101,9 +103,12 @@ export default {
   <div class="root">
     <!--    <n-scrollbar style="height: 100vh"  >-->
     <div class="lay-1" ref="lay1Ref">
-      <div class="image-wrapper img1"><img :src="TreeFront" alt="Image 1"/></div>
-      <div class="image-wrapper img2"><img :src="TreeMedium" alt="Image 2"/></div>
-      <div class="image-wrapper img3"><img :src="Sun" alt="Image 3"/></div>
+<!--      <div class="image-wrapper img1"><img :src="TreeFront" alt="Image 1"/></div>-->
+      <div class="image-wrapper img1"><TreeFront/></div>
+<!--      <div class="image-wrapper img2"><img :src="TreeMedium" alt="Image 2"/></div>-->
+      <div class="image-wrapper img2"><TreeMedium/></div>
+<!--      <div class="image-wrapper img3"><img :src="Sun" alt="Image 3"/></div>-->
+      <div class="image-wrapper img3"><Sun/></div>
       <!-- 引入悬浮左侧的介绍内容 -->
       <div class="intro">
         <div class="web-name">
@@ -131,16 +136,16 @@ export default {
         <div class="advance-item" v-for="option in advanceOptions" :key="option.id">
           <div class="card-content">
             <div class="icon-container">
-              <n-icon v-if="option.icon_id === 0" size="50">
+              <n-icon v-if="option.icon_id === 0" :size="iconSize">
                 <safeIcon/>
               </n-icon>
-              <n-icon v-if="option.icon_id === 1" size="50">
+              <n-icon v-if="option.icon_id === 1" :size="iconSize">
                 <lockIcon/>
               </n-icon>
-              <n-icon v-if="option.icon_id === 2" size="50">
+              <n-icon v-if="option.icon_id === 2" :size="iconSize">
                 <mgrIcon/>
               </n-icon>
-              <n-icon v-if="option.icon_id === 3" size="50">
+              <n-icon v-if="option.icon_id === 3" :size="iconSize">
                 <fastIcon/>
               </n-icon>
             </div>
@@ -296,7 +301,7 @@ export default {
     }
 
     .why-us-sub {
-      width: auto;
+      width: 80%;
       font-size: 1rem;
       font-weight: 400;
       opacity: 0.7;
