@@ -389,6 +389,7 @@ const useThemeStore = defineStore('theme', () => {
             },
             Card: {
                 colorEmbedded: '#fff',
+                borderRadius: '3px'
             },
             Switch: {
                 railColorActive: '#5dac81s'

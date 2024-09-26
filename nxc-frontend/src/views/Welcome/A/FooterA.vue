@@ -37,11 +37,11 @@ export default {
 
 <template>
 <div class="root" style="color: white">
-  <p class="title">快速連結</p>
+  <p class="title">{{ t('welcome.A.fastLink') }}</p>
   <n-hr style="margin-bottom: 30px"></n-hr>
 
   <div class="subscribe-us">
-    <p class="subscribe-us-title">關注我們</p>
+    <p class="subscribe-us-title">{{ t('welcome.A.subscribeUs') }}</p>
     <div class="subscribe-us-media">
       <n-button
           text
@@ -60,7 +60,7 @@ export default {
     </div>
   </div>
   <n-hr style="margin-bottom: 30px"></n-hr>
-  <p class="code">備案號  12345677</p>
+  <p class="code">{{ t('welcome.A.filingsCode', {code: '11223'}) }}</p>
   <p class="right-policy">Copyright © 2013 - 2024 Tencent Cloud. All Rights Reserved. NxcNetworks 版權所有</p>
 </div>
 </template>

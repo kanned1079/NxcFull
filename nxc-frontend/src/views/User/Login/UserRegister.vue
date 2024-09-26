@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 // import useSiteInfo from "@/stores/siteInfo";
 // import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
+
 import type {NotificationType} from 'naive-ui'
 import {FormInst, useMessage, useNotification} from 'naive-ui'
-import {GlobeOutline as LanguageIcon} from '@vicons/ionicons5'
+import {  ChevronBackOutline as backIcon,} from "@vicons/ionicons5"
 
 import authInstance from '@/axios/authInstance'
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -14,6 +16,7 @@ import useApiAddrStore from "@/stores/useApiAddrStore";
 import {hashPassword} from "@/utils/encryptor";
 import instance from "@/axios";
 
+const {t} = useI18n()
 const apiAddrStore = useApiAddrStore();
 const appInfosStore = useAppInfosStore()
 const notification = useNotification()
@@ -24,6 +27,29 @@ const message = useMessage()
 const router = useRouter();
 
 const formRef = ref<FormInst | null>(null)
+
+let bgColor = computed(() => themeStore.enableDarkMode?{
+  backgroundColor: 'rgba(40, 41, 41, 1)',
+}:{
+  backgroundColor: '#fff'
+})
+
+let coverBgColor = computed(() => themeStore.enableDarkMode?{
+  backgroundColor: 'rgba(40, 40, 40, 0.2)',
+}:{
+  backgroundColor: 'rgba(255, 255, 255, 0.0)',
+})
+
+let placeholderBgColor = computed(() => themeStore.enableDarkMode?{
+}:{
+  backgroundColor: '#f2fafd',
+  height: '45px',
+})
+
+let textLeftColor = computed(() => themeStore.enableDarkMode?{
+  color: '#fff',
+}:{})
+
 
 
 let agreementChecked = ref<boolean>(false)  // 同意按钮是否被选中
@@ -314,167 +340,347 @@ export default {
 </script>
 
 <template>
+  <div class="root">
+    <div class="l-content" :style="bgColor">
+      <div class="l-content-top" :style="coverBgColor"></div>
+      <div class="l-content-color1"></div>
+      <div class="l-content-color2"></div>
+      <div class="l-content-color3"></div>
+      <div class="l-content-color4"></div>
+      <div class="l-container">
+        <p :style="textLeftColor" class="title">{{ appInfosStore.appCommonConfig.app_name }}</p>
+        <p :style="textLeftColor" class="sub">{{ appInfosStore.appCommonConfig.app_description }}</p>
+      </div>
+    </div>
+    <div class="r-content" :style="bgColor">
+      <div class="r-content-color-cover"></div>
+      <div class="r-content-color1"></div>
+      <div class="r-content-color2"></div>
+      <div class="r-content-color3"></div>
+      <n-card class="login-card" :embedded="false" :bordered="false">
+        <n-button class="back" text :bordered="false" @click="router.back()">
+          <n-icon style="margin-right: 5px" size="20"><backIcon/></n-icon>
+          {{ t('userLogin.backHomePage') }}
+        </n-button>
+        <p class="login-title">准备您的新账户</p>
 
-  <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center"
-            :style="backgroundStyle">
-    <n-flex justify="center" :vertical="true" align="center" style="gap: 0">
-      <n-card class="layer-up" :embedded="true">
-        <p class="title">{{ appInfosStore.registerPageConfig.app_name }}</p>
-        <p class="sub-title">{{ appInfosStore.registerPageConfig.app_description }}</p>
-        <div class="inp">
-          <n-form
-              ref="formRef"
-              :model="formValue"
-              :rules="rules">
-            <n-form-item path="user.email" :show-feedback="false">
-              <n-input v-model:value="formValue.user.email" placeholder="邮箱地址" size="large"
-                       style="user-select: none"/>
-            </n-form-item>
-            <n-form-item path="user.verify_code" :show-feedback="false"
-                         v-if="appInfosStore.registerPageConfig.is_email_verify">
-              <n-input v-model:value.number="formValue.user.verify_code" placeholder="邮箱验证码" size="large"/>
-              <n-button :disabled="!enableSendCode" secondary type="primary" @click="sendVerifyCode"
-                        style="margin-left: 12px" size="large">
-                发送验证码{{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
-              </n-button>
-            </n-form-item>
-            <n-form-item path="user.password" :show-feedback="false">
-              <n-input type="password" v-model:value="formValue.user.password" placeholder="密码" size="large"/>
-            </n-form-item>
-            <n-form-item path="user.password_confirmation" :show-feedback="false">
-              <n-input type="password" v-model:value="formValue.user.password_confirmation" placeholder="确认密码"
-                       size="large"/>
-            </n-form-item>
-            <n-form-item path="user.invest_code" :show-feedback="false"
-                         v-if="appInfosStore.registerPageConfig.is_invite_force">
-              <n-input v-model:value.number="formValue.user.invite_user_id" placeholder="邀请码（选填）" size="large"/>
-            </n-form-item>
-          </n-form>
-          <n-form>
-            <n-form-item>
-              <n-checkbox v-model:checked="agreementChecked"></n-checkbox>
-              <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">我已经阅读并同意</p>
-              <n-button text type="primary" style="font-weight: bold; opacity: 0.9; margin-left: 3px">用户条款
-              </n-button>
-            </n-form-item>
-          </n-form>
-        </div>
-        <n-button type="primary" class="login-btn" size="large" @click="handleValidateClick" :disabled="!regBtnEnabled">
+        <n-form
+            ref="formRef"
+            :model="formValue"
+            :rules="rules">
+          <n-form-item
+              path="user.email"
+              :show-feedback="false"
+          >
+            <n-input
+                v-model:value="formValue.user.email"
+                placeholder="邮箱地址"
+                size="large"
+                :bordered="false"
+                :style="placeholderBgColor"
+
+            />
+          </n-form-item>
+          <n-form-item
+              path="user.verify_code"
+              :show-feedback="false"
+              v-if="appInfosStore.registerPageConfig.is_email_verify"
+          >
+            <n-input
+                v-model:value.number="formValue.user.verify_code"
+                placeholder="邮箱验证码"
+                size="large"
+                class="input-general"
+                :bordered="false"
+                :style="placeholderBgColor"
+
+            />
+            <n-button
+                :disabled="!enableSendCode"
+                secondary type="primary"
+                @click="sendVerifyCode"
+                style="margin-left: 12px; height: 45px"
+                size="large">
+              发送验证码{{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
+            </n-button>
+          </n-form-item>
+          <n-form-item
+              path="user.password"
+              :show-feedback="false"
+          >
+            <n-input
+                type="password"
+                v-model:value="formValue.user.password"
+                placeholder="密码"
+                size="large"
+                :bordered="false"
+                :style="placeholderBgColor"
+
+            />
+          </n-form-item>
+          <n-form-item
+              path="user.password_confirmation"
+              :show-feedback="false"
+          >
+            <n-input
+                type="password"
+                v-model:value="formValue.user.password_confirmation"
+                placeholder="确认密码"
+                size="large"
+                class="input-general"
+                :bordered="false"
+                :style="placeholderBgColor"
+
+            />
+          </n-form-item>
+          <n-form-item
+              path="user.invest_code"
+              :show-feedback="false"
+              v-if="appInfosStore.registerPageConfig.is_invite_force"
+          >
+            <n-input
+                v-model:value.number="formValue.user.invite_user_id"
+                placeholder="邀请码（选填）"
+                size="large"
+                class="input-general"
+                :bordered="false"
+                :style="placeholderBgColor"
+
+            />
+          </n-form-item>
+        </n-form>
+        <n-form>
+          <n-form-item>
+            <n-checkbox v-model:checked="agreementChecked"></n-checkbox>
+            <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">我已经阅读并同意</p>
+            <n-button text type="primary" style="font-weight: bold; opacity: 0.9; margin-left: 3px">用户条款
+            </n-button>
+          </n-form-item>
+        </n-form>
+
+        <n-button :bordered="false" type="primary" class="login-btn" size="large" @click="handleValidateClick" :disabled="!regBtnEnabled">
           注册
         </n-button>
       </n-card>
-      <n-card class="layer-down" content-style="padding: 0;">
-        <div class="bottom-root">
-          <div class="l-con">
-            <n-button text @click="backToLogin">返回登录</n-button>
-          </div>
-          <div class="r-con">
-            <n-button text>
-              <n-icon style="margin-right: 5px;">
-                <LanguageIcon/>
-              </n-icon>
-              <n-button text>语言</n-button>
-            </n-button>
-          </div>
-        </div>
-
-      </n-card>
-
-    </n-flex>
-  </n-layout>
-
-
+    </div>
+  </div>
 </template>
 
-<style lang="less" scoped>
-
-.n-flex {
+<style scoped lang="less">
+.root {
   height: 100vh;
-  //background-color: rgba(255, 255, 255, 0.001);
-  //background-image:
-  //background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
+  display: flex;
+  position: relative;
 }
 
-.layer-up {
-  width: 480px;
-  border: 0;
-  border-radius: 5px 5px 0 0;
-  margin-bottom: 0;
+.l-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  //background-color: #292929;
 
-  .title {
-    margin-top: 20px;
-    font-size: 30px;
-  }
+  .l-container {
+    position: absolute;
+    z-index: 1001;
+    top: 35%;
+    left: 15%;
+    //background-color: #4cae4c;
+    width: 70%;
+    transition: ease 300ms;
 
-  .sub-title {
-    font-size: 1rem;
-    opacity: 0.8;
-  }
 
-  .inp {
-    margin-top: 5px;
-    text-align: left;
-    width: 95%;
-  }
-
-  .login-btn {
-    margin-top: 10px;
-    width: 95%;
-  }
-
-  .register-btn {
-    margin-top: 30px;
-    width: 95%;
-  }
-
-}
-
-.bottom-panel {
-  height: 50px;
-  width: 480px;
-  border-radius: 0 0 5px 5px;
-  padding: 0;
-  margin: 0;
-}
-
-.layer-down {
-  width: 480px;
-  height: 50px;
-  border-radius: 0 0 5px 5px;
-
-  .bottom-root {
-    border-radius: 0 0 5px 5px;
-    height: 100%;
-    display: flex;
-    backdrop-filter: blur(20px);
-    //background-color: rgba(225, 225, 225, 0.0);
-    background-color: rgba(202, 202, 202, 0.1);
-    justify-content: space-between;
-
-    .l-con {
-      line-height: 50px;
-      margin-left: 20px;
+    .title {
+      font-size: 2.5rem;
+      font-weight: 700;
       opacity: 0.8;
+      //color: #205387;
+      //color: white;
     }
 
-    .r-con {
-      line-height: 50px;
-      margin-right: 20px;
+    .sub {
+      //color: #136685;
+      margin-top: 20px;
+      font-size: 1.2rem;
+      opacity: 0.5;
 
+      //color: white;
+    }
+  }
+
+  .l-container:hover {
+    transform: translateX(0) translateY(-10px);
+  }
+
+  .l-content-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    //background-color: rgba(255, 255, 255, 0.0);
+    backdrop-filter: blur(90px);
+    -webkit-backdrop-filter: blur(100px);
+    z-index: 1000;
+  }
+
+  .l-content-color1 {
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background-color: rgba(225, 107, 140, 0.2);
+    position: absolute;
+    //top: calc(70% - 400px / 2);
+    //left: calc(30% - 400px / 2);
+    //bottom: calc(100% - 100px);
+    left: -250px;
+    bottom: -250px;
+    z-index: 1;
+  }
+
+  .l-content-color2 {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    //background-color: rgba(84, 234, 255, 0);
+    background: linear-gradient(to right, rgb(129, 129, 221), rgb(142, 177, 255), rgb(131, 255, 244));
+    position: absolute;
+    top: calc(30% - 150px / 2);
+    left: calc(30% - 150px / 2);
+    z-index: 2;
+  }
+
+  .l-content-color3 {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    //background-color: rgba(220, 135, 227, 0);
+    background: linear-gradient(to right, rgb(142, 255, 22), rgb(100, 179, 244));
+    position: absolute;
+    top: calc(60% - 400px / 2);
+    left: calc(50% - 400px / 2);
+    z-index: 3;
+  }
+
+  .l-content-color4 {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    //background-color: rgba(220, 135, 227, 0);
+    background: linear-gradient(to right, rgb(217, 167, 199), rgb(255, 252, 220));
+    position: absolute;
+    top: calc(50% - 200px / 2);
+    left: calc(50% - 200px / 2);
+    z-index: 3;
+  }
+}
+
+@media (max-width: 900px) {
+  .l-content {
+    display: flex;
+    flex: 0;
+  }
+}
+
+.r-content {
+  flex: 1;
+  //background-color: #c8d9eb;
+  //position: relative;
+  display: flex;
+  flex-direction: row;
+
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+
+  .login-card {
+    z-index: 2000;
+    display: flex;
+    background-color: rgba(218, 144, 144, 0.0);
+    //background-color: #66afe9;
+    width: 75%;
+
+    .back {
+      //background-color: #31739f;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+
+
+    .login-title {
+      font-size: 2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .login-btn {
+      margin-top: 50px;
+      width: 100%;
+      height: 45px;
+      color: white;
+      background: linear-gradient(to right, rgba(167, 112, 239, 0.5), rgba(207, 139, 243, 0.9), rgba(253, 185, 155, 0.5));
+      box-shadow: rgba(139, 129, 195, 0.5) 3px 3px 200px 0;
+      margin-bottom: 20px;
+      transition: ease 300ms;
+    }
+    .login-btn:hover {
+      transform: translateX(0) translateY(-3px);
+    }
+
+    .other-login-method {
+      width: 100%;
+      height: 45px;
+      margin-bottom: 20px;
+      transition: ease 200ms;
+    }
+
+    .other-login-method:hover {
+      transform: translateX(0) translateY(-3px);
+    }
+
+    .github {
+      color: white;
+      background-color: #3a4754;
+      box-shadow: #3a4754 1px 1px 5px 0;
+    }
+
+    .google {
+      color: white;
+      background-color: #3382f0;
+      box-shadow: #3382f0 1px 1px 5px 0;
+    }
+
+    .apple {
+      color: white;
+      background-color: #000;
+      box-shadow: #000 1px 1px 5px 0;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .login-card {
+      width: 70%;
+    }
+  }
+  @media (max-width: 768px) {
+    .login-card {
+      width: 90%;
     }
   }
 }
 
-.n-card {
-  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  backdrop-filter: blur(50px);
-  //background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
-  //border: 0;
+@media (max-width: 900px) {
+  .r-content {
+    //background: linear-gradient(to right, rgb(217, 167, 199), rgb(255, 252, 220));
 
+  }
 }
-
-//element.style {
-//  gap: 0;
+//
+//.n-input {
+//  background-color: #66afe9;
 //}
 
 </style>

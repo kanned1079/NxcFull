@@ -19,8 +19,10 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         tos_url: string
     }
 
+    // 每次用户打开首页必须的配置
     interface AppCommonConfig {
         app_name: string
+        app_sub_name: string
         app_description: string
         app_url: string
         logo: string
@@ -46,12 +48,13 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
 
     let appCommonConfig: AppCommonConfig = {
         app_name: 'Nxc Cloud International',
-        app_description: '全球站点',
+        app_sub_name: '全球站点',
+        app_description: '穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。 ',
         app_url: '',
-        logo: 'logo.svg',
+        logo: 'https://ikanned.com:24444/d/Upload/NXC/links3.svg    ',
         user_bg: '',
         admin_bg: '',
-        currency: 'USDT',
+        currency: 'pt',
         currency_symbol: '$',
     }
 

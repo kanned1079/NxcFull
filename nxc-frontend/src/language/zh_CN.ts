@@ -6,9 +6,7 @@ export default {
         logout: '退出登陸',
     },
     commonAside: {
-        admin: {
-
-        },
+        admin: {},
         user: {
             dashboard: '儀表板',
             document: '使用文檔',
@@ -23,6 +21,20 @@ export default {
             support: '我的工單',
             activateLog: '激活紀錄'
         }
+    },
+    userLogin: {
+        loginToContinue: '登入以繼續',
+        email: '郵件地址',
+        password: '密碼',
+        haveNoAccount: '還沒有您的帳戶？',
+        login: '登入',
+        reg: '立即註冊',
+        otherMethods: '或使用其他方式繼續',
+        github: '以Github帳戶繼續',
+        apple: '以Apple帳戶繼續',
+        google: '以Google帳戶繼續',
+        backHomePage: '回到首頁',
+
     },
     userSummary: {
         myPlan: '我的訂閱',
@@ -115,7 +127,21 @@ export default {
             login: '登錄',
             register: '註冊帳號',
             welcomeTo: '歡迎來到',
+            welcomeToSub: '“穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。”在这里川端康成用几近吝啬的简洁文字，拉开了《雪国》的序幕。',
             startingUse: '開始使用',
+            whyUs: '為什麼選擇我們',
+            whyUsSub: '“穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。”在这里川端康成用几近吝啬的简洁文字，拉开了《雪国》的序幕。',
+            browseSafe:' 瀏覽安全',
+            browseSafeSub: '優秀的防火牆過濾系統能有效防禦網路釣魚和惡意網站',
+            encrypt: '端到端加密',
+            encryptSub: '雙向 SSL 和端對端加密保護您的隱私安全，即使是服務器也無法讀取您的信息',
+            mgr: '高效管理',
+            mgrSub: '一個用戶介面管理所有密鑰，管理功能完善豐富，無須擔心訂閱洩露問題',
+            fast: '方便快捷',
+            fastSub: '提供完整的 API 文檔供 WebApp 或是嵌入到第三方軟件中',
+            fastLink: '快速連結',
+            subscribeUs: '關注我們',
+            filingsCode: '備案號 {code}',
         }
     }
 }

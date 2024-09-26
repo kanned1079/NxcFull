@@ -1,16 +1,27 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import useSiteInfo from "@/stores/siteInfo";
 import useUserInfoStore from "@/stores/useUserInfoStore";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import type {NotificationType} from 'naive-ui'
 import {FormInst, useMessage, useNotification} from 'naive-ui'
 import instance from '@/axios/index'
-import {GlobeOutline as LanguageIcon} from '@vicons/ionicons5'
+import {
+  LogInOutline as loginIcon,
+  LogoApple as appleIcon,
+  LogoGithub as githubIcon,
+  LogoGoogle as googleIcon,
+    LogoMicrosoft as microsoftIcon,
+  ChevronBackOutline as backIcon,
+} from '@vicons/ionicons5'
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import {hashPassword} from "@/utils/encryptor";
 
+const {t} = useI18n()
+const appInfoStore = useAppInfosStore()
 const apiAddrStore = useApiAddrStore();
 const notification = useNotification()
 const themeStore = useThemeStore()
@@ -20,6 +31,26 @@ const userInfoStore = useUserInfoStore();
 const router = useRouter();
 
 const formRef = ref<FormInst | null>(null)
+
+let bgColor = computed(() => themeStore.enableDarkMode ? {
+  backgroundColor: 'rgba(40, 41, 41, 1)',
+} : {
+  backgroundColor: '#fff'
+})
+
+let coverBgColor = computed(() => themeStore.enableDarkMode ? {
+  backgroundColor: 'rgba(40, 40, 40, 0.2)',
+} : {
+  backgroundColor: 'rgba(255, 255, 255, 0.0)',
+})
+
+let placeholderBgColor = computed(() => themeStore.enableDarkMode ? {} : {
+  backgroundColor: '#f2fafd'
+})
+
+let textLeftColor = computed(() => themeStore.enableDarkMode ? {
+  color: '#fff',
+} : {})
 
 let formValue = ref({
   user: {
@@ -95,16 +126,8 @@ let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.thisUser.balance = user_data.balance
   userInfoStore.thisUser.lastLogin = user_data.last_login ? user_data.last_login.toString() : ''
   userInfoStore.thisUser.lastLoginIp = user_data.last_login_ip
-  // userInfoStore.thisUser.licenseActive = user_data.license_active
-  // userInfoStore.thisUser.licenseExpiration = user_data.license_expiration
-  // userInfoStore.thisUser.licenseId = user_data.license_id
   console.log('绑定结束')
 }
-
-let enterDashboard = (data) => {
-
-}
-
 
 let handleLogin = async () => {
   console.log('用户数据')
@@ -147,8 +170,6 @@ let handleLogin = async () => {
     // notifyErr('error', error.toString())
     enableLogin.value = true
   }
-
-
 }
 
 let toRegister = () => {
@@ -209,150 +230,491 @@ export default {
 }
 </script>
 
+<!--<template>-->
+
+<!--&lt;!&ndash;  <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center"&ndash;&gt;-->
+<!--&lt;!&ndash;            :style="backgroundStyle">&ndash;&gt;-->
+<!--&lt;!&ndash;    <n-flex justify="center" :vertical="true" align="center" style="gap: 0">&ndash;&gt;-->
+<!--&lt;!&ndash;      <n-card class="layer-up" :embedded="true" hoverable>&ndash;&gt;-->
+<!--&lt;!&ndash;        <p class="title">{{ siteInfo.siteName }}</p>&ndash;&gt;-->
+<!--&lt;!&ndash;        <p class="sub-title">常州站点</p>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="inp">&ndash;&gt;-->
+
+<!--&lt;!&ndash;          <n-form&ndash;&gt;-->
+<!--&lt;!&ndash;              ref="formRef"&ndash;&gt;-->
+<!--&lt;!&ndash;              :model="formValue"&ndash;&gt;-->
+<!--&lt;!&ndash;              :rules="rules"&ndash;&gt;-->
+<!--&lt;!&ndash;          >&ndash;&gt;-->
+<!--&lt;!&ndash;            <n-form-item path="user.email" :show-feedback="false">&ndash;&gt;-->
+<!--&lt;!&ndash;              <n-input v-model:value="formValue.user.email" placeholder="邮箱地址" size="large"&ndash;&gt;-->
+<!--&lt;!&ndash;                       style="user-select: none"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            </n-form-item>&ndash;&gt;-->
+
+<!--&lt;!&ndash;            <n-form-item path="user.password" :show-feedback="false">&ndash;&gt;-->
+<!--&lt;!&ndash;              <n-input type="password" v-model:value="formValue.user.password" placeholder="密码" size="large"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            </n-form-item>&ndash;&gt;-->
+<!--&lt;!&ndash;          </n-form>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        <n-button secondary type="info" class="login-btn" size="large" @click="handleValidateClick"&ndash;&gt;-->
+<!--&lt;!&ndash;                  :disabled="!enableLogin">&ndash;&gt;-->
+<!--&lt;!&ndash;          登入&ndash;&gt;-->
+<!--&lt;!&ndash;        </n-button>&ndash;&gt;-->
+
+<!--&lt;!&ndash;      </n-card>&ndash;&gt;-->
+<!--&lt;!&ndash;      <n-card class="layer-down" content-style="padding: 0;">&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="bottom-root">&ndash;&gt;-->
+<!--&lt;!&ndash;          <div class="l-con">&ndash;&gt;-->
+<!--&lt;!&ndash;            <n-button text @click="toRegister">注册</n-button>&ndash;&gt;-->
+<!--&lt;!&ndash;            <n-divider vertical/>&ndash;&gt;-->
+<!--&lt;!&ndash;            <n-button text @click="handleForgetPassword">忘记密码</n-button>&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;          <div class="r-con">&ndash;&gt;-->
+<!--&lt;!&ndash;            <n-button text>&ndash;&gt;-->
+<!--&lt;!&ndash;              <n-icon style="margin-right: 5px;">&ndash;&gt;-->
+<!--&lt;!&ndash;                <LanguageIcon/>&ndash;&gt;-->
+<!--&lt;!&ndash;              </n-icon>&ndash;&gt;-->
+<!--&lt;!&ndash;              语言&ndash;&gt;-->
+<!--&lt;!&ndash;            </n-button>&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;      </n-card>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    </n-flex>&ndash;&gt;-->
+<!--&lt;!&ndash;  </n-layout>&ndash;&gt;-->
+
+
+<!--</template>-->
+
+<!--<style lang="less" scoped>-->
+
+<!--.n-flex {-->
+<!--  height: 100vh;-->
+<!--  //background-color: rgba(255, 255, 255, 0.001);-->
+<!--  //background-image:-->
+<!--  //background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;-->
+<!--}-->
+
+<!--.layer-up {-->
+<!--  width: 480px;-->
+<!--  height: auto;-->
+<!--  border: 0;-->
+<!--  border-radius: 5px 5px 0 0;-->
+<!--  margin-bottom: 0;-->
+
+<!--  .title {-->
+<!--    margin-top: 20px;-->
+<!--    font-size: 30px;-->
+<!--  }-->
+
+<!--  .sub-title {-->
+<!--    font-size: 13px;-->
+<!--  }-->
+
+<!--  .inp {-->
+<!--    margin-top: 30px;-->
+<!--    text-align: left;-->
+<!--    width: 90%;-->
+<!--  }-->
+
+<!--  .login-btn {-->
+<!--    margin-top: 30px;-->
+<!--    width: 90%;-->
+<!--    margin-bottom: 30px;-->
+<!--  }-->
+
+<!--  .register-btn {-->
+<!--    margin-top: 30px;-->
+<!--    width: 90%;-->
+<!--  }-->
+
+<!--}-->
+
+<!--.bottom-panel {-->
+<!--  height: 50px;-->
+<!--  width: 480px;-->
+<!--  border-radius: 0 0 5px 5px;-->
+<!--  padding: 0;-->
+<!--  margin: 0;-->
+<!--}-->
+
+<!--.layer-down {-->
+<!--  width: 480px;-->
+<!--  height: 50px;-->
+<!--  border-radius: 0 0 5px 5px;-->
+
+<!--  .bottom-root {-->
+<!--    border-radius: 0 0 5px 5px;-->
+<!--    height: 100%;-->
+<!--    display: flex;-->
+<!--    backdrop-filter: blur(10px);-->
+<!--    background-color: rgba(225, 225, 225, 0.2);-->
+<!--    justify-content: space-between;-->
+
+<!--    .l-con {-->
+<!--      line-height: 50px;-->
+<!--      margin-left: 20px;-->
+<!--      opacity: 0.8;-->
+<!--    }-->
+
+<!--    .r-con {-->
+<!--      line-height: 50px;-->
+<!--      margin-right: 20px;-->
+
+<!--    }-->
+<!--  }-->
+<!--}-->
+
+<!--.n-card {-->
+<!--  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');-->
+<!--  //background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');-->
+<!--  border: 0;-->
+<!--}-->
+
+<!--//element.style {-->
+<!--//  gap: 0;-->
+<!--//}-->
+
+<!--</style>-->
+
+
 <template>
-
-  <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center"
-            :style="backgroundStyle">
-    <n-flex justify="center" :vertical="true" align="center" style="gap: 0">
-      <n-card class="layer-up" :embedded="true" hoverable>
-        <p class="title">{{ siteInfo.siteName }}</p>
-        <p class="sub-title">常州站点</p>
-        <div class="inp">
-
-          <n-form
-              ref="formRef"
-              :model="formValue"
-              :rules="rules"
-          >
-            <n-form-item path="user.email" :show-feedback="false">
-              <n-input v-model:value="formValue.user.email" placeholder="邮箱地址" size="large"
-                       style="user-select: none"/>
-            </n-form-item>
-
-            <n-form-item path="user.password" :show-feedback="false">
-              <n-input type="password" v-model:value="formValue.user.password" placeholder="密码" size="large"/>
-            </n-form-item>
-          </n-form>
-        </div>
-        <n-button secondary type="info" class="login-btn" size="large" @click="handleValidateClick"
-                  :disabled="!enableLogin">
-          登入
+  <div class="root">
+    <div class="l-content" :style="bgColor">
+      <div class="l-content-top" :style="coverBgColor"></div>
+      <div class="l-content-color1"></div>
+      <div class="l-content-color2"></div>
+      <div class="l-content-color3"></div>
+      <div class="l-content-color4"></div>
+      <div class="l-container">
+        <p :style="textLeftColor" class="title">{{ appInfoStore.appCommonConfig.app_name }}</p>
+        <p :style="textLeftColor" class="sub">{{ appInfoStore.appCommonConfig.app_description }}</p>
+      </div>
+    </div>
+    <div class="r-content" :style="bgColor">
+      <div class="r-content-color-cover"></div>
+      <div class="r-content-color1"></div>
+      <div class="r-content-color2"></div>
+      <div class="r-content-color3"></div>
+      <n-card class="login-card" :embedded="false" :bordered="false">
+        <n-button class="back" text :bordered="false" @click="router.back()">
+          <n-icon style="margin-right: 5px" size="20"><backIcon/></n-icon>
+          {{ t('userLogin.backHomePage') }}
         </n-button>
-
-      </n-card>
-      <n-card class="layer-down" content-style="padding: 0;">
-        <div class="bottom-root">
-          <div class="l-con">
-            <n-button text @click="toRegister">注册</n-button>
-            <n-divider vertical/>
-            <n-button text @click="handleForgetPassword">忘记密码</n-button>
-          </div>
-
-          <div class="r-con">
-            <n-button text>
-              <n-icon style="margin-right: 5px;">
-                <LanguageIcon/>
-              </n-icon>
-              语言
-            </n-button>
-          </div>
+        <p class="login-title">{{ t('userLogin.loginToContinue') }}</p>
+        <n-input size="large" :style="placeholderBgColor" :bordered="false" type="text" class="username"
+                 :placeholder="t('userLogin.email')" v-model:value="formValue.user.email"></n-input>
+        <n-input size="large" :style="placeholderBgColor" :bordered="false" type="password" class="password"
+                 :placeholder="t('userLogin.password')" v-model:value="formValue.user.password"></n-input>
+        <div class="no-account">
+          <p class="no-account-prefix">{{ t('userLogin.haveNoAccount') }}</p>
+          <n-button class="no-account-btn" text @click="router.push({path: '/register'})">{{
+              t('userLogin.reg')
+            }}
+          </n-button>
         </div>
-
+        <n-button :bordered="false" type="primary" class="login-btn" @click="handleValidateClick"
+                  :disabled="!enableLogin">
+          <n-icon style="margin-right: 10px" size="25">
+            <loginIcon/>
+          </n-icon>
+          {{ t('userLogin.login') }}
+        </n-button>
+        <n-divider>
+          <p style="opacity: 0.5;  font-weight: 400; font-size: 0.8rem">{{ t('userLogin.otherMethods') }}</p>
+        </n-divider>
+        <n-button :bordered="false" class="other-login-method github" type="primary" @click="loginViaGithub ">
+          <n-icon style="margin-right: 10px;" size="25">
+            <githubIcon/>
+          </n-icon>
+          {{ t('userLogin.github') }}
+        </n-button>
+        <n-button :bordered="false" class="other-login-method apple" type="primary">
+          <n-icon style="margin-right: 10px;" size="25">
+            <appleIcon/>
+          </n-icon>
+          {{ t('userLogin.apple') }}&nbsp;
+        </n-button>
+        <n-button :bordered="false" class="other-login-method google" type="primary">
+          <n-icon style="margin-right: 10px;" size="25">
+            <googleIcon/>
+          </n-icon>
+          {{ t('userLogin.google') }}
+        </n-button>
+        <n-button :bordered="false" class="other-login-method microsoft" type="primary">
+          <n-icon style="margin-right: 10px;" size="23">
+            <microsoftIcon/>
+          </n-icon>
+          {{ t('userLogin.google') }}
+        </n-button>
       </n-card>
-
-    </n-flex>
-  </n-layout>
-
-
+    </div>
+  </div>
 </template>
 
-<style lang="less" scoped>
-
-.n-flex {
+<style scoped lang="less">
+.root {
   height: 100vh;
-  //background-color: rgba(255, 255, 255, 0.001);
-  //background-image:
-  //background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
+  display: flex;
+  position: relative;
 }
 
-.layer-up {
-  width: 480px;
-  height: auto;
-  border: 0;
-  border-radius: 5px 5px 0 0;
-  margin-bottom: 0;
+.l-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  //background-color: #292929;
 
-  .title {
-    margin-top: 20px;
-    font-size: 30px;
-  }
+  .l-container {
+    position: absolute;
+    z-index: 1001;
+    top: 35%;
+    left: 15%;
+    //background-color: #4cae4c;
+    width: 70%;
+    transition: ease 300ms;
 
-  .sub-title {
-    font-size: 13px;
-  }
 
-  .inp {
-    margin-top: 30px;
-    text-align: left;
-    width: 90%;
-  }
-
-  .login-btn {
-    margin-top: 30px;
-    width: 90%;
-    margin-bottom: 30px;
-  }
-
-  .register-btn {
-    margin-top: 30px;
-    width: 90%;
-  }
-
-}
-
-.bottom-panel {
-  height: 50px;
-  width: 480px;
-  border-radius: 0 0 5px 5px;
-  padding: 0;
-  margin: 0;
-}
-
-.layer-down {
-  width: 480px;
-  height: 50px;
-  border-radius: 0 0 5px 5px;
-
-  .bottom-root {
-    border-radius: 0 0 5px 5px;
-    height: 100%;
-    display: flex;
-    backdrop-filter: blur(10px);
-    background-color: rgba(225, 225, 225, 0.2);
-    justify-content: space-between;
-
-    .l-con {
-      line-height: 50px;
-      margin-left: 20px;
+    .title {
+      font-size: 2.5rem;
+      font-weight: 700;
       opacity: 0.8;
+      //color: #205387;
+      //color: white;
     }
 
-    .r-con {
-      line-height: 50px;
-      margin-right: 20px;
+    .sub {
+      //color: #136685;
+      margin-top: 20px;
+      font-size: 1.2rem;
+      opacity: 0.5;
 
+      //color: white;
+    }
+  }
+
+  .l-container:hover {
+    transform: translateX(0) translateY(-10px);
+  }
+
+  .l-content-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    //background-color: rgba(255, 255, 255, 0.0);
+    backdrop-filter: blur(90px);
+    -webkit-backdrop-filter: blur(100px);
+    z-index: 1000;
+  }
+
+  .l-content-color1 {
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background-color: rgba(225, 107, 140, 0.2);
+    position: absolute;
+    //top: calc(70% - 400px / 2);
+    //left: calc(30% - 400px / 2);
+    //bottom: calc(100% - 100px);
+    left: -250px;
+    bottom: -250px;
+    z-index: 1;
+  }
+
+  .l-content-color2 {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    //background-color: rgba(84, 234, 255, 0);
+    background: linear-gradient(to right, rgb(129, 129, 221), rgb(142, 177, 255), rgb(131, 255, 244));
+    position: absolute;
+    top: calc(30% - 150px / 2);
+    left: calc(30% - 150px / 2);
+    z-index: 2;
+  }
+
+  .l-content-color3 {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    //background-color: rgba(220, 135, 227, 0);
+    background: linear-gradient(to right, rgb(142, 255, 22), rgb(100, 179, 244));
+    position: absolute;
+    top: calc(60% - 400px / 2);
+    left: calc(50% - 400px / 2);
+    z-index: 3;
+  }
+
+  .l-content-color4 {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    //background-color: rgba(220, 135, 227, 0);
+    background: linear-gradient(to right, rgb(217, 167, 199), rgb(255, 252, 220));
+    position: absolute;
+    top: calc(50% - 200px / 2);
+    left: calc(50% - 200px / 2);
+    z-index: 3;
+  }
+}
+
+@media (max-width: 900px) {
+  .l-content {
+    display: flex;
+    flex: 0;
+  }
+}
+
+.r-content {
+  flex: 1;
+  //background-color: #c8d9eb;
+  //position: relative;
+  display: flex;
+  flex-direction: row;
+
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+
+
+  .login-card {
+    z-index: 2000;
+    display: flex;
+    background-color: rgba(218, 144, 144, 0.0);
+    //background-color: #66afe9;
+    width: 75%;
+
+    .back {
+      //background-color: #31739f;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+
+    .login-title {
+      font-size: 2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .username {
+      margin-top: 20px;
+      height: 45px;
+      border-radius: 3px;
+      align-items: center;
+      //background-color: #f2fafd;
+      //box-shadow: rgba(242,251,254,0.5) 0 1px 10px 0;
+    }
+
+    .password {
+      margin-top: 30px;
+      height: 45px;
+      border-radius: 3px;
+      align-items: center;
+      //background-color: #f2fafd;
+    }
+
+    .no-account {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: row;
+      justify-content: right;
+
+      .no-account-prefix {
+        font-size: 1rem;
+        margin-right: 3px;
+        opacity: 0.8;
+      }
+
+      .no-account-btn {
+        opacity: 0.5;
+        font-size: 1rem;
+      }
+    }
+
+    .login-btn {
+      margin-top: 50px;
+      width: 100%;
+      height: 45px;
+      color: white;
+      background: linear-gradient(to right, rgba(167, 112, 239, 0.5), rgba(207, 139, 243, 0.9), rgba(253, 185, 155, 0.5));
+      box-shadow: rgba(139, 129, 195, 0.5) 3px 3px 200px 0;
+      margin-bottom: 20px;
+      transition: ease 300ms;
+    }
+
+    .login-btn:hover {
+      transform: translateX(0) translateY(-3px);
+    }
+
+    .other-login-method {
+      width: 100%;
+      height: 45px;
+      margin-bottom: 20px;
+      transition: ease 200ms;
+    }
+
+    .other-login-method:hover {
+      transform: translateX(0) translateY(-2px);
+    }
+
+    .github {
+      color: white;
+      background-color: #3a4754;
+    }
+    .github:hover {
+      box-shadow: #3a4754 0 5px 20px 0;
+    }
+
+    .google {
+      color: white;
+      background-color: #e84d40;
+    }
+    .google:hover {
+      box-shadow: #e84d40 0 5px 20px 0;
+    }
+
+    .apple {
+      color: white;
+      background-color: #000;
+    }
+    .apple:hover {
+      box-shadow: #000 0 5px 20px 0;
+    }
+
+    .microsoft {
+      color: white;
+      background-color: #00a4ef;
+    }
+    .microsoft:hover {
+      box-shadow: #00a4ef 0 5px 20px 0;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .login-card {
+      width: 70%;
+    }
+  }
+  @media (max-width: 768px) {
+    .login-card {
+      width: 90%;
     }
   }
 }
 
-.n-card {
-  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  //background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
-  border: 0;
+@media (max-width: 900px) {
+  .r-content {
+    //background: linear-gradient(to right, rgb(217, 167, 199), rgb(255, 252, 220));
+
+  }
 }
 
-//element.style {
-//  gap: 0;
-//}
 
 </style>

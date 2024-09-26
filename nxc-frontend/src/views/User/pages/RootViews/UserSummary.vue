@@ -250,7 +250,7 @@ onMounted(() => {
           :key="index"
           class="license-active"
           content-style="padding: 0;"
-          style="padding: 0 25px 0 25px"
+          style="padding: 0 25px 0 25px; background-color: rgba(0,0,0,0.0)"
           :bordered="false"
       >
         <div class="plan-item">

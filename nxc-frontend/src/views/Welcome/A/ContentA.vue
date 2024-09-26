@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import TreeFront from "./assets/TreeFront.svg";
 import TreeMedium from "./assets/TreeMedium.svg";
+import {useRouter} from "vue-router";
 import Sun from "./assets/Sun.svg";
 import {
   FileTrayFullOutline as mgrIcon,
   GlobeOutline as safeIcon,
   LockClosedOutline as lockIcon,
   SparklesOutline as fastIcon,
+  ChevronForward as userIcon,
 } from "@vicons/ionicons5";
 
 const {t} = useI18n();
+const router = useRouter();
 
+const appInfosStore = useAppInfosStore();
 let iconSize = ref<number>(40)
 
 const rootRef = ref<HTMLElement | null>(null);
@@ -31,26 +36,26 @@ let advanceOptions = ref([
   {
     id: 0,
     icon_id: 0,
-    title: "瀏覽安全",
-    content: "優秀的防火牆過濾系統能有效防禦網路釣魚和惡意網站",
+    title: computed(() => t('welcome.A.browseSafe')),
+    content: computed(() => t('welcome.A.browseSafeSub')),
   },
   {
     id: 1,
     icon_id: 1,
-    title: "端到端加密",
-    content: "雙向 SSL 和端對端加密保護您的隱私安全，即使是服務器也無法讀取您的信息",
+    title: computed(() => t('welcome.A.encrypt')),
+    content: computed(() => t('welcome.A.encryptSub')),
   },
   {
     id: 2,
     icon_id: 2,
-    title: "高效管理",
-    content: "一個用戶介面管理所有密鑰，管理功能完善豐富，無須擔心訂閱洩露問題",
+    title: computed(() => t('welcome.A.mgr')),
+    content: computed(() => t('welcome.A.mgrSub')),
   },
   {
     id: 3,
     icon_id: 3,
-    title: "方便快捷",
-    content: "提供完整的 API 文檔供 WebApp 或是嵌入到第三方軟件中",
+    title: computed(() => t('welcome.A.fast')),
+    content: computed(() => t('welcome.A.fastSub')),
   },
 ]);
 
@@ -65,9 +70,9 @@ let onScrollFunction = () => {
     const isScrollingDown = scrollTop > lastScrollTop;
     lastScrollTop = scrollTop;
     if (!isScrolledToTarget && isScrollingDown && lay2Ref.value) {
-      lay2Ref.value.scrollIntoView({ behavior: "smooth" });
+      lay2Ref.value.scrollIntoView({behavior: "smooth"});
       isScrolledToTarget = true;
-    } else if (isScrolledToTarget &&!isScrollingDown) {
+    } else if (isScrolledToTarget && !isScrollingDown) {
       // 添加反向滚动的处理逻辑，例如重置状态变量或执行其他操作
       isScrolledToTarget = false;
     }
@@ -101,65 +106,75 @@ export default {
 
 <template>
   <div class="root">
-    <!--    <n-scrollbar style="height: 100vh"  >-->
-    <div class="lay-1" ref="lay1Ref">
-<!--      <div class="image-wrapper img1"><img :src="TreeFront" alt="Image 1"/></div>-->
-      <div class="image-wrapper img1"><TreeFront/></div>
-<!--      <div class="image-wrapper img2"><img :src="TreeMedium" alt="Image 2"/></div>-->
-      <div class="image-wrapper img2"><TreeMedium/></div>
-<!--      <div class="image-wrapper img3"><img :src="Sun" alt="Image 3"/></div>-->
-      <div class="image-wrapper img3"><Sun/></div>
-      <!-- 引入悬浮左侧的介绍内容 -->
-      <div class="intro">
-        <div class="web-name">
-          <p class="title">{{ t('welcome.A.welcomeTo') }}</p>
-          <p class="app-name">{{ 'app_name' }}</p>
+    <n-scrollbar style="scrollbar-width: none" content-style="width: 0">
+      <div class="lay-1" ref="lay1Ref">
+        <div class="image-wrapper img1">
+          <TreeFront/>
         </div>
-        <p class="desc">
-          “穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。”在这里川端康成用几近吝啬的简洁文字，拉开了《雪国》的序幕。
-        </p>
-        <n-button size="large" class="btn-start" text>开始使用</n-button>
+        <div class="image-wrapper img2">
+          <TreeMedium/>
+        </div>
+        <div class="image-wrapper img3">
+          <Sun/>
+        </div>
+        <!-- 引入悬浮左侧的介绍内容 -->
+        <div class="intro">
+          <div class="web-name">
+            <p class="title">{{ t('welcome.A.welcomeTo') }}</p>
+            <p class="app-name">{{ appInfosStore.appCommonConfig.app_name }}</p>
+          </div>
+          <p class="desc">
+            {{ t('welcome.A.welcomeToSub') }}
+          </p>
+          <n-button
+              @click="router.push({path: '/dashboard/summary'})"
+              size="large"
+              class="btn-start"
+              text>
+            {{ t('welcome.A.startingUse') }}
+            <n-icon style="margin-left: 12px" size="18"><userIcon/></n-icon>
+          </n-button>
+        </div>
+
       </div>
 
-    </div>
+      <!--    lay-2每一行兩個卡片，如果是移動端則每行一個垂直排列-->
+      <div class="lay-2" ref="lay2Ref">
+        <div class="why-us-head">
+          <p class="why-us-title">{{ t('welcome.A.whyUs') }}</p>
+          <p class="why-us-sub">
+            {{ t('welcome.A.whyUsSub') }}
+          </p>
+        </div>
 
-    <!--    lay-2每一行兩個卡片，如果是移動端則每行一個垂直排列-->
-    <div class="lay-2" ref="lay2Ref">
-      <div class="why-us-head">
-        <p class="why-us-title">為什麼選擇我們</p>
-        <p class="why-us-sub">
-          為什麼選擇我們為什麼選擇我們為什麼選擇我們為什麼選擇我們為什麼選擇我們為什麼選擇我們為什麼選擇我們為什麼選擇我們為什麼選擇我們為什麼選擇我們為什麼選擇我們
-        </p>
-      </div>
-
-      <div class="items">
-        <div class="advance-item" v-for="option in advanceOptions" :key="option.id">
-          <div class="card-content">
-            <div class="icon-container">
-              <n-icon v-if="option.icon_id === 0" :size="iconSize">
-                <safeIcon/>
-              </n-icon>
-              <n-icon v-if="option.icon_id === 1" :size="iconSize">
-                <lockIcon/>
-              </n-icon>
-              <n-icon v-if="option.icon_id === 2" :size="iconSize">
-                <mgrIcon/>
-              </n-icon>
-              <n-icon v-if="option.icon_id === 3" :size="iconSize">
-                <fastIcon/>
-              </n-icon>
-            </div>
-            <div class="text-container">
-              <p class="title">{{ option.title }}</p>
-              <p class="desc2">{{ option.content }}</p>
+        <div class="items">
+          <div class="advance-item" v-for="option in advanceOptions" :key="option.id">
+            <div class="card-content">
+              <div class="icon-container">
+                <n-icon color="#1d3144" v-if="option.icon_id === 0" :size="iconSize">
+                  <safeIcon/>
+                </n-icon>
+                <n-icon color="#1d3144" v-if="option.icon_id === 1" :size="iconSize">
+                  <lockIcon/>
+                </n-icon>
+                <n-icon color="#1d3144" v-if="option.icon_id === 2" :size="iconSize">
+                  <mgrIcon/>
+                </n-icon>
+                <n-icon color="#1d3144" v-if="option.icon_id === 3" :size="iconSize">
+                  <fastIcon/>
+                </n-icon>
+              </div>
+              <div class="text-container">
+                <p class="title">{{ option.title }}</p>
+                <p class="desc2">{{ option.content }}</p>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
 
-    </div>
-
-    <!--        </n-scrollbar>-->
+    </n-scrollbar>
   </div>
 </template>
 
@@ -174,7 +189,7 @@ export default {
   flex-direction: column;
   height: 100vh; // 修改为占满视窗高度
   background-color: #c8d9eb;
-  //overflow: hidden;
+  overflow: hidden;
 
   .image-wrapper {
     width: 100%;
@@ -231,11 +246,12 @@ export default {
     }
 
     .desc {
+      color: rgba(0, 23, 58, 0.9);
       margin-top: 10px;
       position: relative;
       max-width: 600px;
       font-size: 1.2rem;
-      opacity: 0.8;
+      opacity: 0.7;
     }
 
     .btn-start {
@@ -245,7 +261,12 @@ export default {
       border-radius: 10px;
       background-color: #1d324d;
       color: white;
-      box-shadow: rgba(29, 50, 77, 0.2) 10px 10px 50px 0;
+      box-shadow: rgba(29, 50, 77, 0.2) 5px 5px 20px 0;
+      transition: ease 300ms;
+    }
+    .btn-start:hover {
+      box-shadow: rgba(29, 50, 77, 0.5) 5px 5px 30px 0;
+
     }
   }
 
@@ -273,6 +294,7 @@ export default {
           font-size: 2rem;
         }
       }
+
     }
 
     @media (max-width: 768px) {
@@ -287,6 +309,7 @@ export default {
   background-color: #c8d9eb;
   height: 600px;
 
+
   .why-us-head {
     padding: 50px 30px 0 30px;
     display: flex;
@@ -294,13 +317,15 @@ export default {
     align-items: center;
 
     .why-us-title {
-      margin-top: 20px;
+      margin: 20px 0 20px 0;
       font-size: 2rem;
       font-weight: 600;
       opacity: 0.9;
+      color: #091b44;
     }
 
     .why-us-sub {
+      color: rgba(9, 27, 68, 1);
       width: 80%;
       font-size: 1rem;
       font-weight: 400;
@@ -395,6 +420,7 @@ export default {
       align-items: center; /* 水平行内居中 */
       //padding: 10px;
       width: 100%;
+      //background-color: #66afe9;
 
     }
   }
@@ -406,14 +432,17 @@ export default {
   display: flex;
   flex-direction: column;
 
+
   .title {
     font-weight: bold;
-    font-size: 1.5rem
+    font-size: 1.5rem;
+    color: #1d3144;
   }
 
   .desc2 {
     font-size: 1.2rem;
     opacity: 0.7;
+    color: rgba(9, 27, 68, 0.9);
   }
 }
 
