@@ -150,7 +150,6 @@ export default {
         clientId: '激活客戶端ID',
         active: '活躍',
         inactive: '不可用',
-        keyDetail: '密鑰細節',
         releaseData: '密钥生成日期',
         expirationData: '到期日期',
         none: '無',

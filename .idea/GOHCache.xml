@@ -80,6 +80,13 @@
             </set>
           </value>
         </entry>
+        <entry key="LoginMsg">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/nxc-backend/routers/LoginHandles.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Message">
           <value>
             <set>
@@ -269,7 +276,7 @@
         <entry key="file://$PROJECT_DIR$/aaaa.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726061626637" />
+              <option name="lastModified" value="1727611023513" />
               <option name="schema">
                 <list>
                   <option value="AAA" />
@@ -278,10 +285,17 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/main.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1727610925425" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/Document/Document.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726713242603" />
+              <option name="lastModified" value="1727611023513" />
               <option name="schema">
                 <list>
                   <option value="Document" />
@@ -293,21 +307,21 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/Document/DocumentHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726716158563" />
+              <option name="lastModified" value="1727611023513" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/auth/JWT.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726060991025" />
+              <option name="lastModified" value="1727611023513" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/Coupon.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727087080978" />
+              <option name="lastModified" value="1727611023514" />
               <option name="schema">
                 <list>
                   <option value="Coupon" />
@@ -319,14 +333,14 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/CouponHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727571522230" />
+              <option name="lastModified" value="1727611023514" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/coupon/CouponUseage.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726802124813" />
+              <option name="lastModified" value="1727611023514" />
               <option name="schema">
                 <list>
                   <option value="CouponUsage" />
@@ -338,21 +352,21 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/dao/dao.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726042165567" />
+              <option name="lastModified" value="1727611023514" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/dao/redis.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726042734918" />
+              <option name="lastModified" value="1727611023514" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/encry/base.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151715" />
+              <option name="lastModified" value="1727611023514" />
               <option name="schema">
                 <list>
                   <option value="Encryptor" />
@@ -364,7 +378,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/finance/subscribe.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725952468075" />
+              <option name="lastModified" value="1727611023514" />
               <option name="schema">
                 <list>
                   <option value="Subscribes" />
@@ -376,14 +390,14 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/handles/admin.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151715" />
+              <option name="lastModified" value="1727611023514" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/keys/Keys.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726986577479" />
+              <option name="lastModified" value="1727611023514" />
               <option name="schema">
                 <list>
                   <option value="Keys" />
@@ -395,14 +409,14 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/keys/KeysHandler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727421214475" />
+              <option name="lastModified" value="1727611023514" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/main/main.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727576755833" />
+              <option name="lastModified" value="1727611023515" />
               <option name="schema">
                 <list>
                   <option value="adminConfig" />
@@ -414,14 +428,14 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/main/writeLog.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151748" />
+              <option name="lastModified" value="1727611023558" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/orders/ActiveOrder.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727253360477" />
+              <option name="lastModified" value="1727611023558" />
               <option name="schema">
                 <list>
                   <option value="ActiveOrders" />
@@ -433,7 +447,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/orders/Order.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727574161542" />
+              <option name="lastModified" value="1727611023558" />
               <option name="schema">
                 <list>
                   <option value="Orders" />
@@ -445,14 +459,14 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/orders/OrdersHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727576845870" />
+              <option name="lastModified" value="1727611023558" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/privilege/Group.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726814643232" />
+              <option name="lastModified" value="1727611023558" />
               <option name="schema">
                 <list>
                   <option value="Group" />
@@ -464,7 +478,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/privilege/GroupHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727518840700" />
+              <option name="lastModified" value="1727611023558" />
               <option name="schema">
                 <list>
                   <option value="ResponseData" />
@@ -476,7 +490,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/publicNotice/Coupon.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726796329889" />
+              <option name="lastModified" value="1727611023558" />
               <option name="schema">
                 <list>
                   <option value="PublicNotices" />
@@ -488,21 +502,21 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/redis/query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726042136295" />
+              <option name="lastModified" value="1727611023558" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/LoginHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726987817456" />
+              <option name="lastModified" value="1727611023559" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/MailHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726109850097" />
+              <option name="lastModified" value="1727611023559" />
               <option name="schema">
                 <list>
                   <option value="SMTPConfig" />
@@ -516,7 +530,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/NoticeHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726796330076" />
+              <option name="lastModified" value="1727611023559" />
               <option name="schema">
                 <list>
                   <option value="noticeFormData" />
@@ -528,7 +542,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/SysSettings.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725758575309" />
+              <option name="lastModified" value="1727611023559" />
               <option name="schema">
                 <list>
                   <option value="AppSettings" />
@@ -540,7 +554,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/VerifyEmail.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726311420688" />
+              <option name="lastModified" value="1727611023559" />
               <option name="schema">
                 <list>
                   <option value="VerifyEmail" />
@@ -552,21 +566,21 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/registerHandles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726988096192" />
+              <option name="lastModified" value="1727611023559" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/routers/routers.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727571245422" />
+              <option name="lastModified" value="1727611023559" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/settings/SettingsParts.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726327560213" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="SystemSettingOptions" />
@@ -586,7 +600,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/settings/settings.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725952613351" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="SiteSetting" />
@@ -598,7 +612,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/subscribePlan/PlanHanles.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727090169692" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="planInfo" />
@@ -610,7 +624,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/subscribePlan/plan.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726819146812" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="Plan" />
@@ -622,7 +636,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/system/os.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151749" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="OsInfo" />
@@ -634,14 +648,14 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/system/useage.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151749" />
+              <option name="lastModified" value="1727611023560" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/themes/themes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726327560135" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="Themes" />
@@ -653,7 +667,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/ticket/Ticket.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727005580209" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="Ticket" />
@@ -666,7 +680,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/Auth.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726327560164" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="Auth" />
@@ -678,7 +692,7 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/User.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727252809496" />
+              <option name="lastModified" value="1727611023560" />
               <option name="schema">
                 <list>
                   <option value="User" />
@@ -690,14 +704,21 @@
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/code.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1725700151749" />
+              <option name="lastModified" value="1727611023560" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/nxc-backend/user/crud.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1726916847515" />
+              <option name="lastModified" value="1727611023560" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/nxc-frontend/src/assets/main.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1726382885701" />
             </ScannedPath>
           </value>
         </entry>
@@ -717,6 +738,7 @@
         <entry key="frontend" value="Frontend" />
         <entry key="group" value="Group" />
         <entry key="keys" value="Keys" />
+        <entry key="login_msg" value="LoginMsg" />
         <entry key="message" value="Message" />
         <entry key="myapp" value="Myapp" />
         <entry key="notice" value="Notice" />
@@ -744,6 +766,6 @@
         <entry key="verify_email_data" value="VerifyEmailData" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1727349180845" />
+    <option name="lastTimeChecked" value="1727611024798" />
   </component>
 </project>
