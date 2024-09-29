@@ -4,6 +4,7 @@ import (
 	"NxcFull/nxc-backend/Document"
 	"NxcFull/nxc-backend/auth"
 	"NxcFull/nxc-backend/coupon"
+	"NxcFull/nxc-backend/keys"
 	"NxcFull/nxc-backend/orders"
 	"NxcFull/nxc-backend/privilege"
 	"NxcFull/nxc-backend/subscribePlan"
@@ -98,6 +99,9 @@ func StartAdminReq() {
 		userAuthorized.POST("/auth/passcode/verify", user.HandleCheckOldPassword)
 		userAuthorized.POST("/auth/passcode/update", user.HandleApplyNewPassword)
 		userAuthorized.GET("plan/info/fetch", orders.GetActivePlanListByUserId)
+		userAuthorized.GET("keys", keys.HandleGetAllUserKeys)
+
+		userAuthorized.PUT("order", orders.HandleCommitNewOrder)
 	}
 
 	if err := r.Run("localhost:8080"); err != nil {

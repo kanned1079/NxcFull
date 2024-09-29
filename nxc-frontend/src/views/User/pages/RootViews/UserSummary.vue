@@ -152,6 +152,7 @@ let getActivePlanList = async () => {
 
 let goCartPage = () => {
   console.log('to cart page')
+
 }
 
 onMounted(() => {
@@ -232,7 +233,7 @@ onMounted(() => {
           v-if="!haveActive"
           class="no-license"
           content-style="padding: 0;"
-          @click="goCartPage"
+          @click="router.push({path: '/dashboard/purchase'})"
           :bordered="false"
       >
         <div

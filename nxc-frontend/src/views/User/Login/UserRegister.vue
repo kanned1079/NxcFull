@@ -150,7 +150,7 @@ let validateEmail = (email: string): boolean => {
 let sendVerifyCode = async () => {
   console.log(formValue.value.user.email.trim())
   if (formValue.value.user.email === '' || validateEmail(formValue.value.user.email.trim())) {
-    notifyErr('error', '注册', '邮件格式不合法')
+    notifyErr('error', '注册', computed(() => t('userRegister.invalidEmailFormat')))
     return
   } else {
     console.log("邮件校验通过 发送邮箱验证")
@@ -161,7 +161,7 @@ let sendVerifyCode = async () => {
       if (data.code === 200) {
         enableSendCode.value = false
         startWait(60)
-        notifyPass('success', '注册', '邮件发送成功 请查看邮箱')
+        notifyPass('success', '注册', computed(() => t('userRegister.sendSuccess')))
       } else {
         notifyErr('error', '注册', data.error.toString())
       }
@@ -215,9 +215,9 @@ let handleRegister = async () => {
     })
     console.log(data)
     if (data.code === 200) {
-      notifyPass('success', '注册', '注册成功')
+      notifyPass('success',  computed(() => t('userRegister.reg')), computed(() => t('userRegister.regSuccess')))
     } else {
-      notifyErr('error', '注册', data.msg.toString())
+      notifyErr('error', computed(() => t('userRegister.failure')), data.msg.toString())
     }
   } catch (error) {
     // notifyErr('error',error.toString())
@@ -261,11 +261,11 @@ let handleValidateClick = async () => {
   }
 
   if (formValue.value.user.email === '' || formValue.value.user.password === '' || formValue.value.user.password_confirmation === '') {
-    notifyErr('error', '注册', '缺少有效信息')
+    notifyErr('error', computed(() => t('userRegister.reg')), computed(() => t('userRegister.infoIncomplete')))
     return
   } else {  // 有效信息完整
     if (formValue.value.user.password !== formValue.value.user.password_confirmation) {
-      notifyErr('error', '注册', '密码不一致')
+      notifyErr('error', computed(() => t('userRegister.reg')), computed(() => t('userRegister.pwdIncorrect')))
       return
     }
     if (appInfosStore.registerPageConfig.is_email_verify) { // 如果启用了邮箱验证
@@ -282,22 +282,22 @@ let handleValidateClick = async () => {
           })
           if (data.code === 200) {
             console.log("注册成功")
-            notifyPass('success', '注册', '注册成功 返回登录')
+            notifyPass('success', computed(() => t('userRegister.reg')), computed(() => t('userRegister.regSuccess')))
             setTimeout(async () => {
               await router.push({
                 path: '/login'
               })
             }, 1000)
           } else {
-            notifyPass('error', '注册失败', data.msg)
+            notifyPass('error', computed(() => t('userRegister.regFailure')), data.msg)
 
           }
         } catch (error) {
-          notifyPass('error', '未知错误', error.toString())
+          notifyPass('error', computed(() => t('userRegister.unknowErr')), error.toString())
         }
         return;
       } else {
-        notifyErr('error', '注册', '验证码错误')
+        notifyErr('error', computed(() => t('userRegister.failure')), computed(() => t('userRegister.verifyCodeErr')))
         return
       }
 
@@ -358,11 +358,11 @@ export default {
       <div class="r-content-color2"></div>
       <div class="r-content-color3"></div>
       <n-card class="login-card" :embedded="false" :bordered="false">
-        <n-button class="back" text :bordered="false" @click="router.back()">
+        <n-button class="back" text :bordered="false" @click="router.replace({path: '/welcome'})">
           <n-icon style="margin-right: 5px" size="20"><backIcon/></n-icon>
-          {{ t('userLogin.backHomePage') }}
+          {{ t('userRegister.backHomePage') }}
         </n-button>
-        <p class="login-title">准备您的新账户</p>
+        <p class="login-title">{{ t('userRegister.newAccount') }}</p>
 
         <n-form
             ref="formRef"
@@ -374,7 +374,7 @@ export default {
           >
             <n-input
                 v-model:value="formValue.user.email"
-                placeholder="邮箱地址"
+                :placeholder="t('userRegister.email')"
                 size="large"
                 :bordered="false"
                 :style="placeholderBgColor"
@@ -388,7 +388,7 @@ export default {
           >
             <n-input
                 v-model:value.number="formValue.user.verify_code"
-                placeholder="邮箱验证码"
+                :placeholder="t('userRegister.verifyCode')"
                 size="large"
                 class="input-general"
                 :bordered="false"
@@ -401,7 +401,8 @@ export default {
                 @click="sendVerifyCode"
                 style="margin-left: 12px; height: 45px"
                 size="large">
-              发送验证码{{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
+              {{ t('userRegister.sendVerifyCode') }}
+              {{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
             </n-button>
           </n-form-item>
           <n-form-item
@@ -411,7 +412,7 @@ export default {
             <n-input
                 type="password"
                 v-model:value="formValue.user.password"
-                placeholder="密码"
+                :placeholder="t('userRegister.pwd')"
                 size="large"
                 :bordered="false"
                 :style="placeholderBgColor"
@@ -425,7 +426,7 @@ export default {
             <n-input
                 type="password"
                 v-model:value="formValue.user.password_confirmation"
-                placeholder="确认密码"
+                :placeholder="t('userRegister.pwdAgain')"
                 size="large"
                 class="input-general"
                 :bordered="false"
@@ -440,7 +441,7 @@ export default {
           >
             <n-input
                 v-model:value.number="formValue.user.invite_user_id"
-                placeholder="邀请码（选填）"
+                :placeholder="t('userRegister.inviteCode')"
                 size="large"
                 class="input-general"
                 :bordered="false"
@@ -452,14 +453,14 @@ export default {
         <n-form>
           <n-form-item>
             <n-checkbox v-model:checked="agreementChecked"></n-checkbox>
-            <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">我已经阅读并同意</p>
-            <n-button text type="primary" style="font-weight: bold; opacity: 0.9; margin-left: 3px">用户条款
+            <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">{{ t('userRegister.agreement') }}</p>
+            <n-button text type="primary" style="font-weight: bold; opacity: 0.9; margin-left: 3px">{{ t('userRegister.terminalUserAgreement') }}
             </n-button>
           </n-form-item>
         </n-form>
 
         <n-button :bordered="false" type="primary" class="login-btn" size="large" @click="handleValidateClick" :disabled="!regBtnEnabled">
-          注册
+          {{ t('userRegister.reg') }}
         </n-button>
       </n-card>
     </div>
@@ -678,9 +679,5 @@ export default {
 
   }
 }
-//
-//.n-input {
-//  background-color: #66afe9;
-//}
 
 </style>

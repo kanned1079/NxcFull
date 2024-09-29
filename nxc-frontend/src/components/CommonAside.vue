@@ -263,12 +263,12 @@ let UserMenuOption = ref([
     children: [
       {
         label: computed(() => t('commonAside.user.myOrder')),
-        key: 'user-order',
+        key: 'user-orders',
         icon: renderIcon(myOrderIcon),
       },
       {
         label: computed(() => t('commonAside.user.myInvite')),
-        key: 'user-invited',
+        key: 'user-invite',
         icon: renderIcon(inviteIcon),
       },
     ]
@@ -316,6 +316,10 @@ let userUpdate = (key: string) => {
       router.push({path: '/dashboard/purchase'})
       break
     }
+    case 'user-orders': {
+      router.push({path: '/dashboard/orders'})
+      break
+    }
 
 
     case 'user-profile': {
@@ -331,6 +335,10 @@ let userUpdate = (key: string) => {
     }
     case 'user-keys': {
       router.push({path: '/dashboard/keys'})
+      break
+    }
+    case 'user-invite': {
+      router.push({path: '/dashboard/invite'})
       break
     }
   }

@@ -15,6 +15,7 @@ const useThemeStore = defineStore('theme', () => {
 
     // 是否启用深色模式
     const enableDarkMode = ref(false)
+    // 主題名選擇
     const selectedTheme = ref('')
     // const selectedTheme = useSettingStore().settings.frontend.frontend_theme
 
@@ -109,6 +110,10 @@ const useThemeStore = defineStore('theme', () => {
                 textColorHoverPrimary: '#fff',
                 textColorPressedPrimary: '#fff',
                 textColorFocusPrimary: '#fff',
+
+                colorTextPrimary: '#385894',
+                colorTextHoverPrimary: '#2f508e',
+                textColorTextHoverPrimary: '#2f508e'
             },
             Input: {
                 borderHover: '1px solid #385894',
@@ -126,6 +131,9 @@ const useThemeStore = defineStore('theme', () => {
             Notification: {
                 color: 'rgba(255, 255, 255, 1)',
                 bordered: '1px solid #385894',
+            },
+            Dropdown: {
+                color: 'rgba(40, 41, 41, 1)'
             }
         } as GlobalThemeOverrides)
     })
@@ -439,7 +447,7 @@ const useThemeStore = defineStore('theme', () => {
                 return bambooGreen;
             }
             default: {
-                return bambooGreen;
+                return darkBlueDay;
             }
         }
     })

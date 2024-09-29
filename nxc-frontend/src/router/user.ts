@@ -10,6 +10,9 @@ import NewSettlement from "@/views/User/pages/PurchaseViews/NewSettlement.vue";
 import UserProfile from "@/views/User/pages/Profile/UserProfile.vue";
 import Tickets from "@/views/User/pages/UserViews/Tickets.vue"
 import UserKeys from "@/views/User/pages/PurchaseViews/UserKeys.vue";
+import UserInvite from "@/views/User/pages/FinanceViews/UserInvite.vue";
+import UserOrders from "@/views/User/pages/FinanceViews/UserOrders.vue";
+import ConfirmOrder from "@/views/User/pages/PurchaseViews/ConfirmOrder.vue";
 
 // WhyChooseUs页面
 import WhyChooseUsA from "@/views/Welcome/A/WhyChooseUsA.vue";
@@ -66,6 +69,10 @@ const userRoutes: RouteRecordRaw[] = [
                 component: NewSettlement,
             },
             {
+                path: '/dashboard/purchase/confirm',
+                component: ConfirmOrder,
+            },
+            {
                 path: '/dashboard/profile',
                 component: UserProfile,
             },
@@ -80,6 +87,14 @@ const userRoutes: RouteRecordRaw[] = [
             {
                 path: '/dashboard/keys',
                 component: UserKeys
+            },
+            {
+                path: '/dashboard/orders',
+                component: UserOrders
+            },
+            {
+                path: '/dashboard/invite',
+                component: UserInvite
             }
 
         ]

@@ -48,7 +48,7 @@ let resultPrice = ref<number>(0)
 // let ticketVerified = ref<boolean>(false)
 
 let couponCode = ref<string>('')
-
+let period = ref<string>()
 
 let showCycleName = computed(() => {
   if (selectedCycle.value === 'month') {
@@ -72,6 +72,8 @@ let showCycleName = computed(() => {
 let cycleSelect = (key: string) => {
   console.log(key)
   selectedCycle.value = key
+  period.value = key
+  console.log('period: ', period.value)
 }
 
 const menuOptions: MenuOption[] = []
@@ -113,7 +115,15 @@ let handleUpdateExpandedKeys = (keys: string) => {
 }
 
 // 优惠券信息
-let couponInfo = ref({
+interface Coupon {
+  id: number,
+  name: string,
+  verified: boolean,
+  percent_off: number,
+}
+
+let couponInfo = ref<Coupon>({
+  id: null,
   name: '',
   verified: false,
   percent_off: 0.0,
@@ -129,12 +139,13 @@ let verifyTicket = async () => {
     let {data} = await instance.post(apiAddrStore.apiAddr.user.verifyCoupon, {
       coupon_code: couponCode.value.trim(),  // 优惠券码
       plan_id: plan.id,               // 订阅计划id
-      user_id: userInfoStore.thisUser.id  // 用户id 判断是否使用过
+      user_id: userInfoStore.thisUser.id,  // 用户id 判断是否使用过
     });
     if (data.code === 200) {
       if (data.verified) {
-        console.log('验证码有效');
+        console.log('验证码有效', data);
         // ticketVerified.value = true;
+        couponInfo.value.id = data.id;
         couponInfo.value.verified = true;
         couponInfo.value.percent_off = data.percent_off;
         couponInfo.value.name = data.name;
@@ -164,18 +175,24 @@ let discountPrice = computed(()  => couponInfo.value.verified ? ((couponInfo.val
 
 let saveOrder = async () => {
   console.log('提交订单准备支付')
+  try{
+    let {data} = await instance.put('/api/user/v1/order', {
+      plan_id: plan.id,
+      user_id: userInfoStore.thisUser.id,
+      coupon_id: couponInfo.value.id || null,
+      period: period.value || 'month',
+    })
+    if (data.code === 200) {
+      console.log('订单创建成功')
+      // Object.assign(data, paymentStore.confirmOrder)
+      paymentStore.confirmOrder = data
+      console.log('选择支付方式')
+      await router.push({path: '/dashboard/purchase/confirm'})
 
-
-  // try{
-  //   let {data} = await instance.post(apiAddrStore.apiAddr.user.saveOrder, {
-  //     plan_id: plan.id,
-  //   })
-  //   if (data.code === 200) {
-  //     console.log('订单创建成功')
-  //   }
-  // }catch (error) {
-  //   console.log(error)
-  // }
+    }
+  }catch (error) {
+    console.log(error)
+  }
 }
 
 let notify = (type: NotificationType, title: string, meta: string) => {

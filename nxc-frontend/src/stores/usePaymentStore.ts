@@ -45,11 +45,25 @@ const usePaymentStore = defineStore('paymentStore', () => {
 
     let plan_id_selected = ref<number>(-1)
 
+    interface ConfirmOrder {
+        code: number,
+        order_id: number,
+        plan_name: string,
+        original_price: number,
+        discount_amount: number,
+        pay_price: number,
+        period: string,
+        created_at: string
+    }
+
+    let confirmOrder = ref<ConfirmOrder>({})
+
 
     return {
         plan_list,
         getAllPlans,
         plan_id_selected,
+        confirmOrder
     }
 
 }, {

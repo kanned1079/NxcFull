@@ -80,10 +80,31 @@ let collapsedMenuOptions = ref([
 let handleSelectLang = (lang: string) => {
   console.log(lang)
   // lang: en_US, zh_CN, zh_HK, ja_JP
-  // const { locale } = useI18n()
   // 动态切换语言
   locale.value = lang
   localStorage.setItem('locale', lang)  // 保存语言到 localStorage
+}
+
+let handleEnter = (link: string) => {
+  console.log(link)
+  switch (link) {
+    case 'about-us': {
+
+      break
+    }
+    case 'pricing': {
+
+      break
+    }
+    case 'login': {
+      router.push({path: '/login'})
+      break
+    }
+    case 'register': {
+      router.push({path: '/register'})
+      break
+    }
+  }
 }
 
 let collapse = ref<boolean>(false)
@@ -119,14 +140,23 @@ export default {
       <n-button v-if="!collapse" size="large" style="margin-right: 40px" color="#277aa8" text type="primary">
         {{ t('welcome.A.aboutUs') }}
       </n-button>
-      <n-button v-if="!collapse" size="large" color="#277aa8" text type="primary">{{
-          t('welcome.A.pricing')
-        }}
+      <n-button v-if="!collapse" size="large" color="#277aa8" text type="primary">
+        {{ t('welcome.A.pricing') }}
       </n-button>
     </div>
     <div class="right-content">
-      <n-dropdown trigger="hover" :options="langOptions" @select="handleSelectLang">
-        <n-button style="margin-right: 20px" quaternary class="btn" size="medium" color="#277aa8">
+      <n-dropdown
+          trigger="hover"
+          :options="langOptions"
+          @select="handleSelectLang"
+          style="background-color: white;"
+      >
+        <n-button
+            style="margin-right: 20px"
+            quaternary class="btn"
+            size="medium"
+            color="#277aa8"
+        >
           <template #icon>
             <n-icon size="20">
               <langIcon/>
@@ -139,8 +169,8 @@ export default {
           v-if="collapse"
           trigger="hover"
           :options="collapsedMenuOptions"
-          @select=""
-          style="backdrop-filter: blur(10px); width: 200px"
+          @select="handleEnter"
+          style="backdrop-filter: blur(10px); width: 200px; background-color: white"
       >
         <n-button style="margin-right: 20px" quaternary class="btn" size="medium" color="#277aa8">
           <template #icon>

@@ -65,6 +65,9 @@ func main() {
 	if err := dao.Db.AutoMigrate(coupon.Coupon{}); err != nil {
 		panic("failed to migrate database")
 	}
+	if err := dao.Db.AutoMigrate(coupon.CouponUsage{}); err != nil {
+		panic("failed to migrate database")
+	}
 
 	if err := dao.Db.AutoMigrate(privilege.Group{}); err != nil {
 		panic("failed to migrate database")

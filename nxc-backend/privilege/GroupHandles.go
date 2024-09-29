@@ -20,6 +20,15 @@ type Group struct {
 */
 
 func HandleGetAllGroups(context *gin.Context) {
+	pageData := &struct {
+		Page int64 `form:"page" json:"page"`
+		Size int64 `form:"size" json:"size"`
+	}{}
+	if err := context.ShouldBindQuery(pageData); err != nil {
+		log.Println(err)
+	}
+	log.Println(pageData)
+	// pass
 	var privilegeGroups []Group
 	type ResponseData struct {
 		Id        int64  `json:"id"`

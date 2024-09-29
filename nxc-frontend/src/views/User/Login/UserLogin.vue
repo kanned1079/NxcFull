@@ -230,155 +230,6 @@ export default {
 }
 </script>
 
-<!--<template>-->
-
-<!--&lt;!&ndash;  <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center"&ndash;&gt;-->
-<!--&lt;!&ndash;            :style="backgroundStyle">&ndash;&gt;-->
-<!--&lt;!&ndash;    <n-flex justify="center" :vertical="true" align="center" style="gap: 0">&ndash;&gt;-->
-<!--&lt;!&ndash;      <n-card class="layer-up" :embedded="true" hoverable>&ndash;&gt;-->
-<!--&lt;!&ndash;        <p class="title">{{ siteInfo.siteName }}</p>&ndash;&gt;-->
-<!--&lt;!&ndash;        <p class="sub-title">常州站点</p>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="inp">&ndash;&gt;-->
-
-<!--&lt;!&ndash;          <n-form&ndash;&gt;-->
-<!--&lt;!&ndash;              ref="formRef"&ndash;&gt;-->
-<!--&lt;!&ndash;              :model="formValue"&ndash;&gt;-->
-<!--&lt;!&ndash;              :rules="rules"&ndash;&gt;-->
-<!--&lt;!&ndash;          >&ndash;&gt;-->
-<!--&lt;!&ndash;            <n-form-item path="user.email" :show-feedback="false">&ndash;&gt;-->
-<!--&lt;!&ndash;              <n-input v-model:value="formValue.user.email" placeholder="邮箱地址" size="large"&ndash;&gt;-->
-<!--&lt;!&ndash;                       style="user-select: none"/>&ndash;&gt;-->
-<!--&lt;!&ndash;            </n-form-item>&ndash;&gt;-->
-
-<!--&lt;!&ndash;            <n-form-item path="user.password" :show-feedback="false">&ndash;&gt;-->
-<!--&lt;!&ndash;              <n-input type="password" v-model:value="formValue.user.password" placeholder="密码" size="large"/>&ndash;&gt;-->
-<!--&lt;!&ndash;            </n-form-item>&ndash;&gt;-->
-<!--&lt;!&ndash;          </n-form>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <n-button secondary type="info" class="login-btn" size="large" @click="handleValidateClick"&ndash;&gt;-->
-<!--&lt;!&ndash;                  :disabled="!enableLogin">&ndash;&gt;-->
-<!--&lt;!&ndash;          登入&ndash;&gt;-->
-<!--&lt;!&ndash;        </n-button>&ndash;&gt;-->
-
-<!--&lt;!&ndash;      </n-card>&ndash;&gt;-->
-<!--&lt;!&ndash;      <n-card class="layer-down" content-style="padding: 0;">&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="bottom-root">&ndash;&gt;-->
-<!--&lt;!&ndash;          <div class="l-con">&ndash;&gt;-->
-<!--&lt;!&ndash;            <n-button text @click="toRegister">注册</n-button>&ndash;&gt;-->
-<!--&lt;!&ndash;            <n-divider vertical/>&ndash;&gt;-->
-<!--&lt;!&ndash;            <n-button text @click="handleForgetPassword">忘记密码</n-button>&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;          <div class="r-con">&ndash;&gt;-->
-<!--&lt;!&ndash;            <n-button text>&ndash;&gt;-->
-<!--&lt;!&ndash;              <n-icon style="margin-right: 5px;">&ndash;&gt;-->
-<!--&lt;!&ndash;                <LanguageIcon/>&ndash;&gt;-->
-<!--&lt;!&ndash;              </n-icon>&ndash;&gt;-->
-<!--&lt;!&ndash;              语言&ndash;&gt;-->
-<!--&lt;!&ndash;            </n-button>&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;      </n-card>&ndash;&gt;-->
-
-<!--&lt;!&ndash;    </n-flex>&ndash;&gt;-->
-<!--&lt;!&ndash;  </n-layout>&ndash;&gt;-->
-
-
-<!--</template>-->
-
-<!--<style lang="less" scoped>-->
-
-<!--.n-flex {-->
-<!--  height: 100vh;-->
-<!--  //background-color: rgba(255, 255, 255, 0.001);-->
-<!--  //background-image:-->
-<!--  //background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;-->
-<!--}-->
-
-<!--.layer-up {-->
-<!--  width: 480px;-->
-<!--  height: auto;-->
-<!--  border: 0;-->
-<!--  border-radius: 5px 5px 0 0;-->
-<!--  margin-bottom: 0;-->
-
-<!--  .title {-->
-<!--    margin-top: 20px;-->
-<!--    font-size: 30px;-->
-<!--  }-->
-
-<!--  .sub-title {-->
-<!--    font-size: 13px;-->
-<!--  }-->
-
-<!--  .inp {-->
-<!--    margin-top: 30px;-->
-<!--    text-align: left;-->
-<!--    width: 90%;-->
-<!--  }-->
-
-<!--  .login-btn {-->
-<!--    margin-top: 30px;-->
-<!--    width: 90%;-->
-<!--    margin-bottom: 30px;-->
-<!--  }-->
-
-<!--  .register-btn {-->
-<!--    margin-top: 30px;-->
-<!--    width: 90%;-->
-<!--  }-->
-
-<!--}-->
-
-<!--.bottom-panel {-->
-<!--  height: 50px;-->
-<!--  width: 480px;-->
-<!--  border-radius: 0 0 5px 5px;-->
-<!--  padding: 0;-->
-<!--  margin: 0;-->
-<!--}-->
-
-<!--.layer-down {-->
-<!--  width: 480px;-->
-<!--  height: 50px;-->
-<!--  border-radius: 0 0 5px 5px;-->
-
-<!--  .bottom-root {-->
-<!--    border-radius: 0 0 5px 5px;-->
-<!--    height: 100%;-->
-<!--    display: flex;-->
-<!--    backdrop-filter: blur(10px);-->
-<!--    background-color: rgba(225, 225, 225, 0.2);-->
-<!--    justify-content: space-between;-->
-
-<!--    .l-con {-->
-<!--      line-height: 50px;-->
-<!--      margin-left: 20px;-->
-<!--      opacity: 0.8;-->
-<!--    }-->
-
-<!--    .r-con {-->
-<!--      line-height: 50px;-->
-<!--      margin-right: 20px;-->
-
-<!--    }-->
-<!--  }-->
-<!--}-->
-
-<!--.n-card {-->
-<!--  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');-->
-<!--  //background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');-->
-<!--  border: 0;-->
-<!--}-->
-
-<!--//element.style {-->
-<!--//  gap: 0;-->
-<!--//}-->
-
-<!--</style>-->
-
-
 <template>
   <div class="root">
     <div class="l-content" :style="bgColor">
@@ -709,12 +560,10 @@ export default {
   }
 }
 
-@media (max-width: 900px) {
-  .r-content {
-    //background: linear-gradient(to right, rgb(217, 167, 199), rgb(255, 252, 220));
-
-  }
-}
-
+//@media (max-width: 900px) {
+//  .r-content {
+//    //background: linear-gradient(to right, rgb(217, 167, 199), rgb(255, 252, 220));
+//  }
+//}
 
 </style>

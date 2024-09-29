@@ -35,7 +35,7 @@ const useUserInfoStore = defineStore('userInfoS',() => {
     let logout = () => {
         setAndSaveAuthStatus(false)
         let isAdminBak = thisUser.isAdmin
-        sessionStorage.removeItem('tokeni')
+        sessionStorage.removeItem('token')
         Object.assign(thisUser, {
             id: 0,
             inviteUserId: 0,

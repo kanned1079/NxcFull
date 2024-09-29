@@ -10,6 +10,9 @@ const message = useMessage()
 
 let modifyFunc = ref<string>('add')
 let modifyId = ref<number>(null)
+let pagination =  ref({ pageSize: 4 })
+let page = ref<number>(1)
+let pageCount = ref(18)
 
 interface GroupItem {
   id: number
@@ -52,6 +55,8 @@ const columns = ref(
       {
         title: '操作',
         key: 'actions',
+        width: 200,
+        fixed: 'right',
         render(row: GroupItem) {
           return h('div', {style: 'display: flex; gap: 8px'}, [
             h(NButton, {size: 'small', type: 'primary', onClick: () => editGroup(row)}, {default: () => '編輯'}),
@@ -217,8 +222,16 @@ export default {
     <n-card style="margin-top: 20px" :embedded="true" hoverable :bordered="false" content-style="padding: 0;">
       <!--      在這裏放置表格-->
       <!--      表格有五列 列名分別是 權限組ID， 組名稱， 用戶數量（前面使用n-icon放置一個用戶圖標）， 計畫數量（前面使用n-icon放置一個圖標， 操作（內部為兩個按鈕 水平排列分別為編輯和刪除）-->
-      <n-data-table :columns="columns" :data="groupList" :pagination="false"/>
+      <n-data-table
+          :columns="columns"
+          :data="groupList"
+          :scroll-x="900"
+      />
     </n-card>
+
+    <div class="btn-pagination">
+      <n-pagination  v-model:page="page" :page-count="pageCount" />
+    </div>
 
   </div>
 
@@ -257,10 +270,16 @@ export default {
 <style lang="less" scoped>
 .root {
   padding: 20px;
-  min-width: 900px;
 
   .add-btn {
     margin-top: 10px;
+  }
+
+  .btn-pagination {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
   }
 }
 
