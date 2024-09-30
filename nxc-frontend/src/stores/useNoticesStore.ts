@@ -4,21 +4,23 @@ import instance from "@/axios";
 // import {useMessage} from "naive-ui"
 
 
+interface Notice {
+    id: number,
+    title: string,
+    content: string,
+    show: boolean,
+    img_url?: string,
+    tags?: string,
+    created_at: string,
+    updated_at?: string,
+    deleted_at?: string,
+}
+
 const useNoticesStore = defineStore('NoticesStore', () => {
 
-    interface Notices {
-        id: int,
-        title: string,
-        content: string,
-        show: boolean,
-        img_url?: string,
-        tags?: string,
-        created_at: string,
-        updated_at?: string,
-        deleted_at?: string,
-    }
 
-    let noticesArr = reactive([]<Notices>)
+
+    let noticesArr = reactive<Notice[]>([])
 
     // // 获取所有的通知
     // let getAllNotices = async () => {

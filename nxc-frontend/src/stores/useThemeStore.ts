@@ -1,29 +1,62 @@
-import {computed, reactive, ref} from 'vue'
+import {computed, reactive, ref, type Ref, type ComputedRef} from 'vue'
 import {defineStore} from "pinia";
 import {darkTheme, type GlobalThemeOverrides} from 'naive-ui';
 import useSettingStore from "@/stores/useSettingStore"
 
-const useThemeStore = defineStore('theme', () => {
+const useThemeStore = defineStore('themeStore', (): {
+    // enableDarkMode: Ref<boolean>;
+    // selectedTheme: Ref<string>;
+    // setThemeFromSetting: () => void;
+    // saveEnableDarkMode: () => void;
+    // readEnableDarkMode: () => void;
+    // globeTheme: {
+    //     asideBgColor: ComputedRef<string>;
+    // };
+    // darkBlueDay: {
+    //     topLogoBgColor: ComputedRef<string>;
+    //     topLogoTextColor: string;
+    //     topHeaderBgColor: ComputedRef<string>;
+    //     topHeaderTextColor: string;
+    //     globeTheme: typeof globeTheme; // 如果 globeTheme 的类型已知
+    //     selfOverride: ComputedRef<GlobalThemeOverrides>;
+    // };
+    // milkGreenDay: {
+    //     topLogoBgColor: ComputedRef<string>;
+    //     topLogoTextColor: string;
+    //     topHeaderBgColor: ComputedRef<string>;
+    //     topHeaderTextColor: string;
+    //     globeTheme: typeof globeTheme; // 如果 globeTheme 的类型已知
+    //     selfOverride: ComputedRef<GlobalThemeOverrides>;
+    // };
+    // biliPink: {
+    //     topLogoBgColor: ComputedRef<string>;
+    //     topLogoTextColor: string;
+    //     topHeaderBgColor: ComputedRef<string>;
+    //     topHeaderTextColor: string;
+    //     globeTheme: typeof globeTheme; // 如果 globeTheme 的类型已知
+    //     selfOverride: ComputedRef<GlobalThemeOverrides>;
+    // };
+    // bambooGreen: {
+    //     topLogoBgColor: ComputedRef<string>;
+    //     topLogoTextColor: string;
+    //     topHeaderBgColor: ComputedRef<string>;
+    //     topHeaderTextColor: string;
+    //     globeTheme: typeof globeTheme; // 如果 globeTheme 的类型已知
+    //     selfOverride: ComputedRef<GlobalThemeOverrides>;
+    // };
+    //
 
-    // const darkOverride: GlobalThemeOverrides = {
-    //     Notification: {
-    //         tex
-    //     }
-    // }
-    // type SelectThemeOverrides = NonNullable<SelectProps['themeOverrides']>
-
-
+} => {
     // 是否启用深色模式
-    const enableDarkMode = ref(false)
+    const enableDarkMode = ref<boolean>(false)
     // 主題名選擇
-    const selectedTheme = ref('')
-    // const selectedTheme = useSettingStore().settings.frontend.frontend_theme
+    const selectedTheme = ref<string>('')
 
     // 如在个性化中修改了主题 或者app挂载时候需要调用来应用设置
     let setThemeFromSetting = () => selectedTheme.value = useSettingStore().settings.frontend.frontend_theme
 
     // saveTheme 保存到浏览器localStorage深色配置
-    const saveEnableDarkMode = () => localStorage.setItem('themeCode', JSON.stringify({code: enableDarkMode.value}));
+    const saveEnableDarkMode = () => localStorage.setItem('themeCode', JSON.stringify({code: enableDarkMode.value as boolean}));
 
     // 读取浏览器缓存中的配置 处理主题设置
     const readEnableDarkMode = () => !localStorage.getItem('themeCode') ? saveEnableDarkMode() : enableDarkMode.value = JSON.parse(localStorage.getItem('themeCode') as string).code as boolean;
@@ -31,13 +64,7 @@ const useThemeStore = defineStore('theme', () => {
     // 通用部分 计算属性
     const globeTheme = reactive({
         asideBgColor: computed(() => enableDarkMode.value ? '#282929' : '#fff'),
-        //contentBgColor: computed(() => enableDarkMode.value ? '#2d2f2f' : '#eff2f7'),
-        //cardBgColor: computed(() => enableDarkMode.value ? 'rgba(40, 41, 41, 1)' : '#fff'),
-        //loginCardBgColor: computed(() => enableDarkMode.value ? 'rgba(40, 41, 41, 0.7)' : 'rgba(255, 255, 255, 0.7)'),
     })
-
-    // 等六j
-    const backgroundUrl = ref('https://ikanned.com:24444/d/Upload/pexels-martin-p%C3%A9chy-5335217.jpg')
 
     // 主题配置 深蓝色
     const darkBlueDay = reactive({
@@ -472,7 +499,7 @@ const useThemeStore = defineStore('theme', () => {
         saveEnableDarkMode,
         setAdminPageTheme,
         setThemeFromSetting,
-        backgroundUrl,
+        // backgroundUrl,
         contentPath,
         menuSelected,
         userPath,

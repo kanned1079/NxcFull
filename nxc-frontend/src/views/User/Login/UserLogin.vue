@@ -7,7 +7,7 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import type {NotificationType} from 'naive-ui'
-import {FormInst, useMessage, useNotification} from 'naive-ui'
+import {type FormInst, useMessage, useNotification} from 'naive-ui'
 import instance from '@/axios/index'
 import {
   LogInOutline as loginIcon,
@@ -275,7 +275,7 @@ export default {
         <n-divider>
           <p style="opacity: 0.5;  font-weight: 400; font-size: 0.8rem">{{ t('userLogin.otherMethods') }}</p>
         </n-divider>
-        <n-button :bordered="false" class="other-login-method github" type="primary" @click="loginViaGithub ">
+        <n-button :bordered="false" class="other-login-method github" type="primary" @click=" ">
           <n-icon style="margin-right: 10px;" size="25">
             <githubIcon/>
           </n-icon>
