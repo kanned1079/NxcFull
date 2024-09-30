@@ -58,6 +58,7 @@ import (
 //
 //}
 
+// GetActivePlanListByUserId 获取用户的有效订阅
 func GetActivePlanListByUserId(context *gin.Context) {
 	// Parse the user_id from the query parameters
 	userID := context.Query("user_id")
@@ -105,13 +106,14 @@ func GetActivePlanListByUserId(context *gin.Context) {
 	})
 }
 
+// HandleCommitNewOrder 用户提交一个新的订单
 func HandleCommitNewOrder(context *gin.Context) {
 	var err error
 	postData := &struct {
-		UserId   int64  `json:"user_id"` // 用户Id
-		PlanId   int64  `json:"plan_id"` // 订阅计划Id
-		Period   string `json:"period"`  // 付款周期
-		CouponId int64  `json:"coupon_id"`
+		UserId   int64  `json:"user_id"`   // 用户Id
+		PlanId   int64  `json:"plan_id"`   // 订阅计划Id
+		Period   string `json:"period"`    // 付款周期 month, quater, half-year, year
+		CouponId int64  `json:"coupon_id"` // 如果没使用优惠券这就是0否则为优惠券的id
 	}{}
 	if err := context.ShouldBindJSON(postData); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
@@ -221,5 +223,27 @@ func HandleCommitNewOrder(context *gin.Context) {
 		"period":          postData.Period,
 		"created_at":      time.Now().Format("2006-01-02 15:04:05"),
 	})
+}
 
+func HandleGetOrders(context *gin.Context) {
+	var userId int
+	var err error
+	if userId, err = strconv.Atoi(context.Query("user_id")); err != nil {
+		log.Println(err)
+	}
+	log.Println("user_id", userId)
+	var orders []Orders
+	if result := dao.Db.Model(&Orders{}).Where("user_id = ?", userId).Find(&orders); result.Error != nil {
+		log.Println(result.Error)
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusNotFound,
+			"error": result.Error.Error(),
+			"msg":   "查找用户订单错误",
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       http.StatusOK,
+		"order_list": orders,
+	})
 }

@@ -162,13 +162,19 @@ export default {
         orderStatus: '訂單狀態',
         createdAt: '創建時間',
         operate: '操作',
-        monthPay: '月付',
-        quarterPay: '季付',
-        halfYearPay: '半年付',
-        yearPay: '年付',
+        // monthPay: '月付',
+        // quarterPay: '季付',
+        // halfYearPay: '半年付',
+        // yearPay: '年付',
         showDetail: '訂單細節',
         cancelOrder: '取消訂單',
         canceled: '已取消',
+        period: {
+            monthPay: '月付',
+            quarterPay: '季付',
+            halfYearPay: '半年付',
+            yearPay: '年付',
+        }
     },
     userInvite: {
         myInvite: '我的邀請',

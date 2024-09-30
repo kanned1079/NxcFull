@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-func StartAdminReq() {
+func StartReq() {
 	r := gin.Default()
 
 	// 中间件 过OPTIONS预检
@@ -98,10 +98,13 @@ func StartAdminReq() {
 		userAuthorized.POST("/coupon/verify", coupon.HandleVerifyCoupon)   // 验证优惠券可用性
 		userAuthorized.POST("/auth/passcode/verify", user.HandleCheckOldPassword)
 		userAuthorized.POST("/auth/passcode/update", user.HandleApplyNewPassword)
-		userAuthorized.GET("plan/info/fetch", orders.GetActivePlanListByUserId)
-		userAuthorized.GET("keys", keys.HandleGetAllUserKeys)
+		userAuthorized.GET("/plan/info/fetch", orders.GetActivePlanListByUserId)
+		userAuthorized.GET("/keys", keys.HandleGetAllUserKeys)
 
-		userAuthorized.PUT("order", orders.HandleCommitNewOrder)
+		userAuthorized.PUT("/order", orders.HandleCommitNewOrder) // 下单新的订阅
+		// 这里将生成订单号后推送至消息队列 交由第二个进程进行处理
+
+		userAuthorized.GET("/orders", orders.HandleGetOrders)
 	}
 
 	if err := r.Run("localhost:8080"); err != nil {

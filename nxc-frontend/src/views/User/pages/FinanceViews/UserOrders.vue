@@ -1,136 +1,122 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onBeforeMount, onMounted, ref, h, computed} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
+import useUserInfoStore from "@/stores/useUserInfoStore";
 import {NButton, NTag, useMessage} from "naive-ui"
-
+import instance from "@/axios/index"
+import {formatDate} from "@/utils/timeFormat"
 
 
 const {t} = useI18n();
 const themeStore = useThemeStore();
+const userInfoStore = useUserInfoStore()
 
-
-
-interface TicketItem {
-  id: number  // 工单Id
-  title: string // 工单主题
-  urgency: number // 紧急程度 1低 2中 3高
-  status: boolean // true工单未关闭 false工单关闭
-  created_at: string  // 工单创建时间
-  last_response: string // 最后一次回复
+interface OrderList {
+  id: number
+  user_id: number
+  email: string
+  plan_id: number
+  payment_method: string
+  period: string
+  coupon_id: number
+  status: number
+  is_success: boolean
+  failure_reason: string
+  discount_amount: number
+  amount: number
+  paid_at: any
+  created_at: string
+  updated_at: string
+  deleted_at: any
 }
 
-// 假数据
-let ticketList = ref<TicketItem[]>([
-  {
-    id: 1,
-    title: '系统登录问题',
-    urgency: 2,
-    status: true,
-    created_at: '2024-09-15 14:22',
-    last_response: '2024-09-16 10:00'
-  },
-  {
-    id: 2,
-    title: '功能反馈',
-    urgency: 1,
-    status: false,
-    created_at: '2024-09-12 08:30',
-    last_response: '2024-09-12 09:45'
-  },
-  {
-    id: 3,
-    title: '支付问题',
-    urgency: 3,
-    status: true,
-    created_at: '2024-09-18 16:10',
-    last_response: '2024-09-19 11:30'
-  },
-  {
-    id: 3,
-    title: '支付问题',
-    urgency: 3,
-    status: true,
-    created_at: '2024-09-18 16:10',
-    last_response: '2024-09-19 11:30'
-  },
-  {
-    id: 3,
-    title: '支付问题',
-    urgency: 3,
-    status: true,
-    created_at: '2024-09-18 16:10',
-    last_response: '2024-09-19 11:30'
-  },
-  {
-    id: 3,
-    title: '支付问题',
-    urgency: 3,
-    status: true,
-    created_at: '2024-09-18 16:10',
-    last_response: '2024-09-19 11:30'
-  },
-])
+let orderList = ref<OrderList[]>([])
 
 // 定义表格的列
 const columns = [
-  {title: '#', key: 'id'},
-  {title: '主题', key: 'title'},
+  { title: '# 订单号', key: 'id' },
   {
-    title: '工单级别', key: 'urgency', render(row: TicketItem) {
-      let level = '';
-      switch (row.urgency) {
-        case 1:
-          level = '低';
-          break;
-        case 2:
-          level = '中';
-          break;
-        case 3:
-          level = '高';
-          break;
-      }
-      return h(NTag, {
-        type: row.urgency === 3 ? 'error' : row.urgency === 2 ? 'warning' : 'success',
-        bordered: false,
-      }, {default: () => level});
+    title: '周期', key: 'period', render(row: OrderList) {
+      return h(NTag, { bordered: false }, { default: () => {
+        switch (row.period) {
+          case 'month': {return t('userOrders.period.monthPay')}
+          case 'quarter': {return t('userOrders.period.quarterPay')}
+          case 'half-year': {return t('userOrders.period.halfYearPay')}
+          case 'year': {return t('userOrders.period.yearPay')}
+        }
+        }
+      });
     }
   },
   {
-    title: '工单状态', key: 'status', render(row: TicketItem) {
-      return h(NTag, {
-        type: row.status ? 'info' : 'default',
-        bordered: false,
-      }, {default: () => row.status ? '未关闭' : '已关闭'});
+    title: '订单金额',
+    key: 'amount',
+    render(row: OrderList) {
+      return h('span', {}, { default: () => row.amount.toFixed(2) });
     }
   },
-  {title: '创建时间', key: 'created_at'},
-  {title: '最后回复', key: 'last_response'},
   {
-    title: '操作', key: 'actions', fixed: 'right', render(row: TicketItem) {
-      return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
+    title: '订单状态', key: 'is_success', render(row: OrderList) {
+      return h(NTag, {
+        type: row.is_success ? 'success' : 'error',
+        bordered: false,
+      }, { default: () => row.is_success ? '已完成' : '已取消' });
+    }
+  },
+  {
+    title: '创建时间',
+    key: 'created_at',
+    render(row: OrderList) {
+      return h('span', {}, { default: () => formatDate(row.created_at) });
+    }
+  },
+  {
+    title: '操作', key: 'actions', render(row: OrderList) {
+      return h('div', { style: { display: 'flex', flexDirection: 'row' } }, [
         h(NButton, {
           size: 'small',
           type: 'primary',
           bordered: false,
-          style: {marginLeft: '10px'},
-          onClick: () => openTicket(row)
-        }, {default: () => '查看工单'}),
+          onClick: () => showOrderDetails(row)
+        }, { default: () => '订单详情' }),
         h(NButton, {
           size: 'small',
           type: 'error',
-          disabled: !row.status,
-          style: {marginLeft: '10px'},
-          onClick: () => closeTicket(row)
-        }, {default: () => '关闭工单'})
+          disabled: !row.is_success,
+          style: { marginLeft: '10px' },
+          onClick: () => cancelOrder(row)
+        }, { default: () => '取消订单' })
       ]);
-    }
+    },
+    width: 200,
+    fixed: 'right'
   }
-]
+];
+
+let showOrderDetails = (row: OrderList) => {
+  console.log('显示订单详情', row.id)
+}
+
+let cancelOrder = (row: OrderList) => {
+console.log('取消订单', row.id)
+}
+
+
+let getAllMyOrders = async () => {
+  orderList.value = []
+  let {data} = await instance.get('api/user/v1/orders', {
+    params: {
+      user_id: userInfoStore.thisUser.id
+    }
+  })
+  console.log('我的所有订单',data)
+  data.order_list.forEach((order: OrderList) => orderList.value.push(order))
+}
 
 
 onBeforeMount(() => {
-
+  getAllMyOrders()
 })
 
 onMounted(() => {
@@ -154,7 +140,7 @@ export default {
       <n-data-table
           class="table"
           :columns="columns"
-          :data="ticketList"
+          :data="orderList"
           :pagination="false"
           :bordered="true"
           style=""
