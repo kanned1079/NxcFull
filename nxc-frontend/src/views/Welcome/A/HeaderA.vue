@@ -27,22 +27,22 @@ let windowWidth = ref<number>(0)
 
 let langOptions = ref([
   {
-    label: '简体中文',
+    label: '简体中文 zh_CN',
     key: 'zh_CN',
     disabled: false
   },
   {
-    label: '繁體中文',
+    label: '繁體中文 zh_HK',
     key: 'zh_HK',
     disabled: false
   },
   {
-    label: 'English',
+    label: 'English en_US',
     key: 'en_US',
     disabled: false
   },
   {
-    label: '日本語',
+    label: '日本語 ja_JP',
     key: 'ja_JP',
     disabled: false
   },
@@ -137,10 +137,10 @@ export default {
           <img :src="appInfoStore.appCommonConfig.logo" alt="SVG Image">
       </span>
       <p class="name">{{ appInfoStore.appCommonConfig.app_name }}</p>
-      <n-button v-if="!collapse" size="large" style="margin-right: 40px" color="#277aa8" text type="primary">
+      <n-button v-if="!collapse" size="large" style="margin-right: 40px" color="#277aa8" text >
         {{ t('welcome.A.aboutUs') }}
       </n-button>
-      <n-button v-if="!collapse" size="large" color="#277aa8" text type="primary">
+      <n-button v-if="!collapse" size="large" color="#277aa8" text>
         {{ t('welcome.A.pricing') }}
       </n-button>
     </div>
@@ -149,13 +149,13 @@ export default {
           trigger="hover"
           :options="langOptions"
           @select="handleSelectLang"
-          style="background-color: white;"
+
       >
         <n-button
-            style="margin-right: 20px"
-            quaternary class="btn"
+            style="margin-right: 20px; color: #277aa8"
+            quaternary
+            class="btn"
             size="medium"
-            color="#277aa8"
         >
           <template #icon>
             <n-icon size="20">
@@ -170,9 +170,10 @@ export default {
           trigger="hover"
           :options="collapsedMenuOptions"
           @select="handleEnter"
-          style="backdrop-filter: blur(10px); width: 200px; background-color: white"
+          style="width: 200px;"
+          :content-style="{color: '#277aa8', width: 300}"
       >
-        <n-button style="margin-right: 20px" quaternary class="btn" size="medium" color="#277aa8">
+        <n-button style="margin-right: 20px; color: #277aa8" quaternary class="btn" size="medium">
           <template #icon>
             <n-icon size="20">
               <menuIcon/>
@@ -181,11 +182,9 @@ export default {
         </n-button>
       </n-dropdown>
 
-
       <n-button
           v-if="!collapse"
           text
-          secondary
           color="#277aa8"
           style="margin-right: 20px"
           size="large"
@@ -196,7 +195,6 @@ export default {
       <n-button
           v-if="!collapse"
           text
-          secondary
           color="#277aa8"
           size="large"
           type="primary"
