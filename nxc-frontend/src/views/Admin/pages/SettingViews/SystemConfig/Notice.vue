@@ -1,11 +1,23 @@
-<script setup lang="ts" name="Notice">
-import {defineComponent} from 'vue'
-import useThemeStore from '@/stores/useThemeStore'
+<script setup lang="ts">
+// import {defineComponent} from 'vue'
+// import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
-const themeStore = useThemeStore()
+// const themeStore = useThemeStore()
 const settingStore = useSettingStore()
 
-let noticeSettings = [
+type NoticeModel =
+    | "notice_name"
+    | "bark_host"
+    | "bark_group";
+
+interface NoticeSetting {
+  title: string;
+  shallow: string;
+  model: NoticeModel;
+  placeholder?: string;
+}
+
+let noticeSettings: NoticeSetting[] = [
   {
     title: "显示名称",
     shallow: "仅用于前端页面显示",
@@ -26,6 +38,12 @@ let noticeSettings = [
   }
 ]
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Notice'
+}
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-<script setup lang="ts" name="DashBoard">
+<script setup lang="ts" name="">
 import {onMounted} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {RouterView, useRouter} from 'vue-router';
@@ -16,6 +16,12 @@ onMounted(() => {
     path: '/admin/dashboard/summary',
   })
 })
+</script>
+
+<script lang="ts">
+export default {
+  name: 'DashBoard'
+}
 </script>
 
 <template>
@@ -94,7 +100,7 @@ onMounted(() => {
 }
 
 .content {
-  background-color: v-bind('themeStore.getTheme.globeTheme.contentBgColor');
+  //background-color: v-bind('themeStore.getTheme.globeTheme.contentBgColor');
 }
 
 </style>

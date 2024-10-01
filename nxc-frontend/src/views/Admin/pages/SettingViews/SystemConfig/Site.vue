@@ -1,4 +1,4 @@
-<script setup lang="ts" name="Site">
+<script setup lang="ts">
 import useThemeStore from "@/stores/useThemeStore";
 import useSettingStore from "@/stores/useSettingStore"
 import instance from "@/axios";
@@ -7,11 +7,47 @@ import {onMounted, ref} from "vue";
 const themeStore = useThemeStore();
 const settingStore = useSettingStore();
 
-let handleSaveOptions = () => {
-  settingStore.saveSetting()
+// let handleSaveOptions = () => {
+//   settingStore.saveSetting()
+// }
+
+interface Plan {
+  id: number;
+  group_id: number;
+  name: string;
+  is_sale: boolean;
+  is_renew: boolean;
+  capacity_limit: number;
+  month_price: number;
+  quarter_price: number;
+  half_year_price: number;
+  year_price: number;
 }
 
-let appSettings = [
+type SiteModel =
+    | "app_name"
+    | "app_description"
+    | "app_url"
+    | "force_https"
+    | "logo_url"
+    | "subscribe_url"
+    | "tos_url"
+    | "stop_register"
+    | "trial_subscribe"
+    | "trial_time"
+    | "currency"
+    | "currency_symbol";
+
+interface AppSetting {
+  title: string;
+  shallow: string;
+  model: SiteModel;
+  type: string;
+  placeholder?: string;
+}
+
+// appSettings 用于v-for渲染的数据
+let appSettings: AppSetting[] = [
   {
     title: "站点名称",
     shallow: "用于显示需要站点名称的地方。",
@@ -135,7 +171,7 @@ let getSubscribeList = async () => {
     let {data} = await instance.get('/api/admin/v1/plans/get')
     if (data.code === 200) {
       console.log(data)
-      data.plans.forEach(plan => {
+      data.plans.forEach((plan: Plan) => {
         subscribe_list.value.push({
           label: plan.name,
           value: plan.id,
@@ -153,6 +189,12 @@ onMounted(() => {
 
 })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Site'
+}
 </script>
 
 <template>

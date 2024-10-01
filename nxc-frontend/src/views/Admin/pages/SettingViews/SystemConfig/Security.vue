@@ -1,13 +1,13 @@
-<script setup lang="ts" name="Security">
+<script setup lang="ts">
 import useThemeStore from "@/stores/useThemeStore";
 import useSettingStore from "@/stores/useSettingStore";
 
 const themeStore = useThemeStore();
 const settingStore = useSettingStore();
 
-let saveSetting = () => {
-  settingStore.saveSetting()
-}
+// let saveSetting = () => {
+//   settingStore.saveSetting()
+// }
 
 // const optionsAll = [
 //   {
@@ -29,7 +29,27 @@ let saveSetting = () => {
 //
 // ]
 
-let securitySettingsData = [
+type SecurityModel =
+    | "email_verify"
+    | "email_gmail_limit_enable"
+    | "safe_mode_enable"
+    | "secure_path"
+    | "email_whitelist_enable"
+    | "recaptcha_enable"
+    | "ip_register_limit_enable"
+    | "ip_register_limit_times"
+    | "ip_register_lock_time";
+
+interface SecuritySetting {
+  title: string;
+  // shallow: string;
+  description: string
+  modelValue: SecurityModel;
+  type: string;
+  placeholder?: string;
+}
+
+let securitySettingsData: SecuritySetting[] = [
   {
     title: "邮箱验证",
     description: "开启后将会强制要求用户进行邮箱验证。",
@@ -89,6 +109,12 @@ let securitySettingsData = [
   }
 ]
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Security'
+}
 </script>
 
 <template>

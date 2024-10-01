@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, onMounted} from "vue";
 import {MdEditor} from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
-import type {DrawerPlacement, FormInst, useMessage} from 'naive-ui'
+import type {DrawerPlacement, FormInst} from 'naive-ui'
+import {useMessage} from "naive-ui";
 import instance from "@/axios/index";
 
 const apiAddrStore = useApiAddrStore();
@@ -78,8 +79,7 @@ let submitDoc = async () => {
 }
 
 
-onMounted
-(() => {
+onMounted(() => {
   themeStore.menuSelected = 'doc-manager'
   themeStore.contentPath = '/admin/dashboard/document';
 })

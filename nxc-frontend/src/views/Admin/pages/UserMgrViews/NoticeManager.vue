@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
-import useThemeStore from "@/stores/useThemeStore.ts"
+import {onMounted, reactive, ref, h} from "vue";
+import useThemeStore from "@/stores/useThemeStore"
 import instance from "@/axios";
 import type {DataTableColumns} from 'naive-ui'
 import {NButton, NSwitch, useMessage} from 'naive-ui'
@@ -33,7 +33,7 @@ let showModal = ref(false)
 
 // 接口
 interface Notices {
-  id: int,
+  id: number,
   title: string,
   content: string,
   show: boolean,
@@ -45,10 +45,8 @@ interface Notices {
 }
 
 // 添加新的
-let handleAddNotice = async () => {
-  await console.log('处理添加一条通知')
-
-
+let handleAddNotice =  () => {
+  console.log('处理添加一条通知')
   showModal.value = true
 
 }
@@ -111,11 +109,11 @@ let createColumns = ({sendMail}: { sendMail: (rowData: Notices) => void }): Data
   ]
 }
 
-let columns = createColumns({
-  sendMail(rowData) {
-    message.info(`send mail to ${rowData.name}`)
-  }
-})
+// let columns = createColumns({
+//   sendMail(rowData) {
+//     message.info(`send mail to ${rowData.name}`)
+//   }
+// })
 
 let pagination = {
   pageSize: 10
@@ -144,7 +142,7 @@ let deleteNotice = async (id: number) => {
   try {
     let {data} = await instance.delete(apiAddrStore.apiAddr.admin.deleteANotice,
         {
-          params: {notice_id: notice_id,},
+          params: {notice_id: id,},
         },
     )
     data.code === 200 ? message.success("删除成功") : message.error("出现错误")
@@ -183,13 +181,13 @@ export default {
     <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">
       <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>
       <n-button type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试</n-button>
-      <n-data-table
-          style="margin-top: 20px"
-          :bordered="false"
-          :columns="columns"
-          :data="noticesStore.noticesArr"
-          :pagination="pagination"
-      />
+<!--      <n-data-table-->
+<!--          style="margin-top: 20px"-->
+<!--          :bordered="false"-->
+<!--          :columns="columns"-->
+<!--          :data="noticesStore.noticesArr"-->
+<!--          :pagination="pagination"-->
+<!--      />-->
 
       <n-modal
           title="新建通知"

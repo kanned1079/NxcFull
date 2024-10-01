@@ -1,11 +1,24 @@
-<script setup lang="ts" name="WeApp">
+<script setup lang="ts">
 import {defineComponent} from 'vue'
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
 const settingStore = useSettingStore();
-const themeStore = useThemeStore()
+// const themeStore = useThemeStore()
 
-let appDownloadSettings = [
+
+type AppModel =
+    | "win_download"
+    | "osx_download"
+    | "android_download";
+
+interface AppSetting {
+  title: string;
+  shallow: string;
+  model: AppModel;
+  placeholder?: string;
+}
+
+let appDownloadSettings: AppSetting[] = [
   {
     title: "Windows",
     shallow: "Windows 端版本号及下载地址。",
@@ -26,6 +39,12 @@ let appDownloadSettings = [
   }
 ]
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'WeApp'
+}
 </script>
 
 <template>

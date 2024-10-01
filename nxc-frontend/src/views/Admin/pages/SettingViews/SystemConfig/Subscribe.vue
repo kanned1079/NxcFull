@@ -1,4 +1,4 @@
-<script setup lang="ts" name="Subscribe">
+<script setup lang="ts">
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
 const themeStore = useThemeStore()
@@ -11,6 +11,12 @@ let sendTestMail = () => {
 
 }
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Subscribe'
+}
 </script>
 
 <template>

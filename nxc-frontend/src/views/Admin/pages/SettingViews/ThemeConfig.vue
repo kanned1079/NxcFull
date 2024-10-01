@@ -1,4 +1,4 @@
-<script setup lang="ts" name="ThemeConfig">
+<script setup lang="ts">
 import useThemeStore from "@/stores/useThemeStore";
 import {computed, onMounted} from "vue";
 
@@ -62,6 +62,12 @@ onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/theme'
 })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'ThemeConfig'
+}
 </script>
 
 <template>

@@ -9,7 +9,7 @@ import {BarChartOutlined, UserOutlined} from '@vicons/antd' // 引入所需圖�
 const message = useMessage()
 
 let modifyFunc = ref<string>('add')
-let modifyId = ref<number>(null)
+let modifyId = ref<number | null>(null)
 let pagination =  ref({ pageSize: 4 })
 let page = ref<number>(1)
 let pageCount = ref(18)
@@ -100,9 +100,8 @@ const apiAddrStore = useApiAddrStore()
 interface PrivilegeGroup {
   id: number
   name: string
-  created_at?: string
-  updated_at?: string
-  deleted_at?: string
+  plan_count: number
+  user_count: number
 }
 
 let showModal = ref(false)
@@ -110,7 +109,7 @@ let showModal = ref(false)
 let formValue = ref({
   privilege_group: {
     name: '',
-  } as PrivilegeGroup
+  }
 })
 
 let rules = {
@@ -124,7 +123,7 @@ let rules = {
 
 let newGroupName = ref<string>('')
 
-let notify = (type: NotificationType, title: string, meta: string) => {
+let notify = (type: NotificationType, title: string, meta?: string) => {
   notification[type]({
     content: title,
     meta: meta,
@@ -163,12 +162,12 @@ let closeModal = () => {
 
 let getAllGroups = async () => {
   try {
-    // groupList.value = []
+    groupList.value = []
     let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllPrivilegeGroups)
     if (data.code === 200) {
       console.log('获取到的权限组列表', data)
-      // data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
-      groupList.value = data.group_list
+      data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
+      // groupList.value = data.group_list
     }
   } catch (error) {
     console.log(error)

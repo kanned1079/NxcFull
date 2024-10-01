@@ -3,6 +3,85 @@ import {defineStore} from "pinia";
 import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 
+interface SiteSettings {
+    app_name: string;
+    app_description: string;
+    app_url: string;
+    'force_https': boolean;
+    logo_url: string;
+    subscribe_url: string;
+    tos_url: string;
+    stop_register: boolean;
+    trial_time: number;
+    trial_subscribe: number;
+    currency: string;
+    currency_symbol: string;
+    // [key: any]: any;
+}
+
+interface SecuritySettings {
+    email_verify: boolean;
+    email_gmail_limit_enable: boolean;
+    safe_mode_enable: boolean;
+    secure_path: string;
+    email_whitelist_enable: boolean;
+    recaptcha_enable: boolean;
+    ip_register_limit_enable: boolean;
+    ip_register_limit_times: number;
+    ip_register_lock_time: number;
+}
+
+interface FrontendSettings {
+    frontend_theme_sidebar: boolean;
+    frontend_theme_header: boolean;
+    frontend_theme: string;
+    frontend_background_url: string;
+}
+
+interface SubscribeSettings {
+    user_modify_enable: boolean;
+    show_info_in_sub: boolean;
+}
+
+interface ServerSettings {
+    server_token: string;
+    server_pull_interval: number;
+    server_push_interval: number;
+}
+
+interface SendmailSettings {
+    email_host: string;
+    email_port: number;
+    email_encryption: string;
+    email_username: string;
+    email_password: string;
+    email_from_address: string;
+    email_template: string;
+}
+
+interface NoticeSettings {
+    notice_name: string;
+    bark_host: string;
+    bark_group: string;
+}
+
+interface MyAppSettings {
+    win_download: string;
+    osx_download: string;
+    android_download: string;
+}
+
+interface Settings {
+    site: SiteSettings;
+    security: SecuritySettings;
+    frontend: FrontendSettings;
+    subscribe: SubscribeSettings;
+    server: ServerSettings;
+    sendmail: SendmailSettings;
+    notice: NoticeSettings;
+    my_app: MyAppSettings;
+}
+
 const useSettingStore = defineStore('SettingStore', () => {
     // 管理员系统设置界面所有设置
 
@@ -20,7 +99,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             trial_subscribe: 1,    // 注册试用
             currency: '',           // 货币单位
             currency_symbol: '',    // 货币符号
-        },
+        } as SiteSettings,
         security: {
             email_verify: true,                 // 邮箱验证
             email_gmail_limit_enable: false,    // 禁止使用Gmail多别名
@@ -66,7 +145,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             osx_download: '',       // osx端软件下载地址
             android_download: '',   // 安卓端软件下载地址
         }
-    })
+    } as Settings)
 
     // 从服务器拉取数据
     let getSetting = async () => {

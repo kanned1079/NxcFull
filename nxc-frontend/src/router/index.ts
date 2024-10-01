@@ -150,7 +150,7 @@ router.beforeEach((to, from, next) => {
                 // 管理员用户访问 /admin 相关的路径
                 if (to.path === '/admin/login') {
                     // 管理员已经登录，避免再次访问登录页面，重定向到 /admin/dashboard/summary
-                    if (to.path !== '/admin/dashboard/summary') {
+                    if (to.path as string !== '/admin/dashboard/summary') {
                         next('/admin/dashboard/summary');
                     } else {
                         next();
@@ -163,7 +163,7 @@ router.beforeEach((to, from, next) => {
             // 已登录用户访问非管理员路径
             if (to.path === '/login') {
                 // 已登录用户访问普通用户登录页面，重定向到 dashboard
-                if (to.path !== '/dashboard/summary') {
+                if (to.path as string !== '/dashboard/summary') {
                     next('/dashboard/summary');
                 } else {
                     next();

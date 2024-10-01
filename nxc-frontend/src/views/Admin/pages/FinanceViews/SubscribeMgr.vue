@@ -2,11 +2,11 @@
 import {onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
-import type { NotificationType } from 'naive-ui'
+import type { NotificationType, DrawerPlacement, FormInst } from 'naive-ui'
 import { useNotification } from 'naive-ui'
 import instance from "@/axios";
-import type {DrawerPlacement, FormInst, useMessage} from 'naive-ui'
-import {MdEditor} from "md-editor-v3";
+import {useMessage} from 'naive-ui'
+// import {MdEditor} from "md-editor-v3";
 
 const notification = useNotification()
 const apiAddrStore = useApiAddrStore();
@@ -72,7 +72,9 @@ let rules = {
   }
 }
 
-let groupOptions = []
+
+
+let groupOptions = ref<{label: string, value: number}[]>([])
 
 const themeStore = useThemeStore();
 
@@ -121,8 +123,9 @@ let submitNewPlan = async () => {
   }
 }
 
-interface GroupItem {
+interface GroupItemFromServer {
   id: number
+  label: string
   name: string
   created_at?: string
   updated_at?: string
@@ -136,7 +139,7 @@ let getAllGroups = async () => {
     if (data.code === 200) {
       console.log('获取到的权限组列表', data)
       // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
-      data.group_list.forEach((group: GroupItem) => groupOptions.push({
+      data.group_list.forEach((group: GroupItemFromServer) => groupOptions.value.push({
         label: group.name,
         value: group.id,
       }))

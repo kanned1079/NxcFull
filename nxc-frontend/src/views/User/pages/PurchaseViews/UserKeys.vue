@@ -45,7 +45,7 @@ let getAllMyKeys = async () => {
     })
     if (data.code === 200) {
       console.log(data)
-        data.key_list.forEach(key => myKeys.value.push(key))
+        data.key_list.forEach((key: Key) => myKeys.value.push(key))
       //
     }
   } catch (error) {

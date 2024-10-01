@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, h} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import type {FormInst} from 'naive-ui'
@@ -32,6 +32,7 @@ const formRef = ref<FormInst | null>(null)
 //   deleted_at?: string
 // }
 
+// 从服务器拉取的优惠券列表
 interface Coupon {
   id: number  // 优惠券id
   name: string // 优惠券名称
@@ -46,7 +47,7 @@ interface Coupon {
   plan_limit: number  // 限制可以使用的订阅计划id
   created_at: string  // gorm创建日期
   updated_at: string  // gorm更新日期
-  deleted_at: string  // gorm删除标记
+  deleted_at?: string  // gorm删除标记
 }
 
 let formValue = ref({
@@ -59,7 +60,16 @@ let formValue = ref({
     per_user_limit: null,
     capacity: null,
     plan_limit: null,
-  } as Coupon
+  } as {
+    name: string
+    code: string
+    percent_off: number | null
+    start_time: number | null
+    end_time: number | null
+    per_user_limit: number | null
+    capacity: number | null
+    plan_limit: number | null
+  }
 })
 
 let rules = {
@@ -98,7 +108,7 @@ let getPlanKV = async () => {
     let {data} = await instance.get(apiAddrStore.apiAddr.admin.getPlanKVList)
     if (data.code === 200) {
       console.log(data)
-      data.plans.forEach(item =>  plans.value.push({
+      data.plans.forEach((item: {id: number, name: string}) =>  plans.value.push({
         label: item.name,
         value: item.id,
       }))
@@ -126,7 +136,7 @@ let getAllCoupons = async () => {
     let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllCoupons);
     if (data.code === 200) {
       // couponList.value = data.coupons;
-      data.coupon_list.forEach((item, index) => {
+      data.coupon_list.forEach((item: Coupon, index: number) => {
         couponList.value.push(item)
       })
     } else {
@@ -161,12 +171,12 @@ let activateACoupon = async (id: number, value: boolean) => {
   }
 }
 
-let updateACoupon = async () => {
+let updateACoupon = async (row: Coupon) => {
   // 这里是点击编辑一个优惠券后 使用post方法保存到服务器
   // 请求地址 /admin/v1/coupon/update
   // 请求体 {优惠券id， 该优惠券结构}
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.admin.updateCoupon, coupon);
+    let {data} = await instance.post(apiAddrStore.apiAddr.admin.updateCoupon, row);
     if (data.code === 200) {
       message.success('优惠券更新成功');
       await getAllCoupons(); // 更新成功后刷新列表
@@ -179,13 +189,13 @@ let updateACoupon = async () => {
   }
 }
 
-let deleteACoupon = async () => {
+let deleteACoupon = async (id: number) => {
   // 点击删除后 使用post方法 用于删除一个优惠券
   // 请求地址 /admin/v1/coupon/delete
   // 请求体 {优惠券id}
   try {
     let {data} = await instance.post(apiAddrStore.apiAddr.admin.deleteCoupon, {
-      id: couponId
+      id,
     });
     if (data.code === 200) {
       message.success('优惠券删除成功');
@@ -207,7 +217,7 @@ const columns = [
   {
     title: '是否启用',
     key: 'enabled',
-    render(row) {
+    render(row: Coupon) {
       return h(NSwitch, {
         value: row.enabled,
         onUpdateValue: (value) => activateACoupon(row.id, value),
@@ -221,7 +231,7 @@ const columns = [
   {
     title: '优惠券码',
     key: 'code',
-    render(row) {
+    render(row: Coupon) {
       return h(NTag, {}, {default: () => row.code});
     }
   },
@@ -240,7 +250,7 @@ const columns = [
   {
     title: '操作',
     key: 'actions',
-    render(row) {
+    render(row: Coupon) {
       // return h(NButtonGroup, null, () => [
       //   h(NButton, {
       //     size: 'small',
@@ -265,7 +275,7 @@ const columns = [
           type: 'error',
           disabled: false,
           style: {marginLeft: '10px'},
-          onClick: () => deleteACoupon(row)
+          onClick: () => deleteACoupon(row.id)
         }, {default: () => '删除'})
       ]);
     },
@@ -284,15 +294,16 @@ let submitCoupon = async () => {
   formValue.value.coupon.end_time = range.value[1]
   console.log(formValue.value)
   try {
-    let {data} = instance.post(apiAddrStore.apiAddr.admin.addNewCoupon, {
-      name: formValue.value.coupon.name,
-      code: formValue.value.coupon.code,
-      percent_off: formValue.value.coupon.percent_off,
-      start_time: formValue.value.coupon.start_time,
-      end_time: formValue.value.coupon.end_time,
-      capacity: formValue.value.coupon.capacity,
-      per_user_limit: formValue.value.coupon.per_user_limit,
-      plan_limit: formValue.value.coupon.plan_limit,
+    let {data} = await instance.post(apiAddrStore.apiAddr.admin.addNewCoupon, {
+      // name: formValue.value.coupon.name,
+      // code: formValue.value.coupon.code,
+      // percent_off: formValue.value.coupon.percent_off,
+      // start_time: formValue.value.coupon.start_time,
+      // end_time: formValue.value.coupon.end_time,
+      // capacity: formValue.value.coupon.capacity,
+      // per_user_limit: formValue.value.coupon.per_user_limit,
+      // plan_limit: formValue.value.coupon.plan_limit,
+      ...formValue.value.coupon
     })
     if (data.code === 200) {
       message.success('添加优惠券成功')

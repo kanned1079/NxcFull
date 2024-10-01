@@ -1,4 +1,4 @@
-<script setup lang="ts" name="Personalization">
+<script setup lang="ts" name="">
 import {onMounted, reactive} from 'vue'
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
@@ -35,13 +35,13 @@ const themeSettings = reactive({
   background_image: ''
 })
 
-let handok = () => {
-  console.log('ok')
-}
+// let handok = () => {
+//   console.log('ok')
+// }
 
-onMounted(() => {
-  console.log(themeStore.allTheme)
-})
+// onMounted(() => {
+//   console.log(themeStore.allTheme)
+// })
 
 </script>
 
@@ -149,8 +149,5 @@ onMounted(() => {
   }
 }
 
-//.n-card {
-//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-//  border: 0;
-//}
+
 </style>

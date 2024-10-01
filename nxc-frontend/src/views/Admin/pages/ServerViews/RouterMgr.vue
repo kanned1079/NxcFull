@@ -1,4 +1,4 @@
-<script setup lang="ts" name="RouterMgr">
+<script setup lang="ts">
 import {defineComponent, onMounted} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 const themeStore = useThemeStore()
@@ -12,6 +12,12 @@ onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/routermgr'
 })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'RouterMgr'
+}
 </script>
 
 <template>

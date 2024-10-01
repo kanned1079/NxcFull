@@ -17,15 +17,29 @@ const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
 const router = useRouter();
 
+interface ConfirmOrder {
+  code: number | null,
+  order_id: number | null,
+  plan_name: string | null,
+  original_price: number | null,
+  discount_amount: number | null,
+  pay_price: number | null,
+  period: string | null,
+  created_at: string | null
+}
+
+let confirmOrder = ref<ConfirmOrder>()
+
+
 let goodInfoData = ref([
   {
     title: computed(() => '商品信息'),
-    content: computed(() => paymentStore.confirmOrder.plan_name)
+    content: computed(() => confirmOrder.value?.plan_name)
   },
   {
     title: computed(() => '周期/类型'),
     content: computed(() => {
-      switch (paymentStore.confirmOrder.period) {
+      switch (confirmOrder.value?.period) {
         case 'month': {
           return computed(() => '月付')
         }
@@ -46,15 +60,15 @@ let goodInfoData = ref([
 let orderData = ref([
   {
     title: computed(() => '订单号'),
-    content: computed(() => paymentStore.confirmOrder.order_id)
+    content: computed(() => confirmOrder.value?.order_id)
   },
   {
     title: computed(() => '创建日期'),
-    content: computed(() => paymentStore.confirmOrder.created_at)
+    content: computed(() => confirmOrder.value?.created_at)
   },
   {
     title: computed(() => '订单号'),
-    content: computed(() => paymentStore.confirmOrder.plan_name)
+    content: computed(() => confirmOrder.value?.plan_name)
   },
 
 ])
@@ -67,6 +81,8 @@ onMounted(() => {
   themeStore.userPath = '/dashboard/purchase/confirm'
 
   console.log(paymentStore.confirmOrder)
+  if (paymentStore.confirmOrder)
+    confirmOrder.value = paymentStore.confirmOrder
 
 })
 

@@ -22,14 +22,14 @@ interface Plan {
 }
 
 interface ConfirmOrder {
-    code: number,
-    order_id: number,
-    plan_name: string,
-    original_price: number,
-    discount_amount: number,
-    pay_price: number,
-    period: string,
-    created_at: string
+    code: number | null,
+    order_id: number | null,
+    plan_name: string | null,
+    original_price: number | null,
+    discount_amount: number | null,
+    pay_price: number | null,
+    period: string | null,
+    created_at: string | null
 }
 
 const usePaymentStore = defineStore('paymentStore', () => {
@@ -54,7 +54,7 @@ const usePaymentStore = defineStore('paymentStore', () => {
 
     let plan_id_selected = ref<number>(-1)
 
-    let confirmOrder = ref<ConfirmOrder>()
+    let confirmOrder = ref<ConfirmOrder | undefined>()
 
     return {
         plan_list,

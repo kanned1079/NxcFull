@@ -1,4 +1,4 @@
-<script setup lang="ts" name="Summary">
+<script setup lang="ts">
 import {onMounted} from "vue";
 import Settings from '@/views/Admin/pages/RootViews/dashboard/Settings.vue'
 import useThemeStore from "@/stores/useThemeStore";
@@ -12,6 +12,12 @@ onMounted(() => {
   themeStore.menuSelected = 'dashboard'
 })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Summary'
+}
 </script>
 
 <template>

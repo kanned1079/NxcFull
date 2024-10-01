@@ -1,4 +1,4 @@
-<script setup lang="ts" name="SystemConfig">
+<script setup lang="ts">
 import Site from "@/views/Admin/pages/SettingViews/SystemConfig/Site.vue";
 import Security from "@/views/Admin/pages/SettingViews/SystemConfig/Security.vue";
 import Personalization from "@/views/Admin/pages/SettingViews/SystemConfig/Personalization.vue";
@@ -34,6 +34,12 @@ onMounted(() => {
   themeStore.menuSelected = 'system-config'
 })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'SystemConfig'
+}
 </script>
 
 <template>

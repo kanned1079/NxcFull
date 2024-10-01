@@ -1,4 +1,4 @@
-<script setup lang="ts" name="DashBoard">
+<script setup lang="ts">
 import {onMounted} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {RouterView, useRouter} from 'vue-router';
@@ -30,6 +30,12 @@ onMounted(() => {
     })
   }, 50)
 })
+</script>
+
+<script lang="ts">
+export default {
+  name: 'DashBoard'
+}
 </script>
 
 <template>
@@ -77,28 +83,23 @@ onMounted(() => {
 }
 
 .n-layout-sider {
-  //background-color: v-bind('nowTheme.commonAsideBgColor');
   height: 100vh;
   align-items: center;
   background-color: v-bind('themeStore.getTheme.globeTheme.asideBgColor');
 }
 
 .n-layout-content {
-  //background-color: v-bind('nowTheme.commonContentBgColor');
-
   height: 100vh;
 
 }
 
 .logo {
-  //width: 240px;
   padding: 0;
   overflow: hidden
 }
 
 .content {
   margin-top: 52px;
-  //background-color: v-bind('themeStore.getTheme.globeTheme.contentBgColor');
 }
 
 </style>

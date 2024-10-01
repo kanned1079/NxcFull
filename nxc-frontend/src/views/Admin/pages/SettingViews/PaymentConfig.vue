@@ -1,4 +1,4 @@
-<script setup lang="ts" name="PaymentConfig">
+<script setup lang="ts">
 import {ref} from 'vue'
 import type { DrawerPlacement } from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
@@ -57,6 +57,12 @@ let paymentMethods = [
   },
 ]
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'PaymentConfig'
+}
 </script>
 
 

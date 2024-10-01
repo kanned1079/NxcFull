@@ -1,4 +1,4 @@
-<script setup lang="ts" name="QueueMonitor">
+<script setup lang="ts">
 import {onMounted, onUnmounted, reactive, ref, onBeforeMount} from 'vue'
 import type {NumberAnimationInst} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
@@ -133,6 +133,12 @@ onUnmounted(() => {
   clearInterval(intervalId.value)
 })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'QueueMonitor',
+}
 </script>
 
 <template>

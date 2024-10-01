@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, onMounted, ref} from "vue"
+import {onBeforeMount, onMounted, ref, computed} from "vue"
 import type {MenuOption, NotificationType} from 'naive-ui'
 import {NIcon, useNotification} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
@@ -52,19 +52,19 @@ let period = ref<string>()
 
 let showCycleName = computed(() => {
   if (selectedCycle.value === 'month') {
-    resultPrice.value = plan.month_price
+    resultPrice.value = plan.month_price || 0
     return computed(() => t('newSettlement.monthPay'))
   }
   if (selectedCycle.value === 'quarter') {
-    resultPrice.value = plan.quarter_price
+    resultPrice.value = plan.quarter_price || 0
     return computed(() => t('newSettlement.quarterPay'))
   }
   if (selectedCycle.value === 'half-year') {
-    resultPrice.value = plan.half_year_price
+    resultPrice.value = plan.half_year_price || 0
     return computed(() => t('newSettlement.halfYearPay'))
   }
   if (selectedCycle.value === 'year') {
-    resultPrice.value = plan.year_price
+    resultPrice.value = plan.year_price || 0
     return computed(() => t('newSettlement.yearPay'))
   }
 })
@@ -123,7 +123,7 @@ interface Coupon {
 }
 
 let couponInfo = ref<Coupon>({
-  id: null,
+  id: 0,
   name: '',
   verified: false,
   percent_off: 0.0,
@@ -160,7 +160,7 @@ let verifyTicket = async () => {
       // 处理非200状态码的错误
       await notify('error', t('newSettlement.notify.couponInvalid'), data.msg);
     }
-  } catch (error) {
+  } catch (error: Error| any | undefined) {
     // 处理网络错误或后端500错误
     couponInfo.value.verified = false
     await notify('error', t('newSettlement.notify.couponInvalid'), error.toString());
@@ -215,7 +215,7 @@ onMounted(() => {
 onBeforeMount(() => {
   console.log('settlement挂载前', paymentStore.plan_id_selected)
   if (paymentStore.plan_id_selected < 0) {
-    router.back(-1)
+    router.back()
   } else{
     appendCycleOptions()
 

@@ -3,50 +3,39 @@ import {defineStore} from "pinia";
 import {darkTheme, type GlobalThemeOverrides} from 'naive-ui';
 import useSettingStore from "@/stores/useSettingStore"
 
-const useThemeStore = defineStore('themeStore', (): {
-    // enableDarkMode: Ref<boolean>;
-    // selectedTheme: Ref<string>;
-    // setThemeFromSetting: () => void;
-    // saveEnableDarkMode: () => void;
-    // readEnableDarkMode: () => void;
-    // globeTheme: {
-    //     asideBgColor: ComputedRef<string>;
-    // };
-    // darkBlueDay: {
-    //     topLogoBgColor: ComputedRef<string>;
-    //     topLogoTextColor: string;
-    //     topHeaderBgColor: ComputedRef<string>;
-    //     topHeaderTextColor: string;
-    //     globeTheme: typeof globeTheme; // 如果 globeTheme 的类型已知
-    //     selfOverride: ComputedRef<GlobalThemeOverrides>;
-    // };
-    // milkGreenDay: {
-    //     topLogoBgColor: ComputedRef<string>;
-    //     topLogoTextColor: string;
-    //     topHeaderBgColor: ComputedRef<string>;
-    //     topHeaderTextColor: string;
-    //     globeTheme: typeof globeTheme; // 如果 globeTheme 的类型已知
-    //     selfOverride: ComputedRef<GlobalThemeOverrides>;
-    // };
-    // biliPink: {
-    //     topLogoBgColor: ComputedRef<string>;
-    //     topLogoTextColor: string;
-    //     topHeaderBgColor: ComputedRef<string>;
-    //     topHeaderTextColor: string;
-    //     globeTheme: typeof globeTheme; // 如果 globeTheme 的类型已知
-    //     selfOverride: ComputedRef<GlobalThemeOverrides>;
-    // };
-    // bambooGreen: {
-    //     topLogoBgColor: ComputedRef<string>;
-    //     topLogoTextColor: string;
-    //     topHeaderBgColor: ComputedRef<string>;
-    //     topHeaderTextColor: string;
-    //     globeTheme: typeof globeTheme; // 如果 globeTheme 的类型已知
-    //     selfOverride: ComputedRef<GlobalThemeOverrides>;
-    // };
-    //
+interface CustomThemeConfig {
+    topLogoBgColor: string;
+    topLogoTextColor: string;
+    topHeaderBgColor: string;
+    topHeaderTextColor: string;
+    globeTheme: {
+        asideBgColor: string;
+        cardBgColor: string;
+    };
+    selfOverride: GlobalThemeOverrides;
+}
 
-} => {
+interface Theme {
+    enableDarkMode: Ref<boolean>;
+    selectedTheme: Ref<string>;
+    darkBlueDay: Ref<CustomThemeConfig>;
+    milkGreenDay?: Ref<CustomThemeConfig>;
+    biliPink: Ref<CustomThemeConfig>;
+    bambooGreen?: Ref<CustomThemeConfig>;
+    allTheme?: Ref<Record<string, Ref<GlobalThemeOverrides>>>;
+    getTheme: ComputedRef<CustomThemeConfig>;
+    getMainTheme: ComputedRef<any | null>;
+    readEnableDarkMode: () => void;
+    saveEnableDarkMode: () => void;
+    setAdminPageTheme: (theme: string) => void;
+    setThemeFromSetting: () => void;
+    contentPath: Ref<string>;
+    menuSelected: Ref<string>;
+    userPath: Ref<string>;
+    menuCollapsed: Ref<boolean>;
+}
+
+const useThemeStore = defineStore('themeStore', (): Theme => {
     // 是否启用深色模式
     const enableDarkMode = ref<boolean>(false)
     // 主題名選擇
@@ -62,12 +51,13 @@ const useThemeStore = defineStore('themeStore', (): {
     const readEnableDarkMode = () => !localStorage.getItem('themeCode') ? saveEnableDarkMode() : enableDarkMode.value = JSON.parse(localStorage.getItem('themeCode') as string).code as boolean;
 
     // 通用部分 计算属性
-    const globeTheme = reactive({
+    const globeTheme = ref({
         asideBgColor: computed(() => enableDarkMode.value ? '#282929' : '#fff'),
+        cardBgColor: computed(() => enableDarkMode.value ? '#282929' : '#fff'),
     })
 
     // 主题配置 深蓝色
-    const darkBlueDay = reactive({
+    const darkBlueDay = ref({
         topLogoBgColor: computed(() => enableDarkMode.value ? '#374868' : '#324f85'),
         topLogoTextColor: '#bfc8d9',
         topHeaderBgColor: computed(() => enableDarkMode.value ? '#3b4e72' : '#385894'),
@@ -166,7 +156,7 @@ const useThemeStore = defineStore('themeStore', (): {
     })
 
     // 主题配置 奶绿色
-    const milkGreenDay = reactive({
+    const milkGreenDay = ref({
         topLogoBgColor: computed(() => enableDarkMode.value ? '#2a6f6a' : '#008784'),
         topLogoTextColor: '#bfe1e0',
         topHeaderBgColor: computed(() => enableDarkMode.value ? '#2d7974' : '#009693'),
@@ -257,7 +247,7 @@ const useThemeStore = defineStore('themeStore', (): {
     })
 
     // 主题配置 b站粉色
-    const biliPink = reactive({
+    const biliPink = ref({
         topLogoBgColor: computed(() => enableDarkMode.value ? '#ec4374' : '#f45987'),
         topLogoTextColor: '#bfe1e0',
         topHeaderBgColor: computed(() => enableDarkMode.value ? '#f4648d' : '#fb7299'),
@@ -348,7 +338,7 @@ const useThemeStore = defineStore('themeStore', (): {
     })
 
     // 主题配置 若竹
-    const bambooGreen = reactive({
+    const bambooGreen = ref({
         topLogoBgColor: computed(() => enableDarkMode.value ? '#519a6d' : '#5dac81'),
         topLogoTextColor: '#bfe1e0',
         topHeaderBgColor: computed(() => enableDarkMode.value ? '#4d855b' : '#5dac81'),
@@ -441,40 +431,40 @@ const useThemeStore = defineStore('themeStore', (): {
 
 
     // 主题配置 默认
-    const defaultDay = reactive({
+    const defaultDay = ref({
         darkBlueDay,
     })
 
     // 所有的主题集合
-    const allTheme = reactive({
-        defaultDay,     // 默认主题
-        darkBlueDay,    // 深蓝色
-        milkGreenDay,   // 奶绿色
-    })
+    // const allTheme = ref({
+    //     defaultDay,     // 默认主题
+    //     darkBlueDay,    // 深蓝色
+    //     milkGreenDay,   // 奶绿色
+    // })
 
     const setAdminPageTheme = (theme: string) => selectedTheme.value = theme
 
 
     // getMainTheme 获取默认的主题
-    const getMainTheme = computed(() => (enableDarkMode.value ? darkTheme : null))
+    const getMainTheme = computed((): any => (enableDarkMode.value ? darkTheme : null))
 
     // getTheme 这个是覆盖的主题
-    const getTheme = computed(() => {
+    const getTheme = computed((): CustomThemeConfig => {
         switch (selectedTheme.value) {
             case 'darkBlueDay': {
-                return darkBlueDay;
+                return darkBlueDay.value;
             }
             case 'milkGreenDay': {
-                return milkGreenDay;
+                return milkGreenDay.value;
             }
             case 'biliPink': {
-                return biliPink;
+                return biliPink.value;
             }
             case 'bambooGreen': {
-                return bambooGreen;
+                return bambooGreen.value;
             }
             default: {
-                return darkBlueDay;
+                return darkBlueDay.value;
             }
         }
     })
@@ -483,16 +473,18 @@ const useThemeStore = defineStore('themeStore', (): {
     let menuCollapsed = ref<boolean>(false)
 
     // 当前访问的位置
-    let userPath = ref('/dashboard/summary')
-    let contentPath = ref('/admin/dashboard/summary')
-    let menuSelected = ref('dashboard')
+    let userPath = ref<string>('/dashboard/summary')
+    let contentPath = ref<string>('/admin/dashboard/summary')
+    let menuSelected = ref<string>('dashboard')
 
     return {
         selectedTheme,
         enableDarkMode,
         darkBlueDay,
         milkGreenDay,
-        allTheme,
+        biliPink,
+        bambooGreen,
+        // allTheme,
         getTheme,
         getMainTheme,
         readEnableDarkMode,

@@ -1,4 +1,4 @@
-<script setup lang="ts" name="UserManager">
+<script setup lang="ts">
 import type {DataTableColumns} from 'naive-ui'
 import {computed, onMounted} from 'vue'
 import { NButton, NTag, useMessage, NDropdown } from 'naive-ui'
@@ -212,6 +212,12 @@ onMounted(() => {
 
 })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'UserManager'
+}
 </script>
 
 <template>

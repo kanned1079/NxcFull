@@ -23,7 +23,7 @@ import renderIcon from "@/utils/iconFormator";
 
 const {t, locale} = useI18n()
 
-let dropDownBtn = ref(null)
+const dropDownBtn = ref<HTMLElement | null>(null);
 let dropDownWidth = ref(0)
 
 const userDropdownStore = useUserDropDown()
@@ -134,8 +134,13 @@ let handleChangeTheme = () => {
 }
 
 onMounted(() => {
-  dropDownWidth.value = dropDownBtn.value.getBoundingClientRect().width || dropDownBtn.value.offsetWidth;
-
+  // dropDownWidth.value = dropDownBtn.value.getBoundingClientRect().width || dropDownBtn.value.offsetWidth;
+  if (dropDownBtn.value) {
+    dropDownWidth.value = dropDownBtn.value.getBoundingClientRect().width || dropDownBtn.value.offsetWidth;
+  } else {
+    // 可以在这里进行一些默认值的设置或者提示操作，比如设置一个默认宽度
+    dropDownWidth.value = 100;
+  }
 })
 
 </script>
