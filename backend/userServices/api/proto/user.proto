@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto";
+
+//import "google/protobuf/timestamp.proto";
+
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
+
+service UserService {
+  // 定义用户登录 RPC 方法
+  rpc Login(UserLoginRequest) returns (UserLoginResponse);
+
+  // 定义用户注册 RPC 方法
+  rpc Register(UserRegisterRequest) returns (UserRegisterResponse);
+}
+
+// 定义用户登录请求消息
+message UserLoginRequest {
+  string email = 1;
+  string password = 2;
+  string role = 3;
+}
+
+// 定义用户注册请求消息
+message UserRegisterRequest {
+  string email = 1;
+  string password = 2;
+  string name = 3;
+  string invite_user_id = 4;  // 邀请人ID（可选）
+}
+
+// 定义用户数据消息
+message User {
+  int64 id = 1;
+  string invite_user_id = 2;
+  int64 group_id = 3;
+  string name = 4;
+  string email = 5;
+  bool is_admin = 6;
+  bool is_staff = 7;
+  float balance = 8;
+  Timestamp last_login = 9;
+  string last_login_ip = 10;
+  Timestamp created_at = 11;
+  Timestamp updated_at = 12;
+  Timestamp deleted_at = 13;
+}
+
+// 定义用户登录响应消息
+message UserLoginResponse {
+  int32 code = 1;
+  bool isAuthed = 2;
+  string msg = 3;
+  string token = 4;
+  User user_data = 5;
+}
+
+// 定义用户注册响应消息
+message UserRegisterResponse {
+  int32 code = 1;
+  bool isRegistered = 2;
+  string msg = 3;
+  User user_data = 4;
+}

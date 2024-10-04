@@ -70,42 +70,54 @@ func getConfigFromDB() (SMTPConfig, error) {
 	if err != nil {
 		return SMTPConfig{}, err
 	}
-	json.Unmarshal(host, &smtpConfig.Host)
+	if err := json.Unmarshal(host, &smtpConfig.Host); err != nil {
+		log.Println(err)
+	}
 
 	// 邮件端口
 	port, err := readSettingFromDB("sendmail", "email_port")
 	if err != nil {
 		return SMTPConfig{}, err
 	}
-	json.Unmarshal(port, &smtpConfig.Port)
+	if err := json.Unmarshal(port, &smtpConfig.Port); err != nil {
+		log.Println(err)
+	}
 
 	// 邮件用户名
 	username, err := readSettingFromDB("sendmail", "email_username")
 	if err != nil {
 		return SMTPConfig{}, err
 	}
-	json.Unmarshal(username, &smtpConfig.Username)
+	if err := json.Unmarshal(username, &smtpConfig.Username); err != nil {
+		log.Println(err)
+	}
 
 	// 邮件密码
 	password, err := readSettingFromDB("sendmail", "email_password")
 	if err != nil {
 		return SMTPConfig{}, err
 	}
-	json.Unmarshal(password, &smtpConfig.Password)
+	if err := json.Unmarshal(password, &smtpConfig.Password); err != nil {
+		log.Println(err)
+	}
 
 	// 发件人地址
 	from, err := readSettingFromDB("sendmail", "email_from_address")
 	if err != nil {
 		return SMTPConfig{}, err
 	}
-	json.Unmarshal(from, &smtpConfig.From)
+	if err := json.Unmarshal(from, &smtpConfig.From); err != nil {
+		log.Println(err)
+	}
 
 	// 邮件模版
 	mailTemplate, err := readSettingFromDB("sendmail", "email_template")
 	if err != nil {
 		return SMTPConfig{}, err
 	}
-	json.Unmarshal(mailTemplate, &smtpConfig.MailTemplate)
+	if err := json.Unmarshal(mailTemplate, &smtpConfig.MailTemplate); err != nil {
+		log.Println(err)
+	}
 
 	// 加密方式 (SSL / TLS)
 	encryption, err := readSettingFromDB("sendmail", "email_encryption")
@@ -113,7 +125,9 @@ func getConfigFromDB() (SMTPConfig, error) {
 		return SMTPConfig{}, err
 	}
 	var encryptionMethod string
-	json.Unmarshal(encryption, &encryptionMethod)
+	if err := json.Unmarshal(encryption, &encryptionMethod); err != nil {
+		log.Println(err)
+	}
 
 	if encryptionMethod == "SSL" {
 		smtpConfig.UseSSL = true
@@ -204,11 +218,6 @@ func HandSendEmailCode(to string, code string, templatePath string, templateType
 		}
 
 	}
-	//renderedEmail, err := renderEmailTemplate(templatePath, emailData)
-	//if err != nil {
-	//	return err
-	//}
-
 	// 发送邮件
 	if err := sendEmail(to, "邮箱验证码", renderedEmail); err != nil {
 		return err

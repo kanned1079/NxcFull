@@ -133,7 +133,7 @@ let handleLogin = async () => {
   console.log('用户数据')
   console.log(formValue.value.user.email, formValue.value.user.password)
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.user.userLogin, {
+    let {data} = await instance.post("http://localhost:8081/api/user/v1/login", {
       email: formValue.value.user.email,
       // password: encodeToBase64(formValue.value.user.password),
       password: hashPassword(formValue.value.user.password),
