@@ -16,6 +16,12 @@ message mapEntry {
   repeated KeyValuePair data = 2; // category 对应多个键值对
 }
 
+// 每个类别包含对应的文档列表
+message CategoryDocuments {
+  string category = 1; // 类别名
+  repeated Document documents = 2; // 对应的文档列表
+}
+
 // 定义文档结构
 message Document {
   int64 id = 1;
@@ -23,7 +29,7 @@ message Document {
   string category = 3;
   string title = 4;
   string body = 5;
-  int32 sort = 6;
+  int64 sort = 6;
   bool show = 7;
   string created_at = 8;
   string updated_at = 9;
@@ -40,7 +46,8 @@ message GetDocumentsResponse {
   int64 code = 1;
   string msg = 2;
 //  repeated Document documents = 3;
-  repeated mapEntry documents = 3; // 使用 mapEntry 来模拟 map[string]interface{}
+//  repeated mapEntry documents = 3; // 使用 mapEntry 来模拟 map[string]interface{}
+  repeated CategoryDocuments documents = 3; // 修改为 CategoryDocuments 类型
 }
 
 // 添加新文档的请求结构

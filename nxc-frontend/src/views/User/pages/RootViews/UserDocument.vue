@@ -4,13 +4,15 @@ import {ref, reactive, onMounted, computed} from "vue";
 import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
-import type { DrawerPlacement, useMessage } from 'naive-ui'
-const placement = ref<DrawerPlacement>('right')
+import  {type DrawerPlacement, useMessage } from 'naive-ui'
 // import MarkdownIt from 'markdown-it';
-import {convertMd} from "@/utils/markdown";
+// import {convertMd} from "@/utils/markdown";
 import instance from "@/axios";
 import {MdPreview} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
+
+const placement = ref<DrawerPlacement>('right')
+
 
 const {t} = useI18n()
 const message = useMessage()
@@ -34,12 +36,32 @@ const router = useRouter();
 let drawTitle = ref<string>('')
 let drawBody = ref<string>('')
 
-let doc_list = reactive([])
+// 单个文档的接口定义
+interface Document {
+  id: number;
+  language: string;
+  category: string;
+  title: string;
+  body: string;
+  sort: number;
+  show: boolean;
+  created_at: string; // 日期字符串
+  updated_at: string; // 日期字符串
+  deleted_at: string; // 日期字符串，可能为 null 或 undefined
+}
+
+// 类别及其文档列表的接口定义
+interface CategoryDocuments {
+  category: string;
+  documents: Document[]; // 文档数组
+}
+
+let doc_list = reactive<CategoryDocuments[]>([])
 
 let getAllDocuments = async () => {
   console.log('拉取所有文档列表')
   try {
-    let {data} = await instance.get(apiAddrStore.apiAddr.user.getAllDocumentList, {
+    let {data} = await instance.get('http://localhost:8081/api/user/v1/document', {
       params: {
         lang: 'zh_CN',
         find: search.value
@@ -51,7 +73,7 @@ let getAllDocuments = async () => {
     } else {
       message.error(data.msg)
     }
-  }catch (error) {
+  }catch (error: any) {
     message.error(error)
   }
 
@@ -91,12 +113,12 @@ export default {
   <n-card v-for="item in doc_list" :key="item.category" class="doc-card" hoverable :embedded="true" :title="item.category" content-style="padding: 0;" :bordered="false">
     <div
         class="doc-item"
-        v-for="item in item.data"
-        :key="item.category"
-        @click="activate(themeStore.menuCollapsed?'bottom':'right', item.title, item.body)"
+        v-for="doc in item.documents"
+        :key="doc.category"
+        @click="activate(themeStore.menuCollapsed?'bottom':'right', doc.title, doc.body)"
     >
-      <p class="doc-title">{{ item.title }}</p>
-      <p class="doc-release">{{ item.date }}</p>
+      <p class="doc-title">{{ doc.title }}</p>
+      <p class="doc-release">{{ doc.created_at }}</p>
 
     </div>
   </n-card>

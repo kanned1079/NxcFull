@@ -88,7 +88,7 @@ func StartApiGateways() {
 		////...其他用户路由
 		//// 开始首页
 		//userAuthorized.GET("/notices/get", HandleGetAllNotices)            // 获取所有的通知列表
-		//userAuthorized.GET("/document/get", Document.HandleGetAllDocument) // 按照分类获取所有的文档列表
+		userAuthorized.GET("/document", handler.HandleGetAllDocuments) // 按照分类获取所有的文档列表
 		//userAuthorized.GET("/plan/get", subscribePlan.HandleGetAllPlans)   // 获取所有的有效订阅
 		//userAuthorized.POST("/coupon/verify", coupon.HandleVerifyCoupon)   // 验证优惠券可用性
 		//userAuthorized.POST("/auth/passcode/verify", user.HandleCheckOldPassword)

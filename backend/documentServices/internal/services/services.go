@@ -18,6 +18,7 @@ func NewDocumentService() *DocumentService {
 }
 
 func (s *DocumentService) GetDocuments(ctx context.Context, req *pb.GetDocumentsRequest) (*pb.GetDocumentsResponse, error) {
+	log.Println("lang: ", req.Language)
 	var documentsList []model.Document
 	if result := dao.Db.Model(&model.Document{}).Where("language = ?", req.Language).Find(&documentsList); result.Error != nil {
 		log.Println("获取所有文档失败")
@@ -27,33 +28,29 @@ func (s *DocumentService) GetDocuments(ctx context.Context, req *pb.GetDocuments
 		}, nil
 	}
 
-	// 使用 map 存储类别和相应的数据
-	categories := make(map[string][]*pb.KeyValuePair)
+	// 使用 map 存储类别和相应的文档
+	categories := make(map[string][]*pb.Document)
 	for _, doc := range documentsList {
-		item := &pb.KeyValuePair{
-			Key:   "date", // 设置键名
-			Value: doc.CreatedAt.Format("2006-01-02"),
-		}
-		// 将标题和正文也添加为键值对
-		categories[doc.Category] = append(categories[doc.Category], item)
-
-		// 可以选择性地添加标题和正文
-		categories[doc.Category] = append(categories[doc.Category], &pb.KeyValuePair{
-			Key:   "title",
-			Value: doc.Title,
-		})
-		categories[doc.Category] = append(categories[doc.Category], &pb.KeyValuePair{
-			Key:   "body",
-			Value: doc.Body,
+		categories[doc.Category] = append(categories[doc.Category], &pb.Document{
+			Id:        doc.Id,
+			Language:  doc.Language,
+			Category:  doc.Category,
+			Title:     doc.Title,
+			Body:      doc.Body,
+			Sort:      int64(doc.Sort),
+			Show:      doc.Show,
+			CreatedAt: doc.CreatedAt.Format("2006-01-02"), // 格式化日期
+			UpdatedAt: doc.UpdatedAt.Format("2006-01-02"),
+			DeletedAt: doc.DeletedAt.Time.Format("2006-01-02"), // 处理可空时间
 		})
 	}
 
 	// 转换为 gRPC 响应需要的格式
-	var grpcDocuments []*pb.MapEntry
-	for category, data := range categories {
-		grpcDocuments = append(grpcDocuments, &pb.MapEntry{
-			Category: category,
-			Data:     data,
+	var grpcDocuments []*pb.CategoryDocuments
+	for category, docs := range categories {
+		grpcDocuments = append(grpcDocuments, &pb.CategoryDocuments{
+			Category:  category,
+			Documents: docs,
 		})
 	}
 
