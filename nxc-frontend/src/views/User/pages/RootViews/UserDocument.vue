@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {ref, reactive, onMounted} from "vue";
+import {ref, reactive, onMounted, onBeforeMount} from "vue";
 // import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
@@ -18,7 +18,7 @@ const {t} = useI18n()
 const message = useMessage()
 // const apiAddrStore = useApiAddrStore();
 
-
+let isEmpty = ref<boolean>(false)
 let search = ref('')
 // let text = ref('')
 let active = ref<boolean>(false)
@@ -71,7 +71,15 @@ let getAllDocuments = async () => {
     if (data.code === 200) {
       console.log(data)
       // Object.assign(doc_list, data.doc_list)
+      if (!data.doc_list) {
+        isEmpty.value = true
+        return
+      } else {
+        isEmpty.value = false
+      }
       data.doc_list.forEach((category: CategoryDocuments) => doc_list.value.push(category))
+      console.log("doc_list", doc_list.value)
+
     } else {
       message.error(data.msg)
     }
@@ -85,11 +93,15 @@ let getAllDocuments = async () => {
 //
 // }
 
+onBeforeMount(() => {
+  getAllDocuments()
+
+})
+
 onMounted(() => {
   console.log('document挂载');
   themeStore.menuSelected = 'user-doc'
   themeStore.userPath = '/dashboard/document'
-  getAllDocuments()
   // getAllDocuments()
 
 })
@@ -123,6 +135,11 @@ export default {
       <p class="doc-release">{{ doc.created_at }}</p>
 
     </div>
+  </n-card>
+
+  <n-card v-if="isEmpty" :embedded="true" hoverable :bordered="false" style="padding: 30px 0">
+    <n-result status="404" title="查无结果" description="尝试换一个关键词吧">
+    </n-result>
   </n-card>
 
   <n-drawer v-model:show="active" width="80%" height="80%" :placement="placement">

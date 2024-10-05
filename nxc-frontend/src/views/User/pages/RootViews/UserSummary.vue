@@ -1,13 +1,12 @@
-<script setup lang="ts" name="UserSummary">
+<script setup lang="ts">
 import {useI18n} from 'vue-i18n'
-import {onMounted, ref} from "vue";
+import {onMounted, ref, computed} from "vue";
 import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import { useDialog, useMessage } from 'naive-ui'
-const message = useMessage()
-const dialog = useDialog()
+
 import {
   ArrowBack,
   ArrowForward,
@@ -21,6 +20,8 @@ import {
 import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 
+const message = useMessage()
+const dialog = useDialog()
 const {t, locale} = useI18n()
 const apiAddrStore = useApiAddrStore();
 const appInfoStore = useAppInfosStore();
@@ -28,7 +29,16 @@ const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
 const router = useRouter();
 
-let thisNotices = ref([])
+interface Notice {
+  id: number
+  tags: string
+  title: string
+  content: string
+  img_url?: string
+  created_at: string
+}
+
+let thisNotices = ref<Notice[]>([])
 
 // let noticeBg = computed(() => ({
 //   backgroundSize: 'cover',
@@ -167,6 +177,12 @@ onMounted(() => {
 })
 </script>
 
+<script lang="ts">
+export default {
+  name: 'UserSummary',
+}
+</script>
+
 <template>
   <div class="root">
     <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
@@ -232,13 +248,13 @@ onMounted(() => {
       <n-card
           v-if="!haveActive"
           class="no-license"
+          style="background-color: rgba(0,0,0,0.0)"
           content-style="padding: 0;"
           @click="router.push({path: '/dashboard/purchase'})"
           :bordered="false"
       >
-        <div
-            style="display: flex;text-align: center;justify-content: flex-end;line-height: 20px;flex-direction: column;align-items: center;padding-bottom: 20px;">
-          <n-icon style="text-align: center;font-size: 30px;">
+        <div style="display: flex;text-align: center;justify-content: flex-end;line-height: 20px;flex-direction: column;align-items: center;padding: 20px; background-color: rgba(0,0,0,0.0)">
+          <n-icon style="text-align: center" size="40">
             <cartIcon/>
           </n-icon>
           <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">{{ t('userSummary.toPurchase') }}</p>
