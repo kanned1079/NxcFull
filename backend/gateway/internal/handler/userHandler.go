@@ -1,13 +1,17 @@
 package handler
 
 import (
-	pb "NxcFull/backend/userServices/api/proto"
+	grpc2 "NxcFull/backend/gateway/internal/grpc"
+	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
 	sysContext "context"
 	"github.com/gin-gonic/gin"
+	//"google.golang.org/grpc"
 	"log"
 	"net/http"
 	"time"
 )
+
+var grpcClient = grpc2.NewClients()
 
 func HandleUserLogin(context *gin.Context) {
 	var req = struct {
@@ -30,21 +34,34 @@ func HandleUserLogin(context *gin.Context) {
 	// 调用grpc的login方法
 	ctx, cancel := sysContext.WithTimeout(sysContext.Background(), time.Second)
 	defer cancel()
-	resp, err := grpcClient.Login(ctx, rpcReq)
+	//resp, err := GrpcClients.UserServiceClient.Login()
+	resp, err := grpcClient.UserServiceClient.Login(ctx, rpcReq)
 	if err != nil {
-		log.Println("grpc请求错误", err)
-		context.JSON(http.StatusOK, gin.H{
-			"code":  http.StatusInternalServerError,
-			"msg":   "grpc调用失败",
-			"error": err.Error(),
-		})
-		return
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+	//if err != nil || resp.Code != http.StatusOK {
+	//	log.Println("grpc请求错误", err)
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code":     resp.Code,
+	//		"isAuthed": resp.IsAuthed,
+	//		"msg":      "grpc调用失败",
+	//		"error":    err.Error(),
+	//	})
+	//	return
+	//}
+	//context.JSON(http.StatusOK, gin.H{
+	//	"code":      http.StatusOK,
+	//	"isAuthed":  true,
+	//	"msg":       "验证通过",
+	//	"token":     resp.Token,
+	//	"user_data": resp.UserData,
+	//})
 	context.JSON(http.StatusOK, gin.H{
-		"code":      http.StatusOK,
-		"isAuthed":  true,
-		"msg":       "验证通过",
+		"code":      resp.Code,
+		"isAuthed":  resp.IsAuthed,
+		"msg":       resp.Msg,
 		"token":     resp.Token,
 		"user_data": resp.UserData,
 	})
+
 }

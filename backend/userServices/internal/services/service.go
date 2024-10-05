@@ -58,7 +58,7 @@ func (s *UserService) Login(cxt context.Context, req *pb.UserLoginRequest) (*pb.
 		}
 	} else {
 		return &pb.UserLoginResponse{
-			Code:     http.StatusInternalServerError,
+			Code:     http.StatusNotFound,
 			IsAuthed: false,
 			Msg:      "用户不存在",
 		}, nil

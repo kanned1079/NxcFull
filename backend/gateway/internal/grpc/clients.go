@@ -1,16 +1,17 @@
 package grpc
 
 import (
-	"NxcFull/backend/gateway/internal/grpc/api/proto/user"
-	"google.golang.org/grpc"
+	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
+	"NxcFull/backend/gateway/internal/grpc/api/user"
+	//"google.golang.org/grpc"
 )
 
 type Clients struct {
 	//userServiceClient pb.UserServiceClient
-	UserServiceClient    *grpc.ClientConn
-	CouponServiceClient  *grpc.ClientConn
-	NoticesServiceClient *grpc.ClientConn
-	OrderServiceClient   *grpc.ClientConn
+	UserServiceClient pb.UserServiceClient
+	//CouponServiceClient  *grpc.ClientConn
+	//NoticesServiceClient *grpc.ClientConn
+	//OrderServiceClient   *grpc.ClientConn
 }
 
 func NewClients() Clients {

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"NxcFull/backend/gateway/internal/etcd"
 	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -8,11 +9,12 @@ import (
 )
 
 func NewUserClient() (client pb.UserServiceClient) {
-	clientConn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	log.Println("NewUserClient")
+	clientConn, err := grpc.NewClient(etcd.GetServiceAddress("userServices"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Println("连接到user grpc服务器失败", err.Error())
-		panic(err)
+		return
 	}
-
+	log.Println("连接到userServices成功")
 	return pb.NewUserServiceClient(clientConn)
 }
