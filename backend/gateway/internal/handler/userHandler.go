@@ -39,23 +39,6 @@ func HandleUserLogin(context *gin.Context) {
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
-	//if err != nil || resp.Code != http.StatusOK {
-	//	log.Println("grpc请求错误", err)
-	//	context.JSON(http.StatusOK, gin.H{
-	//		"code":     resp.Code,
-	//		"isAuthed": resp.IsAuthed,
-	//		"msg":      "grpc调用失败",
-	//		"error":    err.Error(),
-	//	})
-	//	return
-	//}
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code":      http.StatusOK,
-	//	"isAuthed":  true,
-	//	"msg":       "验证通过",
-	//	"token":     resp.Token,
-	//	"user_data": resp.UserData,
-	//})
 	context.JSON(http.StatusOK, gin.H{
 		"code":      resp.Code,
 		"isAuthed":  resp.IsAuthed,
@@ -100,35 +83,79 @@ func HandleUserRegister(context *gin.Context) {
 		"msg":           resp.Msg,
 	})
 
-	//var newUserInfo user.User = user.User{
-	//	Email:        postForm.Email,
-	//	InviteUserID: postForm.InviteUserId,
-	//	//LicenseExpiration: nil,
-	//}
-	//var newUserAuth user.Auth = user.Auth{
-	//	Email:    postForm.Email,
-	//	Password: postForm.Password,
-	//}
-	//result1 := dao.Db.Model(&user.User{}).Create(&newUserInfo)
-	//if result1.Error != nil {
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"code":  http.StatusInternalServerError,
-	//		"msg":   "插入数据错误",
-	//		"error": result1.Error.Error(),
-	//	})
-	//}
-	//result2 := dao.Db.Model(&user.Auth{}).Create(&newUserAuth)
-	//if result2.Error != nil {
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"code":  http.StatusInternalServerError,
-	//		"msg":   "插入验证数据错误",
-	//		"error": result2.Error.Error(),
-	//	})
-	//}
-	//if result1.Error == nil && result2.Error == nil {
-	//	context.JSON(http.StatusOK, gin.H{
-	//		"code": http.StatusOK,
-	//		"msg":  "新建用户成功",
-	//	})
-	//}
+}
+
+func HandleCheckPreviousPassword(context *gin.Context) {
+	// 绑定 JSON 请求体中的数据
+	postData := &struct {
+		Email       string `json:"email"`
+		OldPassword string `json:"old_password"` // 已经哈希过的密码
+	}{}
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusInternalServerError,
+			"msg":   "绑定数据失败",
+			"error": err.Error(),
+		})
+		return
+	}
+
+	log.Println(postData)
+
+	resp, err := grpcClient.UserServiceClient.CheckPreviousPassword(sysContext.Background(), &pb.CheckPreviousPasswordRequest{
+		Email:       postData.Email,
+		OldPassword: postData.OldPassword,
+	})
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code":  http.StatusInternalServerError,
+			"error": err.Error(),
+		})
+	}
+	log.Println(resp)
+
+	// 如果密码验证通过
+	context.JSON(http.StatusOK, gin.H{
+		"code":     resp.Code,
+		"verified": resp.Verified,
+		"msg":      resp.Msg,
+	})
+}
+
+func HandleApplyNewPassword(context *gin.Context) {
+	// 绑定 JSON 请求体中的数据
+	postData := &struct {
+		Email       string `json:"email"`
+		NewPassword string `json:"new_password"` // 新密码已经哈希过
+	}{}
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusInternalServerError,
+			"msg":   "绑定数据失败",
+			"error": err.Error(),
+		})
+		return
+	}
+
+	log.Println(postData)
+
+	resp, err := grpcClient.UserServiceClient.ApplyNewPassword(sysContext.Background(), &pb.ApplyNewPasswordRequest{
+		Email:       postData.Email,
+		NewPassword: postData.NewPassword,
+	})
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code":  http.StatusInternalServerError,
+			"error": err.Error(),
+		})
+	}
+	log.Println(resp)
+
+	//log.Println("修改密码成功")
+	// 密码更新成功
+	context.JSON(http.StatusOK, gin.H{
+		"code":    resp.Code,
+		"updated": resp.Updated,
+		"msg":     resp.Msg,
+	})
 }

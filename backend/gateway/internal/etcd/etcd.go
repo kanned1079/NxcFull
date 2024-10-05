@@ -51,7 +51,7 @@ func GetServiceAddress(serviceName string) string {
 		InitEtcdClient()
 	}
 
-	resp, err := cli.Get(ctx, "/services/"+serviceName) // 此处报错
+	resp, err := cli.Get(ctx, "/services/"+serviceName)
 	if err != nil || len(resp.Kvs) == 0 {
 		log.Printf("Failed to get service address for %s: %v", serviceName, err)
 		return ""

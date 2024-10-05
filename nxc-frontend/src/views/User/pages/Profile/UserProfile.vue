@@ -12,14 +12,14 @@ import {hashPassword} from "@/utils/encryptor";
 import instance from "@/axios";
 
 interface ModelType {
-  old_password: string | null
-  new_password: string | null
-  new_password_again: string | null
+  old_password: string
+  new_password: string
+  new_password_again: string
 }
 
 const {t} = useI18n()
 const formRef = ref<FormInst | null>(null)
-const message = useMessage()
+// const message = useMessage()
 const modelRef = ref<ModelType>({
   old_password: '',
   new_password: '',
@@ -48,7 +48,7 @@ const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
 const appInfosStore = useAppInfosStore();
 
-let notify = (type: NotificationType, title: string, meta: string) => {
+let notify = (type: NotificationType, title: string, meta?: string) => {
   notification[type]({
     content: title,
     meta: meta,
@@ -59,9 +59,9 @@ let notify = (type: NotificationType, title: string, meta: string) => {
 
 let verifyOldPassword = async (): Promise<boolean> => {
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.user.verifyOldPassword, {
+    let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/verify', {
       email: userInfoStore.thisUser.email,
-      old_password: hashPassword(modelRef.value.old_password.trim())
+      old_password: hashPassword(modelRef.value.old_password.trim() as string)
     });
     if (data.code === 200) {
       return data.verified as boolean;
@@ -70,7 +70,7 @@ let verifyOldPassword = async (): Promise<boolean> => {
       console.log(data);
       return false;
     }
-  } catch (error) {
+  } catch (error: any) {
     notify('error', t('userProfile.oldPwdVerifiedFailure'), error.toString())
     console.log(error.toString());
     return false;
@@ -84,7 +84,7 @@ let saveNewPassword = async () => {
         console.log('验证ok');
         if (await verifyOldPassword()) { // 等待验证旧密码的结果
           try {
-            let {data} = await instance.post(apiAddrStore.apiAddr.user.applyNewPassword, {
+            let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/update', {
               email: userInfoStore.thisUser.email,
               new_password: hashPassword(modelRef.value.new_password)
             });
@@ -96,7 +96,7 @@ let saveNewPassword = async () => {
               notify('success', t('userProfile.alertSuccess'), t('userProfile.alertSuccessSub'))
 
             }
-          } catch (error) {
+          } catch (error: any) {
             notify('error', t('userProfile.alertFailure'), error.toString())
           }
         } else {
@@ -167,17 +167,21 @@ export default {
       <div class="form">
         <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
           <n-form-item path="old_password" :label="t('userProfile.oldPwd')">
-            <n-input v-model:value="modelRef.old_password" @keydown.enter.prevent :placeholder="t('userProfile.oldPwdSub')"/>
+            <n-input v-model:value="modelRef.old_password" @keydown.enter.prevent
+                     :placeholder="t('userProfile.oldPwdSub')"/>
           </n-form-item>
           <n-form-item path="new_password" :label="t('userProfile.newPwd')">
-            <n-input v-model:value="modelRef.new_password" @keydown.enter.prevent :placeholder="t('userProfile.newPwdSub')"/>
+            <n-input v-model:value="modelRef.new_password" @keydown.enter.prevent
+                     :placeholder="t('userProfile.newPwdSub')"/>
           </n-form-item>
           <n-form-item path="new_password_again" :label="t('userProfile.newPwdAgain')">
             <n-input v-model:value="modelRef.new_password_again" @keydown.enter.prevent
                      :placeholder="t('userProfile.newPwdAgainSub')"/>
           </n-form-item>
         </n-form>
-        <n-button class="alert-btn" type="primary" @click="saveNewPassword" :bordered="false">{{ t('userProfile.saveBtn') }}</n-button>
+        <n-button class="alert-btn" type="primary" @click="saveNewPassword" :bordered="false">
+          {{ t('userProfile.saveBtn') }}
+        </n-button>
       </div>
     </n-card>
 
@@ -192,7 +196,7 @@ export default {
       <div class="form">
         <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
           <n-form-item path="old_password" :label="t('userProfile.enableNotify')">
-            <n-switch />
+            <n-switch/>
           </n-form-item>
         </n-form>
       </div>
@@ -275,10 +279,11 @@ export default {
     .title {
       font-size: 1.1rem;
       font-weight: 400;
-      background-color: rgba(216,216,216,0.1);
+      background-color: rgba(216, 216, 216, 0.1);
       padding: 10px 20px 10px 20px;
       border-radius: 3px 3px 0 0;
     }
+
     .form {
       margin: 20px;
     }
@@ -300,13 +305,15 @@ export default {
     .title {
       font-size: 1.1rem;
       font-weight: 400;
-      background-color: rgba(216,216,216,0.1);
+      background-color: rgba(216, 216, 216, 0.1);
       padding: 10px 20px 10px 20px;
       border-radius: 3px 3px 0 0;
     }
+
     .form {
       margin: 20px 20px 0 20px;
     }
+
     margin-bottom: 20px;
   }
 
@@ -314,13 +321,15 @@ export default {
     .title {
       font-size: 1.1rem;
       font-weight: 400;
-      background-color: rgba(216,216,216,0.1);
+      background-color: rgba(216, 216, 216, 0.1);
       padding: 10px 20px 10px 20px;
       border-radius: 3px 3px 0 0;
     }
+
     .form {
       margin: 20px;
     }
+
     margin-bottom: 20px;
   }
 

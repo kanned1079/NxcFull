@@ -17,6 +17,14 @@ service UserService {
 
   // 定义用户注册 RPC 方法
   rpc Register(UserRegisterRequest) returns (UserRegisterResponse);
+
+  // 验证旧密码
+  rpc CheckPreviousPassword(CheckPreviousPasswordRequest) returns (CheckPreviousPasswordResponse);
+
+  // 更新用户密码
+  rpc ApplyNewPassword(ApplyNewPasswordRequest) returns (ApplyNewPasswordResponse);
+
+
 }
 
 // 定义用户登录请求消息
@@ -68,4 +76,26 @@ message UserRegisterResponse {
   bool isRegistered = 2;
   string msg = 3;
   User user_data = 4;
+}
+
+message CheckPreviousPasswordRequest {
+  string email = 1;
+  string old_password = 2; // 哈希后的旧密码
+}
+
+message CheckPreviousPasswordResponse {
+  int64 code = 1;
+  bool verified = 2; // 密码是否验证通过
+  string msg = 3;    // 消息提示
+}
+
+message ApplyNewPasswordRequest {
+  string email = 1;
+  string new_password = 2; // 哈希后的新密码
+}
+
+message ApplyNewPasswordResponse {
+  int64 code = 1;
+  bool updated = 2; // 密码是否更新成功
+  string msg = 3;   // 消息提示
 }

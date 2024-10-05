@@ -91,8 +91,8 @@ func StartApiGateways() {
 		userAuthorized.GET("/document", handler.HandleGetAllDocuments) // 按照分类获取所有的文档列表	// rpc实现
 		//userAuthorized.GET("/plan/get", subscribePlan.HandleGetAllPlans)   // 获取所有的有效订阅
 		//userAuthorized.POST("/coupon/verify", coupon.HandleVerifyCoupon)   // 验证优惠券可用性
-		//userAuthorized.POST("/auth/passcode/verify", user.HandleCheckOldPassword)
-		//userAuthorized.POST("/auth/passcode/update", user.HandleApplyNewPassword)
+		userAuthorized.POST("/auth/passcode/verify", handler.HandleCheckPreviousPassword)
+		userAuthorized.POST("/auth/passcode/update", handler.HandleApplyNewPassword)
 		//userAuthorized.GET("/plan/info/fetch", orders.GetActivePlanListByUserId)
 		//userAuthorized.GET("/keys", keys.HandleGetAllUserKeys)
 		//
