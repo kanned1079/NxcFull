@@ -39,16 +39,16 @@ func StartApiGateways() {
 	{
 
 		// 一般用户登录和注册相关路由
-		userPublic.POST("/login", handler.HandleUserLogin)
+		userPublic.POST("/login", handler.HandleUserLogin) // rpc实现
 
 		//userPublic.POST("/register/vc/get", SendVerifyEmail)
 		//userPublic.POST("/register/vc/verify", HandleVerifyEmailCode)
-		userPublic.POST("/register/register", handler.HandleUserRegister)
+		userPublic.POST("/register/register", handler.HandleUserRegister) // rpc实现
 	}
 
 	protectedRoutes := router.Group("/api")
-	protectedRoutes.Use(auth.AuthMiddleware())
-	protectedRoutes.Use(auth.RoleMiddleware())
+	protectedRoutes.Use(auth.AuthMiddleware()) // 验证Token中间价
+	protectedRoutes.Use(auth.RoleMiddleware()) // 鉴权中间件
 
 	adminAuthorized := protectedRoutes.Group("/admin/v1", auth.RoleMiddleware())
 	{
@@ -67,7 +67,7 @@ func StartApiGateways() {
 		//adminAuthorized.DELETE("/notice/delete", HandleDeleteNotice)         // 删除一条通知
 		//adminAuthorized.GET("/plans/get", subscribePlan.HandleGetAllPlans)   // 获取所有的订阅
 		//adminAuthorized.POST("/plans/add", subscribePlan.HandleAddNewPlan)   // 添加新的订阅
-		//adminAuthorized.POST("/document/add", Document.HandleAddNewDocument) // 添加一条说明文档
+		adminAuthorized.POST("/document/add", handler.HandleAddNewDocument) // 添加一条说明文档
 		//adminAuthorized.POST("/coupon/add", coupon.HandleAddNewCoupon)       // 新建优惠券
 		//
 		//adminAuthorized.POST("/groups", privilege.HandleAddNewGroup) // 添加权限组
@@ -88,7 +88,7 @@ func StartApiGateways() {
 		////...其他用户路由
 		//// 开始首页
 		//userAuthorized.GET("/notices/get", HandleGetAllNotices)            // 获取所有的通知列表
-		userAuthorized.GET("/document", handler.HandleGetAllDocuments) // 按照分类获取所有的文档列表
+		userAuthorized.GET("/document", handler.HandleGetAllDocuments) // 按照分类获取所有的文档列表	// rpc实现
 		//userAuthorized.GET("/plan/get", subscribePlan.HandleGetAllPlans)   // 获取所有的有效订阅
 		//userAuthorized.POST("/coupon/verify", coupon.HandleVerifyCoupon)   // 验证优惠券可用性
 		//userAuthorized.POST("/auth/passcode/verify", user.HandleCheckOldPassword)

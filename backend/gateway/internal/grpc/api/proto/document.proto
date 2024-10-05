@@ -39,6 +39,7 @@ message Document {
 // 请求文档列表的请求结构
 message GetDocumentsRequest {
   string language = 1;
+  string find = 2;
 }
 
 // 请求文档列表的响应结构

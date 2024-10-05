@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {ref, reactive, onMounted, computed} from "vue";
-import {useRouter} from "vue-router";
+import {ref, reactive, onMounted} from "vue";
+// import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
+// import useApiAddrStore from "@/stores/useApiAddrStore";
 import  {type DrawerPlacement, useMessage } from 'naive-ui'
 // import MarkdownIt from 'markdown-it';
 // import {convertMd} from "@/utils/markdown";
@@ -16,11 +16,11 @@ const placement = ref<DrawerPlacement>('right')
 
 const {t} = useI18n()
 const message = useMessage()
-const apiAddrStore = useApiAddrStore();
+// const apiAddrStore = useApiAddrStore();
 
 
 let search = ref('')
-let text = ref('')
+// let text = ref('')
 let active = ref<boolean>(false)
 
 const activate = (place: DrawerPlacement, title:string, body: string) => {
@@ -31,7 +31,7 @@ const activate = (place: DrawerPlacement, title:string, body: string) => {
 }
 
 const themeStore = useThemeStore();
-const router = useRouter();
+// const router = useRouter();
 
 let drawTitle = ref<string>('')
 let drawBody = ref<string>('')
@@ -56,10 +56,11 @@ interface CategoryDocuments {
   documents: Document[]; // 文档数组
 }
 
-let doc_list = reactive<CategoryDocuments[]>([])
+let doc_list = ref<CategoryDocuments[]>([])
 
 let getAllDocuments = async () => {
   console.log('拉取所有文档列表')
+  doc_list.value = []
   try {
     let {data} = await instance.get('http://localhost:8081/api/user/v1/document', {
       params: {
@@ -69,7 +70,8 @@ let getAllDocuments = async () => {
     })
     if (data.code === 200) {
       console.log(data)
-      Object.assign(doc_list, data.doc_list)
+      // Object.assign(doc_list, data.doc_list)
+      data.doc_list.forEach((category: CategoryDocuments) => doc_list.value.push(category))
     } else {
       message.error(data.msg)
     }
@@ -79,9 +81,9 @@ let getAllDocuments = async () => {
 
 }
 
-let showDetail = () => {
-
-}
+// let showDetail = () => {
+//
+// }
 
 onMounted(() => {
   console.log('document挂载');
@@ -105,7 +107,7 @@ export default {
 <div class="root">
   <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root" :bordered="false">
     <n-input-group>
-      <n-input v-model="search" :bordered="false" size="medium" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
+      <n-input v-model:value="search" :bordered="false" size="medium" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
       <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="medium" class="search-btn">{{ t('userDocument.searchBtn') }}</n-button>
     </n-input-group>
   </n-card>

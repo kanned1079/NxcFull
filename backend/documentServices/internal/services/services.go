@@ -19,8 +19,18 @@ func NewDocumentService() *DocumentService {
 
 func (s *DocumentService) GetDocuments(ctx context.Context, req *pb.GetDocumentsRequest) (*pb.GetDocumentsResponse, error) {
 	log.Println("lang: ", req.Language)
+	log.Println("find: ", req.Find) // 打印 Find 的值
+
 	var documentsList []model.Document
-	if result := dao.Db.Model(&model.Document{}).Where("language = ?", req.Language).Find(&documentsList); result.Error != nil {
+	query := dao.Db.Model(&model.Document{}).Where("language = ?", req.Language)
+
+	// 如果 Find 字段不为空，添加模糊查询条件
+	if req.Find != "" {
+		query = query.Where("title LIKE ?", "%"+req.Find+"%")
+	}
+
+	// 执行查询
+	if result := query.Find(&documentsList); result.Error != nil {
 		log.Println("获取所有文档失败")
 		return &pb.GetDocumentsResponse{
 			Code: http.StatusInternalServerError,
@@ -28,9 +38,10 @@ func (s *DocumentService) GetDocuments(ctx context.Context, req *pb.GetDocuments
 		}, nil
 	}
 
-	// 使用 map 存储类别和相应的文档
+	// 创建一个 map 来存储类别和相应的文档
 	categories := make(map[string][]*pb.Document)
 	for _, doc := range documentsList {
+		// 根据类别进行分类，确保只有匹配的文档被返回
 		categories[doc.Category] = append(categories[doc.Category], &pb.Document{
 			Id:        doc.Id,
 			Language:  doc.Language,
@@ -45,7 +56,7 @@ func (s *DocumentService) GetDocuments(ctx context.Context, req *pb.GetDocuments
 		})
 	}
 
-	// 转换为 gRPC 响应需要的格式
+	// 转换为 gRPC 响应需要的格式，只返回包含数据的类别
 	var grpcDocuments []*pb.CategoryDocuments
 	for category, docs := range categories {
 		grpcDocuments = append(grpcDocuments, &pb.CategoryDocuments{
