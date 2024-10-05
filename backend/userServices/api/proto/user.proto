@@ -26,13 +26,7 @@ message UserLoginRequest {
   string role = 3;
 }
 
-// 定义用户注册请求消息
-message UserRegisterRequest {
-  string email = 1;
-  string password = 2;
-  string name = 3;
-  string invite_user_id = 4;  // 邀请人ID（可选）
-}
+
 
 // 定义用户数据消息
 message User {
@@ -58,6 +52,14 @@ message UserLoginResponse {
   string msg = 3;
   string token = 4;
   User user_data = 5;
+}
+
+// 定义用户注册请求消息
+message UserRegisterRequest {
+  string email = 1;
+  string password = 2;
+  string name = 3;
+  string invite_user_id = 4;  // 邀请人ID（可选）
 }
 
 // 定义用户注册响应消息

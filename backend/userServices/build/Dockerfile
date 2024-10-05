@@ -7,6 +7,6 @@ COPY . .
 RUN go mod tidy
 RUN go build -o user-service ./command/server
 
-EXPOSE 50051
+EXPOSE 50001
 
 CMD ["./user-service"]

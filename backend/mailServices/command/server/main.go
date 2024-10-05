@@ -1,10 +1,9 @@
 package main
 
 import (
-	"NxcFull/backend/userServices/internal/config"
-	"NxcFull/backend/userServices/internal/dao"
-	"NxcFull/backend/userServices/internal/etcd"
-	"NxcFull/backend/userServices/internal/handler"
+	"NxcFull/backend/mailServices/internal/config"
+	"NxcFull/backend/mailServices/internal/etcd"
+	"NxcFull/backend/mailServices/internal/handler"
 	"log"
 )
 
@@ -17,12 +16,9 @@ func init() {
 		log.Println("读取配置文件出错", err)
 		return
 	}
-
 }
 
 func main() {
-	dao.InitMysqlServer() // 初始化主数据库
-	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "userServices", "localhost:50001")
+	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "mailServices", "localhost:50002")
 	handler.RunGRPCServer()
-
 }

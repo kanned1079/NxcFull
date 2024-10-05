@@ -43,7 +43,7 @@ func StartApiGateways() {
 
 		//userPublic.POST("/register/vc/get", SendVerifyEmail)
 		//userPublic.POST("/register/vc/verify", HandleVerifyEmailCode)
-		//userPublic.POST("/register/register", HandleUserRegister)
+		userPublic.POST("/register/register", handler.HandleUserRegister)
 	}
 
 	protectedRoutes := router.Group("/api")

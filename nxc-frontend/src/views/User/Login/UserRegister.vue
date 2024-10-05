@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onMounted, ref} from 'vue'
+import {computed, type ComputedRef, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 // import useSiteInfo from "@/stores/siteInfo";
 // import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 
 import type {NotificationType} from 'naive-ui'
-import {FormInst, useMessage, useNotification} from 'naive-ui'
+import {type FormInst, useMessage, useNotification} from 'naive-ui'
 import {  ChevronBackOutline as backIcon,} from "@vicons/ionicons5"
 
 import authInstance from '@/axios/authInstance'
@@ -103,7 +103,7 @@ let rules = {
   }
 }
 
-let notifyErr = (type: NotificationType, title: string, msg: string) => {
+let notifyErr = (type: NotificationType, title: any, msg: any) => {
   notification[type]({
     content: title,
     meta: msg,
@@ -112,7 +112,7 @@ let notifyErr = (type: NotificationType, title: string, msg: string) => {
   })
 }
 
-let notifyPass = (type: NotificationType, title: string, msg: string) => {
+let notifyPass = (type: NotificationType, title: any , msg: any) => {
   notification[type]({
     content: title,
     meta: msg,
@@ -206,24 +206,26 @@ let backToLogin = () => {
 
 // 处理注册
 let handleRegister = async () => {
-  console.log('用户注册信息', formRef.value)
   try {
-    let {data} = authInstance.post(apiAddrStore.apiAddr.user.newUserRegister, {
+    let {data} = await instance.post('http://localhost:8081/api/user/v1/register/register', {
       email: formValue.value.user.email,
-      password: formValue.value.user.password,
+      password: hashPassword(formValue.value.user.password),
       invite_user_id: formValue.value.user.invite_user_id,
     })
-    console.log(data)
-    if (data.code === 200) {
-      notifyPass('success',  computed(() => t('userRegister.reg')), computed(() => t('userRegister.regSuccess')))
+    if (data.code === 200 && data.is_registered) {
+      console.log("注册成功")
+      notifyPass('success', computed(() => t('userRegister.reg')), computed(() => t('userRegister.regSuccess')))
+      setTimeout(async () => {
+        await router.push({
+          path: '/login'
+        })
+      }, 1000)
     } else {
-      notifyErr('error', computed(() => t('userRegister.failure')), data.msg.toString())
+      notifyPass('error', computed(() => t('userRegister.regFailure')), data.msg)
     }
   } catch (error) {
-    // notifyErr('error',error.toString())
-    console.log(error)
+    notifyPass('error', computed(() => t('userRegister.unknowErr')), error)
   }
-
 }
 
 
@@ -273,37 +275,40 @@ let handleValidateClick = async () => {
       if (await verifyCode()) {
         // 验证码正确
         console.log('验证码正确')
+        await handleRegister()
         // handleRegister()  // 注册并写入数据库
-        try {
-          let {data} = await instance.post(apiAddrStore.apiAddr.user.newUserRegister, {
-            email: formValue.value.user.email,
-            password: hashPassword(formValue.value.user.password),
-            invite_user_id: formValue.value.user.invite_user_id,
-          })
-          if (data.code === 200) {
-            console.log("注册成功")
-            notifyPass('success', computed(() => t('userRegister.reg')), computed(() => t('userRegister.regSuccess')))
-            setTimeout(async () => {
-              await router.push({
-                path: '/login'
-              })
-            }, 1000)
-          } else {
-            notifyPass('error', computed(() => t('userRegister.regFailure')), data.msg)
-
-          }
-        } catch (error) {
-          notifyPass('error', computed(() => t('userRegister.unknowErr')), error.toString())
-        }
-        return;
+        // try {
+        //   let {data} = await instance.post(apiAddrStore.apiAddr.user.newUserRegister, {
+        //     email: formValue.value.user.email,
+        //     password: hashPassword(formValue.value.user.password),
+        //     invite_user_id: formValue.value.user.invite_user_id,
+        //   })
+        //   if (data.code === 200 && data.is_registered) {
+        //     console.log("注册成功")
+        //     notifyPass('success', computed(() => t('userRegister.reg')), computed(() => t('userRegister.regSuccess')))
+        //     setTimeout(async () => {
+        //       await router.push({
+        //         path: '/login'
+        //       })
+        //     }, 1000)
+        //   } else {
+        //     notifyPass('error', computed(() => t('userRegister.regFailure')), data.msg)
+        //   }
+        // } catch (error) {
+        //   notifyPass('error', computed(() => t('userRegister.unknowErr')), error)
+        // }
+        // return;
       } else {
         notifyErr('error', computed(() => t('userRegister.failure')), computed(() => t('userRegister.verifyCodeErr')))
         return
       }
 
+    } else {
+      // 没有启用邮箱验证
+      await handleRegister()
     }
   }
-  await handleRegister()
+  // await handleRegister()
 }
 
 let startWait = (sec: number) => {

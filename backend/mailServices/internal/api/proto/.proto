@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto";
+
+//import "google/protobuf/timestamp.proto";
+
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
+
+service MailService {
+  // 发送测试邮件
+  rpc SendMail(SendMailRequest) returns (SendMailResponse);
+}
+
+message SendMailRequest {
+  string to = 1;
+  string code = 2;
+  string template = 3;
+  string mailType = 4;
+  string remindText = 5;
+}
+
+message SendMailResponse {
+  int64 code = 1;
+  string msg = 2;
+}
+

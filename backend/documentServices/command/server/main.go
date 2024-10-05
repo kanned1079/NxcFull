@@ -1,10 +1,10 @@
 package main
 
 import (
-	"NxcFull/backend/userServices/internal/config"
-	"NxcFull/backend/userServices/internal/dao"
-	"NxcFull/backend/userServices/internal/etcd"
-	"NxcFull/backend/userServices/internal/handler"
+	"NxcFull/backend/documentServices/internal/config"
+	"NxcFull/backend/documentServices/internal/dao"
+	"NxcFull/backend/documentServices/internal/etcd"
+	"NxcFull/backend/documentServices/internal/handler"
 	"log"
 )
 
@@ -22,7 +22,7 @@ func init() {
 
 func main() {
 	dao.InitMysqlServer() // 初始化主数据库
-	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "userServices", "localhost:50001")
+	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "documentServices", "localhost:50002")
 	handler.RunGRPCServer()
 
 }

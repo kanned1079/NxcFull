@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package document;
+
+option go_package = "./proto";
+
+// 定义文档结构
+message Document {
+  int64 id = 1;
+  string language = 2;
+  string category = 3;
+  string title = 4;
+  string body = 5;
+  int32 sort = 6;
+  bool show = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  string deleted_at = 10;
+}
+
+// 请求文档列表的请求结构
+message GetDocumentsRequest {
+  string language = 1;
+}
+
+// 请求文档列表的响应结构
+message GetDocumentsResponse {
+  repeated Document documents = 1;
+}
+
+// 添加新文档的请求结构
+message AddDocumentRequest {
+  string language = 1;
+  string category = 2;
+  string title = 3;
+  string body = 4;
+  int32 sort = 5;
+  bool show = 6;
+}
+
+// 添加新文档的响应结构
+message AddDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 更新文档的请求结构
+message UpdateDocumentRequest {
+  int64 id = 1;
+  string language = 2;
+  string category = 3;
+  string title = 4;
+  string body = 5;
+}
+
+// 更新文档的响应结构
+message UpdateDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 定义 Document 服务
+service DocumentService {
+  rpc GetDocuments (GetDocumentsRequest) returns (GetDocumentsResponse);
+  rpc AddDocument (AddDocumentRequest) returns (AddDocumentResponse);
+  rpc UpdateDocument (UpdateDocumentRequest) returns (UpdateDocumentResponse);
+}
