@@ -11,6 +11,7 @@ import (
 func HandleGetAllDocuments(context *gin.Context) {
 	lang := context.Query("lang")
 	find := context.Query("find")
+
 	resp, err := grpcClient.DocumentServiceClient.GetDocuments(sysContext.Background(), &pb.GetDocumentsRequest{
 		Language: lang,
 		Find:     find,
