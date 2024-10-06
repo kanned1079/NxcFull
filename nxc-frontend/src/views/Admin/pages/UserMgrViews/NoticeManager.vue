@@ -58,7 +58,7 @@ let closeModal = () => {
 let submitModal = async () => {
   console.log('submit')
   console.log(formData)
-  let {data} = await instance.post(apiAddrStore.apiAddr.admin.addANotice, formData)
+  let {data} = await instance.put('http://localhost:8081/api/admin/v1/notice', formData)
   if (data.code === 200) {
     message.success("添加成功")
   }
@@ -122,7 +122,7 @@ let pagination = {
 // 获取所有的通知
 let getAllNotices = async () => {
   try {
-    let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllNoticesList)
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/notice')
     if (data.code === 200) {
       // console.log(data.Document)
       noticesStore.noticesArr = data.notices
@@ -140,7 +140,7 @@ let getAllNotices = async () => {
 let deleteNotice = async (id: number) => {
   const message = useMessage()
   try {
-    let {data} = await instance.delete(apiAddrStore.apiAddr.admin.deleteANotice,
+    let {data} = await instance.delete('http://localhost:8081/api/admin/v1/notice',
         {
           params: {notice_id: id,},
         },
@@ -165,7 +165,7 @@ onMounted(() => {
 
 
 let handleDeleteNotice = async () => {
-  await deleteNotice(2)
+  await deleteNotice(7)
 }
 
 </script>

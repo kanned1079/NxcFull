@@ -1,10 +1,10 @@
 package main
 
 import (
-	"NxcFull/backend/documentServices/internal/config"
-	"NxcFull/backend/documentServices/internal/dao"
-	"NxcFull/backend/documentServices/internal/etcd"
-	"NxcFull/backend/documentServices/internal/handler"
+	"NxcFull/backend/noticeServices/internal/config"
+	"NxcFull/backend/noticeServices/internal/dao"
+	"NxcFull/backend/noticeServices/internal/etcd"
+	"NxcFull/backend/noticeServices/internal/handler"
 	"log"
 )
 
@@ -17,12 +17,10 @@ func init() {
 		log.Println("读取配置文件出错", err)
 		return
 	}
-	dao.InitMysqlServer() // 初始化主数据库
+	dao.InitMysqlServer()
 }
 
 func main() {
-
-	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "documentServices", "localhost:50002")
+	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "noticeServices", "localhost:50003")
 	handler.RunGRPCServer()
-
 }

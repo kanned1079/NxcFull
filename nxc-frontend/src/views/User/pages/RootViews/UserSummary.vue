@@ -116,7 +116,7 @@ let showDetail = () => {
 let getAllNotices = async () => {
   console.log('获取所有有效通知')
   try {
-    let {data} = await instance.get(apiAddrStore.apiAddr.user.getAllNoticesList)
+    let {data} = await instance.get('http://localhost:8081/api/user/v1/notice')
     if (data.code === 200) {
       thisNotices.value = data.notices
     }

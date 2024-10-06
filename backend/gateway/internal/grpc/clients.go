@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"NxcFull/backend/gateway/internal/grpc/api/document"
+	"NxcFull/backend/gateway/internal/grpc/api/notice"
 	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/user"
 	//"google.golang.org/grpc"
@@ -15,6 +16,7 @@ type Clients struct {
 	//NoticesServiceClient *grpc.ClientConn
 	//OrderServiceClient   *grpc.ClientConn
 	DocumentServiceClient pb.DocumentServiceClient
+	NoticeServiceClient   pb.NoticeServiceClient
 }
 
 func NewClients() Clients {
@@ -22,6 +24,7 @@ func NewClients() Clients {
 	return Clients{
 		UserServiceClient:     user.NewUserClient(),
 		DocumentServiceClient: document.NewDocumentClient(),
+		NoticeServiceClient:   notice.NewNoticeClient(),
 	}
 
 }

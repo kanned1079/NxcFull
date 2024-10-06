@@ -24,28 +24,33 @@ func HandleGetAllNotices(context *gin.Context) {
 	})
 }
 
-type noticeFormData struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	Tags    string `json:"tags"`
-	ImgUrl  string `json:"img_url"`
-}
+//type noticeFormData struct {
+//	Title   string `json:"title"`
+//	Content string `json:"content"`
+//	Tags    string `json:"tags"`
+//	ImgUrl  string `json:"img_url"`
+//}
 
 func HandleAddNotice(context *gin.Context) {
-	var fromData noticeFormData
-	if err := context.ShouldBind(&fromData); err != nil {
+	formData := &struct {
+		Title   string `json:"title"`
+		Content string `json:"content"`
+		Tags    string `json:"tags"`
+		ImgUrl  string `json:"img_url"`
+	}{}
+	if err := context.ShouldBind(&formData); err != nil {
 		log.Println(err)
 		context.JSON(http.StatusBadRequest, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg:": err.Error(),
 		})
 	}
-	log.Println(fromData)
+	log.Println(formData)
 	var notice publicNotice.PublicNotices
-	notice.Title = fromData.Title
-	notice.Content = fromData.Content
-	notice.Tags = fromData.Tags
-	notice.ImgUrl = fromData.ImgUrl
+	notice.Title = formData.Title
+	notice.Content = formData.Content
+	notice.Tags = formData.Tags
+	notice.ImgUrl = formData.ImgUrl
 	if result := dao.Db.Model(&publicNotice.PublicNotices{}).Create(&notice); result.Error != nil {
 		log.Println("新建通知错误", result.Error)
 	} else {

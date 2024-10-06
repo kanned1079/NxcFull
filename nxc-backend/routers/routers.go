@@ -66,10 +66,12 @@ func StartReq() {
 
 		adminAuthorized.GET("/users", handleGetUserList) // 获取所有用户的列表
 
-		adminAuthorized.GET("/notices/get", HandleGetAllNotices)             // 获取所有通知列表
-		adminAuthorized.POST("/notice/add", HandleAddNotice)                 // 添加一条新的通知
-		adminAuthorized.POST("/mail/test", HandleSendTestMail)               // 发送测试邮件
-		adminAuthorized.DELETE("/notice/delete", HandleDeleteNotice)         // 删除一条通知
+		adminAuthorized.GET("/notices/get", HandleGetAllNotices)     // 获取所有通知列表
+		adminAuthorized.POST("/notice/add", HandleAddNotice)         // 添加一条新的通知
+		adminAuthorized.DELETE("/notice/delete", HandleDeleteNotice) // 删除一条通知
+
+		adminAuthorized.POST("/mail/test", HandleSendTestMail) // 发送测试邮件
+
 		adminAuthorized.GET("/plans/get", subscribePlan.HandleGetAllPlans)   // 获取所有的订阅
 		adminAuthorized.POST("/plans/add", subscribePlan.HandleAddNewPlan)   // 添加新的订阅
 		adminAuthorized.POST("/document/add", Document.HandleAddNewDocument) // 添加一条说明文档

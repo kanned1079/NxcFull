@@ -1,4 +1,4 @@
-<script setup lang="ts" name="AdminLogin">
+<script setup lang="ts">
 import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import useSiteInfo from "@/stores/siteInfo";
@@ -64,7 +64,7 @@ interface UserData {
   invite_user_id: number;
   name: string;
   email: string;
-  isAdmin: boolean;
+  is_admin: boolean;
   is_staff: boolean;
   balance: number;
   last_login: Date;
@@ -79,7 +79,7 @@ let bindUserInfo =  (data: DataWithAuth) => {
   userInfoStore.thisUser.inviteUserId = user_data.invite_user_id
   userInfoStore.thisUser.name = user_data.name
   userInfoStore.thisUser.email = user_data.email
-  userInfoStore.thisUser.isAdmin = user_data.isAdmin
+  userInfoStore.thisUser.isAdmin = user_data.is_admin
   userInfoStore.thisUser.isStaff = user_data.is_staff
   userInfoStore.thisUser.balance = user_data.balance
   userInfoStore.thisUser.lastLogin = user_data.last_login.toString()
@@ -97,7 +97,7 @@ let bindUserInfo =  (data: DataWithAuth) => {
   //   lastLoginIp: user_data.last_login_ip,
   //   token: data.token,
   // };
-  console.log('isAdmin', user_data.isAdmin)
+  console.log('isAdmin', user_data.is_admin)
   console.log('admin/login: ', userInfoStore.thisUser.isAdmin)
 }
 
@@ -122,7 +122,7 @@ let handleLogin = async () => {
   enableLogin.value = false
   console.log('管理员密码hash: ', hashPassword(password.value))
   try {
-    let { data } = await instance.post(apiAddrStore.apiAddr.admin.adminLogin, {
+    let { data } = await instance.post('http://localhost:8081/api/admin/v1/login', {
       email: username.value,
       // password: encodeToBase64(password.value),
       password: hashPassword(password.value),
@@ -137,9 +137,9 @@ let handleLogin = async () => {
       // userInfoStore.isAuthed = true // 鉴权通过
       // sessionStorage.setItem('isAuthed', JSON.stringify(true))
       notifyPass('success');
-      await bindUserInfo(data)
+      bindUserInfo(data)
       console.log(userInfoStore.thisUser)
-      await router.push({ path: '/admin/dashboard' });
+      await router.push({ path: '/admin/dashboard/summary' });
     } else {
       enableLogin.value = true
       switch (data.msg) {
@@ -184,7 +184,7 @@ onMounted(() => {
 
   if (JSON.parse(sessionStorage.getItem('isAuthed') as string)) {
     console.log('to dashboard')
-    router.push({path:'/admin/dashboard'})
+    router.push({path:'/admin/dashboard/summary'})
   }
 
   // if (sessionStorage.getItem('isAuthed') != null) {
@@ -199,6 +199,12 @@ onMounted(() => {
   //   }
   // }
 })
+</script>
+
+<script lang="ts">
+export default {
+  name: 'AdminLogin',
+}
 </script>
 
 <template>
