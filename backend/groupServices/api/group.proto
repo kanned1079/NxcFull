@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package group;
+
+option go_package = "./proto";
+
+// 定义 GroupService 服务
+service GroupService {
+  // 获取所有组
+  rpc GetAllGroups (GetAllGroupsRequest) returns (GetAllGroupsResponse);
+
+  // 添加新组
+  rpc AddNewGroup (AddNewGroupRequest) returns (AddNewGroupResponse);
+
+  // 更新组
+  rpc UpdateGroup (UpdateGroupRequest) returns (UpdateGroupResponse);
+
+  // 删除组
+  rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse);
+}
+
+// 请求和响应消息定义
+
+// GetAllGroups 请求
+message GetAllGroupsRequest {
+  int64 page = 1;
+  int64 size = 2;
+}
+
+// GetAllGroups 响应
+message GetAllGroupsResponse {
+  int32 code = 1;
+  string msg = 2;
+  repeated ResponseGroup group_list = 3;
+
+}
+
+// 添加新组的请求
+message AddNewGroupRequest {
+  string group_name = 1;
+}
+
+// 添加新组的响应
+message AddNewGroupResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// 更新组的请求
+message UpdateGroupRequest {
+  int64 id = 1;
+  string name = 2;
+}
+
+// 更新组的响应
+message UpdateGroupResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// 删除组的请求
+message DeleteGroupRequest {
+  int64 id = 1;
+}
+
+// 删除组的响应
+message DeleteGroupResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// Group 数据结构定义
+// Group 数据结构定义
+message Group {
+  int64 id = 1;
+  string name = 2;
+  string created_at = 3;
+  string updated_at = 4;
+  string deleted_at = 5;  // Soft delete field
+}
+
+message ResponseGroup {
+  int64 id = 1;
+  string name = 2;
+  int64 user_count = 3;
+  int64 plan_count = 4;
+}
+
+

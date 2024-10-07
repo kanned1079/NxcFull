@@ -24,7 +24,7 @@ const (
 	DocumentService_UpdateDocument_FullMethodName = "/document.DocumentService/UpdateDocument"
 )
 
-// DocumentServiceClient is the client API for DocumentService service.
+// DocumentServiceClient is the client API for DocumentService services.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
@@ -73,7 +73,7 @@ func (c *documentServiceClient) UpdateDocument(ctx context.Context, in *UpdateDo
 	return out, nil
 }
 
-// DocumentServiceServer is the server API for DocumentService service.
+// DocumentServiceServer is the server API for DocumentService services.
 // All implementations must embed UnimplementedDocumentServiceServer
 // for forward compatibility.
 //
@@ -104,7 +104,7 @@ func (UnimplementedDocumentServiceServer) UpdateDocument(context.Context, *Updat
 func (UnimplementedDocumentServiceServer) mustEmbedUnimplementedDocumentServiceServer() {}
 func (UnimplementedDocumentServiceServer) testEmbeddedByValue()                         {}
 
-// UnsafeDocumentServiceServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeDocumentServiceServer may be embedded to opt out of forward compatibility for this services.
 // Use of this interface is not recommended, as added methods to DocumentServiceServer will
 // result in compilation errors.
 type UnsafeDocumentServiceServer interface {
@@ -176,7 +176,7 @@ func _DocumentService_UpdateDocument_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-// DocumentService_ServiceDesc is the grpc.ServiceDesc for DocumentService service.
+// DocumentService_ServiceDesc is the grpc.ServiceDesc for DocumentService services.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var DocumentService_ServiceDesc = grpc.ServiceDesc{

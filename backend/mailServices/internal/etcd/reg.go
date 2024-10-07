@@ -34,7 +34,7 @@ func RegisterService2Etcd(serverAddr string, ttl int64, serviceName, serviceAddr
 	//put, err := cli.Put(ctx, serviceName, serviceAddr)
 	put, err := cli.Put(ctx, "/services/"+serviceName, serviceAddr, clientv3.WithLease(leaseResp.ID))
 	if err != nil {
-		log.Println("Error registering service", err)
+		log.Println("Error registering services", err)
 	}
 	log.Println("Put operation completed. Revision:", put.Header.Revision)
 
@@ -48,7 +48,7 @@ func RegisterService2Etcd(serverAddr string, ttl int64, serviceName, serviceAddr
 		for {
 			kaResp, ok := <-ch
 			if !ok {
-				log.Println("Lease keep-alive channel closed, service may be expired")
+				log.Println("Lease keep-alive channel closed, services may be expired")
 				return
 			}
 			log.Printf("Lease renewed successfully for leaseID: %v\n", kaResp.ID)

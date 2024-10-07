@@ -25,7 +25,7 @@ const (
 	UserService_ApplyNewPassword_FullMethodName      = "/proto.UserService/ApplyNewPassword"
 )
 
-// UserServiceClient is the client API for UserService service.
+// UserServiceClient is the client API for UserService services.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
@@ -87,7 +87,7 @@ func (c *userServiceClient) ApplyNewPassword(ctx context.Context, in *ApplyNewPa
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
+// UserServiceServer is the server API for UserService services.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
 type UserServiceServer interface {
@@ -124,7 +124,7 @@ func (UnimplementedUserServiceServer) ApplyNewPassword(context.Context, *ApplyNe
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
 
-// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this services.
 // Use of this interface is not recommended, as added methods to UserServiceServer will
 // result in compilation errors.
 type UnsafeUserServiceServer interface {
@@ -214,7 +214,7 @@ func _UserService_ApplyNewPassword_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// UserService_ServiceDesc is the grpc.ServiceDesc for UserService services.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{

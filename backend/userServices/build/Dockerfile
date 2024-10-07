@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN go mod tidy
-RUN go build -o user-service ./command/server
+RUN go build -o user-services ./command/server
 
 EXPOSE 50001
 

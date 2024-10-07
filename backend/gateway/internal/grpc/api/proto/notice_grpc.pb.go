@@ -24,7 +24,7 @@ const (
 	NoticeService_DeleteNotice_FullMethodName  = "/publicNotice.NoticeService/DeleteNotice"
 )
 
-// NoticeServiceClient is the client API for NoticeService service.
+// NoticeServiceClient is the client API for NoticeService services.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
@@ -73,7 +73,7 @@ func (c *noticeServiceClient) DeleteNotice(ctx context.Context, in *DeleteNotice
 	return out, nil
 }
 
-// NoticeServiceServer is the server API for NoticeService service.
+// NoticeServiceServer is the server API for NoticeService services.
 // All implementations must embed UnimplementedNoticeServiceServer
 // for forward compatibility.
 //
@@ -104,7 +104,7 @@ func (UnimplementedNoticeServiceServer) DeleteNotice(context.Context, *DeleteNot
 func (UnimplementedNoticeServiceServer) mustEmbedUnimplementedNoticeServiceServer() {}
 func (UnimplementedNoticeServiceServer) testEmbeddedByValue()                       {}
 
-// UnsafeNoticeServiceServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeNoticeServiceServer may be embedded to opt out of forward compatibility for this services.
 // Use of this interface is not recommended, as added methods to NoticeServiceServer will
 // result in compilation errors.
 type UnsafeNoticeServiceServer interface {
@@ -176,7 +176,7 @@ func _NoticeService_DeleteNotice_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-// NoticeService_ServiceDesc is the grpc.ServiceDesc for NoticeService service.
+// NoticeService_ServiceDesc is the grpc.ServiceDesc for NoticeService services.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var NoticeService_ServiceDesc = grpc.ServiceDesc{

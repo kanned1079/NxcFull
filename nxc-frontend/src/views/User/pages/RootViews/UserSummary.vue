@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import {useI18n} from 'vue-i18n'
-import {onMounted, ref, computed} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
-import { useDialog, useMessage } from 'naive-ui'
+import {useDialog, useMessage} from 'naive-ui'
+import noticeUniversalBgDay from "@/assert/noticeUniversalBgDay.svg"
 
 import {
   ArrowBack,
   ArrowForward,
-  KeyOutline as keyIcon,
-  CartOutline as cartIcon,
-  BookOutline as bookIcon,
-  ArrowForwardCircleOutline as subIcon,
   BagHandleOutline as buyIcon,
+  BookOutline as bookIcon,
+  CartOutline as cartIcon,
   HelpBuoyOutline as supportIcon,
-}from '@vicons/ionicons5'
+  KeyOutline as keyIcon,
+} from '@vicons/ionicons5'
 import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 
@@ -125,7 +125,7 @@ let getAllNotices = async () => {
   }
 }
 
-let handleConfirm = (title:string, content: string) => {
+let handleConfirm = (title: string, content: string) => {
   dialog.success({
     showIcon: false,
     title: title,
@@ -154,7 +154,7 @@ let getActivePlanList = async () => {
       myActivePlans.value = data.my_plans
       console.log(myActivePlans.value)
     }
-  }catch (error) {
+  } catch (error) {
     haveActive.value = false
     console.log(error)
   }
@@ -191,7 +191,7 @@ export default {
             v-for="item in thisNotices"
             :key="item.id"
             class="item"
-            :style="item.img_url===''?({backgroundImage: `url('https://ikanned.com:24444/d/Upload/NXC/noticeUniversalBgDay.svg')`,}):({backgroundImage: `url(${item.img_url})`,backgroundSize: 'cover'})"
+            :style="!item.hasOwnProperty('bg_img')?{backgroundImage: `url(${noticeUniversalBgDay})`}:{backgroundImage: `url(${item.img_url})`}"
             @click="handleConfirm(item.title, item.content)"
             :bordered="false"
         >
@@ -202,7 +202,6 @@ export default {
               <p class="date">{{ item.created_at }}</p>
             </div>
           </div>
-
         </n-card>
 
         <template #arrow="{ prev, next }">
@@ -230,6 +229,7 @@ export default {
           </ul>
         </template>
       </n-carousel>
+
     </n-card>
 
 
@@ -253,11 +253,13 @@ export default {
           @click="router.push({path: '/dashboard/purchase'})"
           :bordered="false"
       >
-        <div style="display: flex;text-align: center;justify-content: flex-end;line-height: 20px;flex-direction: column;align-items: center;padding: 20px; background-color: rgba(0,0,0,0.0)">
+        <div
+            style="display: flex;text-align: center;justify-content: flex-end;line-height: 20px;flex-direction: column;align-items: center;padding: 20px; background-color: rgba(0,0,0,0.0)">
           <n-icon style="text-align: center" size="40">
             <cartIcon/>
           </n-icon>
-          <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">{{ t('userSummary.toPurchase') }}</p>
+          <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">
+            {{ t('userSummary.toPurchase') }}</p>
         </div>
       </n-card>
 
@@ -272,7 +274,8 @@ export default {
       >
         <div class="plan-item">
           <p style="font-size: 1.1rem; font-weight: bold;opacity: 0.9;">{{ plan.plan_name }}</p>
-          <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">{{ t('userSummary.timeLeft', {msg: plan.expiration_date, })}}</p>
+          <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">
+            {{ t('userSummary.timeLeft', {msg: plan.expiration_date,}) }}</p>
         </div>
 
         <n-hr v-if="!(index === (myActivePlans.length - 1))"></n-hr>
@@ -294,17 +297,26 @@ export default {
           v-for="item in helpData"
           :key="item.id"
           style="display: flex; justify-content: space-between; width: 100%; height: auto; padding: 10px"
-        @click="router.push({ path: pathById[item.id].path})"
+          @click="router.push({ path: pathById[item.id].path})"
       >
         <div style="height: 100%; text-align: left; padding-left: 20px">
           <p style="font-size: 16px;">{{ item.title }}</p>
           <p style="font-size: 12px; margin-top: 5px; opacity: 0.5">{{ item.content }}</p>
         </div>
-        <div style="width: 40px; font-size: 30px; margin-right: 20px; display: flex; flex-direction: column; justify-content: center">
-          <n-icon v-if="item.icon_id===1" style="opacity: 0.5; width: 40px; "><bookIcon/></n-icon>
-          <n-icon v-if="item.icon_id===2" style="opacity: 0.5; width: 40px; "><keyIcon/></n-icon>
-          <n-icon v-if="item.icon_id===3" style="opacity: 0.5; width: 40px; "><buyIcon/></n-icon>
-          <n-icon v-if="item.icon_id===4" style="opacity: 0.5; width: 40px; "><supportIcon/></n-icon>
+        <div
+            style="width: 40px; font-size: 30px; margin-right: 20px; display: flex; flex-direction: column; justify-content: center">
+          <n-icon v-if="item.icon_id===1" style="opacity: 0.5; width: 40px; ">
+            <bookIcon/>
+          </n-icon>
+          <n-icon v-if="item.icon_id===2" style="opacity: 0.5; width: 40px; ">
+            <keyIcon/>
+          </n-icon>
+          <n-icon v-if="item.icon_id===3" style="opacity: 0.5; width: 40px; ">
+            <buyIcon/>
+          </n-icon>
+          <n-icon v-if="item.icon_id===4" style="opacity: 0.5; width: 40px; ">
+            <supportIcon/>
+          </n-icon>
         </div>
       </div>
     </n-card>

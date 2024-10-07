@@ -1,10 +1,10 @@
 package main
 
 import (
-	"NxcFull/backend/userServices/internal/config"
-	"NxcFull/backend/userServices/internal/dao"
-	"NxcFull/backend/userServices/internal/etcd"
-	"NxcFull/backend/userServices/internal/handler"
+	"NxcFull/backend/groupServices/internal/config"
+	"NxcFull/backend/groupServices/internal/dao"
+	"NxcFull/backend/groupServices/internal/etcd"
+	"NxcFull/backend/groupServices/internal/handler"
 	"log"
 )
 
@@ -22,7 +22,6 @@ func init() {
 }
 
 func main() {
-	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "userServices", "localhost:50001")
+	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "groupServices", "localhost:50004")
 	handler.RunGRPCServer()
-
 }

@@ -53,12 +53,12 @@ func GetServiceAddress(serviceName string) string {
 
 	resp, err := cli.Get(ctx, "/services/"+serviceName)
 	if err != nil || len(resp.Kvs) == 0 {
-		log.Printf("Failed to get service address for %s: %v", serviceName, err)
+		log.Printf("Failed to get services address for %s: %v", serviceName, err)
 		return ""
 	}
 
 	serviceAddress := string(resp.Kvs[0].Value)
-	log.Printf("Get service %s address: %s\n", serviceName, serviceAddress)
+	log.Printf("Get services %s address: %s\n", serviceName, serviceAddress)
 
 	// 更新缓存
 	cacheMux.Lock()
