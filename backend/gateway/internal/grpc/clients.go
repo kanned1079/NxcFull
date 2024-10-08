@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"NxcFull/backend/gateway/internal/grpc/api/coupon"
 	"NxcFull/backend/gateway/internal/grpc/api/document"
 	"NxcFull/backend/gateway/internal/grpc/api/group"
 	"NxcFull/backend/gateway/internal/grpc/api/notice"
@@ -21,6 +22,7 @@ type Clients struct {
 	NoticeServiceClient       pb.NoticeServiceClient
 	GroupServiceClient        pb.GroupServiceClient
 	SubscriptionServiceClient pb.SubscriptionServiceClient
+	CouponServiceClient       pb.CouponServiceClient
 }
 
 func NewClients() Clients {
@@ -31,6 +33,7 @@ func NewClients() Clients {
 		NoticeServiceClient:       notice.NewNoticeClient(),
 		GroupServiceClient:        group.NewGroupClient(),
 		SubscriptionServiceClient: subscribe.NewSubscriptionServiceClient(),
+		CouponServiceClient:       coupon.NewCouponServiceClient(),
 	}
 
 }

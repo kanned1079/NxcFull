@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"NxcFull/backend/documentServices/internal/config"
+	"NxcFull/backend/couponServices/internal/config"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

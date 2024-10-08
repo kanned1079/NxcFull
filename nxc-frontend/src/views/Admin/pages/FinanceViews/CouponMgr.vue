@@ -7,6 +7,7 @@ import type {FormInst} from 'naive-ui'
 import {NButton, NButtonGroup, NSwitch, NTag, useMessage} from 'naive-ui'
 import useNoticesStore from "@/stores/useNoticesStore";
 import instance from "@/axios";
+import {formatTimestamp} from "@/utils/timeFormat"
 
 const {t} = useI18n();
 const apiAddrStore = useApiAddrStore();
@@ -133,7 +134,7 @@ let getAllCoupons = async () => {
   // 请求地址 /admin/v1/coupon/fetch
   try {
     couponList.value = []
-    let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllCoupons);
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/coupon');
     if (data.code === 200) {
       // couponList.value = data.coupons;
       data.coupon_list.forEach((item: Coupon, index: number) => {
@@ -155,7 +156,7 @@ let activateACoupon = async (id: number, value: boolean) => {
   // 请求地址 /admin/v1/coupon/status/update
   // 请求体 {优惠券id， 状态}
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.admin.updateCouponStatus, {
+    let {data} = await instance.put('http://localhost:8081/api/admin/v1/coupon/status', {
       id: id,
       status: value
     });
@@ -176,7 +177,7 @@ let updateACoupon = async (row: Coupon) => {
   // 请求地址 /admin/v1/coupon/update
   // 请求体 {优惠券id， 该优惠券结构}
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.admin.updateCoupon, row);
+    let {data} = await instance.put('http://localhost:8081/api/admin/v1/coupon', row);
     if (data.code === 200) {
       message.success('优惠券更新成功');
       await getAllCoupons(); // 更新成功后刷新列表
@@ -193,9 +194,12 @@ let deleteACoupon = async (id: number) => {
   // 点击删除后 使用post方法 用于删除一个优惠券
   // 请求地址 /admin/v1/coupon/delete
   // 请求体 {优惠券id}
+  console.log(id)
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.admin.deleteCoupon, {
-      id,
+    let {data} = await instance.delete('http://localhost:8081/api/admin/v1/coupon', {
+      params: {
+        coupon_id: id,
+      }
     });
     if (data.code === 200) {
       message.success('优惠券删除成功');
@@ -237,15 +241,21 @@ const columns = [
   },
   {
     title: '剩余使用次数',
-    key: 'residue'
+    key: 'residue',
   },
   {
     title: '启用时间',
-    key: 'start_time'
+    key: 'start_time',
+    render(row: Coupon) {
+      return h('p', {}, {default: () => formatTimestamp(row.start_time)});
+    }
   },
   {
     title: '过期时间',
-    key: 'end_time'
+    key: 'end_time',
+    render(row: Coupon) {
+      return h('p', {}, {default: () => formatTimestamp(row.end_time)});
+    }
   },
   {
     title: '操作',
@@ -294,7 +304,7 @@ let submitCoupon = async () => {
   formValue.value.coupon.end_time = range.value[1]
   console.log(formValue.value)
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.admin.addNewCoupon, {
+    let {data} = await instance.post('http://localhost:8081/api/admin/v1/coupon', {
       // name: formValue.value.coupon.name,
       // code: formValue.value.coupon.code,
       // percent_off: formValue.value.coupon.percent_off,
