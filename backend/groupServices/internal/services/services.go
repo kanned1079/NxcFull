@@ -104,7 +104,7 @@ func (s *GroupServices) GetAllGroups(ctx context.Context, request *pb.GetAllGrou
 	return &pb.GetAllGroupsResponse{
 		Code:      http.StatusOK,
 		GroupList: ConvertToPointerResponseGroups(responseDataList),
-		Msg:       "查询用户数量失败",
+		Msg:       "查询成功",
 	}, nil
 }
 

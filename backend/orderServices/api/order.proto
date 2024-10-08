@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package order;
+
+option go_package = "./proto";
+
+service SubscriptionService {
+  // 获取用户活动订阅计划
+  rpc GetActivePlanListByUserId(GetActivePlanListByUserIdRequest) returns (GetActivePlanListByUserIdResponse);
+
+  // 提交新订单
+  rpc CommitNewOrder(CommitNewOrderRequest) returns (CommitNewOrderResponse);
+
+  // 获取用户订单
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse);
+}
+
+message GetActivePlanListByUserIdRequest {
+  string user_id = 1;  // 用户 ID
+}
+
+message PlanInfo {
+  string plan_name = 1;         // 订阅计划名称
+  string expiration_date = 2;   // 到期日期
+}
+
+message GetActivePlanListByUserIdResponse {
+  int32 code = 1;                // 状态码
+  repeated PlanInfo my_plans = 2;  // 用户的活动订阅计划
+  string msg = 3;                // 消息
+}
+
+message CommitNewOrderRequest {
+  int64 user_id = 1;    // 用户 ID
+  int64 plan_id = 2;    // 订阅计划 ID
+  string period = 3;    // 付款周期 (month, quarter, half-year, year)
+  int64 coupon_id = 4;  // 优惠券 ID (未使用则为 0)
+}
+
+message CommitNewOrderResponse {
+  int32 code = 1;            // 状态码
+  int64 order_id = 2;        // 订单 ID
+  string plan_name = 3;      // 订阅计划名称
+  float original_price = 4;  // 原始价格
+  float discount_amount = 5; // 抵折金额
+  float pay_price = 6;       // 最终应付金额
+  string period = 7;         // 付款周期
+  string created_at = 8;     // 订单创建时间
+  string msg = 9;            // 消息
+}
+
+
+message OrderInfo {
+  int64 id = 1;             // 订单 ID
+  int64 user_id = 2;        // 用户 ID
+  string email = 3;         // 用户邮箱
+  int64 plan_id = 4;        // 订阅计划 ID
+  string payment_method = 5; // 支付方式
+  string period = 6;        // 订阅周期
+  int64 coupon_id = 7;      // 优惠券 ID
+  int64 status = 8;         // 订单状态
+  bool is_success = 9;      // 支付是否成功
+  string failure_reason = 10; // 支付失败原因
+  float discount_amount = 11; // 抵折金额
+  float amount = 12;        // 订单金额
+  string paid_at = 13;      // 支付时间
+  string created_at = 14;   // 创建时间
+  string updated_at = 15;   // 更新时间
+}
+
+message GetOrdersRequest {
+  string user_id = 1;  // 用户 ID
+}
+
+message GetOrdersResponse {
+  int32 code = 1;              // 状态码
+  repeated OrderInfo order_list = 2; // 订单列表
+  string msg = 3;              // 消息
+}

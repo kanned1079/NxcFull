@@ -38,7 +38,7 @@ const columns = ref(
         render(row: GroupItem) {
           return h('div', {style: {display: 'flex', flexDirection: 'row', }}, [
             h(NIcon, {size: 18, style: {marginRight: 5}}, {default: () => h(UserOutlined)}), // 用戶圖標
-            ` ${row.user_count}`
+            `${row.hasOwnProperty('user_count')?row.user_count:0}`,
           ])
         }
       },
@@ -48,7 +48,7 @@ const columns = ref(
         render(row: GroupItem) {
           return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
             h(NIcon, {size: 18, style: {marginRight: 5}}, {default: () => h(BarChartOutlined)}), // 計畫圖標
-            ` ${row.plan_count}`
+            `${row.hasOwnProperty('plan_count')?row.plan_count:0}`,
           ])
         }
       },
@@ -80,7 +80,7 @@ const editGroup = (row: GroupItem) => {
 // 刪除組操作
 const deleteGroup = async (id: number) => {
   message.warning(`刪除權限組：${id}`)
-  let {data} = await instance.delete('/api/admin/v1/groups', {
+  let {data} = await instance.delete('http://localhost:8081/api/admin/v1/groups', {
     data: {
       id,
     }
@@ -141,7 +141,7 @@ let handleAddGroup = async () => {
 let submitNewGroup = async () => {
   console.log('添加权限组')
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.admin.addNewPrivilegeGroup, {
+    let {data} = await instance.post('http://localhost:8081/api/admin/v1/groups', {
       group_name: newGroupName.value
     })
     if (data.code === 200) {
@@ -163,7 +163,7 @@ let closeModal = () => {
 let getAllGroups = async () => {
   try {
     groupList.value = []
-    let {data} = await instance.get(apiAddrStore.apiAddr.admin.getAllPrivilegeGroups)
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/groups')
     if (data.code === 200) {
       console.log('获取到的权限组列表', data)
       data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
@@ -185,7 +185,7 @@ let submit = async () => {
 
 let submitUpdate = async () => {
   console.log(12345)
-  let {data} = await instance.put('/api/admin/v1/groups', {
+  let {data} = await instance.put('http://localhost:8081/api/admin/v1/groups', {
     id: modifyId.value,
     name: newGroupName.value,
   })

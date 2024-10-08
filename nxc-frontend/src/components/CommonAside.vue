@@ -108,7 +108,7 @@ let MenuOption = [
       },
       {
         label: '订单管理',
-        key: 'order-manager',
+        key: 'subscribe-manager',
         icon: renderIcon(orderIcon),
       },
       {

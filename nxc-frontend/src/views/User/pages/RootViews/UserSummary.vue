@@ -143,7 +143,7 @@ let haveActive = ref<boolean>(false)
 
 let getActivePlanList = async () => {
   try {
-    let {data} = await instance.get(apiAddrStore.apiAddr.user.getMyPlanList, {
+    let {data} = await instance.get('http://localhost:8081/api/user/v1/plan/info/fetch', {
       params: {
         user_id: userInfoStore.thisUser.id,
         // user_id: 3,
