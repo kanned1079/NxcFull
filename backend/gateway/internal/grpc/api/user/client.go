@@ -2,7 +2,7 @@ package user
 
 import (
 	"NxcFull/backend/gateway/internal/etcd"
-	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
+	pb "NxcFull/backend/gateway/internal/grpc/api/user/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"

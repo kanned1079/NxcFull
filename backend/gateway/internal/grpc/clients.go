@@ -2,27 +2,32 @@ package grpc
 
 import (
 	"NxcFull/backend/gateway/internal/grpc/api/coupon"
+	couponPb "NxcFull/backend/gateway/internal/grpc/api/coupon/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/document"
+	documentPb "NxcFull/backend/gateway/internal/grpc/api/document/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/group"
+	groupPb "NxcFull/backend/gateway/internal/grpc/api/group/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/notice"
-	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
-	"NxcFull/backend/gateway/internal/grpc/api/subscribe"
+	noticePb "NxcFull/backend/gateway/internal/grpc/api/notice/proto"
+	"NxcFull/backend/gateway/internal/grpc/api/subscription"
+	subscribePb "NxcFull/backend/gateway/internal/grpc/api/subscription/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/user"
+	userPb "NxcFull/backend/gateway/internal/grpc/api/user/proto"
 	//"google.golang.org/grpc"
 )
 
 type Clients struct {
 	//userServiceClient pb.UserServiceClient
-	UserServiceClient pb.UserServiceClient
+	UserServiceClient userPb.UserServiceClient
 
 	//CouponServiceClient  *grpc.ClientConn
 	//NoticesServiceClient *grpc.ClientConn
 	//OrderServiceClient   *grpc.ClientConn
-	DocumentServiceClient     pb.DocumentServiceClient
-	NoticeServiceClient       pb.NoticeServiceClient
-	GroupServiceClient        pb.GroupServiceClient
-	SubscriptionServiceClient pb.SubscriptionServiceClient
-	CouponServiceClient       pb.CouponServiceClient
+	DocumentServiceClient     documentPb.DocumentServiceClient
+	NoticeServiceClient       noticePb.NoticeServiceClient
+	GroupServiceClient        groupPb.GroupServiceClient
+	SubscriptionServiceClient subscribePb.SubscriptionServiceClient
+	CouponServiceClient       couponPb.CouponServiceClient
 }
 
 func NewClients() Clients {
@@ -32,7 +37,7 @@ func NewClients() Clients {
 		DocumentServiceClient:     document.NewDocumentClient(),
 		NoticeServiceClient:       notice.NewNoticeClient(),
 		GroupServiceClient:        group.NewGroupClient(),
-		SubscriptionServiceClient: subscribe.NewSubscriptionServiceClient(),
+		SubscriptionServiceClient: subscription.NewSubscriptionClient(),
 		CouponServiceClient:       coupon.NewCouponServiceClient(),
 	}
 

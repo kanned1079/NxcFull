@@ -134,7 +134,7 @@ func handleUpdateSystemSettings(context *gin.Context) {
 	saveSettingsWithReflection("site", options.Site)
 	saveSettingsWithReflection("security", options.Security)
 	saveSettingsWithReflection("frontend", options.Frontend)
-	saveSettingsWithReflection("subscribe", options.Subscribe)
+	saveSettingsWithReflection("subscription", options.Subscribe)
 	saveSettingsWithReflection("server", options.Server)
 	saveSettingsWithReflection("sendmail", options.Sendmail)
 	saveSettingsWithReflection("notice", options.Notice)

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"NxcFull/backend/orderServices/internal/config"
-	"NxcFull/backend/orderServices/internal/dao"
-	"NxcFull/backend/orderServices/internal/etcd"
-	"NxcFull/backend/orderServices/internal/handler"
+	"NxcFull/backend/subscribeServices/internal/config"
+	"NxcFull/backend/subscribeServices/internal/dao"
+	"NxcFull/backend/subscribeServices/internal/etcd"
+	"NxcFull/backend/subscribeServices/internal/handler"
 	"log"
 )
 

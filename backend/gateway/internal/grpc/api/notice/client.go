@@ -2,7 +2,7 @@ package notice
 
 import (
 	"NxcFull/backend/gateway/internal/etcd"
-	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
+	pb "NxcFull/backend/gateway/internal/grpc/api/notice/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"

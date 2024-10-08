@@ -136,7 +136,7 @@ let verifyTicket = async () => {
   }
   console.log('验证优惠券')
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.user.verifyCoupon, {
+    let {data} = await instance.post('http://localhost:8081/api/user/v1/coupon/verify', {
       coupon_code: couponCode.value.trim(),  // 优惠券码
       plan_id: plan.id,               // 订阅计划id
       user_id: userInfoStore.thisUser.id,  // 用户id 判断是否使用过

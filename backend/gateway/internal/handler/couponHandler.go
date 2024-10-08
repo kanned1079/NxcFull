@@ -1,7 +1,7 @@
 package handler
 
 import (
-	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
+	pb "NxcFull/backend/gateway/internal/grpc/api/coupon/proto"
 	sysContext "context"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -106,6 +106,7 @@ func HandleVerifyCoupon(context *gin.Context) {
 			"msg":  err.Error(),
 		})
 	}
+	log.Println(resp)
 	//// 验证通过，返回优惠信息
 	context.JSON(http.StatusOK, gin.H{
 		"code":        resp.Code,

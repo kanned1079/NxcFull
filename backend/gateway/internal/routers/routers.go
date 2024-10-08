@@ -68,8 +68,8 @@ func StartApiGateways() {
 
 		//adminAuthorized.POST("/mail/test", HandleSendTestMail)               // 发送测试邮件
 
-		//adminAuthorized.GET("/plans/get", subscribePlan.HandleGetAllPlans)   // 获取所有的订阅
-		//adminAuthorized.POST("/plans/add", subscribePlan.HandleAddNewPlan)   // 添加新的订阅
+		adminAuthorized.GET("/plans/get", handler.HandleGetAllPlans)        // 获取所有的订阅
+		adminAuthorized.POST("/plans/add", handler.HandleAddNewPlan)        // 添加新的订阅
 		adminAuthorized.POST("/document/add", handler.HandleAddNewDocument) // 添加一条说明文档
 		//
 		adminAuthorized.POST("/groups", handler.HandleAddNewGroup) // 添加权限组
@@ -82,7 +82,7 @@ func StartApiGateways() {
 		adminAuthorized.PUT("/coupon/status", handler.HandleActiveCoupon) // PUT
 		adminAuthorized.DELETE("/coupon", handler.HandleDeleteCoupon)
 
-		//adminAuthorized.GET("/plans/kv/fetch", subscribePlan.HandleGetAllPlanKeyName)
+		adminAuthorized.GET("/plans/kv/fetch", handler.HandleGetAllPlanKeyName)
 
 	}
 
@@ -92,16 +92,16 @@ func StartApiGateways() {
 		userAuthorized.GET("/profile")
 		////...其他用户路由
 		//// 开始首页
-		userAuthorized.GET("/notice", handler.HandleGetAllNotices)     // 获取所有的通知列表
-		userAuthorized.GET("/document", handler.HandleGetAllDocuments) // 按照分类获取所有的文档列表	// rpc实现
-		//userAuthorized.GET("/plan/get", handler.HandleGetAllPlans) // 获取所有的有效订阅
+		userAuthorized.GET("/notice", handler.HandleGetAllNotices)        // 获取所有的通知列表
+		userAuthorized.GET("/document", handler.HandleGetAllDocuments)    // 按照分类获取所有的文档列表	// rpc实现
+		userAuthorized.GET("/plan/get", handler.HandleGetAllPlans)        // 获取所有的有效订阅
 		userAuthorized.POST("/coupon/verify", handler.HandleVerifyCoupon) // 验证优惠券可用性	// POST
 		userAuthorized.POST("/auth/passcode/verify", handler.HandleCheckPreviousPassword)
 		userAuthorized.POST("/auth/passcode/update", handler.HandleApplyNewPassword)
 		userAuthorized.GET("/plan/info/fetch", handler.GetActivePlanListByUserId)
 		//userAuthorized.GET("/keys", keys.HandleGetAllUserKeys)
 		//
-		//userAuthorized.PUT("/subscribe", orders.HandleCommitNewOrder) // 下单新的订阅
+		//userAuthorized.PUT("/subscription", orders.HandleCommitNewOrder) // 下单新的订阅
 		//// 这里将生成订单号后推送至消息队列 交由第二个进程进行处理
 		//
 		//userAuthorized.GET("/orders", orders.HandleGetOrders)

@@ -106,7 +106,7 @@ let plans = ref([
 let getPlanKV = async () => {
   plans.value = []
   try {
-    let {data} = await instance.get(apiAddrStore.apiAddr.admin.getPlanKVList)
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/plans/kv/fetch')
     if (data.code === 200) {
       console.log(data)
       data.plans.forEach((item: {id: number, name: string}) =>  plans.value.push({

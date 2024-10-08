@@ -1,9 +1,11 @@
 package handler
 
 import (
-	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
+	pb "NxcFull/backend/gateway/internal/grpc/api/subscription/proto"
+
 	sysContext "context"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -15,6 +17,7 @@ func GetActivePlanListByUserId(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "user_id is required"})
 		return
 	}
+
 	resp, err := grpcClient.SubscriptionServiceClient.GetActivePlanListByUserId(sysContext.Background(), &pb.GetActivePlanListByUserIdRequest{
 		UserId: userID,
 	})
@@ -46,10 +49,10 @@ func GetActivePlanListByUserId(context *gin.Context) {
 	//var result []map[string]interface{}
 	//
 	//// Iterate through the active orders and fetch plan details
-	//for _, subscribe := range activeOrders {
+	//for _, subscription := range activeOrders {
 	//	var plan subscribePlan.Plan
 	//	// Fetch the plan details using the PlanId
-	//	if err := dao.Db.Where("id = ?", subscribe.PlanId).First(&plan).Error; err != nil {
+	//	if err := dao.Db.Where("id = ?", subscription.PlanId).First(&plan).Error; err != nil {
 	//		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch plan details"})
 	//		return
 	//	}
@@ -57,7 +60,7 @@ func GetActivePlanListByUserId(context *gin.Context) {
 	//	// Add the plan_name and expiration_date to the result
 	//	result = append(result, map[string]interface{}{
 	//		"plan_name":       plan.Name,
-	//		"expiration_date": subscribe.ExpirationDate,
+	//		"expiration_date": subscription.ExpirationDate,
 	//	})
 	//}
 	//
@@ -67,6 +70,33 @@ func GetActivePlanListByUserId(context *gin.Context) {
 	//	"my_plans": result,
 	//	"msg":      "获取数据成功",
 	//})
+}
+
+func HandleGetAllPlanKeyName(context *gin.Context) {
+	//type planInfo struct {
+	//	Id   int64  `json:"id"`
+	//	Name string `json:"name"`
+	//}
+	//var planArr = []planInfo{}
+	//if result := dao.Db.Model(&Plan{}).Select("id, name").Order("sort ASC").Find(&planArr); result.Error != nil {
+	//	log.Println(result.Error)
+	//}
+	//log.Println(planArr)
+	//context.JSON(http.StatusOK, gin.H{
+	//	"code":  http.StatusOK,
+	//	"plans": planArr,
+	//})
+	resp, err := grpcClient.SubscriptionServiceClient.GetAllPlanKeyName(sysContext.Background(), &pb.GetAllPlanKeyNameRequest{})
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":  resp.Code,
+		"plans": resp.Plans,
+	})
 }
 
 // HandleCommitNewOrder 用户提交一个新的订单
@@ -136,7 +166,7 @@ func GetActivePlanListByUserId(context *gin.Context) {
 //
 //	log.Println(discountPercent, disCountAmount, originalPrice-disCountAmount)
 //
-//	subscribe := Orders{
+//	subscription := Orders{
 //		Id:             int64(orderIdGenerated),        // 订单id
 //		UserId:         postData.UserId,                // 用户id
 //		PlanId:         postData.PlanId,                // 订阅计划id
@@ -149,7 +179,7 @@ func GetActivePlanListByUserId(context *gin.Context) {
 //		CouponId:       couponInfo.Id,
 //	}
 //
-//	log.Println(subscribe)
+//	log.Println(subscription)
 //
 //	couponUsed := coupon.CouponUsage{
 //		CouponId: couponInfo.Id,
@@ -168,7 +198,7 @@ func GetActivePlanListByUserId(context *gin.Context) {
 //		}
 //	}
 //
-//	if result := dao.Db.Model(&Orders{}).Create(&subscribe); result.Error != nil {
+//	if result := dao.Db.Model(&Orders{}).Create(&subscription); result.Error != nil {
 //		context.JSON(http.StatusOK, gin.H{
 //			"code":  http.StatusInternalServerError,
 //			"error": result.Error.Error(),
@@ -178,7 +208,7 @@ func GetActivePlanListByUserId(context *gin.Context) {
 //
 //	context.JSON(http.StatusOK, gin.H{
 //		"code":            http.StatusOK,
-//		"order_id":        subscribe.Id,
+//		"order_id":        subscription.Id,
 //		"plan_name":       plan.Name,
 //		"original_price":  originalPrice,
 //		"discount_amount": disCountAmount,
@@ -210,3 +240,107 @@ func GetActivePlanListByUserId(context *gin.Context) {
 //		"order_list": orders,
 //	})
 //}
+
+func HandleGetAllPlans(context *gin.Context) {
+	//var plans []Plan
+	////if result := dao.Db.Model(&Plan{}).Find(&plans); result.Error != nil {
+	//if result := dao.Db.Model(&Plan{}).Order("sort ASC").Find(&plans); result.Error != nil {
+	//	log.Println(result.Error)
+	//	context.JSON(http.StatusInternalServerError, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "获取订阅列表失败",
+	//	})
+	//}
+	//log.Println(plans)
+	//context.JSON(http.StatusOK, gin.H{
+	//	"code":  http.StatusOK,
+	//	"plans": plans,
+	//})
+	resp, err := grpcClient.SubscriptionServiceClient.GetAllPlans(sysContext.Background(), &pb.GetAllPlansRequest{})
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":  resp.Code,
+		"plans": resp.Plans,
+		"msg":   resp.Msg,
+	})
+}
+
+func HandleAddNewPlan(context *gin.Context) {
+	postData := &struct {
+		Name          string  `json:"name"`
+		Describe      string  `json:"describe"`
+		IsSale        bool    `json:"is_sale"`
+		IsRenew       bool    `json:"is_renew"`
+		GroupId       int64   `json:"group_id"`
+		CapacityLimit int64   `json:"capacity_limit"`
+		MonthPrice    float64 `json:"month_price"`
+		QuarterPrice  float64 `json:"quarter_price"`
+		HalfYearPrice float64 `json:"half_year_price"`
+		YearPrice     float64 `json:"year_price"`
+		Sort          int64   `json:"sort"`
+	}{}
+	if err := context.ShouldBind(&postData); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"code":  http.StatusBadRequest,
+			"msg":   "绑定数据失败",
+			"error": err.Error(),
+		})
+	}
+	log.Println(postData)
+	resp, err := grpcClient.SubscriptionServiceClient.AddNewPlan(sysContext.Background(), &pb.AddNewPlanRequest{
+		Name:          postData.Name,
+		Describe:      postData.Describe,
+		IsSale:        postData.IsSale,
+		IsRenew:       postData.IsRenew,
+		GroupId:       postData.GroupId,
+		CapacityLimit: postData.CapacityLimit,
+		MonthPrice:    postData.MonthPrice,
+		QuarterPrice:  postData.QuarterPrice,
+		HalfYearPrice: postData.HalfYearPrice,
+		YearPrice:     postData.YearPrice,
+		Sort:          postData.Sort,
+	})
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+	//var newPlan = Plan{
+	//	Name:          postData.Name,
+	//	Describe:      postData.Describe,
+	//	IsSale:        postData.IsSale,
+	//	IsRenew:       postData.IsRenew,
+	//	GroupId:       postData.GroupId,
+	//	CapacityLimit: postData.CapacityLimit,
+	//	Residue:       postData.CapacityLimit,
+	//	MonthPrice:    postData.MonthPrice,
+	//	QuarterPrice:  postData.QuarterPrice,
+	//	HalfYearPrice: postData.HalfYearPrice,
+	//	YearPrice:     postData.YearPrice,
+	//	// 以下Sort用于在前端进行排序 优先级从低到高，添加新订阅时，它的优先级为上一个的优先级+1，如果表内为空不存在数据，则第一个添加的sort为1000
+	//	// Sort:
+	//	Sort: postData.Sort,
+	//}
+	//if result := dao.Db.Create(&newPlan); result.Error != nil {
+	//	log.Println(result.Error)
+	//	context.JSON(http.StatusInternalServerError, gin.H{
+	//		"code":  http.StatusInternalServerError,
+	//		"msg":   "插入数据库失败",
+	//		"error": result.Error.Error(),
+	//	})
+	//}
+	//context.JSON(http.StatusOK, gin.H{
+	//	"code": http.StatusOK,
+	//	"msg":  "插入数据成功",
+	//})
+}

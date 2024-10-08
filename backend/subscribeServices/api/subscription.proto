@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package order;
+package subscription;
 
 option go_package = "./proto";
 
@@ -13,6 +13,28 @@ service SubscriptionService {
 
   // 获取用户订单
   rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse);
+
+  rpc GetAllPlanKeyName(GetAllPlanKeyNameRequest) returns (GetAllPlanKeyNameResponse);
+
+  rpc GetAllPlans(GetAllPlansRequest) returns (GetAllPlansResponse);
+
+  rpc AddNewPlan(AddNewPlanRequest) returns (AddNewPlanResponse);
+
+}
+
+message GetAllPlanKeyNameRequest {
+
+}
+
+message PlanKV {
+  int64 id = 1;
+  string name = 2;
+}
+
+message GetAllPlanKeyNameResponse {
+  int64 code = 1;
+  string msg = 2;
+  repeated PlanKV plans = 3;
 }
 
 message GetActivePlanListByUserIdRequest {
@@ -76,4 +98,55 @@ message GetOrdersResponse {
   int32 code = 1;              // 状态码
   repeated OrderInfo order_list = 2; // 订单列表
   string msg = 3;              // 消息
+}
+
+// -------------------------
+
+// 订阅计划结构体
+message Plan {
+  int64 id = 1;              // 订阅计划ID
+  int64 group_id = 2;        // 群组Id
+  string name = 3;           // 订阅名称
+  bool is_sale = 4;          // 启用销售
+  bool is_renew = 5;         // 是否允许续费
+  int64 capacity_limit = 6;  // 最大用户数量限制
+  int64 residue = 7;         // 剩余订阅数量
+  string describe = 8;       // 订阅计划备注
+  double month_price = 9;    // 月付价格
+  double quarter_price = 10; // 季付价格
+  double half_year_price = 11; // 半年付价格
+  double year_price = 12;    // 年付价格
+  int64 sort = 13;           // 排序顺序
+  string created_at = 14;    // 创建时间
+  string updated_at = 15;    // 更新时间
+  string deleted_at = 16;    // 删除时间
+}
+// 获取订阅列表的请求和响应
+message GetAllPlansRequest {}
+
+
+message GetAllPlansResponse {
+  int32 code = 1;
+  string msg = 2;
+  repeated Plan plans = 3;
+}
+
+// 添加订阅计划的请求和响应
+message AddNewPlanRequest {
+  string name = 1;
+  string describe = 2;
+  bool is_sale = 3;
+  bool is_renew = 4;
+  int64 group_id = 5;
+  int64 capacity_limit = 6;
+  double month_price = 7;
+  double quarter_price = 8;
+  double half_year_price = 9;
+  double year_price = 10;
+  int64 sort = 11;
+}
+
+message AddNewPlanResponse {
+  int32 code = 1;
+  string msg = 2;
 }

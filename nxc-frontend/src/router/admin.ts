@@ -79,7 +79,7 @@ const adminRoutes: RouteRecordRaw[] = [
             },
             {
                 path: '/admin/dashboard/subscribemanager',
-                name: 'subscribe-manager',
+                name: 'subscription-manager',
                 component: SubscribeMgr,
             },
             {

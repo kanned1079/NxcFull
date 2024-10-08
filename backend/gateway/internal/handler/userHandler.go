@@ -2,7 +2,7 @@ package handler
 
 import (
 	grpc2 "NxcFull/backend/gateway/internal/grpc"
-	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
+	pb "NxcFull/backend/gateway/internal/grpc/api/user/proto"
 	sysContext "context"
 	"github.com/gin-gonic/gin"
 	//"google.golang.org/grpc"

@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"NxcFull/backend/orderServices/api/proto"
-	"NxcFull/backend/orderServices/internal/services"
+	"NxcFull/backend/subscribeServices/api/proto"
+	"NxcFull/backend/subscribeServices/internal/services"
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

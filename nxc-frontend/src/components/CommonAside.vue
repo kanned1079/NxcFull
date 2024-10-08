@@ -103,12 +103,12 @@ let MenuOption = [
     children: [
       {
         label: '订阅管理',
-        key: 'subscribe-manager',
+        key: 'subscription-manager',
         icon: renderIcon(subscriptionIcon),
       },
       {
         label: '订单管理',
-        key: 'subscribe-manager',
+        key: 'subscription-manager',
         icon: renderIcon(orderIcon),
       },
       {
@@ -201,8 +201,8 @@ let update = (key: string) => {
       router.push({path: '/admin/dashboard/noticemanager'})
       break
     }
-    case 'subscribe-manager': {
-      themeStore.menuSelected = 'subscribe-manager'
+    case 'subscription-manager': {
+      themeStore.menuSelected = 'subscription-manager'
       router.push({path: '/admin/dashboard/subscribemanager'})
       break
     }
@@ -238,7 +238,7 @@ let UserMenuOption = ref([
     icon: renderIcon(manualIcon)
   },
   {
-    label: computed(() => t('commonAside.user.subscribe')),
+    label: computed(() => t('commonAside.user.subscription')),
     key: 'user-sub',
     // icon: renderIcon(settingIcon),
     disabled: false,

@@ -4,7 +4,7 @@ type SystemSettingOptions struct {
 	Site      Site      `json:"site"`
 	Security  Security  `json:"security"`
 	Frontend  Frontend  `json:"frontend"`
-	Subscribe Subscribe `json:"subscribe"`
+	Subscribe Subscribe `json:"subscription"`
 	Server    Server    `json:"server"`
 	Sendmail  Sendmail  `json:"sendmail"`
 	Notice    Notice    `json:"notice"`

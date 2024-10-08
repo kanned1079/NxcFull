@@ -39,7 +39,7 @@ const usePaymentStore = defineStore('paymentStore', () => {
         let apiAddrStore = useApiAddrStore()
         try {
             plan_list.value = []
-            let {data} = await instance.get(apiAddrStore.apiAddr.user.getAllPlanList)
+            let {data} = await instance.get('http://localhost:8081/api/user/v1/plan/get')
             if (data.code === 200) {
                 data.plans.forEach((item: Plan) => plan_list.value.push(item))
                 // plan_list.value = data.plans

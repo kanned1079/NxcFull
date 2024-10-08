@@ -1,14 +1,14 @@
-package subscribe
+package subscription
 
 import (
 	"NxcFull/backend/gateway/internal/etcd"
-	pb "NxcFull/backend/gateway/internal/grpc/api/proto"
+	pb "NxcFull/backend/gateway/internal/grpc/api/subscription/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 )
 
-func NewSubscriptionServiceClient() (client pb.SubscriptionServiceClient) {
+func NewSubscriptionClient() (client pb.SubscriptionServiceClient) {
 	log.Println("NewSubscriptionServiceClient", etcd.GetServiceAddress("subscribeServices"))
 	clientConn, err := grpc.NewClient(etcd.GetServiceAddress("subscribeServices"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

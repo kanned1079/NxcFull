@@ -75,9 +75,9 @@ export default {
         payCycle: 'Payment cycle',
         couponPlaceholder: 'Have a coupon?',
         verifyBtn: 'Verify',
-        orderTotalTitle: 'Total subscribe amount',
+        orderTotalTitle: 'Total subscription amount',
         total: 'Total',
-        submitOrder: 'Submit subscribe',
+        submitOrder: 'Submit subscription',
         coupon: 'Coupon',
         notify: {
             passTitle: 'Verification passed',

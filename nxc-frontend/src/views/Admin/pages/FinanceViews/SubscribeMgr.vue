@@ -162,7 +162,7 @@ onMounted(() => {
   console.log('SubscribeMgr挂载')
   // getAllSubscribeItems()
 
-  themeStore.menuSelected = 'subscribe-manager'
+  themeStore.menuSelected = 'subscription-manager'
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
 
 

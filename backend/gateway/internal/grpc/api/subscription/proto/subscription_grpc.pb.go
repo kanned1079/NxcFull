@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.19.4
-// source: subscribe.proto
+// source: subscription.proto
 
 package proto
 
@@ -19,9 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SubscriptionService_GetActivePlanListByUserId_FullMethodName = "/subscribe.SubscriptionService/GetActivePlanListByUserId"
-	SubscriptionService_CommitNewOrder_FullMethodName            = "/subscribe.SubscriptionService/CommitNewOrder"
-	SubscriptionService_GetOrders_FullMethodName                 = "/subscribe.SubscriptionService/GetOrders"
+	SubscriptionService_GetActivePlanListByUserId_FullMethodName = "/subscription.SubscriptionService/GetActivePlanListByUserId"
+	SubscriptionService_CommitNewOrder_FullMethodName            = "/subscription.SubscriptionService/CommitNewOrder"
+	SubscriptionService_GetOrders_FullMethodName                 = "/subscription.SubscriptionService/GetOrders"
+	SubscriptionService_GetAllPlanKeyName_FullMethodName         = "/subscription.SubscriptionService/GetAllPlanKeyName"
+	SubscriptionService_GetAllPlans_FullMethodName               = "/subscription.SubscriptionService/GetAllPlans"
+	SubscriptionService_AddNewPlan_FullMethodName                = "/subscription.SubscriptionService/AddNewPlan"
 )
 
 // SubscriptionServiceClient is the client API for SubscriptionService service.
@@ -34,6 +37,9 @@ type SubscriptionServiceClient interface {
 	CommitNewOrder(ctx context.Context, in *CommitNewOrderRequest, opts ...grpc.CallOption) (*CommitNewOrderResponse, error)
 	// 获取用户订单
 	GetOrders(ctx context.Context, in *GetOrdersRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error)
+	GetAllPlanKeyName(ctx context.Context, in *GetAllPlanKeyNameRequest, opts ...grpc.CallOption) (*GetAllPlanKeyNameResponse, error)
+	GetAllPlans(ctx context.Context, in *GetAllPlansRequest, opts ...grpc.CallOption) (*GetAllPlansResponse, error)
+	AddNewPlan(ctx context.Context, in *AddNewPlanRequest, opts ...grpc.CallOption) (*AddNewPlanResponse, error)
 }
 
 type subscriptionServiceClient struct {
@@ -74,6 +80,36 @@ func (c *subscriptionServiceClient) GetOrders(ctx context.Context, in *GetOrders
 	return out, nil
 }
 
+func (c *subscriptionServiceClient) GetAllPlanKeyName(ctx context.Context, in *GetAllPlanKeyNameRequest, opts ...grpc.CallOption) (*GetAllPlanKeyNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllPlanKeyNameResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_GetAllPlanKeyName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionServiceClient) GetAllPlans(ctx context.Context, in *GetAllPlansRequest, opts ...grpc.CallOption) (*GetAllPlansResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllPlansResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_GetAllPlans_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionServiceClient) AddNewPlan(ctx context.Context, in *AddNewPlanRequest, opts ...grpc.CallOption) (*AddNewPlanResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddNewPlanResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_AddNewPlan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubscriptionServiceServer is the server API for SubscriptionService service.
 // All implementations must embed UnimplementedSubscriptionServiceServer
 // for forward compatibility.
@@ -84,6 +120,9 @@ type SubscriptionServiceServer interface {
 	CommitNewOrder(context.Context, *CommitNewOrderRequest) (*CommitNewOrderResponse, error)
 	// 获取用户订单
 	GetOrders(context.Context, *GetOrdersRequest) (*GetOrdersResponse, error)
+	GetAllPlanKeyName(context.Context, *GetAllPlanKeyNameRequest) (*GetAllPlanKeyNameResponse, error)
+	GetAllPlans(context.Context, *GetAllPlansRequest) (*GetAllPlansResponse, error)
+	AddNewPlan(context.Context, *AddNewPlanRequest) (*AddNewPlanResponse, error)
 	mustEmbedUnimplementedSubscriptionServiceServer()
 }
 
@@ -102,6 +141,15 @@ func (UnimplementedSubscriptionServiceServer) CommitNewOrder(context.Context, *C
 }
 func (UnimplementedSubscriptionServiceServer) GetOrders(context.Context, *GetOrdersRequest) (*GetOrdersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) GetAllPlanKeyName(context.Context, *GetAllPlanKeyNameRequest) (*GetAllPlanKeyNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPlanKeyName not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) GetAllPlans(context.Context, *GetAllPlansRequest) (*GetAllPlansResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPlans not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) AddNewPlan(context.Context, *AddNewPlanRequest) (*AddNewPlanResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNewPlan not implemented")
 }
 func (UnimplementedSubscriptionServiceServer) mustEmbedUnimplementedSubscriptionServiceServer() {}
 func (UnimplementedSubscriptionServiceServer) testEmbeddedByValue()                             {}
@@ -178,11 +226,65 @@ func _SubscriptionService_GetOrders_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubscriptionService_GetAllPlanKeyName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllPlanKeyNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).GetAllPlanKeyName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_GetAllPlanKeyName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).GetAllPlanKeyName(ctx, req.(*GetAllPlanKeyNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionService_GetAllPlans_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllPlansRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).GetAllPlans(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_GetAllPlans_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).GetAllPlans(ctx, req.(*GetAllPlansRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionService_AddNewPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddNewPlanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).AddNewPlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_AddNewPlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).AddNewPlan(ctx, req.(*AddNewPlanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubscriptionService_ServiceDesc is the grpc.ServiceDesc for SubscriptionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SubscriptionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "subscribe.SubscriptionService",
+	ServiceName: "subscription.SubscriptionService",
 	HandlerType: (*SubscriptionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -197,7 +299,19 @@ var SubscriptionService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetOrders",
 			Handler:    _SubscriptionService_GetOrders_Handler,
 		},
+		{
+			MethodName: "GetAllPlanKeyName",
+			Handler:    _SubscriptionService_GetAllPlanKeyName_Handler,
+		},
+		{
+			MethodName: "GetAllPlans",
+			Handler:    _SubscriptionService_GetAllPlans_Handler,
+		},
+		{
+			MethodName: "AddNewPlan",
+			Handler:    _SubscriptionService_AddNewPlan_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "subscribe.proto",
+	Metadata: "subscription.proto",
 }
