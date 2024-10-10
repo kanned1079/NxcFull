@@ -23,8 +23,8 @@ const themeStore = useThemeStore();
 //   console.log(data)
 // }
 
-onBeforeMount(() => {
-  settingStore.loadSetting()
+onBeforeMount(async () => {
+  await settingStore.loadSetting()
 
 })
 

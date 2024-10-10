@@ -79,6 +79,7 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 	}, nil
 }
 
+// CommitNewOrder 提交新订单
 func (s *SubscribeServices) CommitNewOrder(ctx context.Context, request *pb.CommitNewOrderRequest) (*pb.CommitNewOrderResponse, error) {
 	var err error
 	log.Printf("UserId %v\n PlanId %v\n Period %v\n CouponId %v\n", request.UserId, request.PlanId, request.Period, request.CouponId)
@@ -211,21 +212,11 @@ func (s *SubscribeServices) GetOrders(ctx context.Context, request *pb.GetOrders
 	var orders []model.Orders
 	if result := dao.Db.Model(&model.Orders{}).Where("user_id = ?", request.UserId).Find(&orders); result.Error != nil {
 		log.Println(result.Error)
-		//context.JSON(http.StatusOK, gin.H{
-		//	"code":  http.StatusNotFound,
-		//	"error": result.Error.Error(),
-		//	"msg":   "查找用户订单错误",
-		//})
-		//return
 		return &pb.GetOrdersResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "查找用户订单错误",
 		}, nil
 	}
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code":       http.StatusOK,
-	//	"order_list": orders,
-	//})
 	return &pb.GetOrdersResponse{
 		Code:      http.StatusInternalServerError,
 		OrderList: ConvertOrder2pbOrder(orders),
@@ -234,12 +225,13 @@ func (s *SubscribeServices) GetOrders(ctx context.Context, request *pb.GetOrders
 }
 
 func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *pb.GetAllPlanKeyNameRequest) (*pb.GetAllPlanKeyNameResponse, error) {
-	type planInfo struct {
-		Id   int64  `json:"id"`
-		Name string `json:"name"`
-	}
+	//type planInfo struct {
+	//	Id     int64  `json:"id"`
+	//	Name   string `json:"name"`
+	//	IsSale bool   `json:"is_sale"`
+	//}
 	var planArr []*pb.PlanKV
-	if result := dao.Db.Model(&model.Plan{}).Select("id, name").Order("sort ASC").Find(&planArr); result.Error != nil {
+	if result := dao.Db.Model(&model.Plan{}).Select("id, name, is_sale").Order("sort ASC").Find(&planArr); result.Error != nil {
 		log.Println(result.Error)
 		return &pb.GetAllPlanKeyNameResponse{
 			Code: http.StatusInternalServerError,
@@ -247,10 +239,6 @@ func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *
 		}, nil
 	}
 	log.Println(planArr)
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code":  http.StatusOK,
-	//	"plans": planArr,
-	//})
 	return &pb.GetAllPlanKeyNameResponse{
 		Code:  http.StatusOK,
 		Msg:   "查询成功",
@@ -294,108 +282,56 @@ func (s *SubscribeServices) AddNewPlan(ctx context.Context, request *pb.AddNewPl
 	}
 	if result := dao.Db.Create(&newPlan); result.Error != nil {
 		log.Println(result.Error)
-		//context.JSON(http.StatusInternalServerError, gin.H{
-		//	"code":  http.StatusInternalServerError,
-		//	"msg":   "插入数据库失败",
-		//	"error": result.Error.Error(),
-		//})
 		return &pb.AddNewPlanResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "插入数据库失败",
 		}, nil
 	}
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code": http.StatusOK,
-	//	"msg":  "插入数据成功",
-	//})
 	return &pb.AddNewPlanResponse{
 		Code: http.StatusOK,
 		Msg:  "插入数据成功",
 	}, nil
 }
 
-// pass start
-//func HandleGetAllPlans(context *gin.Context) {
-//	var plans []model.Plan
-//	//if result := dao.Db.Model(&Plan{}).Find(&plans); result.Error != nil {
-//	if result := dao.Db.Model(&model.Plan{}).Order("sort ASC").Find(&plans); result.Error != nil {
-//		log.Println(result.Error)
-//		context.JSON(http.StatusInternalServerError, gin.H{
-//			"code": http.StatusInternalServerError,
-//			"msg":  "获取订阅列表失败",
-//		})
-//	}
-//	log.Println(plans)
-//	context.JSON(http.StatusOK, gin.H{
-//		"code":  http.StatusOK,
-//		"plans": plans,
-//	})
-//}
-//
-//func HandleAddNewPlan(context *gin.Context) {
-//	postData := &struct {
-//		Name          string  `json:"name"`
-//		Describe      string  `json:"describe"`
-//		IsSale        bool    `json:"is_sale"`
-//		IsRenew       bool    `json:"is_renew"`
-//		GroupId       int64   `json:"group_id"`
-//		CapacityLimit int64   `json:"capacity_limit"`
-//		MonthPrice    float64 `json:"month_price"`
-//		QuarterPrice  float64 `json:"quarter_price"`
-//		HalfYearPrice float64 `json:"half_year_price"`
-//		YearPrice     float64 `json:"year_price"`
-//		Sort          int64   `json:"sort"`
-//	}{}
-//	if err := context.ShouldBind(&postData); err != nil {
-//		context.JSON(http.StatusBadRequest, gin.H{
-//			"code":  http.StatusBadRequest,
-//			"msg":   "绑定数据失败",
-//			"error": err.Error(),
-//		})
-//	}
-//	log.Println(postData)
-//	var newPlan = model.Plan{
-//		Name:          postData.Name,
-//		Describe:      postData.Describe,
-//		IsSale:        postData.IsSale,
-//		IsRenew:       postData.IsRenew,
-//		GroupId:       postData.GroupId,
-//		CapacityLimit: postData.CapacityLimit,
-//		Residue:       postData.CapacityLimit,
-//		MonthPrice:    postData.MonthPrice,
-//		QuarterPrice:  postData.QuarterPrice,
-//		HalfYearPrice: postData.HalfYearPrice,
-//		YearPrice:     postData.YearPrice,
-//		// 以下Sort用于在前端进行排序 优先级从低到高，添加新订阅时，它的优先级为上一个的优先级+1，如果表内为空不存在数据，则第一个添加的sort为1000
-//		// Sort:
-//		Sort: postData.Sort,
-//	}
-//	if result := dao.Db.Create(&newPlan); result.Error != nil {
-//		log.Println(result.Error)
-//		context.JSON(http.StatusInternalServerError, gin.H{
-//			"code":  http.StatusInternalServerError,
-//			"msg":   "插入数据库失败",
-//			"error": result.Error.Error(),
-//		})
-//	}
-//	context.JSON(http.StatusOK, gin.H{
-//		"code": http.StatusOK,
-//		"msg":  "插入数据成功",
-//	})
-//}
+func (s *SubscribeServices) UpdatePlan(ctx context.Context, request *pb.UpdatePlanRequest) (*pb.UpdatePlanResponse, error) {
+	var plan = model.Plan{
+		Id:            request.Id,
+		Name:          request.Name,
+		Describe:      request.Describe,
+		IsSale:        request.IsSale,
+		IsRenew:       request.IsRenew,
+		GroupId:       request.GroupId,
+		CapacityLimit: request.CapacityLimit,
+		Residue:       request.CapacityLimit,
+		MonthPrice:    request.MonthPrice,
+		QuarterPrice:  request.QuarterPrice,
+		HalfYearPrice: request.HalfYearPrice,
+		YearPrice:     request.YearPrice,
+		// 以下Sort用于在前端进行排序 优先级从低到高，添加新订阅时，它的优先级为上一个的优先级+1，如果表内为空不存在数据，则第一个添加的sort为1000
+		Sort: request.Sort,
+	}
+	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", plan.Id).Updates(&plan); result.Error != nil {
+		log.Println(result.Error)
+		return &pb.UpdatePlanResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "更新失败" + result.Error.Error(),
+		}, nil
+	}
+	return &pb.UpdatePlanResponse{
+		Code: http.StatusOK,
+		Msg:  "更新成功",
+	}, nil
+}
 
-//func GetAllPlanKeyName(context *gin.Context) {
-//	type planInfo struct {
-//		Id   int64  `json:"id"`
-//		Name string `json:"name"`
-//	}
-//	var planArr = []planInfo{}
-//	if result := dao.Db.Model(&Plan{}).Select("id, name").Order("sort ASC").Find(&planArr); result.Error != nil {
-//		log.Println(result.Error)
-//	}
-//	log.Println(planArr)
-//	context.JSON(http.StatusOK, gin.H{
-//		"code":  http.StatusOK,
-//		"plans": planArr,
-//	})
-//}
+func (s *SubscribeServices) DeletePlan(ctx context.Context, request *pb.DeletePlanRequest) (*pb.DeletePlanResponse, error) {
+	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", request.PlanId).Delete(&model.Plan{Id: request.PlanId}); result.Error != nil {
+		return &pb.DeletePlanResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "删除订阅错误" + result.Error.Error(),
+		}, nil
+	}
+	return &pb.DeletePlanResponse{
+		Code: http.StatusOK,
+		Msg:  "删除成功",
+	}, nil
+}

@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"NxcFull/backend/subscribeServices/api/proto"
-	"NxcFull/backend/subscribeServices/internal/services"
+	"NxcFull/backend/systemServices/api/proto"
+	"NxcFull/backend/systemServices/internal/services"
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -29,7 +29,7 @@ func loggingInterceptor(
 }
 
 func RunGRPCServer() {
-	port := 50005
+	port := 50007
 	listener, err := net.Listen("tcp", "localhost:"+strconv.Itoa(port))
 	if err != nil {
 		log.Println("设置监听端口失败", err)
@@ -46,8 +46,8 @@ func RunGRPCServer() {
 	// 注册反射服务 方便grpc调试工具使用
 	reflection.Register(grpcServer)
 	// 注册UserService到grpcServer服务器
-	orderServices := services.NewOrderServices()
-	proto.RegisterSubscriptionServiceServer(grpcServer, orderServices)
+	settingServices := services.NewSettingServices()
+	proto.RegisterSettingsServiceServer(grpcServer, settingServices)
 	log.Printf("gRPC 服务器正在 %v 端口监听...", port)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Println("启动gRPC服务器失败", err)

@@ -148,12 +148,12 @@ const useSettingStore = defineStore('SettingStore', () => {
     } as Settings)
 
     // 从服务器拉取数据
-    let getSetting = async () => {
-        let {data} = await instance.get('')
-        if (data.code == 200) {
-            console.log(data)
-        }
-    }
+    // let getSetting = async () => {
+    //     let {data} = await instance.get('')
+    //     if (data.code == 200) {
+    //         console.log(data)
+    //     }
+    // }
 
     // let saveSetting = async () => {
     //     let apiAddrStore = useApiAddrStore()
@@ -166,7 +166,7 @@ const useSettingStore = defineStore('SettingStore', () => {
     let saveOption = async (category: string, key: string, value: any) => {
         let apiAddrStore = useApiAddrStore()
         console.log('保存单个键值到数据库', key, value)
-        let {data} = await instance.put('/api/admin/v1/settings', {
+        let {data} = await instance.put('http://localhost:8081/api/admin/v1/setting', {
             category,
             key,
             value
@@ -179,11 +179,18 @@ const useSettingStore = defineStore('SettingStore', () => {
     }
 
     let loadSetting = async () => {
-        let apiAddrStore = useApiAddrStore()
-        console.log('从数据库读取配置')
-        let { data } = await instance.get('/api/admin/v1/settings')
-        console.log(data)
-        Object.assign(settings, data)
+        // let apiAddrStore = useApiAddrStore()
+        try {
+            console.log('从数据库读取配置')
+            let { data } = await instance.get('http://localhost:8081/api/admin/v1/setting')
+            console.log(data)
+            if (data.code == 200) {
+                Object.assign(settings, data.settings)
+                console.log(data.msg)
+            }
+        } catch (error: Error) {
+            console.error(error.toString())
+        }
     }
 
     return {

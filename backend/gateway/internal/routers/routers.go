@@ -57,8 +57,8 @@ func StartApiGateways() {
 		adminAuthorized.GET("/os/status/get") // 获取当前系统的负载
 		//// adminAuthorized.POST("admin/save-setting", handleUpdateSystemSettings)
 		//
-		//adminAuthorized.PUT("/settings", handleUpdateSingleOptions) // 修改单个配置项目
-		//adminAuthorized.GET("/settings", handleGetSystemSetting)    // 获取所有的系统设置
+		adminAuthorized.PUT("/setting", handler.HandleUpdateSingleOptions) // 修改单个配置项目
+		adminAuthorized.GET("/setting", handler.HandleGetSystemSetting)    // 获取所有的系统设置
 		//
 		//adminAuthorized.GET("/users", handleGetUserList) // 获取所有用户的列表
 		//
@@ -68,8 +68,12 @@ func StartApiGateways() {
 
 		//adminAuthorized.POST("/mail/test", HandleSendTestMail)               // 发送测试邮件
 
-		adminAuthorized.GET("/plans/get", handler.HandleGetAllPlans)        // 获取所有的订阅
-		adminAuthorized.POST("/plans/add", handler.HandleAddNewPlan)        // 添加新的订阅
+		adminAuthorized.GET("/plan", handler.HandleGetAllPlans) // 获取所有的订阅
+		adminAuthorized.POST("/plan", handler.HandleAddNewPlan) // 添加新的订阅
+		adminAuthorized.PUT("/plan", handler.HandleUpdatePlan)
+		adminAuthorized.DELETE("/plan", handler.HandleDeletePlan)
+		adminAuthorized.GET("/plan/kv", handler.HandleGetAllPlanKeyName)
+
 		adminAuthorized.POST("/document/add", handler.HandleAddNewDocument) // 添加一条说明文档
 		//
 		adminAuthorized.POST("/groups", handler.HandleAddNewGroup) // 添加权限组
@@ -82,8 +86,6 @@ func StartApiGateways() {
 		adminAuthorized.PUT("/coupon/status", handler.HandleActiveCoupon) // PUT
 		adminAuthorized.DELETE("/coupon", handler.HandleDeleteCoupon)
 
-		adminAuthorized.GET("/plans/kv/fetch", handler.HandleGetAllPlanKeyName)
-
 	}
 
 	userAuthorized := protectedRoutes.Group("/user/v1", auth.RoleMiddleware())
@@ -94,7 +96,7 @@ func StartApiGateways() {
 		//// 开始首页
 		userAuthorized.GET("/notice", handler.HandleGetAllNotices)        // 获取所有的通知列表
 		userAuthorized.GET("/document", handler.HandleGetAllDocuments)    // 按照分类获取所有的文档列表	// rpc实现
-		userAuthorized.GET("/plan/get", handler.HandleGetAllPlans)        // 获取所有的有效订阅
+		userAuthorized.GET("/plan", handler.HandleGetAllPlans)            // 获取所有的有效订阅
 		userAuthorized.POST("/coupon/verify", handler.HandleVerifyCoupon) // 验证优惠券可用性	// POST
 		userAuthorized.POST("/auth/passcode/verify", handler.HandleCheckPreviousPassword)
 		userAuthorized.POST("/auth/passcode/update", handler.HandleApplyNewPassword)

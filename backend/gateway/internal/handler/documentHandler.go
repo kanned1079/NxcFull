@@ -18,13 +18,23 @@ func HandleGetAllDocuments(context *gin.Context) {
 	})
 	if err != nil {
 		log.Println(err)
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
+		return
 	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "rpc方法没有返回值",
+		})
+		return
+	}
+
 	context.JSON(http.StatusOK, gin.H{
-		"code":     http.StatusOK,
+		"code":     resp.Code,
+		"msg":      resp.Msg,
 		"doc_list": resp.Documents,
 	})
 }

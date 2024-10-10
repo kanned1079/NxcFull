@@ -106,7 +106,7 @@ let plans = ref([
 let getPlanKV = async () => {
   plans.value = []
   try {
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/plans/kv/fetch')
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/plan/kv')
     if (data.code === 200) {
       console.log(data)
       data.plans.forEach((item: {id: number, name: string}) =>  plans.value.push({
@@ -261,17 +261,6 @@ const columns = [
     title: '操作',
     key: 'actions',
     render(row: Coupon) {
-      // return h(NButtonGroup, null, () => [
-      //   h(NButton, {
-      //     size: 'small',
-      //     onClick: () => updateACoupon(row)
-      //   }, {default: () => '编辑'}),
-      //   h(NButton, {
-      //     size: 'small',
-      //     type: 'error',
-      //     onClick: () => deleteACoupon(row.id)
-      //   }, {default: () => '删除'})
-      // ]);
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',

@@ -20,6 +20,9 @@ service SubscriptionService {
 
   rpc AddNewPlan(AddNewPlanRequest) returns (AddNewPlanResponse);
 
+  rpc UpdatePlan(UpdatePlanRequest) returns (UpdatePlanResponse);
+
+  rpc DeletePlan(DeletePlanRequest) returns (DeletePlanResponse);
 }
 
 message GetAllPlanKeyNameRequest {
@@ -29,6 +32,7 @@ message GetAllPlanKeyNameRequest {
 message PlanKV {
   int64 id = 1;
   string name = 2;
+  bool is_sale = 3;
 }
 
 message GetAllPlanKeyNameResponse {
@@ -147,6 +151,39 @@ message AddNewPlanRequest {
 }
 
 message AddNewPlanResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// ----------------------
+
+message UpdatePlanRequest {
+  int64 id = 1;
+  string name = 2;
+  string describe = 3;
+  bool is_sale = 4;
+  bool is_renew = 5;
+  int64 group_id = 6;
+  int64 capacity_limit = 7;
+  double month_price = 8;
+  double quarter_price = 9;
+  double half_year_price = 10;
+  double year_price = 11;
+  int64 sort = 12;
+}
+
+message UpdatePlanResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// -------------------------
+
+message DeletePlanRequest {
+  int64 plan_id = 1;
+}
+
+message DeletePlanResponse {
   int32 code = 1;
   string msg = 2;
 }

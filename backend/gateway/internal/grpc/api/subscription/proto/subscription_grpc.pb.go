@@ -25,6 +25,8 @@ const (
 	SubscriptionService_GetAllPlanKeyName_FullMethodName         = "/subscription.SubscriptionService/GetAllPlanKeyName"
 	SubscriptionService_GetAllPlans_FullMethodName               = "/subscription.SubscriptionService/GetAllPlans"
 	SubscriptionService_AddNewPlan_FullMethodName                = "/subscription.SubscriptionService/AddNewPlan"
+	SubscriptionService_UpdatePlan_FullMethodName                = "/subscription.SubscriptionService/UpdatePlan"
+	SubscriptionService_DeletePlan_FullMethodName                = "/subscription.SubscriptionService/DeletePlan"
 )
 
 // SubscriptionServiceClient is the client API for SubscriptionService service.
@@ -40,6 +42,8 @@ type SubscriptionServiceClient interface {
 	GetAllPlanKeyName(ctx context.Context, in *GetAllPlanKeyNameRequest, opts ...grpc.CallOption) (*GetAllPlanKeyNameResponse, error)
 	GetAllPlans(ctx context.Context, in *GetAllPlansRequest, opts ...grpc.CallOption) (*GetAllPlansResponse, error)
 	AddNewPlan(ctx context.Context, in *AddNewPlanRequest, opts ...grpc.CallOption) (*AddNewPlanResponse, error)
+	UpdatePlan(ctx context.Context, in *UpdatePlanRequest, opts ...grpc.CallOption) (*UpdatePlanResponse, error)
+	DeletePlan(ctx context.Context, in *DeletePlanRequest, opts ...grpc.CallOption) (*DeletePlanResponse, error)
 }
 
 type subscriptionServiceClient struct {
@@ -110,6 +114,26 @@ func (c *subscriptionServiceClient) AddNewPlan(ctx context.Context, in *AddNewPl
 	return out, nil
 }
 
+func (c *subscriptionServiceClient) UpdatePlan(ctx context.Context, in *UpdatePlanRequest, opts ...grpc.CallOption) (*UpdatePlanResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdatePlanResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_UpdatePlan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionServiceClient) DeletePlan(ctx context.Context, in *DeletePlanRequest, opts ...grpc.CallOption) (*DeletePlanResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeletePlanResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_DeletePlan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubscriptionServiceServer is the server API for SubscriptionService service.
 // All implementations must embed UnimplementedSubscriptionServiceServer
 // for forward compatibility.
@@ -123,6 +147,8 @@ type SubscriptionServiceServer interface {
 	GetAllPlanKeyName(context.Context, *GetAllPlanKeyNameRequest) (*GetAllPlanKeyNameResponse, error)
 	GetAllPlans(context.Context, *GetAllPlansRequest) (*GetAllPlansResponse, error)
 	AddNewPlan(context.Context, *AddNewPlanRequest) (*AddNewPlanResponse, error)
+	UpdatePlan(context.Context, *UpdatePlanRequest) (*UpdatePlanResponse, error)
+	DeletePlan(context.Context, *DeletePlanRequest) (*DeletePlanResponse, error)
 	mustEmbedUnimplementedSubscriptionServiceServer()
 }
 
@@ -150,6 +176,12 @@ func (UnimplementedSubscriptionServiceServer) GetAllPlans(context.Context, *GetA
 }
 func (UnimplementedSubscriptionServiceServer) AddNewPlan(context.Context, *AddNewPlanRequest) (*AddNewPlanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddNewPlan not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) UpdatePlan(context.Context, *UpdatePlanRequest) (*UpdatePlanResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePlan not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) DeletePlan(context.Context, *DeletePlanRequest) (*DeletePlanResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePlan not implemented")
 }
 func (UnimplementedSubscriptionServiceServer) mustEmbedUnimplementedSubscriptionServiceServer() {}
 func (UnimplementedSubscriptionServiceServer) testEmbeddedByValue()                             {}
@@ -280,6 +312,42 @@ func _SubscriptionService_AddNewPlan_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubscriptionService_UpdatePlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePlanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).UpdatePlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_UpdatePlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).UpdatePlan(ctx, req.(*UpdatePlanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionService_DeletePlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePlanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).DeletePlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_DeletePlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).DeletePlan(ctx, req.(*DeletePlanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubscriptionService_ServiceDesc is the grpc.ServiceDesc for SubscriptionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -310,6 +378,14 @@ var SubscriptionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddNewPlan",
 			Handler:    _SubscriptionService_AddNewPlan_Handler,
+		},
+		{
+			MethodName: "UpdatePlan",
+			Handler:    _SubscriptionService_UpdatePlan_Handler,
+		},
+		{
+			MethodName: "DeletePlan",
+			Handler:    _SubscriptionService_DeletePlan_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

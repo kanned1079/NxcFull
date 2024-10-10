@@ -9,6 +9,8 @@ import (
 	groupPb "NxcFull/backend/gateway/internal/grpc/api/group/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/notice"
 	noticePb "NxcFull/backend/gateway/internal/grpc/api/notice/proto"
+	"NxcFull/backend/gateway/internal/grpc/api/setting"
+	settingPb "NxcFull/backend/gateway/internal/grpc/api/setting/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/subscription"
 	subscribePb "NxcFull/backend/gateway/internal/grpc/api/subscription/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/user"
@@ -17,17 +19,13 @@ import (
 )
 
 type Clients struct {
-	//userServiceClient pb.UserServiceClient
-	UserServiceClient userPb.UserServiceClient
-
-	//CouponServiceClient  *grpc.ClientConn
-	//NoticesServiceClient *grpc.ClientConn
-	//OrderServiceClient   *grpc.ClientConn
+	UserServiceClient         userPb.UserServiceClient
 	DocumentServiceClient     documentPb.DocumentServiceClient
 	NoticeServiceClient       noticePb.NoticeServiceClient
 	GroupServiceClient        groupPb.GroupServiceClient
 	SubscriptionServiceClient subscribePb.SubscriptionServiceClient
 	CouponServiceClient       couponPb.CouponServiceClient
+	SettingServiceClient      settingPb.SettingsServiceClient
 }
 
 func NewClients() Clients {
@@ -39,6 +37,7 @@ func NewClients() Clients {
 		GroupServiceClient:        group.NewGroupClient(),
 		SubscriptionServiceClient: subscription.NewSubscriptionClient(),
 		CouponServiceClient:       coupon.NewCouponServiceClient(),
+		SettingServiceClient:      setting.NewSettingClient(),
 	}
 
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	pb "NxcFull/backend/gateway/internal/grpc/api/subscription/proto"
+	"strconv"
 
 	sysContext "context"
 	"github.com/gin-gonic/gin"
@@ -73,19 +74,6 @@ func GetActivePlanListByUserId(context *gin.Context) {
 }
 
 func HandleGetAllPlanKeyName(context *gin.Context) {
-	//type planInfo struct {
-	//	Id   int64  `json:"id"`
-	//	Name string `json:"name"`
-	//}
-	//var planArr = []planInfo{}
-	//if result := dao.Db.Model(&Plan{}).Select("id, name").Order("sort ASC").Find(&planArr); result.Error != nil {
-	//	log.Println(result.Error)
-	//}
-	//log.Println(planArr)
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code":  http.StatusOK,
-	//	"plans": planArr,
-	//})
 	resp, err := grpcClient.SubscriptionServiceClient.GetAllPlanKeyName(sysContext.Background(), &pb.GetAllPlanKeyNameRequest{})
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
@@ -343,4 +331,80 @@ func HandleAddNewPlan(context *gin.Context) {
 	//	"code": http.StatusOK,
 	//	"msg":  "插入数据成功",
 	//})
+}
+
+func HandleUpdatePlan(context *gin.Context) {
+	postData := &struct {
+		Id            int64   `json:"id"`
+		Name          string  `json:"name"`
+		Describe      string  `json:"describe"`
+		IsSale        bool    `json:"is_sale"`
+		IsRenew       bool    `json:"is_renew"`
+		GroupId       int64   `json:"group_id"`
+		CapacityLimit int64   `json:"capacity_limit"`
+		MonthPrice    float64 `json:"month_price"`
+		QuarterPrice  float64 `json:"quarter_price"`
+		HalfYearPrice float64 `json:"half_year_price"`
+		YearPrice     float64 `json:"year_price"`
+		Sort          int64   `json:"sort"`
+	}{}
+	if err := context.ShouldBind(&postData); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"code":  http.StatusBadRequest,
+			"msg":   "绑定数据失败",
+			"error": err.Error(),
+		})
+	}
+	log.Println(postData)
+	resp, err := grpcClient.SubscriptionServiceClient.UpdatePlan(sysContext.Background(), &pb.UpdatePlanRequest{
+		Id:            postData.Id,
+		Name:          postData.Name,
+		Describe:      postData.Describe,
+		IsSale:        postData.IsSale,
+		IsRenew:       postData.IsRenew,
+		GroupId:       postData.GroupId,
+		CapacityLimit: postData.CapacityLimit,
+		MonthPrice:    postData.MonthPrice,
+		QuarterPrice:  postData.QuarterPrice,
+		HalfYearPrice: postData.HalfYearPrice,
+		YearPrice:     postData.YearPrice,
+		Sort:          postData.Sort,
+	})
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}
+
+func HandleDeletePlan(context *gin.Context) {
+	var planId int
+	var err error
+	if planId, err = strconv.Atoi(context.Query("plan_id")); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	log.Println(planId)
+	resp, err := grpcClient.SubscriptionServiceClient.DeletePlan(sysContext.Background(), &pb.DeletePlanRequest{
+		PlanId: int64(planId),
+	})
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+
 }

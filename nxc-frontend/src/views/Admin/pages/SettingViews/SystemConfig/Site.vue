@@ -168,14 +168,14 @@ let subscribe_list = ref([
 
 let getSubscribeList = async () => {
   try {
-    let {data} = await instance.get('/api/admin/v1/plans/get')
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/plan/kv')
     if (data.code === 200) {
       console.log(data)
       data.plans.forEach((plan: Plan) => {
         subscribe_list.value.push({
           label: plan.name,
           value: plan.id,
-          disabled:!plan.is_sale
+          disabled:plan.is_sale
         })
       })
     }
