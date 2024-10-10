@@ -85,7 +85,7 @@ func saveSettingsWithReflection(category string, settingsStruct interface{}) {
 
 		// 调用保存到数据库的函数
 		if err := saveSettingToDB(category, key, valueJSON); err != nil {
-			log.Println("Error saving setting to DB:", err)
+			log.Println("Error saving settings to DB:", err)
 		}
 	}
 }

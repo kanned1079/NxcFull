@@ -23,8 +23,6 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 	var activeOrders []model.ActiveOrders
 	// Query the ActiveOrders table for the user_id and where IsActive is true
 	if err := dao.Db.Where("user_id = ? AND is_active = ?", request.UserId, true).Find(&activeOrders).Error; err != nil {
-		//context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch active orders"})
-		//return
 		return &pb.GetActivePlanListByUserIdResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "获取有效的订单失败",
@@ -65,13 +63,6 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 			ExpirationDate: order.ExpirationDate.Format("2006-01-02 15:04:05"),
 		})
 	}
-
-	// Return the result as a JSON response
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code":     http.StatusOK,
-	//	"my_plans": result,
-	//	"msg":      "获取数据成功",
-	//})
 	return &pb.GetActivePlanListByUserIdResponse{
 		Code:    http.StatusOK,
 		MyPlans: myPlanResult,
@@ -160,12 +151,6 @@ func (s *SubscribeServices) CommitNewOrder(ctx context.Context, request *pb.Comm
 
 	if request.CouponId != 0 {
 		if result := dao.Db.Model(&model.CouponUsage{}).Create(&couponUsed); result.Error != nil {
-			//context.JSON(http.StatusOK, gin.H{
-			//	"code":  http.StatusInternalServerError,
-			//	"error": result.Error.Error(),
-			//	"msg":   "添加优惠券使用记录出错",
-			//})
-			//return
 			return &pb.CommitNewOrderResponse{
 				Code: http.StatusInternalServerError,
 				Msg:  "添加优惠券使用记录出错",
@@ -174,27 +159,11 @@ func (s *SubscribeServices) CommitNewOrder(ctx context.Context, request *pb.Comm
 	}
 
 	if result := dao.Db.Model(&model.Orders{}).Create(&order); result.Error != nil {
-		//context.JSON(http.StatusOK, gin.H{
-		//	"code":  http.StatusInternalServerError,
-		//	"error": result.Error.Error(),
-		//	"msg":   "创建新订单出错",
-		//})
 		return &pb.CommitNewOrderResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "创建新订单出错",
 		}, nil
 	}
-
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code":            http.StatusOK,
-	//	"order_id":        subscription.Id,
-	//	"plan_name":       plan.Name,
-	//	"original_price":  originalPrice,
-	//	"discount_amount": disCountAmount,
-	//	"pay_price":       originalPrice - discountPercent,
-	//	"period":          postData.Period,
-	//	"created_at":      time.Now().Format("2006-01-02 15:04:05"),
-	//})
 	return &pb.CommitNewOrderResponse{
 		Code:           http.StatusInternalServerError,
 		OrderId:        order.Id,

@@ -5,12 +5,22 @@ import (
 	pb "NxcFull/backend/gateway/internal/grpc/api/user/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 	"log"
+	"time"
 )
 
 func NewUserClient() (client pb.UserServiceClient) {
 	log.Println("NewUserClient")
-	clientConn, err := grpc.NewClient(etcd.GetServiceAddress("userServices"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	keepAliveParams := keepalive.ClientParameters{
+		Time:                10 * time.Second, // 10秒内无操作则发送KeepAlive ping
+		Timeout:             2 * time.Second,  // 超过2秒未响应则认为连接不可用
+		PermitWithoutStream: true,             // 即使没有活跃的RPC流也发送KeepAlive ping
+	}
+	clientConn, err := grpc.NewClient(
+		etcd.GetServiceAddress("userServices"),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithKeepaliveParams(keepAliveParams))
 	if err != nil {
 		log.Println("连接到user grpc服务器失败", err.Error())
 		return

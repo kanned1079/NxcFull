@@ -1,7 +1,7 @@
 package handler
 
 import (
-	pb "NxcFull/backend/gateway/internal/grpc/api/setting/proto"
+	pb "NxcFull/backend/gateway/internal/grpc/api/settings/proto"
 	sysContext "context"
 	"encoding/json"
 	"fmt"
@@ -71,7 +71,7 @@ func HandleUpdateSingleOptions(context *gin.Context) {
 	// 保存或更新设置
 	//if err := saveSettingToDB(category, key, req.Value); err != nil {
 	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"error":   "Failed to update setting",
+	//		"error":   "Failed to update settings",
 	//		"details": err.Error(),
 	//	})
 	//	return

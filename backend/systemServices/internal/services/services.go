@@ -29,20 +29,8 @@ func NewSettingServices() *SettingServices {
 
 // UpdateSingleOption 更新单个设置的键值
 func (s *SettingServices) UpdateSingleOption(context context.Context, request *pb.UpdateSingleOptionRequest) (*pb.UpdateSingleOptionResponse, error) {
-	//val, err := valueToJSONRawMessage(request.Value)
-	//if err != nil {
-	//	return &pb.UpdateSingleOptionResponse{
-	//		Code: http.StatusInternalServerError,
-	//		Msg:  "转换json格式失败" + err.Error(),
-	//	}, nil
-	//}
 	// 保存或更新设置
 	if err := saveSettingToDB(request.Category, request.Key, request.Value); err != nil {
-		//context.JSON(http.StatusInternalServerError, gin.H{
-		//	"error":   "Failed to update setting",
-		//	"details": err.Error(),
-		//})
-		//return
 		return &pb.UpdateSingleOptionResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "保存或更新设置失败" + err.Error(),
@@ -78,7 +66,7 @@ func (s *SettingServices) GetSystemSettings(context context.Context, request *pb
 
 		var value any
 		if err := json.Unmarshal(setting.Value, &value); err != nil {
-			log.Println("Error unmarshaling setting value:", err)
+			log.Println("Error unmarshaling settings value:", err)
 			continue
 		}
 		settingsMap[setting.Category][setting.Key] = value
@@ -102,73 +90,6 @@ func (s *SettingServices) GetSystemSettings(context context.Context, request *pb
 	}, nil
 }
 
-//func anyToProtoValue(val any) (*pb.Value, error) {
-//	switch v := val.(type) {
-//	case string:
-//		return &pb.Value{Kind: &pb.Value_StringValue{StringValue: v}}, nil
-//	case int:
-//		return &pb.Value{Kind: &pb.Value_IntValue{IntValue: int64(v)}}, nil
-//	case bool:
-//		return &pb.Value{Kind: &pb.Value_BoolValue{BoolValue: v}}, nil
-//	case float64:
-//		return &pb.Value{Kind: &pb.Value_DoubleValue{DoubleValue: v}}, nil
-//	default:
-//		return nil, fmt.Errorf("unsupported type: %T", v)
-//	}
-//}
-
-//// handleUpdateOptions 将单个键值保存或更新
-//func handleUpdateSingleOptions(context *gin.Context) {
-//	var req struct {
-//		Category string          `json:"category"`
-//		Key      string          `json:"key"`
-//		Value    json.RawMessage `json:"value"`
-//	}
-//
-//	// 解析请求体
-//	if err := context.ShouldBindJSON(&req); err != nil {
-//		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data", "details": err.Error()})
-//		return
-//	}
-//
-//	// 如果 key 不需要进行格式拆分，可以直接使用 req.Key 作为 key
-//	//category := "frontend" // 假设 category 是固定的 "frontend"，你可以根据需要进行调整
-//	category := req.Category
-//	key := req.Key
-//
-//	// 保存或更新设置
-//	if err := saveSettingToDB(category, key, req.Value); err != nil {
-//		context.JSON(http.StatusInternalServerError, gin.H{
-//			"error":   "Failed to update setting",
-//			"details": err.Error(),
-//		})
-//		return
-//	}
-//
-//	context.JSON(http.StatusOK, gin.H{"message": "Setting updated successfully"})
-//}
-
-// pass
-//func handleUpdateSystemSettings(context *gin.Context) {
-//	var options = settings.SystemSettingOptions{}
-//	if err := context.ShouldBind(&options); err != nil {
-//		log.Println("获取设置失败")
-//	}
-//	log.Println(options)
-//
-//	// 使用反射保存所有字段
-//	saveSettingsWithReflection("site", options.Site)
-//	saveSettingsWithReflection("security", options.Security)
-//	saveSettingsWithReflection("frontend", options.Frontend)
-//	saveSettingsWithReflection("subscription", options.Subscribe)
-//	saveSettingsWithReflection("server", options.Server)
-//	saveSettingsWithReflection("sendmail", options.Sendmail)
-//	saveSettingsWithReflection("notice", options.Notice)
-//	saveSettingsWithReflection("myapp", options.Myapp)
-//	context.JSON(http.StatusOK, gin.H{"message": "Settings updated successfully"})
-//}
-// passed
-
 // handleGetSystemSetting 取出所有设置项
 func handleGetSystemSetting(context *gin.Context) {
 	var settingOptions []settings.SiteSetting
@@ -189,7 +110,7 @@ func handleGetSystemSetting(context *gin.Context) {
 
 		var value any
 		if err := json.Unmarshal(setting.Value, &value); err != nil {
-			log.Println("Error unmarshaling setting value:", err)
+			log.Println("Error unmarshaling settings value:", err)
 			continue
 		}
 		settingsMap[setting.Category][setting.Key] = value

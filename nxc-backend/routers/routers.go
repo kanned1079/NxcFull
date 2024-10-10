@@ -59,7 +59,7 @@ func StartReq() {
 	{
 		// 管理员特定的路由
 		adminAuthorized.GET("/os/status/get", handleGetServerInfo) // 获取当前系统的负载
-		// adminAuthorized.POST("admin/save-setting", handleUpdateSystemSettings)
+		// adminAuthorized.POST("admin/save-settings", handleUpdateSystemSettings)
 
 		adminAuthorized.PUT("/settings", handleUpdateSingleOptions) // 修改单个配置项目
 		adminAuthorized.GET("/settings", handleGetSystemSetting)    // 获取所有的系统设置

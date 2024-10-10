@@ -13,7 +13,7 @@ const themeStore = useThemeStore();
 
 // 方法
 let enterSetting = () => {
-  console.log('setting')
+  console.log('settings')
 }
 </script>
 

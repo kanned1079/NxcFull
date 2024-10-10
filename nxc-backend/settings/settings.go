@@ -25,7 +25,7 @@ func CreateSetting(db *gorm.DB) {
 		Value:    value,
 	}
 	if err := db.Create(&setting).Error; err != nil {
-		fmt.Println("Error creating setting:", err)
+		fmt.Println("Error creating settings:", err)
 	} else {
 		fmt.Println("Setting created successfully")
 	}

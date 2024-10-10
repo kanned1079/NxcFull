@@ -9,8 +9,8 @@ import (
 	groupPb "NxcFull/backend/gateway/internal/grpc/api/group/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/notice"
 	noticePb "NxcFull/backend/gateway/internal/grpc/api/notice/proto"
-	"NxcFull/backend/gateway/internal/grpc/api/setting"
-	settingPb "NxcFull/backend/gateway/internal/grpc/api/setting/proto"
+	"NxcFull/backend/gateway/internal/grpc/api/settings"
+	settingPb "NxcFull/backend/gateway/internal/grpc/api/settings/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/subscription"
 	subscribePb "NxcFull/backend/gateway/internal/grpc/api/subscription/proto"
 	"NxcFull/backend/gateway/internal/grpc/api/user"
@@ -37,7 +37,7 @@ func NewClients() Clients {
 		GroupServiceClient:        group.NewGroupClient(),
 		SubscriptionServiceClient: subscription.NewSubscriptionClient(),
 		CouponServiceClient:       coupon.NewCouponServiceClient(),
-		SettingServiceClient:      setting.NewSettingClient(),
+		SettingServiceClient:      settings.NewSettingClient(),
 	}
 
 }

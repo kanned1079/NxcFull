@@ -71,7 +71,7 @@ func handleUpdateSingleOptions(context *gin.Context) {
 	// 保存或更新设置
 	if err := saveSettingToDB(category, key, req.Value); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Failed to update setting",
+			"error":   "Failed to update settings",
 			"details": err.Error(),
 		})
 		return
@@ -118,7 +118,7 @@ func saveSettingsWithReflection(category string, settingsStruct interface{}) {
 
 		// 调用保存到数据库的函数
 		if err := saveSettingToDB(category, key, valueJSON); err != nil {
-			log.Println("Error saving setting to DB:", err)
+			log.Println("Error saving settings to DB:", err)
 		}
 	}
 }
@@ -162,7 +162,7 @@ func handleGetSystemSetting(context *gin.Context) {
 
 		var value any
 		if err := json.Unmarshal(setting.Value, &value); err != nil {
-			log.Println("Error unmarshaling setting value:", err)
+			log.Println("Error unmarshaling settings value:", err)
 			continue
 		}
 		settingsMap[setting.Category][setting.Key] = value

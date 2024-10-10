@@ -1,8 +1,8 @@
-package coupon
+package settings
 
 import (
 	"NxcFull/backend/gateway/internal/etcd"
-	pb "NxcFull/backend/gateway/internal/grpc/api/coupon/proto"
+	pb "NxcFull/backend/gateway/internal/grpc/api/settings/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"
@@ -10,15 +10,15 @@ import (
 	"time"
 )
 
-func NewCouponServiceClient() (client pb.CouponServiceClient) {
-	log.Println("NewCouponServiceClient")
+func NewSettingClient() (client pb.SettingsServiceClient) {
+	log.Println("NewSettingClient")
 	keepAliveParams := keepalive.ClientParameters{
 		Time:                10 * time.Second,
 		Timeout:             2 * time.Second,
 		PermitWithoutStream: true,
 	}
 	clientConn, err := grpc.NewClient(
-		etcd.GetServiceAddress("couponServices"),
+		etcd.GetServiceAddress("settingServices"),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithKeepaliveParams(keepAliveParams),
 	)
@@ -26,6 +26,6 @@ func NewCouponServiceClient() (client pb.CouponServiceClient) {
 		log.Println("连接到user grpc服务器失败", err.Error())
 		return
 	}
-	log.Println("couponServices")
-	return pb.NewCouponServiceClient(clientConn)
+	log.Println("settingServices")
+	return pb.NewSettingsServiceClient(clientConn)
 }
