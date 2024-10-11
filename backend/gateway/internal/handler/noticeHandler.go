@@ -1,38 +1,14 @@
 package handler
 
 import (
-	pb "NxcFull/backend/gateway/internal/grpc/api/notice/proto"
 	sysContext "context"
 	"encoding/json"
+	pb "gateway/internal/grpc/api/notice/proto"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
 )
-
-//func HandleGetAllNotices(context *gin.Context) {
-//	resp, err := grpcClient.NoticeServiceClient.GetAllNotices(sysContext.Background(), &pb.GetAllNoticesRequest{})
-//	if err != nil {
-//		log.Println(err)
-//		context.JSON(http.StatusOK, gin.H{
-//			"code": http.StatusInternalServerError,
-//			"msg":  err.Error(),
-//		})
-//	}
-//	if resp == nil {
-//		context.JSON(http.StatusOK, gin.H{
-//			"code": http.StatusInternalServerError,
-//			"msg":  "调用rpc服务器失败无返回值",
-//		})
-//		return
-//	}
-//	context.JSON(http.StatusOK, gin.H{
-//		"code":    resp.Code,
-//		"notices": ,
-//		"msg":     resp.Msg,
-//		"page_count": resp.PageCount,
-//	})
-//}
 
 // v2
 func HandleGetAllNotices(context *gin.Context) {

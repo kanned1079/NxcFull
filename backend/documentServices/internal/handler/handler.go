@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"NxcFull/backend/documentServices/api/proto"
-	"NxcFull/backend/documentServices/internal/services"
 	"context"
+	"documentServices/api/proto"
+	"documentServices/internal/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"

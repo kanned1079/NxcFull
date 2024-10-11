@@ -1,10 +1,10 @@
 package services
 
 import (
-	pb "NxcFull/backend/groupServices/api/proto"
-	"NxcFull/backend/groupServices/internal/dao"
-	"NxcFull/backend/groupServices/internal/model"
 	"context"
+	pb "groupServices/api/proto"
+	"groupServices/internal/dao"
+	"groupServices/internal/model"
 	"log"
 	"net/http"
 )

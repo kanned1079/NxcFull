@@ -1,10 +1,10 @@
 package model
 
 import (
-	"NxcFull/backend/userServices/internal/dao"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"userServices/internal/dao"
 )
 
 // IsUserExist 指定邮箱的用户是否存在

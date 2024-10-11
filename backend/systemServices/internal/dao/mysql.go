@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"NxcFull/backend/systemServices/internal/config"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"systemServices/internal/config"
 )
 
 var (

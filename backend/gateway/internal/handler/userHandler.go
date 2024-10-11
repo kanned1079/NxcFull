@@ -1,9 +1,9 @@
 package handler
 
 import (
-	grpc2 "NxcFull/backend/gateway/internal/grpc"
-	pb "NxcFull/backend/gateway/internal/grpc/api/user/proto"
 	sysContext "context"
+	grpc2 "gateway/internal/grpc"
+	pb "gateway/internal/grpc/api/user/proto"
 	"github.com/gin-gonic/gin"
 	//"google.golang.org/grpc"
 	"log"

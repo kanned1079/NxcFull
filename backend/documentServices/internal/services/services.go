@@ -1,10 +1,10 @@
 package services
 
 import (
-	pb "NxcFull/backend/documentServices/api/proto"
-	"NxcFull/backend/documentServices/internal/dao"
-	"NxcFull/backend/documentServices/internal/model"
 	"context"
+	pb "documentServices/api/proto"
+	"documentServices/internal/dao"
+	"documentServices/internal/model"
 	"log"
 	"net/http"
 )

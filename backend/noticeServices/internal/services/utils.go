@@ -1,8 +1,8 @@
 package services
 
 import (
-	pb "NxcFull/backend/noticeServices/api/proto"
-	"NxcFull/backend/noticeServices/internal/model"
+	pb "noticeServices/api/proto"
+	"noticeServices/internal/model"
 	"time"
 )
 

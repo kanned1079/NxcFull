@@ -1,8 +1,8 @@
 package services
 
 import (
-	pb "NxcFull/backend/subscribeServices/api/proto"
-	"NxcFull/backend/subscribeServices/internal/model"
+	pb "subscribeServices/api/proto"
+	"subscribeServices/internal/model"
 	"time"
 )
 

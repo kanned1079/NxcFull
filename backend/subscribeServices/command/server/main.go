@@ -1,11 +1,11 @@
 package main
 
 import (
-	"NxcFull/backend/subscribeServices/internal/config"
-	"NxcFull/backend/subscribeServices/internal/dao"
-	"NxcFull/backend/subscribeServices/internal/etcd"
-	"NxcFull/backend/subscribeServices/internal/handler"
 	"log"
+	"subscribeServices/internal/config"
+	"subscribeServices/internal/dao"
+	"subscribeServices/internal/etcd"
+	"subscribeServices/internal/handler"
 )
 
 var err error

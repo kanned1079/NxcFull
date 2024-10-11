@@ -1,13 +1,12 @@
 package main
 
 import (
-	"NxcFull/backend/gateway/internal/etcd"
-	grpc2 "NxcFull/backend/gateway/internal/grpc"
+	"gateway/internal/etcd"
 	//pb "NxcFull/backend/gateway/internal/grpc/api/proto"
-	"NxcFull/backend/gateway/internal/routers"
+	"gateway/internal/routers"
 )
 
-var GrpcClients grpc2.Clients
+//var GrpcClients grpc2.Clients
 
 // var grpcClient pb.UserServiceClient
 var err error
@@ -25,8 +24,8 @@ func init() {
 	//	}
 	//}()
 	//grpcClient = pb.NewUserServiceClient(grpcConn)
-	etcd.InitEtcdClient()            // 初始化etcd服务器
-	GrpcClients = grpc2.NewClients() // 初始化所有的rpc客户端连接
+	etcd.InitEtcdClient() // 初始化etcd服务器
+	//GrpcClients = grpc2.NewClients() // 初始化所有的rpc客户端连接
 	//userServiceClient = pb.NewUserServiceClient(GrpcClients.UserServiceClient)
 
 }

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"NxcFull/backend/couponServices/internal/config"
-	"NxcFull/backend/couponServices/internal/dao"
-	"NxcFull/backend/couponServices/internal/etcd"
-	"NxcFull/backend/couponServices/internal/handler"
+	"couponServices/internal/config"
+	"couponServices/internal/dao"
+	"couponServices/internal/etcd"
+	"couponServices/internal/handler"
 	"log"
 )
 

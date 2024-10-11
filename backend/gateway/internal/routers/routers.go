@@ -1,9 +1,8 @@
 package routers
 
 import (
-	"NxcFull/backend/gateway/internal/handler"
-	"NxcFull/backend/gateway/internal/middleware"
-	"NxcFull/nxc-backend/auth"
+	"gateway/internal/handler"
+	"gateway/internal/middleware"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -93,7 +92,7 @@ func StartApiGateways() {
 
 	}
 
-	userAuthorized := protectedRoutes.Group("/user/v1", auth.RoleMiddleware())
+	userAuthorized := protectedRoutes.Group("/user/v1", middleware.RoleMiddleware())
 	{
 		//// 用户特定的路由
 		userAuthorized.GET("/profile")

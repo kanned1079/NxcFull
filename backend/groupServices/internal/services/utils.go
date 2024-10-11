@@ -1,7 +1,7 @@
 package services
 
 import (
-	pb "NxcFull/backend/groupServices/api/proto"
+	pb "groupServices/api/proto"
 )
 
 // 转换函数: 将 []model.PublicNotices 转换为 []*pb.PublicNotice

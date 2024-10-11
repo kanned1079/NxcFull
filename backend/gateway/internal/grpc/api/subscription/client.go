@@ -1,8 +1,8 @@
 package subscription
 
 import (
-	"NxcFull/backend/gateway/internal/etcd"
-	pb "NxcFull/backend/gateway/internal/grpc/api/subscription/proto"
+	"gateway/internal/etcd"
+	pb "gateway/internal/grpc/api/subscription/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"

@@ -1,13 +1,13 @@
 package services
 
 import (
-	pb "NxcFull/backend/subscribeServices/api/proto"
-	"NxcFull/backend/subscribeServices/internal/dao"
-	"NxcFull/backend/subscribeServices/internal/model"
 	"context"
 	"log"
 	"net/http"
 	"strconv"
+	pb "subscribeServices/api/proto"
+	"subscribeServices/internal/dao"
+	"subscribeServices/internal/model"
 	"time"
 )
 

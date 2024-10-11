@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"NxcFull/backend/subscribeServices/api/proto"
-	"NxcFull/backend/subscribeServices/internal/services"
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -10,6 +8,8 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"subscribeServices/api/proto"
+	"subscribeServices/internal/services"
 )
 
 // 日志拦截器

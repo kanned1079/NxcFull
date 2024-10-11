@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"NxcFull/backend/noticeServices/api/proto"
-	"NxcFull/backend/noticeServices/internal/services"
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
+	"noticeServices/api/proto"
+	"noticeServices/internal/services"
 	"strconv"
 )
 

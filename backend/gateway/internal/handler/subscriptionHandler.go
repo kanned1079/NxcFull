@@ -1,7 +1,7 @@
 package handler
 
 import (
-	pb "NxcFull/backend/gateway/internal/grpc/api/subscription/proto"
+	pb "gateway/internal/grpc/api/subscription/proto"
 	"strconv"
 
 	sysContext "context"

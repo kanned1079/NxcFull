@@ -1,14 +1,14 @@
 package services
 
 import (
-	pb "NxcFull/backend/systemServices/api/proto"
-	"NxcFull/backend/systemServices/internal/dao"
-	"NxcFull/nxc-backend/settings"
 	"context"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	pb "systemServices/api/proto"
+	"systemServices/internal/dao"
+	"systemServices/internal/model"
 )
 
 type AppSettings struct {
@@ -45,7 +45,7 @@ func (s *SettingServices) UpdateSingleOption(context context.Context, request *p
 }
 
 func (s *SettingServices) GetSystemSettings(context context.Context, request *pb.GetSystemSettingsRequest) (*pb.GetSystemSettingsResponse, error) {
-	var settingOptions []settings.SiteSetting
+	var settingOptions []model.SiteSetting
 
 	// 从数据库中读取所有的系统设置
 	if err := dao.Db.Find(&settingOptions).Error; err != nil {
@@ -92,7 +92,7 @@ func (s *SettingServices) GetSystemSettings(context context.Context, request *pb
 
 // handleGetSystemSetting 取出所有设置项
 func handleGetSystemSetting(context *gin.Context) {
-	var settingOptions []settings.SiteSetting
+	var settingOptions []model.SiteSetting
 
 	// 从数据库中读取所有的系统设置
 	if err := dao.Db.Find(&settingOptions).Error; err != nil {

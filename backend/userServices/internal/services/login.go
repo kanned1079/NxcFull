@@ -1,14 +1,14 @@
 package services
 
 import (
-	pb "NxcFull/backend/userServices/api/proto"
-	"NxcFull/backend/userServices/internal/auth"
-	"NxcFull/backend/userServices/internal/dao"
-	"NxcFull/backend/userServices/internal/model"
 	"context"
 	"log"
 	"net/http"
 	"time"
+	pb "userServices/api/proto"
+	"userServices/internal/auth"
+	"userServices/internal/dao"
+	"userServices/internal/model"
 )
 
 type UserService struct {

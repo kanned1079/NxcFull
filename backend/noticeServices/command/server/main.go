@@ -1,11 +1,11 @@
 package main
 
 import (
-	"NxcFull/backend/noticeServices/internal/config"
-	"NxcFull/backend/noticeServices/internal/dao"
-	"NxcFull/backend/noticeServices/internal/etcd"
-	"NxcFull/backend/noticeServices/internal/handler"
 	"log"
+	"noticeServices/internal/config"
+	"noticeServices/internal/dao"
+	"noticeServices/internal/etcd"
+	"noticeServices/internal/handler"
 )
 
 var err error

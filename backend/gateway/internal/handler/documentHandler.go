@@ -1,8 +1,8 @@
 package handler
 
 import (
-	pb "NxcFull/backend/gateway/internal/grpc/api/document/proto"
 	sysContext "context"
+	pb "gateway/internal/grpc/api/document/proto"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

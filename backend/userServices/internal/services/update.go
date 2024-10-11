@@ -1,12 +1,12 @@
 package services
 
 import (
-	pb "NxcFull/backend/userServices/api/proto"
-	"NxcFull/backend/userServices/internal/dao"
-	"NxcFull/backend/userServices/internal/model"
 	"context"
 	"log"
 	"net/http"
+	pb "userServices/api/proto"
+	"userServices/internal/dao"
+	"userServices/internal/model"
 )
 
 func (s *UserService) CheckPreviousPassword(ctx context.Context, req *pb.CheckPreviousPasswordRequest) (*pb.CheckPreviousPasswordResponse, error) {

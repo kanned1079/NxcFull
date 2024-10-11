@@ -1,15 +1,15 @@
 package services
 
 import (
-	pb "NxcFull/backend/noticeServices/api/proto"
-	"NxcFull/backend/noticeServices/internal/dao"
-	"NxcFull/backend/noticeServices/internal/model"
 	"context"
 	"encoding/json"
 	"gorm.io/gorm"
 	"log"
 	"math"
 	"net/http"
+	pb "noticeServices/api/proto"
+	"noticeServices/internal/dao"
+	"noticeServices/internal/model"
 )
 
 type NoticeServices struct {

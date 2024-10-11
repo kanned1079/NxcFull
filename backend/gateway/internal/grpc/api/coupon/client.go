@@ -1,8 +1,8 @@
 package coupon
 
 import (
-	"NxcFull/backend/gateway/internal/etcd"
-	pb "NxcFull/backend/gateway/internal/grpc/api/coupon/proto"
+	"gateway/internal/etcd"
+	pb "gateway/internal/grpc/api/coupon/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"

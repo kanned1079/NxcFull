@@ -1,13 +1,13 @@
 package services
 
 import (
-	"NxcFull/backend/systemServices/internal/dao"
-	settings "NxcFull/backend/systemServices/internal/model"
 	"encoding/json"
 	"errors"
 	"gorm.io/gorm"
 	"log"
 	"reflect"
+	"systemServices/internal/dao"
+	settings "systemServices/internal/model"
 )
 
 func UnmarshalSingle(val json.RawMessage) (result string) {

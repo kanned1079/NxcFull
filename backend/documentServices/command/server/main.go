@@ -1,10 +1,10 @@
 package main
 
 import (
-	"NxcFull/backend/documentServices/internal/config"
-	"NxcFull/backend/documentServices/internal/dao"
-	"NxcFull/backend/documentServices/internal/etcd"
-	"NxcFull/backend/documentServices/internal/handler"
+	"documentServices/internal/config"
+	"documentServices/internal/dao"
+	"documentServices/internal/etcd"
+	"documentServices/internal/handler"
 	"log"
 )
 

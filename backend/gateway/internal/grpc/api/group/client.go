@@ -1,8 +1,8 @@
 package group
 
 import (
-	"NxcFull/backend/gateway/internal/etcd"
-	pb "NxcFull/backend/gateway/internal/grpc/api/group/proto"
+	"gateway/internal/etcd"
+	pb "gateway/internal/grpc/api/group/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"

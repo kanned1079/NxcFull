@@ -1,11 +1,11 @@
 package main
 
 import (
-	"NxcFull/backend/systemServices/internal/config"
-	"NxcFull/backend/systemServices/internal/dao"
-	"NxcFull/backend/systemServices/internal/etcd"
-	"NxcFull/backend/systemServices/internal/handler"
 	"log"
+	"systemServices/internal/config"
+	"systemServices/internal/dao"
+	"systemServices/internal/etcd"
+	"systemServices/internal/handler"
 )
 
 var err error
