@@ -4,27 +4,26 @@ import (
 	pb "NxcFull/backend/gateway/internal/grpc/api/settings/proto"
 	sysContext "context"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 )
 
 // 辅助函数：将 Go 的 `any` 类型转换为 gRPC 的 `*pb.Value`
-func anyToProtoValue(val any) (*pb.Value, error) {
-	switch v := val.(type) {
-	case string:
-		return &pb.Value{Kind: &pb.Value_StringValue{StringValue: v}}, nil
-	case int:
-		return &pb.Value{Kind: &pb.Value_IntValue{IntValue: int64(v)}}, nil
-	case bool:
-		return &pb.Value{Kind: &pb.Value_BoolValue{BoolValue: v}}, nil
-	case float64:
-		return &pb.Value{Kind: &pb.Value_DoubleValue{DoubleValue: v}}, nil
-	default:
-		return nil, fmt.Errorf("unsupported type: %T", v)
-	}
-}
+//func anyToProtoValue(val any) (*pb.Value, error) {
+//	switch v := val.(type) {
+//	case string:
+//		return &pb.Value{Kind: &pb.Value_StringValue{StringValue: v}}, nil
+//	case int:
+//		return &pb.Value{Kind: &pb.Value_IntValue{IntValue: int64(v)}}, nil
+//	case bool:
+//		return &pb.Value{Kind: &pb.Value_BoolValue{BoolValue: v}}, nil
+//	case float64:
+//		return &pb.Value{Kind: &pb.Value_DoubleValue{DoubleValue: v}}, nil
+//	default:
+//		return nil, fmt.Errorf("unsupported type: %T", v)
+//	}
+//}
 
 func HandleUpdateSingleOptions(context *gin.Context) {
 	var req struct {
@@ -68,16 +67,13 @@ func HandleUpdateSingleOptions(context *gin.Context) {
 			"msg":  err.Error(),
 		})
 	}
-	// 保存或更新设置
-	//if err := saveSettingToDB(category, key, req.Value); err != nil {
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"error":   "Failed to update settings",
-	//		"details": err.Error(),
-	//	})
-	//	return
-	//}
-
-	//context.JSON(http.StatusOK, gin.H{"message": "Setting updated successfully"})
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
@@ -93,6 +89,13 @@ func HandleGetSystemSetting(context *gin.Context) {
 		})
 	}
 	//log.Println(string(resp.Settings)) // 此处json格式正确
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	// 反序列化 resp.Settings 到 Go 的 map 或其他结构
 	var settings map[string]interface{}
 	if err := json.Unmarshal(resp.Settings, &settings); err != nil {

@@ -218,12 +218,27 @@ func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *
 func (s *SubscribeServices) GetAllPlans(ctx context.Context, request *pb.GetAllPlansRequest) (*pb.GetAllPlansResponse, error) {
 	var plans []model.Plan
 	//if result := dao.Db.Model(&Plan{}).Find(&plans); result.Error != nil {
-	if result := dao.Db.Model(&model.Plan{}).Order("sort ASC").Find(&plans); result.Error != nil {
-		log.Println(result.Error)
-		return &pb.GetAllPlansResponse{
-			Code: http.StatusInternalServerError,
-			Msg:  "获取订阅列表失败",
-		}, nil
+	log.Println("request.User: ", request.IsUser)
+	if request.IsUser == true {
+		// 如果是用户的请求
+		log.Println("用户的请求")
+		if result := dao.Db.Model(&model.Plan{}).Where("is_sale = ?", true).Order("sort ASC").Find(&plans); result.Error != nil {
+			log.Println(result.Error)
+			return &pb.GetAllPlansResponse{
+				Code: http.StatusInternalServerError,
+				Msg:  "获取订阅列表失败",
+			}, nil
+		}
+	} else {
+		// 如果是管理员的请求
+		log.Println("管理员的请求")
+		if result := dao.Db.Model(&model.Plan{}).Order("sort ASC").Find(&plans); result.Error != nil {
+			log.Println(result.Error)
+			return &pb.GetAllPlansResponse{
+				Code: http.StatusInternalServerError,
+				Msg:  "获取订阅列表失败",
+			}, nil
+		}
 	}
 	return &pb.GetAllPlansResponse{
 		Code:  http.StatusOK,
@@ -302,5 +317,49 @@ func (s *SubscribeServices) DeletePlan(ctx context.Context, request *pb.DeletePl
 	return &pb.DeletePlanResponse{
 		Code: http.StatusOK,
 		Msg:  "删除成功",
+	}, nil
+}
+
+func (s *SubscribeServices) UpdatePlanIsSale(context context.Context, request *pb.UpdatePlanIsSaleRequest) (*pb.UpdatePlanIsSaleResponse, error) {
+	log.Println("UpdatePlanIsSale", request.Id, request.IsSale)
+	var plan = model.Plan{}
+	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", request.Id).First(&plan); result.Error != nil {
+		return &pb.UpdatePlanIsSaleResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查询失败" + result.Error.Error(),
+		}, nil
+	}
+	plan.IsSale = request.IsSale
+	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", request.Id).Update("is_sale", request.IsSale); result.Error != nil {
+		return &pb.UpdatePlanIsSaleResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "保存失败" + result.Error.Error(),
+		}, nil
+	}
+	return &pb.UpdatePlanIsSaleResponse{
+		Code: http.StatusOK,
+		Msg:  "保存成功",
+	}, nil
+}
+
+func (s *SubscribeServices) UpdatePlanRenew(context context.Context, request *pb.UpdatePlanRenewRequest) (*pb.UpdatePlanRenewResponse, error) {
+	log.Println("UpdatePlanRenew", request.Id, request.IsRenew)
+	var plan = model.Plan{}
+	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", request.Id).Update("is_renew", request.IsRenew); result.Error != nil {
+		return &pb.UpdatePlanRenewResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查询失败" + result.Error.Error(),
+		}, nil
+	}
+	plan.IsRenew = request.IsRenew
+	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", request.Id).Updates(&plan); result.Error != nil {
+		return &pb.UpdatePlanRenewResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "保存失败" + result.Error.Error(),
+		}, nil
+	}
+	return &pb.UpdatePlanRenewResponse{
+		Code: http.StatusOK,
+		Msg:  "保存成功",
 	}, nil
 }

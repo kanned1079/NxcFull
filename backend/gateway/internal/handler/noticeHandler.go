@@ -23,6 +23,13 @@ func HandleGetAllNotices(context *gin.Context) {
 			"msg":  err.Error(),
 		})
 	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	//log.Println("通知条数", len(Document))
 	//log.Println(Document)
 	context.JSON(http.StatusOK, gin.H{
@@ -79,6 +86,13 @@ func HandleAddNotice(context *gin.Context) {
 			"msg":  err.Error(),
 		})
 	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
@@ -105,6 +119,13 @@ func HandleDeleteNotice(context *gin.Context) {
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
 	}
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,

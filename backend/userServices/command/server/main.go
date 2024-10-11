@@ -22,7 +22,7 @@ func init() {
 }
 
 func main() {
-	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "userServices", "localhost:50001")
+	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 3600, "userServices", "localhost:50001")
 	handler.RunGRPCServer()
 
 }

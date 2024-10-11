@@ -28,75 +28,19 @@ func HandleGetAllGroups(context *gin.Context) {
 			"msg":  resp.Msg,
 		})
 	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
 		"group_list": resp.GroupList,
 		"msg":        resp.Msg,
 	})
-	// pass
-	//var privilegeGroups []Group
-	//type ResponseData struct {
-	//	Id        int64  `json:"id"`
-	//	Name      string `json:"name"`
-	//	UserCount int64  `json:"user_count"`
-	//	PlanCount int64  `json:"plan_count"`
-	//}
-	//var responseDataList []ResponseData
-	//
-	//// Query all groups from the database
-	//if err := dao.Db.Model(&Group{}).Find(&privilegeGroups).Error; err != nil {
-	//	log.Println(err)
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"code":  http.StatusInternalServerError,
-	//		"msg":   "查询失败",
-	//		"error": err.Error(),
-	//	})
-	//	return
-	//}
-	//
-	//// Populate responseDataList with group information
-	//for _, group := range privilegeGroups {
-	//	temp := ResponseData{
-	//		Id:   group.Id,
-	//		Name: group.Name,
-	//	}
-	//
-	//	// Query PlanCount from Plan database
-	//	var planCount int64
-	//	if err := dao.Db.Model(&subscribePlan.Plan{}).Where("group_id = ?", group.Id).Count(&planCount).Error; err != nil {
-	//		log.Println("Failed to get plan count:", err)
-	//		context.JSON(http.StatusInternalServerError, gin.H{
-	//			"code":  http.StatusInternalServerError,
-	//			"msg":   "查询计划数量失败",
-	//			"error": err.Error(),
-	//		})
-	//		return
-	//	}
-	//	temp.PlanCount = planCount
-	//
-	//	// Query UserCount from ActiveOrders database
-	//	var userCount int64
-	//
-	//	if err := dao.Db.Model(&orders.ActiveOrders{}).Where("group_id = ? && is_active = ?", group.Id, true).Count(&userCount).Error; err != nil {
-	//		log.Println("Failed to get user count:", err)
-	//		context.JSON(http.StatusInternalServerError, gin.H{
-	//			"code":  http.StatusInternalServerError,
-	//			"msg":   "查询用户数量失败",
-	//			"error": err.Error(),
-	//		})
-	//		return
-	//	}
-	//	temp.UserCount = userCount
-	//
-	//	// Append temp to responseDataList
-	//	responseDataList = append(responseDataList, temp)
-	//}
-	//
-	//log.Println(responseDataList)
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code":       http.StatusOK,
-	//	"group_list": responseDataList,
-	//})
+
 }
 
 func HandleAddNewGroup(context *gin.Context) {
@@ -120,6 +64,13 @@ func HandleAddNewGroup(context *gin.Context) {
 			"code": http.StatusInternalServerError,
 			"msg":  resp.Msg,
 		})
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
 	}
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
@@ -155,10 +106,6 @@ func HandleUpdateGroup(context *gin.Context) {
 			"error": err.Error(),
 		})
 	}
-	//groupNewInfo := Group{
-	//	//Id:   putData.Id,
-	//	Name: putData.Name,
-	//}
 	resp, err := grpcClient.GroupServiceClient.UpdateGroup(sysContext.Background(), &pb.UpdateGroupRequest{
 		Id:   putData.Id,
 		Name: putData.Name,
@@ -170,22 +117,17 @@ func HandleUpdateGroup(context *gin.Context) {
 			"msg":  resp.Msg,
 		})
 	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
 	})
-	//if result := dao.Db.Model(&Group{}).Where("id = ?", putData.Id).Updates(&Group{Name: putData.Name}); result.Error != nil {
-	//	log.Println(result.Error)
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"code":  http.StatusInternalServerError,
-	//		"meg":   "保存到数据库失败",
-	//		"error": result.Error.Error(),
-	//	})
-	//}
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code": http.StatusOK,
-	//	"msg":  "更新成功",
-	//})
 }
 
 func HandleDeleteGroup(context *gin.Context) {
@@ -207,23 +149,15 @@ func HandleDeleteGroup(context *gin.Context) {
 			"msg":  resp.Msg,
 		})
 	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
 	})
-	// 从数据库中删除对应 ID 的 Group
-	//if err := dao.Db.Delete(&Group{}, delData.Id).Error; err != nil {
-	//	log.Println(err)
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"code":  http.StatusInternalServerError,
-	//		"msg":   "删除失败",
-	//		"error": err.Error(),
-	//	})
-	//	return
-	//}
-	//
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code": http.StatusOK,
-	//	"msg":  "删除成功",
-	//})
 }

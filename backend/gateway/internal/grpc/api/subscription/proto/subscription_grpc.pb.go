@@ -27,6 +27,8 @@ const (
 	SubscriptionService_AddNewPlan_FullMethodName                = "/subscription.SubscriptionService/AddNewPlan"
 	SubscriptionService_UpdatePlan_FullMethodName                = "/subscription.SubscriptionService/UpdatePlan"
 	SubscriptionService_DeletePlan_FullMethodName                = "/subscription.SubscriptionService/DeletePlan"
+	SubscriptionService_UpdatePlanIsSale_FullMethodName          = "/subscription.SubscriptionService/UpdatePlanIsSale"
+	SubscriptionService_UpdatePlanRenew_FullMethodName           = "/subscription.SubscriptionService/UpdatePlanRenew"
 )
 
 // SubscriptionServiceClient is the client API for SubscriptionService service.
@@ -44,6 +46,8 @@ type SubscriptionServiceClient interface {
 	AddNewPlan(ctx context.Context, in *AddNewPlanRequest, opts ...grpc.CallOption) (*AddNewPlanResponse, error)
 	UpdatePlan(ctx context.Context, in *UpdatePlanRequest, opts ...grpc.CallOption) (*UpdatePlanResponse, error)
 	DeletePlan(ctx context.Context, in *DeletePlanRequest, opts ...grpc.CallOption) (*DeletePlanResponse, error)
+	UpdatePlanIsSale(ctx context.Context, in *UpdatePlanIsSaleRequest, opts ...grpc.CallOption) (*UpdatePlanIsSaleResponse, error)
+	UpdatePlanRenew(ctx context.Context, in *UpdatePlanRenewRequest, opts ...grpc.CallOption) (*UpdatePlanRenewResponse, error)
 }
 
 type subscriptionServiceClient struct {
@@ -134,6 +138,26 @@ func (c *subscriptionServiceClient) DeletePlan(ctx context.Context, in *DeletePl
 	return out, nil
 }
 
+func (c *subscriptionServiceClient) UpdatePlanIsSale(ctx context.Context, in *UpdatePlanIsSaleRequest, opts ...grpc.CallOption) (*UpdatePlanIsSaleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdatePlanIsSaleResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_UpdatePlanIsSale_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionServiceClient) UpdatePlanRenew(ctx context.Context, in *UpdatePlanRenewRequest, opts ...grpc.CallOption) (*UpdatePlanRenewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdatePlanRenewResponse)
+	err := c.cc.Invoke(ctx, SubscriptionService_UpdatePlanRenew_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubscriptionServiceServer is the server API for SubscriptionService service.
 // All implementations must embed UnimplementedSubscriptionServiceServer
 // for forward compatibility.
@@ -149,6 +173,8 @@ type SubscriptionServiceServer interface {
 	AddNewPlan(context.Context, *AddNewPlanRequest) (*AddNewPlanResponse, error)
 	UpdatePlan(context.Context, *UpdatePlanRequest) (*UpdatePlanResponse, error)
 	DeletePlan(context.Context, *DeletePlanRequest) (*DeletePlanResponse, error)
+	UpdatePlanIsSale(context.Context, *UpdatePlanIsSaleRequest) (*UpdatePlanIsSaleResponse, error)
+	UpdatePlanRenew(context.Context, *UpdatePlanRenewRequest) (*UpdatePlanRenewResponse, error)
 	mustEmbedUnimplementedSubscriptionServiceServer()
 }
 
@@ -182,6 +208,12 @@ func (UnimplementedSubscriptionServiceServer) UpdatePlan(context.Context, *Updat
 }
 func (UnimplementedSubscriptionServiceServer) DeletePlan(context.Context, *DeletePlanRequest) (*DeletePlanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePlan not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) UpdatePlanIsSale(context.Context, *UpdatePlanIsSaleRequest) (*UpdatePlanIsSaleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePlanIsSale not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) UpdatePlanRenew(context.Context, *UpdatePlanRenewRequest) (*UpdatePlanRenewResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePlanRenew not implemented")
 }
 func (UnimplementedSubscriptionServiceServer) mustEmbedUnimplementedSubscriptionServiceServer() {}
 func (UnimplementedSubscriptionServiceServer) testEmbeddedByValue()                             {}
@@ -348,6 +380,42 @@ func _SubscriptionService_DeletePlan_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubscriptionService_UpdatePlanIsSale_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePlanIsSaleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).UpdatePlanIsSale(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_UpdatePlanIsSale_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).UpdatePlanIsSale(ctx, req.(*UpdatePlanIsSaleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionService_UpdatePlanRenew_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePlanRenewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).UpdatePlanRenew(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionService_UpdatePlanRenew_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).UpdatePlanRenew(ctx, req.(*UpdatePlanRenewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubscriptionService_ServiceDesc is the grpc.ServiceDesc for SubscriptionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -386,6 +454,14 @@ var SubscriptionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePlan",
 			Handler:    _SubscriptionService_DeletePlan_Handler,
+		},
+		{
+			MethodName: "UpdatePlanIsSale",
+			Handler:    _SubscriptionService_UpdatePlanIsSale_Handler,
+		},
+		{
+			MethodName: "UpdatePlanRenew",
+			Handler:    _SubscriptionService_UpdatePlanRenew_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

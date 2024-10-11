@@ -39,6 +39,13 @@ func HandleUserLogin(context *gin.Context) {
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":      resp.Code,
 		"isAuthed":  resp.IsAuthed,
@@ -76,7 +83,13 @@ func HandleUserRegister(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":          resp.Code,
 		"is_registered": resp.IsRegistered,
@@ -111,6 +124,13 @@ func HandleCheckPreviousPassword(context *gin.Context) {
 			"code":  http.StatusInternalServerError,
 			"error": err.Error(),
 		})
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
 	}
 	log.Println(resp)
 
@@ -148,6 +168,13 @@ func HandleApplyNewPassword(context *gin.Context) {
 			"code":  http.StatusInternalServerError,
 			"error": err.Error(),
 		})
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
 	}
 	log.Println(resp)
 

@@ -23,6 +23,10 @@ service SubscriptionService {
   rpc UpdatePlan(UpdatePlanRequest) returns (UpdatePlanResponse);
 
   rpc DeletePlan(DeletePlanRequest) returns (DeletePlanResponse);
+
+  rpc UpdatePlanIsSale(UpdatePlanIsSaleRequest) returns (UpdatePlanIsSaleResponse);
+
+  rpc UpdatePlanRenew(UpdatePlanRenewRequest) returns (UpdatePlanRenewResponse);
 }
 
 message GetAllPlanKeyNameRequest {
@@ -126,7 +130,9 @@ message Plan {
   string deleted_at = 16;    // 删除时间
 }
 // 获取订阅列表的请求和响应
-message GetAllPlansRequest {}
+message GetAllPlansRequest {
+  bool is_user = 1;
+}
 
 
 message GetAllPlansResponse {
@@ -184,6 +190,30 @@ message DeletePlanRequest {
 }
 
 message DeletePlanResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// -------------------------
+
+message UpdatePlanIsSaleRequest {
+  int64 id = 1;
+  bool is_sale = 2;
+}
+
+message UpdatePlanIsSaleResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// -----------
+
+message UpdatePlanRenewRequest {
+  int64 id = 1;
+  bool is_renew = 2;
+}
+
+message UpdatePlanRenewResponse {
   int32 code = 1;
   string msg = 2;
 }

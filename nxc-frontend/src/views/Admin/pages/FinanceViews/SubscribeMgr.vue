@@ -3,6 +3,7 @@ import {onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import usePaymentStore from "@/stores/usePaymentStore";
+import useUserInfoStore from "@/stores/useUserInfoStore";
 import type {DrawerPlacement, FormInst, NotificationType} from 'naive-ui'
 import {NButton, NSwitch, NTag, useMessage, useNotification} from 'naive-ui'
 import instance from "@/axios";
@@ -11,10 +12,11 @@ import instance from "@/axios";
 const notification = useNotification()
 const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
+const userInfoStore = useUserInfoStore();
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 
-let editType = ref<'add'| 'update'>('add') // 这里可以选择的是add和update
+let editType = ref<'add' | 'update'>('add') // 这里可以选择的是add和update
 
 interface Plan {
   id: number
@@ -150,18 +152,17 @@ let submitNewPlan = async () => {
 
 let submitPlan = async () => {
   console.log(formValue.value)
-  switch (editType.value){
+  switch (editType.value) {
     case 'add': {
       await submitNewPlan()
       break
     }
-      case 'update': {
-        await updatePlan()
-        break
-      }
+    case 'update': {
+      await updatePlan()
+      break
+    }
   }
 }
-
 
 
 interface GroupItemFromServer {
@@ -176,7 +177,7 @@ interface GroupItemFromServer {
 let getAllGroups = async () => {
   try {
     // groupList.value = []
-    let {data} = await instance.get('/api/admin/v1/groups')
+    let {data} = await instance.get('/api/admin/v1/groups', )
     if (data.code === 200) {
       console.log('获取到的权限组列表', data)
       // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
@@ -199,23 +200,6 @@ let notify = (type: NotificationType, title: string, meta: string) => {
   })
 }
 
-// 表格操作
-// interface RowData {
-//   id: number
-//   isSale: boolean
-//   isRenew: boolean
-//   sort: number
-//   group: string
-//   name: string
-//   quantity: number
-//   residue: number
-//   monthPrice: number
-//   quarterPrice: number
-//   halfYearPrice: number
-//   yearPrice: number
-// }
-
-
 
 // let planlist = ref<Plan[]>([])
 
@@ -230,7 +214,7 @@ const columns = [
     render(row: Plan) {
       return h(NSwitch, {
         value: row.is_sale,
-        onUpdateValue: (value) => toggleSale(row.id, value)
+        onUpdateValue: (value) => updateRowIsSale(row.id, value)
       });
     }
   },
@@ -240,7 +224,7 @@ const columns = [
     render(row: Plan) {
       return h(NSwitch, {
         value: row.is_renew,
-        onUpdateValue: (value) => toggleRenew(row.id, value)
+        onUpdateValue: (value) => updateRowRenew(row.id, value)
       });
     }
   },
@@ -248,7 +232,7 @@ const columns = [
     title: '排序',
     key: 'sort',
     render(row: Plan) {
-      return h(NTag, {}, {default: () => row.hasOwnProperty('sort')?row.sort.toString():'null'});
+      return h(NTag, {}, {default: () => row.hasOwnProperty('sort') ? row.sort.toString() : 'null'});
     }
   },
   {
@@ -256,7 +240,7 @@ const columns = [
     key: 'group',
     render(row: Plan) {
       const group = groupOptions.value.find(option => option.value === row.group_id);
-      return h(NTag, {}, { default: () => group ? group.label : '未知' });
+      return h(NTag, {}, {default: () => group ? group.label : '未知'});
     }
   },
   {
@@ -275,28 +259,28 @@ const columns = [
     title: '月付价格',
     key: 'month_price',
     render(row: Plan): any {
-      return row.month_price.toFixed(2)
+      return row.hasOwnProperty('month_price') ? row.month_price.toFixed(2) : 'null'
     }
   },
   {
     title: '季付价格',
     key: 'quarter_price',
     render(row: Plan): any {
-      return row.quarter_price.toFixed(2)
+      return row.hasOwnProperty('quarter_price') ? row.quarter_price.toFixed(2) : 'null'
     }
   },
   {
     title: '半年付价格',
     key: 'halfYear_price',
     render(row: Plan): any {
-      return row.half_year_price.toFixed(2)
+      return row.hasOwnProperty('half_year_price') ? row.half_year_price.toFixed(2) : 'null'
     }
   },
   {
     title: '年付价格',
     key: 'year_price',
     render(row: Plan): any {
-      return row.year_price.toFixed(2)
+      return row.hasOwnProperty('year_price') ? row.year_price.toFixed(2) : 'null'
     }
   },
   {
@@ -365,6 +349,44 @@ let handleDelete = async (planId: number) => {
       notify('error', '删除失败', data.error)
     }
   } catch (error) {
+    console.log(error)
+  }
+}
+
+let updateRowIsSale = async (id: number, val: boolean) => {
+  console.log('updateRowIsSale: ', val)
+  try {
+    let {data} = await instance.put('/api/admin/v1/plan/sale', {
+      id,
+      is_sale: val,
+    })
+    if (data.code === 200) {
+      notify('success', '更新成功')
+      await paymentStore.getAllPlans()
+    } else {
+      notify('error', '更新失败')
+
+    }
+  } catch (error: Error) {
+    console.log(error)
+  }
+}
+
+let updateRowRenew = async (id: number, val: boolean) => {
+  console.log(val)
+  try {
+    let {data} = await instance.put('/api/admin/v1/plan/renew', {
+      id,
+      is_renew: val,
+    })
+    if (data.code === 200) {
+      notify('success', '更新成功')
+      await paymentStore.getAllPlans()
+    } else {
+      notify('error', '更新失败')
+
+    }
+  } catch (error: Error) {
     console.log(error)
   }
 }
@@ -463,7 +485,10 @@ export default {
         </n-form>
         <div style="display: flex; flex-direction: row; justify-content: right; margin-top: 20px">
           <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">取消</n-button>
-          <n-button style="width: 80px" type="primary" @click="submitPlan">{{ editType === 'add'?'添加':'修改' }}</n-button>
+          <n-button style="width: 80px" type="primary" @click="submitPlan">{{
+              editType === 'add' ? '添加' : '修改'
+            }}
+          </n-button>
         </div>
       </n-drawer-content>
     </n-drawer>

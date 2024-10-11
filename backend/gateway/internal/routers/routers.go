@@ -68,11 +68,13 @@ func StartApiGateways() {
 
 		//adminAuthorized.POST("/mail/test", HandleSendTestMail)               // 发送测试邮件
 
-		adminAuthorized.GET("/plan", handler.HandleGetAllPlans) // 获取所有的订阅
-		adminAuthorized.POST("/plan", handler.HandleAddNewPlan) // 添加新的订阅
-		adminAuthorized.PUT("/plan", handler.HandleUpdatePlan)
-		adminAuthorized.DELETE("/plan", handler.HandleDeletePlan)
-		adminAuthorized.GET("/plan/kv", handler.HandleGetAllPlanKeyName)
+		adminAuthorized.GET("/plan", handler.HandleGetAllPlans)          // 获取所有的订阅
+		adminAuthorized.POST("/plan", handler.HandleAddNewPlan)          // 添加新的订阅
+		adminAuthorized.PUT("/plan", handler.HandleUpdatePlan)           // 修改订阅的细节
+		adminAuthorized.DELETE("/plan", handler.HandleDeletePlan)        // 删除指定的订阅
+		adminAuthorized.GET("/plan/kv", handler.HandleGetAllPlanKeyName) // 获取订阅计划的键值对
+		adminAuthorized.PUT("plan/sale", handler.HandleUpdatePlanSale)   // 更新是否启用销售
+		adminAuthorized.PUT("plan/renew", handler.HandleUpdatePlanRenew) // 更新是否允许续费
 
 		adminAuthorized.POST("/document/add", handler.HandleAddNewDocument) // 添加一条说明文档
 		//

@@ -3,6 +3,7 @@ import {defineStore} from "pinia";
 import instance from "@/axios";
 // import {useMessage} from "naive-ui"
 import useApiAddrStore from "@/stores/useApiAddrStore";
+import useUserInfoStore from "@/stores/useUserInfoStore";
 
 export interface Plan {
     id: number
@@ -33,13 +34,19 @@ interface ConfirmOrder {
 }
 
 const usePaymentStore = defineStore('paymentStore', () => {
+    const userInfoStore = useUserInfoStore()
     let plan_list = ref<Plan[]>([])
 
     let getAllPlans = async () => {
-        let apiAddrStore = useApiAddrStore()
+        // let apiAddrStore = useApiAddrStore()
         try {
             plan_list.value = []
-            let {data} = await instance.get('http://localhost:8081/api/user/v1/plan')
+            let {data} = await instance.get('/api/user/v1/plan', {
+               params: {
+                   is_user: !userInfoStore.thisUser.isAdmin
+                   // is_user: false
+               }
+            })
             if (data.code === 200) {
                 data.plans.forEach((item: Plan) => plan_list.value.push(item))
                 // plan_list.value = data.plans
