@@ -22,41 +22,6 @@ const useNoticesStore = defineStore('NoticesStore', () => {
 
     let noticesArr = reactive<Notice[]>([])
 
-    // // 获取所有的通知
-    // let getAllNotices = async () => {
-    //     try {
-    //         let {data} = await instance.get('/api/admin/get-all-Document')
-    //         if (data.code === 200) {
-    //             // console.log(data.Document)
-    //             noticesArr = data.Document
-    //             console.log('axios获取的数据', noticesArr)
-    //             // createData()
-    //         } else {
-    //             message.error('获取失败')
-    //         }
-    //     } catch (err) {
-    //         message.error('未知错误 ' + err)
-    //     }
-    // }
-    //
-    // // 删除一条通知
-    // let deleteNotice = async (id: number) => {
-    //     const message = useMessage()
-    //     try {
-    //         let {data} = await instance.delete('/api/admin/delete-notice',
-    //             {
-    //                 params: {notice_id: notice_id,},
-    //             },
-    //         )
-    //         data.code === 200 ? message.success("删除成功") : message.error("出现错误")
-    //     } catch (err) {
-    //         message.error("奇怪的错误" + err)
-    //     }
-    //     // console.log(data)
-    // }
-
-
-
     return {
         noticesArr,
         // getAllNotices,

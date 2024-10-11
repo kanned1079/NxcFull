@@ -62,9 +62,11 @@ func StartApiGateways() {
 		//
 		//adminAuthorized.GET("/users", handleGetUserList) // 获取所有用户的列表
 		//
-		adminAuthorized.GET("/notice", handler.HandleGetAllNotices)   // 获取所有通知列表
-		adminAuthorized.PUT("/notice", handler.HandleAddNotice)       // 添加一条新的通知
-		adminAuthorized.DELETE("/notice", handler.HandleDeleteNotice) // 删除一条通知
+		adminAuthorized.GET("/notice", handler.HandleGetAllNotices)             // 获取所有通知列表
+		adminAuthorized.POST("/notice", handler.HandleAddNotice)                // 添加一条新的通知
+		adminAuthorized.PUT("notice", handler.HandleUpdateNotice)               // 修改通知信息
+		adminAuthorized.PUT("/notice/status", handler.HandleUpdateNoticeStatus) // 更新通知的状态
+		adminAuthorized.DELETE("/notice", handler.HandleDeleteNotice)           // 删除一条通知
 
 		//adminAuthorized.POST("/mail/test", HandleSendTestMail)               // 发送测试邮件
 

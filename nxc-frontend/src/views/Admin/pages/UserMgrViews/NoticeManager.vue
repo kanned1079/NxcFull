@@ -1,15 +1,43 @@
 <script setup lang="ts">
-import {onMounted, reactive, ref, h} from "vue";
+import {h, onMounted, reactive, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore"
 import instance from "@/axios";
-import type {DataTableColumns} from 'naive-ui'
 import {NButton, NSwitch, useMessage} from 'naive-ui'
-import useNoticesStore from "@/stores/useNoticesStore";
+// import useNoticesStore from "@/stores/useNoticesStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
+import {formatDate} from "@/utils/timeFormat"
+
+let pageCount = ref(10)
+
+let dataSize = ref<{ pageSize: number, page: number }>({
+  pageSize: 10,
+  page: 1,
+})
+
+let dataCountOptions = [
+  {
+    label: '10条数据/页',
+    value: 10,
+  },
+  {
+    label: '20条数据/页',
+    value: 20,
+  },
+  {
+    label: '50条数据/页',
+    value: 50,
+  },
+  {
+    label: '100条数据/页',
+    value: 100,
+  },
+]
+
+
 const apiAddrStore = useApiAddrStore();
 
 const themeStore = useThemeStore()
-const noticesStore = useNoticesStore()
+// const noticesStore = useNoticesStore()
 const message = useMessage()
 
 interface formData {
@@ -32,7 +60,7 @@ let formData = reactive<formData>({
 let showModal = ref(false)
 
 // 接口
-interface Notices {
+interface Notice {
   id: number,
   title: string,
   content: string,
@@ -44,8 +72,10 @@ interface Notices {
   deleted_at?: string,
 }
 
+let noticesArr = ref<Notice[]>([])
+
 // 添加新的
-let handleAddNotice =  () => {
+let handleAddNotice = () => {
   console.log('处理添加一条通知')
   showModal.value = true
 
@@ -62,58 +92,64 @@ let submitModal = async () => {
   if (data.code === 200) {
     message.success("添加成功")
   }
+  await getAllNotices()
 
 }
 
-
-let createColumns = ({sendMail}: { sendMail: (rowData: Notices) => void }): DataTableColumns<Notices> => {
-  return [
-    {
-      title: 'ID',
-      key: 'id',
-    },
-    {
-      title: '是否显示',
-      key: 'show',
-      render(row) {
-        return h(NSwitch, {
+const columns = [
+  {
+    title: '#',
+    key: 'id',
+    render(row: Notice) {
+      return h('p', {}, row.id);
+    }
+  },
+  {
+    title: '是否显示',
+    key: 'show',
+    render(row: Notice) {
+      return h(NSwitch, {
+        value: row.show,
+        onUpdateValue: (value) => updateNoticeEnabled(row.id, value),
+      });
+    }
+  },
+  {
+    title: '标题',
+    key: 'title',
+    render(row: Notice) {
+      return h('p', {}, row.title);
+    }
+  },
+  {
+    title: '创建时间',
+    key: 'created_at',
+    render(row: Notice) {
+      return h('p', {}, formatDate(row.created_at));
+    }
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    render(row: Notice) {
+      return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
+        h(NButton, {
           size: 'small',
-          value: row.show,
-        })
-      }
-    },
-    {
-      title: '标题',
-      key: 'title'
-    },
-    {
-      title: '创建时间',
-      key: 'created_at',
-
-    },
-    {
-      title: '操作',
-      key: 'operate',
-      render(row) {
-        return h(
-            NButton,
-            {
-              size: 'small',
-              onClick: () => sendMail(row)
-            },
-            {default: () => 'Send Email'}
-        )
-      }
-    },
-
-  ]
-}
-
-// let columns = createColumns({
-//   sendMail(rowData) {
-//     message.info(`send mail to ${rowData.name}`)
-//   }
-// })
+          type: 'primary',
+          bordered: false,
+          style: {marginLeft: '10px'},
+          onClick: () => editItem(row.id)
+        }, {default: () => '编辑'}),
+        h(NButton, {
+          size: 'small',
+          type: 'error',
+          style: {marginLeft: '10px'},
+          onClick: () => deleteItem(row.id)
+        }, {default: () => '删除'})
+      ]);
+    }
+  }
+];
 
 let pagination = {
   pageSize: 10
@@ -121,18 +157,43 @@ let pagination = {
 
 // 获取所有的通知
 let getAllNotices = async () => {
+  noticesArr.value = []
   try {
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/notice')
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/notice', {
+      params: {
+        page: dataSize.value.page,
+        size: dataSize.value.pageSize,
+        is_user: false,
+      }
+    })
     if (data.code === 200) {
       // console.log(data.Document)
-      noticesStore.noticesArr = data.notices
-      console.log('axios获取的数据', noticesStore.noticesArr)
+      // noticesStore.noticesArr = data.notices
+      data.notices.forEach((notice: Notice) => noticesArr.value.push(notice))
+      pageCount.value = data.page_count
+      // console.log('axios获取的数据', noticesStore.noticesArr)
       // createData()
     } else {
       message.error('获取失败')
     }
   } catch (err) {
     message.error('未知错误 ' + err)
+  }
+}
+
+let updateNoticeEnabled = async (id: number, enabled: boolean) => {
+  console.log("new: ", id, enabled)
+  try {
+    let {data} = await instance.put('/api/admin/v1/notice/status', {
+      id,
+      is_show: enabled,
+    })
+    if (data.code === 200) {
+      console.log('更新成功')
+    }
+    await getAllNotices()
+  } catch (error: any) {
+    console.log(error)
   }
 }
 
@@ -152,10 +213,11 @@ let deleteNotice = async (id: number) => {
   // console.log(data)
 }
 
+
 onMounted(() => {
   console.log('NoticeManager挂载')
   getAllNotices()
-  console.log(noticesStore.noticesArr)
+  // console.log(noticesStore.noticesArr)
   // noticesStore.aa()
 
   // 保存历史记录
@@ -181,55 +243,83 @@ export default {
     <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">
       <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>
       <n-button type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试</n-button>
-<!--      <n-data-table-->
-<!--          style="margin-top: 20px"-->
-<!--          :bordered="false"-->
-<!--          :columns="columns"-->
-<!--          :data="noticesStore.noticesArr"-->
-<!--          :pagination="pagination"-->
-<!--      />-->
+      <!--      <n-data-table-->
+      <!--          style="margin-top: 20px"-->
+      <!--          :bordered="false"-->
+      <!--          :columns="columns"-->
+      <!--          :data="noticesStore.noticesArr"-->
+      <!--          :pagination="pagination"-->
+      <!--      />-->
 
-      <n-modal
-          title="新建通知"
-          v-model:show="showModal"
-          preset="dialog"
-          positive-text="确认添加"
-          negative-text="算了"
-          style="width: 480px"
-          @positive-click="submitModal"
-          @negative-click="closeModal"
-          :show-icon="false"
-      >
-        <!--          pass-->
-        <div style="margin-top: 30px"></div>
-
-        <n-form-item path="age" label="标题">
-          <n-input @keydown.enter.prevent placeholder="输入通知标题" v-model:value="formData.title"/>
-        </n-form-item>
-
-        <n-form-item path="age" label="公告内容">
-          <n-input type="textarea" placeholder="输入公告内容" :rows="8" show-count v-model:value="formData.content"/>
-        </n-form-item>
-
-        <n-form-item path="age" label="公告标签">
-          <n-input @keydown.enter.prevent placeholder="输入公告的标签" v-model:value="formData.tags"/>
-        </n-form-item>
-
-        <n-form-item path="age" label="图片URL">
-          <n-input @keydown.enter.prevent placeholder="输入背景图片的URL" v-model:value="formData.img_url"/>
-        </n-form-item>
-
-
-        <!--          pass-->
-        <template #footer>
-          尾部
-        </template>
-
-
-      </n-modal>
 
     </n-card>
+
+    <n-card :embedded="true" hoverable :bordered="false" content-style="padding: 0px" style="margin-top: 20px">
+      <n-data-table
+          class="table"
+          :columns="columns"
+          :data="noticesArr"
+          :pagination="false"
+          :bordered="true"
+          style=""
+          :scroll-x="800"
+      />
+    </n-card>
+
+    <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+      <n-pagination
+          size="medium"
+          v-model:page.number="dataSize.page"
+          :page-count="pageCount"
+          @update:page="getAllNotices() "
+      />
+      <n-select
+          style="width: 160px; margin-left: 20px"
+          v-model:value.number="dataSize.pageSize"
+          size="small"
+          :options="dataCountOptions"
+          :remote="true"
+          @update:value="dataSize.page = 1; getAllNotices()"
+      />
+    </div>
   </div>
+
+  <n-modal
+      title="新建通知"
+      v-model:show="showModal"
+      preset="dialog"
+      positive-text="确认添加"
+      negative-text="算了"
+      style="width: 480px"
+      @positive-click="submitModal"
+      @negative-click="closeModal"
+      :show-icon="false"
+  >
+    <!--          pass-->
+    <div style="margin-top: 30px"></div>
+
+    <n-form-item path="age" label="标题">
+      <n-input @keydown.enter.prevent placeholder="输入通知标题" v-model:value="formData.title"/>
+    </n-form-item>
+
+    <n-form-item path="age" label="公告内容">
+      <n-input type="textarea" placeholder="输入公告内容" :rows="8" show-count v-model:value="formData.content"/>
+    </n-form-item>
+
+    <n-form-item path="age" label="公告标签">
+      <n-input @keydown.enter.prevent placeholder="输入公告的标签" v-model:value="formData.tags"/>
+    </n-form-item>
+
+    <n-form-item path="age" label="图片URL">
+      <n-input @keydown.enter.prevent placeholder="输入背景图片的URL" v-model:value="formData.img_url"/>
+    </n-form-item>
+
+
+    <!--          pass-->
+    <template #footer>
+      尾部
+    </template>
+  </n-modal>
 </template>
 
 <style lang="less" scoped>

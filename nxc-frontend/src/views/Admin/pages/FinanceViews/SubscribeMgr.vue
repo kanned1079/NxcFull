@@ -190,7 +190,7 @@ let getAllGroups = async () => {
   }
 }
 
-let notify = (type: NotificationType, title: string, meta: string) => {
+let notify = (type: NotificationType, title: string, meta?: string) => {
   notification[type]({
     content: title,
     meta: meta,

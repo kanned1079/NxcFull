@@ -3,26 +3,64 @@ package handler
 import (
 	pb "NxcFull/backend/gateway/internal/grpc/api/notice/proto"
 	sysContext "context"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
 )
 
+//func HandleGetAllNotices(context *gin.Context) {
+//	resp, err := grpcClient.NoticeServiceClient.GetAllNotices(sysContext.Background(), &pb.GetAllNoticesRequest{})
+//	if err != nil {
+//		log.Println(err)
+//		context.JSON(http.StatusOK, gin.H{
+//			"code": http.StatusInternalServerError,
+//			"msg":  err.Error(),
+//		})
+//	}
+//	if resp == nil {
+//		context.JSON(http.StatusOK, gin.H{
+//			"code": http.StatusInternalServerError,
+//			"msg":  "调用rpc服务器失败无返回值",
+//		})
+//		return
+//	}
+//	context.JSON(http.StatusOK, gin.H{
+//		"code":    resp.Code,
+//		"notices": ,
+//		"msg":     resp.Msg,
+//		"page_count": resp.PageCount,
+//	})
+//}
+
+// v2
 func HandleGetAllNotices(context *gin.Context) {
-	//var notices []publicNotice.PublicNotices
-	//result := dao.Db.Model(&publicNotice.PublicNotices{}).Where("deleted_at is null").Find(&notices)
-	//if result.Error != nil {
-	//	log.Print(result.Error)
-	//}
-	resp, err := grpcClient.NoticeServiceClient.GetAllNotices(sysContext.Background(), &pb.GetAllNoticesRequest{})
+	queryData := &struct {
+		Page   int64 `form:"page" json:"page"`
+		Size   int64 `form:"size" json:"size"`
+		IsUser bool  `form:"is_user" json:"is_user"`
+	}{}
+	if err := context.ShouldBindQuery(queryData); err != nil {
+		log.Println(err)
+	}
+	log.Println(queryData)
+	// 调用 gRPC 客户端获取通知
+	resp, err := grpcClient.NoticeServiceClient.GetAllNotices(sysContext.Background(), &pb.GetAllNoticesRequest{
+		Page:   queryData.Page,
+		Size:   queryData.Size,
+		IsUser: queryData.IsUser,
+	})
 	if err != nil {
 		log.Println(err)
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
+		return
 	}
+
+	// 检查返回是否为 nil
 	if resp == nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
@@ -30,12 +68,26 @@ func HandleGetAllNotices(context *gin.Context) {
 		})
 		return
 	}
-	//log.Println("通知条数", len(Document))
-	//log.Println(Document)
+
+	// 反序列化 notices
+	var notices []map[string]interface{}
+	log.Println(string(resp.Notices))
+	err = json.Unmarshal(resp.Notices, &notices)
+	if err != nil {
+		log.Println("反序列化通知列表失败:", err)
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "通知列表反序列化失败: " + err.Error(),
+		})
+		return
+	}
+
+	// 返回响应给前端
 	context.JSON(http.StatusOK, gin.H{
-		"code":    resp.Code,
-		"notices": resp.Notices,
-		"msg":     resp.Msg,
+		"code":       resp.Code,
+		"notices":    notices, // 返回反序列化后的通知数据
+		"msg":        resp.Msg,
+		"page_count": resp.PageCount, // 总页数
 	})
 }
 
@@ -61,18 +113,6 @@ func HandleAddNotice(context *gin.Context) {
 		})
 	}
 	log.Println(formData)
-	//var notice publicNotice.PublicNotices
-	//notice.Title = formData.Title
-	//notice.Content = formData.Content
-	//notice.Tags = formData.Tags
-	//notice.ImgUrl = formData.ImgUrl
-	//if result := dao.Db.Model(&publicNotice.PublicNotices{}).Create(&notice); result.Error != nil {
-	//	log.Println("新建通知错误", result.Error)
-	//} else {
-	//	context.JSON(http.StatusOK, gin.H{
-	//		"code": http.StatusOK,
-	//	})
-	//}
 	resp, err := grpcClient.NoticeServiceClient.AddNotice(sysContext.Background(), &pb.AddNoticeRequest{
 		Title:   formData.Title,
 		Content: formData.Content,
@@ -97,6 +137,47 @@ func HandleAddNotice(context *gin.Context) {
 		"code": resp.Code,
 		"msg":  resp.Msg,
 	})
+}
+
+func HandleUpdateNoticeStatus(context *gin.Context) {
+	postData := &struct {
+		Id     int64 `form:"id" json:"id"`
+		IsShow bool  `form:"is_show" json:"is_show"`
+	}{}
+	if err := context.ShouldBind(&postData); err != nil {
+		log.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+	}
+	log.Println(postData)
+	resp, err := grpcClient.NoticeServiceClient.UpdateNoticeStatus(sysContext.Background(), &pb.UpdateNoticeStatusRequest{
+		Id:     postData.Id,
+		IsShow: postData.IsShow,
+	})
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}
+
+func HandleUpdateNotice(context *gin.Context) {
+
 }
 
 func HandleDeleteNotice(context *gin.Context) {
@@ -132,17 +213,4 @@ func HandleDeleteNotice(context *gin.Context) {
 		"msg":  resp.Msg,
 	})
 
-	//if err = dao.Db.Model(&publicNotice.PublicNotices{}).Where("id = ?", deleteNotice.NoticeId).Delete(&publicNotice.PublicNotices{}).Error; err != nil {
-	//	log.Println(err)
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"code":  http.StatusInternalServerError,
-	//		"error": err.Error(),
-	//		"msg":   "删除失败",
-	//	})
-	//} else {
-	//	context.JSON(http.StatusOK, gin.H{
-	//		"code": http.StatusOK,
-	//		"msg":  "删除成功",
-	//	})
-	//}
 }

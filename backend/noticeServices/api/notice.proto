@@ -18,12 +18,18 @@ message PublicNotice {
 }
 
 // 获取所有通知的请求与响应
-message GetAllNoticesRequest {}
+message GetAllNoticesRequest {
+  int64 size = 1;
+  int64 page = 2;
+  bool is_user = 3;
+}
 
 message GetAllNoticesResponse {
   int32 code = 1;
-  repeated PublicNotice notices = 2;
-  string msg = 3;
+//  repeated PublicNotice notices = 2;
+  bytes notices = 3;
+  string msg = 4;
+  int64 page_count = 5;
 }
 
 // 添加通知的请求与响应
@@ -50,9 +56,22 @@ message DeleteNoticeResponse {
   string msg = 2;
 }
 
+// -------------
+
+  message UpdateNoticeStatusRequest {
+    int64 id = 1;
+    bool is_show = 2;
+  }
+
+  message UpdateNoticeStatusResponse {
+    int32 code = 1;
+    string msg = 2;
+  }
+
 // 定义服务接口
 service NoticeService {
   rpc GetAllNotices (GetAllNoticesRequest) returns (GetAllNoticesResponse);
   rpc AddNotice (AddNoticeRequest) returns (AddNoticeResponse);
   rpc DeleteNotice (DeleteNoticeRequest) returns (DeleteNoticeResponse);
+  rpc UpdateNoticeStatus (UpdateNoticeStatusRequest) returns (UpdateNoticeStatusResponse);
 }
