@@ -9,6 +9,9 @@ service GroupService {
   // 获取所有组
   rpc GetAllGroups (GetAllGroupsRequest) returns (GetAllGroupsResponse);
 
+  // 获取所有组的键值
+  rpc GetAllGroupsKv (GetAllGroupsKvRequest) returns (GetAllGroupsKvResponse);
+
   // 添加新组
   rpc AddNewGroup (AddNewGroupRequest) returns (AddNewGroupResponse);
 
@@ -32,6 +35,7 @@ message GetAllGroupsResponse {
   int32 code = 1;
   string msg = 2;
   repeated ResponseGroup group_list = 3;
+  int64 page_count = 4;
 
 }
 
@@ -84,6 +88,23 @@ message ResponseGroup {
   string name = 2;
   int64 user_count = 3;
   int64 plan_count = 4;
+}
+
+// -----------
+
+message ResponseGroupKv {
+  int64 id = 1;
+  string name = 2;
+}
+
+message GetAllGroupsKvRequest {
+
+}
+
+message GetAllGroupsKvResponse {
+  int32 code = 1;
+  string msg = 2;
+  repeated ResponseGroupKv group_list = 3;
 }
 
 

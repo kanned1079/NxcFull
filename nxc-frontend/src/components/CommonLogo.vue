@@ -1,4 +1,4 @@
-<script setup lang="ts" name="CommonLogo">
+<script setup lang="ts">
 import {defineComponent} from 'vue'
 import {useRouter} from 'vue-router'
 import useThemeStore from '@/stores/useThemeStore'
@@ -15,6 +15,12 @@ let backDashBoard = () => {
 
 }
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'CommonLogo',
+}
 </script>
 
 <template>

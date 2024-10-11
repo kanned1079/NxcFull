@@ -176,8 +176,7 @@ interface GroupItemFromServer {
 
 let getAllGroups = async () => {
   try {
-    // groupList.value = []
-    let {data} = await instance.get('/api/admin/v1/groups', )
+    let {data} = await instance.get('/api/admin/v1/groups/kv', )
     if (data.code === 200) {
       console.log('获取到的权限组列表', data)
       // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))

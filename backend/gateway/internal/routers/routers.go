@@ -80,6 +80,7 @@ func StartApiGateways() {
 		//
 		adminAuthorized.POST("/groups", handler.HandleAddNewGroup) // 添加权限组
 		adminAuthorized.GET("/groups", handler.HandleGetAllGroups) // 获取所有权限组列表
+		adminAuthorized.GET("groups/kv", handler.HandleGetAllGroupsKv)
 		adminAuthorized.PUT("/groups", handler.HandleUpdateGroup)
 		adminAuthorized.DELETE("/groups", handler.HandleDeleteGroup)
 		//

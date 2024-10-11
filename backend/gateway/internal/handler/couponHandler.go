@@ -107,7 +107,18 @@ func HandleVerifyCoupon(context *gin.Context) {
 }
 
 func HandleGetAllCoupons(context *gin.Context) {
-	resp, err := grpcClient.CouponServiceClient.GetAllCoupons(sysContext.Background(), &pb.GetAllCouponsRequest{})
+	pageData := &struct {
+		Page int64 `form:"page" json:"page"`
+		Size int64 `form:"size" json:"size"`
+	}{}
+	if err := context.ShouldBindQuery(pageData); err != nil {
+		log.Println(err)
+	}
+	log.Println(pageData)
+	resp, err := grpcClient.CouponServiceClient.GetAllCoupons(sysContext.Background(), &pb.GetAllCouponsRequest{
+		Page: pageData.Page,
+		Size: pageData.Size,
+	})
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
@@ -124,6 +135,8 @@ func HandleGetAllCoupons(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"code":        resp.Code,
 		"coupon_list": resp.CouponList,
+		"msg":         resp.Msg,
+		"page_count":  resp.PageCount,
 	})
 
 }

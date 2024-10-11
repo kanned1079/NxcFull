@@ -18,9 +18,46 @@ func NewCouponService() *CouponService {
 	return &CouponService{}
 }
 
+//func (s *CouponService) AddNewCoupon(ctx context.Context, request *pb.AddNewCouponRequest) (*pb.AddNewCouponResponse, error) {
+//	startTime := time.Unix(0, request.StartTime*int64(time.Millisecond))
+//	endTime := time.Unix(0, request.EndTime*int64(time.Millisecond))
+//	var newCoupon model.Coupon = model.Coupon{
+//		Name:         request.Name,
+//		Code:         request.Code,
+//		PercentOff:   float64(request.PercentOff),
+//		Capacity:     request.Capacity,
+//		Residue:      request.Capacity,
+//		PerUserLimit: request.PerUserLimit,
+//		PlanLimit:    request.PlanLimit,
+//		StartTime:    &startTime,
+//		EndTime:      &endTime,
+//	}
+//	//log.Println(postData)
+//	if err := dao.Db.Model(&model.Coupon{}).Create(&newCoupon).Error; err != nil {
+//		return &pb.AddNewCouponResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "插入数据失败",
+//		}, nil
+//	}
+//	return &pb.AddNewCouponResponse{
+//		Code: http.StatusOK,
+//		Msg:  "插入数据失败",
+//	}, nil
+//}
+
 func (s *CouponService) AddNewCoupon(ctx context.Context, request *pb.AddNewCouponRequest) (*pb.AddNewCouponResponse, error) {
+	// 如果 Code 为空，生成随机券码并检查是否重复
+	if request.Code == "" {
+		for {
+			request.Code = generateRandomCode(12)
+			if !isCodeExist(dao.Db, request.Code) {
+				break
+			}
+		}
+	}
 	startTime := time.Unix(0, request.StartTime*int64(time.Millisecond))
 	endTime := time.Unix(0, request.EndTime*int64(time.Millisecond))
+
 	var newCoupon model.Coupon = model.Coupon{
 		Name:         request.Name,
 		Code:         request.Code,
@@ -32,19 +69,22 @@ func (s *CouponService) AddNewCoupon(ctx context.Context, request *pb.AddNewCoup
 		StartTime:    &startTime,
 		EndTime:      &endTime,
 	}
-	//log.Println(postData)
+
+	// 插入优惠券到数据库
 	if err := dao.Db.Model(&model.Coupon{}).Create(&newCoupon).Error; err != nil {
 		return &pb.AddNewCouponResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "插入数据失败",
 		}, nil
 	}
+
 	return &pb.AddNewCouponResponse{
 		Code: http.StatusOK,
-		Msg:  "插入数据失败",
+		Msg:  "优惠券添加成功",
 	}, nil
 }
 
+// VerifyCoupon 用户端用于验证优惠券可用性
 func (s *CouponService) VerifyCoupon(ctx context.Context, request *pb.VerifyCouponRequest) (*pb.VerifyCouponResponse, error) {
 	// 接收前端传递的数据
 	// 查找优惠券
@@ -107,20 +147,69 @@ func (s *CouponService) VerifyCoupon(ctx context.Context, request *pb.VerifyCoup
 	}, nil
 }
 
+//// GetAllCoupons 获取所有的优惠券列表
+//// v1
+//func (s *CouponService) GetAllCoupons(ctx context.Context, request *pb.GetAllCouponsRequest) (*pb.GetAllCouponsResponse, error) {
+//	//request.Size, request.Page	// 完成此处的分页查询功能
+//	var coupons []model.Coupon
+//	if err := dao.Db.Model(&model.Coupon{}).Find(&coupons).Error; err != nil {
+//		return &pb.GetAllCouponsResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "获取优惠券列表失败",
+//		}, nil
+//	}
+//	return &pb.GetAllCouponsResponse{
+//		Code:       http.StatusOK,
+//		CouponList: Convert2rpcCoupons(coupons),
+//		Msg:        "查询成功",
+//		PageCount:  10, // 根据前面的size来计算页数
+//	}, nil
+//
+//}
+
+// GetAllCoupons 获取所有的优惠券列表
+// v2
 func (s *CouponService) GetAllCoupons(ctx context.Context, request *pb.GetAllCouponsRequest) (*pb.GetAllCouponsResponse, error) {
+	// 分页参数
+	pageSize := int(request.Size)
+	page := int(request.Page)
+	if pageSize <= 0 {
+		pageSize = 10 // 默认每页大小
+	}
+	if page <= 0 {
+		page = 1 // 默认第一页
+	}
+
+	// 查询优惠券的总数
+	var total int64
+	if err := dao.Db.Model(&model.Coupon{}).Count(&total).Error; err != nil {
+		return &pb.GetAllCouponsResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "获取优惠券总数失败",
+		}, nil
+	}
+
+	// 分页查询
 	var coupons []model.Coupon
-	if err := dao.Db.Model(&model.Coupon{}).Find(&coupons).Error; err != nil {
+	if err := dao.Db.Model(&model.Coupon{}).
+		Limit(pageSize).
+		Offset((page - 1) * pageSize).
+		Find(&coupons).Error; err != nil {
 		return &pb.GetAllCouponsResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "获取优惠券列表失败",
 		}, nil
 	}
+
+	// 计算总页数
+	pageCount := int64((total + int64(pageSize) - 1) / int64(pageSize))
+
 	return &pb.GetAllCouponsResponse{
 		Code:       http.StatusOK,
 		CouponList: Convert2rpcCoupons(coupons),
 		Msg:        "查询成功",
+		PageCount:  pageCount, // 总页数
 	}, nil
-
 }
 
 func (s *CouponService) DeleteCoupon(ctx context.Context, request *pb.DeleteCouponRequest) (*pb.DeleteCouponResponse, error) {

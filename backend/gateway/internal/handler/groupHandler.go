@@ -39,8 +39,33 @@ func HandleGetAllGroups(context *gin.Context) {
 		"code":       resp.Code,
 		"group_list": resp.GroupList,
 		"msg":        resp.Msg,
+		"page_count": resp.PageCount,
 	})
 
+}
+
+func HandleGetAllGroupsKv(context *gin.Context) {
+	resp, err := grpcClient.GroupServiceClient.GetAllGroupsKv(sysContext.Background(), &pb.GetAllGroupsKvRequest{})
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc方法错误" + err.Error(),
+		})
+		return
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc方法错误无返回值",
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"group_list": resp.GroupList,
+		"msg":        resp.Msg,
+	})
 }
 
 func HandleAddNewGroup(context *gin.Context) {

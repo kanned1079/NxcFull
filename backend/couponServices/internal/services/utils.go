@@ -3,6 +3,8 @@ package services
 import (
 	pb "NxcFull/backend/couponServices/api/proto"
 	"NxcFull/backend/couponServices/internal/model"
+	"gorm.io/gorm"
+	"math/rand"
 	"time"
 )
 
@@ -42,4 +44,22 @@ func Convert2rpcCoupons(original []model.Coupon) []*pb.CouponInfo {
 		})
 	}
 	return result
+}
+
+// 生成随机12位字符串
+func generateRandomCode(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+// 检查券码是否已存在
+func isCodeExist(db *gorm.DB, code string) bool {
+	var count int64
+	db.Model(&model.Coupon{}).Where("code = ?", code).Count(&count)
+	return count > 0
 }

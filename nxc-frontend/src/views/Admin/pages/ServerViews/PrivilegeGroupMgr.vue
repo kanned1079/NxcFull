@@ -10,9 +10,15 @@ const message = useMessage()
 
 let modifyFunc = ref<string>('add')
 let modifyId = ref<number | null>(null)
-let pagination =  ref({ pageSize: 4 })
-let page = ref<number>(1)
-let pageCount = ref(18)
+let pagination = ref({pageSize: 4})
+// let page = ref<number>(1)
+let pageCount = ref(10)
+
+let dataSize = ref<{ pageSize: number, page: number }>({
+  pageSize: 10,
+  page: 1,
+})
+
 
 interface GroupItem {
   id: number
@@ -36,9 +42,9 @@ const columns = ref(
         title: '用戶數量',
         key: 'user_count',
         render(row: GroupItem) {
-          return h('div', {style: {display: 'flex', flexDirection: 'row', }}, [
+          return h('div', {style: {display: 'flex', flexDirection: 'row',}}, [
             h(NIcon, {size: 18, style: {marginRight: 5}}, {default: () => h(UserOutlined)}), // 用戶圖標
-            `${row.hasOwnProperty('user_count')?row.user_count:0}`,
+            `${row.hasOwnProperty('user_count') ? row.user_count : 0}`,
           ])
         }
       },
@@ -48,7 +54,7 @@ const columns = ref(
         render(row: GroupItem) {
           return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
             h(NIcon, {size: 18, style: {marginRight: 5}}, {default: () => h(BarChartOutlined)}), // 計畫圖標
-            `${row.hasOwnProperty('plan_count')?row.plan_count:0}`,
+            `${row.hasOwnProperty('plan_count') ? row.plan_count : 0}`,
           ])
         }
       },
@@ -163,10 +169,16 @@ let closeModal = () => {
 let getAllGroups = async () => {
   try {
     groupList.value = []
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/groups')
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/groups', {
+      params: {
+        page: dataSize.value.page,
+        size: dataSize.value.pageSize,
+      }
+    })
     if (data.code === 200) {
       console.log('获取到的权限组列表', data)
       data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
+      pageCount.value = data.page_count
       // groupList.value = data.group_list
     }
   } catch (error) {
@@ -197,6 +209,25 @@ let submitUpdate = async () => {
   }
 }
 
+let dataCountOptions = [
+  {
+    label: '10条数据/页',
+    value: 10,
+  },
+  {
+    label: '20条数据/页',
+    value: 20,
+  },
+  {
+    label: '50条数据/页',
+    value: 50,
+  },
+  {
+    label: '100条数据/页',
+    value: 100,
+  },
+]
+
 onMounted(() => {
   console.log('挂载权限组管理')
   themeStore.contentPath = '/admin/dashboard/group'
@@ -225,11 +256,25 @@ export default {
           :columns="columns"
           :data="groupList"
           :scroll-x="900"
+          :remote="true"
       />
     </n-card>
 
-    <div class="btn-pagination">
-      <n-pagination  v-model:page="page" :page-count="pageCount" />
+    <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+      <n-pagination
+          size="medium"
+          v-model:page.number="dataSize.page"
+          :page-count="pageCount"
+          @update:page="getAllGroups() "
+      />
+      <n-select
+          style="width: 160px; margin-left: 20px"
+          v-model:value.number="dataSize.pageSize"
+          size="small"
+          :options="dataCountOptions"
+          :remote="true"
+          @update:value="dataSize.page = 1; getAllGroups()"
+      />
     </div>
 
   </div>

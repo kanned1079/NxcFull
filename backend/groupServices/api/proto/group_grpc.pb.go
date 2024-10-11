@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GroupService_GetAllGroups_FullMethodName = "/group.GroupService/GetAllGroups"
-	GroupService_AddNewGroup_FullMethodName  = "/group.GroupService/AddNewGroup"
-	GroupService_UpdateGroup_FullMethodName  = "/group.GroupService/UpdateGroup"
-	GroupService_DeleteGroup_FullMethodName  = "/group.GroupService/DeleteGroup"
+	GroupService_GetAllGroups_FullMethodName   = "/group.GroupService/GetAllGroups"
+	GroupService_GetAllGroupsKv_FullMethodName = "/group.GroupService/GetAllGroupsKv"
+	GroupService_AddNewGroup_FullMethodName    = "/group.GroupService/AddNewGroup"
+	GroupService_UpdateGroup_FullMethodName    = "/group.GroupService/UpdateGroup"
+	GroupService_DeleteGroup_FullMethodName    = "/group.GroupService/DeleteGroup"
 )
 
 // GroupServiceClient is the client API for GroupService service.
@@ -33,6 +34,8 @@ const (
 type GroupServiceClient interface {
 	// 获取所有组
 	GetAllGroups(ctx context.Context, in *GetAllGroupsRequest, opts ...grpc.CallOption) (*GetAllGroupsResponse, error)
+	// 获取所有组的键值
+	GetAllGroupsKv(ctx context.Context, in *GetAllGroupsKvRequest, opts ...grpc.CallOption) (*GetAllGroupsKvResponse, error)
 	// 添加新组
 	AddNewGroup(ctx context.Context, in *AddNewGroupRequest, opts ...grpc.CallOption) (*AddNewGroupResponse, error)
 	// 更新组
@@ -53,6 +56,16 @@ func (c *groupServiceClient) GetAllGroups(ctx context.Context, in *GetAllGroupsR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAllGroupsResponse)
 	err := c.cc.Invoke(ctx, GroupService_GetAllGroups_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) GetAllGroupsKv(ctx context.Context, in *GetAllGroupsKvRequest, opts ...grpc.CallOption) (*GetAllGroupsKvResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllGroupsKvResponse)
+	err := c.cc.Invoke(ctx, GroupService_GetAllGroupsKv_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +110,8 @@ func (c *groupServiceClient) DeleteGroup(ctx context.Context, in *DeleteGroupReq
 type GroupServiceServer interface {
 	// 获取所有组
 	GetAllGroups(context.Context, *GetAllGroupsRequest) (*GetAllGroupsResponse, error)
+	// 获取所有组的键值
+	GetAllGroupsKv(context.Context, *GetAllGroupsKvRequest) (*GetAllGroupsKvResponse, error)
 	// 添加新组
 	AddNewGroup(context.Context, *AddNewGroupRequest) (*AddNewGroupResponse, error)
 	// 更新组
@@ -115,6 +130,9 @@ type UnimplementedGroupServiceServer struct{}
 
 func (UnimplementedGroupServiceServer) GetAllGroups(context.Context, *GetAllGroupsRequest) (*GetAllGroupsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllGroups not implemented")
+}
+func (UnimplementedGroupServiceServer) GetAllGroupsKv(context.Context, *GetAllGroupsKvRequest) (*GetAllGroupsKvResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllGroupsKv not implemented")
 }
 func (UnimplementedGroupServiceServer) AddNewGroup(context.Context, *AddNewGroupRequest) (*AddNewGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddNewGroup not implemented")
@@ -160,6 +178,24 @@ func _GroupService_GetAllGroups_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GroupServiceServer).GetAllGroups(ctx, req.(*GetAllGroupsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_GetAllGroupsKv_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllGroupsKvRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GetAllGroupsKv(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GroupService_GetAllGroupsKv_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GetAllGroupsKv(ctx, req.(*GetAllGroupsKvRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -228,6 +264,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllGroups",
 			Handler:    _GroupService_GetAllGroups_Handler,
+		},
+		{
+			MethodName: "GetAllGroupsKv",
+			Handler:    _GroupService_GetAllGroupsKv_Handler,
 		},
 		{
 			MethodName: "AddNewGroup",

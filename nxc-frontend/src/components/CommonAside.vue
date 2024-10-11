@@ -367,10 +367,12 @@ export default {
 <!--        @expand="collapsed = false"-->
 <!--    >-->
 
+    <n-scrollbar style="max-height: calc(100vh - 52px)" :size="0">
       <n-menu
           v-if="userInfoStore.thisUser.isAdmin"
           class="menu"
-          :accordion="true"
+          :accordion="false"
+          :default-expand-all="true"
           :options="MenuOption"
           @update:value="update"
           :value="themeStore.menuSelected"
@@ -387,6 +389,9 @@ export default {
           :indent="0"
 
       />
+    </n-scrollbar>
+
+
 
 <!--    </n-layout-sider>-->
 

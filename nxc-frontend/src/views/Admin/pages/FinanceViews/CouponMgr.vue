@@ -18,20 +18,31 @@ const message = useMessage()
 
 const formRef = ref<FormInst | null>(null)
 
-// interface Coupon {
-//   id: number
-//   name: string
-//   code?: string
-//   percent_off: number
-//   start_time: number
-//   end_time: number
-//   per_user_limit?: number
-//   capacity: number
-//   plan_limit?: number
-//   created_at: string
-//   updated_at: string
-//   deleted_at?: string
-// }
+let pageCount = ref(10)
+
+let dataSize = ref<{pageSize: number, page: number}>({
+  pageSize: 10,
+  page: 1,
+})
+
+let dataCountOptions = [
+  {
+    label: '10条数据/页',
+    value: 10,
+  },
+  {
+    label: '20条数据/页',
+    value: 20,
+  },
+  {
+    label: '50条数据/页',
+    value: 50,
+  },
+  {
+    label: '100条数据/页',
+    value: 100,
+  },
+]
 
 // 从服务器拉取的优惠券列表
 interface Coupon {
@@ -88,21 +99,9 @@ let showLoading = ref<boolean>(false)
 // 显示表单
 let showModal = ref(false)
 let range = ref<[number, number]>([1183135260000, Date.now()])
-let plans = ref([
-  {
-    label: 'S1订阅',
-    value: 0,
-  },
-  {
-    label: 'S2订阅',
-    value: 1,
-  },
-  {
-    label: 'S1订阅',
-    value: 2,
-  }
-])
+let plans = ref<{label: string, value: number}[]>([])
 
+// 订阅计划的键值
 let getPlanKV = async () => {
   plans.value = []
   try {
@@ -134,12 +133,18 @@ let getAllCoupons = async () => {
   // 请求地址 /admin/v1/coupon/fetch
   try {
     couponList.value = []
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/coupon');
+    let {data} = await instance.get('http://localhost:8081/api/admin/v1/coupon', {
+      params: {
+        page: dataSize.value.page,
+        size: dataSize.value.pageSize,
+      }
+    });
     if (data.code === 200) {
       // couponList.value = data.coupons;
       data.coupon_list.forEach((item: Coupon, index: number) => {
         couponList.value.push(item)
       })
+      pageCount.value = data.page_count
     } else {
       message.error('获取优惠券列表失败');
     }
@@ -294,14 +299,6 @@ let submitCoupon = async () => {
   console.log(formValue.value)
   try {
     let {data} = await instance.post('http://localhost:8081/api/admin/v1/coupon', {
-      // name: formValue.value.coupon.name,
-      // code: formValue.value.coupon.code,
-      // percent_off: formValue.value.coupon.percent_off,
-      // start_time: formValue.value.coupon.start_time,
-      // end_time: formValue.value.coupon.end_time,
-      // capacity: formValue.value.coupon.capacity,
-      // per_user_limit: formValue.value.coupon.per_user_limit,
-      // plan_limit: formValue.value.coupon.plan_limit,
       ...formValue.value.coupon
     })
     if (data.code === 200) {
@@ -357,6 +354,23 @@ export default {
       </n-spin>
 
     </n-card>
+
+    <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+      <n-pagination
+          size="medium"
+          v-model:page.number="dataSize.page"
+          :page-count="pageCount"
+          @update:page="getAllCoupons"
+      />
+      <n-select
+          style="width: 160px; margin-left: 20px"
+          v-model:value.number="dataSize.pageSize"
+          size="small"
+          :options="dataCountOptions"
+          :remote="true"
+          @update:value="dataSize.page = 1; getAllCoupons()"
+      />
+    </div>
 
 
   </div>
