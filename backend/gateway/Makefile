@@ -5,7 +5,7 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 # 二进制文件名
-BINARY_NAME=orderServices
+BINARY_NAME=gateway
 MAIN_FILE=./command/server/main.go
 # 输出二进制文件的目录
 BUILD_DIR=./build
