@@ -115,6 +115,49 @@ func HandleAddNotice(context *gin.Context) {
 	})
 }
 
+func HandleUpdateNotice(context *gin.Context) {
+	formData := &struct {
+		Id      int64  `json:"id"`
+		Title   string `json:"title"`
+		Content string `json:"content"`
+		Tags    string `json:"tags"`
+		ImgUrl  string `json:"img_url"`
+	}{}
+	if err := context.ShouldBind(&formData); err != nil {
+		log.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg:": err.Error(),
+		})
+	}
+	log.Println(formData)
+	resp, err := grpcClient.NoticeServiceClient.UpdateNotice(sysContext.Background(), &pb.UpdateNoticeRequest{
+		Id:      formData.Id,
+		Title:   formData.Title,
+		Content: formData.Content,
+		Tags:    formData.Tags,
+		ImgUrl:  formData.ImgUrl,
+	})
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "调用rpc服务器失败无返回值",
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}
+
 func HandleUpdateNoticeStatus(context *gin.Context) {
 	postData := &struct {
 		Id     int64 `form:"id" json:"id"`
@@ -152,9 +195,9 @@ func HandleUpdateNoticeStatus(context *gin.Context) {
 	})
 }
 
-func HandleUpdateNotice(context *gin.Context) {
-
-}
+//func HandleUpdateNotice(context *gin.Context) {
+//
+//}
 
 func HandleDeleteNotice(context *gin.Context) {
 	deleteNotice := &struct {

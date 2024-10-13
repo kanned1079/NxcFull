@@ -4,8 +4,16 @@ import useThemeStore from "@/stores/useThemeStore"
 import instance from "@/axios";
 import {NButton, NSwitch, useMessage} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
 import {formatDate} from "@/utils/timeFormat"
+
+// const apiAddrStore = useApiAddrStore();
+
+const themeStore = useThemeStore()
+// const noticesStore = useNoticesStore()
+const message = useMessage()
+
+
+let editType = ref<'add' | 'edit'>('add')
 
 let pageCount = ref(10)
 
@@ -34,20 +42,15 @@ let dataCountOptions = [
 ]
 
 
-const apiAddrStore = useApiAddrStore();
-
-const themeStore = useThemeStore()
-// const noticesStore = useNoticesStore()
-const message = useMessage()
-
 interface formData {
+  id?: number
   title: string
   content: string
   tags: string
   img_url?: string
 }
 
-let formData = reactive<formData>({
+let formData = ref<formData>({
   title: '',
   content: '',
   tags: '',
@@ -76,24 +79,52 @@ let noticesArr = ref<Notice[]>([])
 
 // 添加新的
 let handleAddNotice = () => {
+  formData.value = {}
   console.log('处理添加一条通知')
+  editType.value = 'add'
   showModal.value = true
+}
 
+let handleEditNotice = (row: Notice) => {
+  formData.value = {}
+  console.log('处理修改一条通知')
+  editType.value = 'edit'
+  Object.assign(formData.value, row)
+  showModal.value = true
 }
 
 let closeModal = () => {
   console.log('close')
 }
 
-let submitModal = async () => {
+// 这里是按钮按下
+let submitModal = () => {
   console.log('submit')
-  console.log(formData)
-  let {data} = await instance.put('http://localhost:8081/api/admin/v1/notice', formData)
-  if (data.code === 200) {
-    message.success("添加成功")
+  console.log(formData.value)
+  switch (editType.value) {
+    case 'add': {
+      addNewNotice()
+      break
+    }
+    case 'edit': {
+      editNotice()
+      break
+    }
   }
-  await getAllNotices()
+}
 
+let addNewNotice = async () => {
+  try {
+    let {data} = await instance.post('/api/admin/v1/notice', {
+      ...formData.value
+    })
+    if (data.code === 200) {
+      message.success("添加成功")
+    }
+    await getAllNotices()
+  } catch (error: any) {
+    console.log(error)
+  }
 }
 
 const columns = [
@@ -138,7 +169,7 @@ const columns = [
           type: 'primary',
           bordered: false,
           style: {marginLeft: '10px'},
-          onClick: () => editItem(row.id)
+          onClick: () => handleEditNotice(row)
         }, {default: () => '编辑'}),
         h(NButton, {
           size: 'small',
@@ -159,7 +190,7 @@ let pagination = {
 let getAllNotices = async () => {
   noticesArr.value = []
   try {
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/notice', {
+    let {data} = await instance.get('/api/admin/v1/notice', {
       params: {
         page: dataSize.value.page,
         size: dataSize.value.pageSize,
@@ -201,7 +232,7 @@ let updateNoticeEnabled = async (id: number, enabled: boolean) => {
 let deleteNotice = async (id: number) => {
   const message = useMessage()
   try {
-    let {data} = await instance.delete('http://localhost:8081/api/admin/v1/notice',
+    let {data} = await instance.delete('/api/admin/v1/notice',
         {
           params: {notice_id: id,},
         },
@@ -211,6 +242,24 @@ let deleteNotice = async (id: number) => {
     message.error("奇怪的错误" + err)
   }
   // console.log(data)
+}
+
+// let handleEditNotice = () => {
+//
+// }
+
+let editNotice = async () => {
+  try {
+    let {data} = await instance.put('/api/admin/v1/notice', {
+      ...formData.value
+    })
+    if (data.code === 200) {
+      message.success("修改成功")
+    }
+    await getAllNotices()
+  } catch (error: any) {
+    console.log(error)
+  }
 }
 
 
@@ -288,7 +337,7 @@ export default {
       title="新建通知"
       v-model:show="showModal"
       preset="dialog"
-      positive-text="确认添加"
+      :positive-text="editType === 'add'?'确认添加':'确认修改'"
       negative-text="算了"
       style="width: 480px"
       @positive-click="submitModal"

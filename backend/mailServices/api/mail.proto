@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package mail;
+
+option go_package = "./proto";
+
+// 定义 GroupService 服务
+service GroupService {
+  // 发送验证码邮件请求
+  rpc SendVerifyEmail(SendVerifyEmailRequest) returns (SendVerifyEmailResponse);
+  // 处理验证
+  rpc VerifyEmailCode(VerifyEmailCodeRequest) returns (VerifyEmailCodeResponse);
+}
+
+// ---------------------------------
+
+message SendVerifyEmailRequest {
+  string email = 1;
+}
+
+message SendVerifyEmailResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// ---------------------------------
+
+message VerifyEmailCodeRequest {
+  string email = 1;
+  string code = 2;
+}
+
+message VerifyEmailCodeResponse {
+  int32 code = 1;
+  string  msg = 2;
+}
+
+// ---------------------------------

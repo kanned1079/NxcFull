@@ -20,34 +20,6 @@ func NewNoticeServices() *NoticeServices {
 	return &NoticeServices{}
 }
 
-// pass
-//func (s *NoticeServices) GetAllNotices(context context.Context, request *pb.GetAllNoticesRequest) (*pb.GetAllNoticesResponse, error) {
-//	// request.Size, request.Page // 实现分页操作 如果IsUser为false才需要实现分页操作 直接取出所有数据 序列化json后返回到Notices中
-//	// request.IsUser 如果true则为用户请求 那么返回的数据中只需要有 Id(int64) Title(string) Content(string) ImgUrl(string) tags(string) 取出数据时 show 需要为true 并且用户请求无需实现分页操作
-//	// 返回的Notices 为bytes类型 将数据序列华返回
-//	// 不管是用户还是管理员的请求，数据总是按照创建时间(createdAt) 从近到远排序
-//	log.Println("GetAllNotices被调用了")
-//	var notices []model.PublicNotices
-//	result := dao.Db.Model(&model.PublicNotices{}).Find(&notices)
-//	log.Println("获取通知列表结束")
-//	if result.Error != nil {
-//		log.Print(result.Error)
-//		return &pb.GetAllNoticesResponse{
-//			Code: http.StatusInternalServerError,
-//			Msg:  "获取所有通知失败" + result.Error.Error(),
-//		}, nil
-//	}
-//	// 转换为 []*pb.PublicNotice
-//	log.Println("转换前")
-//	log.Println(notices)
-//	protoNotices := convertToProtoNotices(notices)
-//	return &pb.GetAllNoticesResponse{
-//		Code: http.StatusOK,
-//		//Notices:   protoNotices,	// Notices为 bytes类型 序列化后
-//		PageCount: 10, // 根据Size来计算这里的总页数
-//	}, nil
-//}
-
 func (s *NoticeServices) GetAllNotices(ctx context.Context, request *pb.GetAllNoticesRequest) (*pb.GetAllNoticesResponse, error) {
 	//log.Println("GetAllNotices被调用了")
 	var notices []model.PublicNotices
@@ -151,8 +123,30 @@ func (s *NoticeServices) AddNotice(context context.Context, request *pb.AddNotic
 	}
 }
 
-func (s *NoticeServices) DeleteNotice(context context.Context, request *pb.DeleteNoticeRequest) (*pb.DeleteNoticeResponse, error) {
+func (s *NoticeServices) UpdateNotice(context context.Context, request *pb.UpdateNoticeRequest) (*pb.UpdateNoticeResponse, error) {
+	notice := model.PublicNotices{
+		Id:      request.Id,
+		Title:   request.Title,
+		Content: request.Content,
+		Tags:    request.Tags,
+		ImgUrl:  request.ImgUrl,
+	}
+	// 更新操作
+	if result := dao.Db.Model(&model.PublicNotices{}).Where("id = ?", request.Id).Updates(&notice); result.Error != nil {
+		log.Println("更新通知错误", result.Error)
+		return &pb.UpdateNoticeResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "更新通知错误: " + result.Error.Error(),
+		}, nil
+	}
 
+	return &pb.UpdateNoticeResponse{
+		Code: http.StatusOK,
+		Msg:  "更新通知成功",
+	}, nil
+}
+
+func (s *NoticeServices) DeleteNotice(context context.Context, request *pb.DeleteNoticeRequest) (*pb.DeleteNoticeResponse, error) {
 	if err := dao.Db.Model(&model.PublicNotices{}).Where("id = ?", request.NoticeId).Delete(&model.PublicNotices{}).Error; err != nil {
 		log.Println(err)
 		return &pb.DeleteNoticeResponse{
@@ -169,16 +163,6 @@ func (s *NoticeServices) DeleteNotice(context context.Context, request *pb.Delet
 
 func (s *NoticeServices) UpdateNoticeStatus(context context.Context, request *pb.UpdateNoticeStatusRequest) (*pb.UpdateNoticeStatusResponse, error) {
 	log.Println("UpdateNoticeStatusRequest: ", request.Id, request.IsShow)
-	//var notice model.PublicNotices
-	//if result := dao.Db.
-	//	Model(&model.PublicNotices{}).Where("id = ?", request.Id).First(&notice); result.Error != nil {
-	//	log.Println(result.Error.Error())
-	//	return &pb.UpdateNoticeStatusResponse{
-	//		Code: http.StatusNotFound,
-	//		Msg:  "查找通知失败" + result.Error.Error(),
-	//	}, nil
-	//}
-	//notice.Show = request.IsShow
 	if result := dao.Db.Model(&model.PublicNotices{}).Where("id = ?", request.Id).Update("`show`", request.IsShow); result.Error != nil {
 		log.Println("更新通知失败" + result.Error.Error())
 		return &pb.UpdateNoticeStatusResponse{

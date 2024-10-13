@@ -2,7 +2,7 @@ package handler
 
 import (
 	sysContext "context"
-	grpc2 "gateway/internal/grpc"
+	"gateway/internal/grpc"
 	pb "gateway/internal/grpc/api/user/proto"
 	"github.com/gin-gonic/gin"
 	//"google.golang.org/grpc"
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var grpcClient = grpc2.NewClients()
+var grpcClient = grpc.NewClients()
 
 func HandleUserLogin(context *gin.Context) {
 	var req = struct {

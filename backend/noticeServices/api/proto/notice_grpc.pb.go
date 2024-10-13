@@ -22,6 +22,7 @@ const (
 	NoticeService_GetAllNotices_FullMethodName      = "/publicNotice.NoticeService/GetAllNotices"
 	NoticeService_AddNotice_FullMethodName          = "/publicNotice.NoticeService/AddNotice"
 	NoticeService_DeleteNotice_FullMethodName       = "/publicNotice.NoticeService/DeleteNotice"
+	NoticeService_UpdateNotice_FullMethodName       = "/publicNotice.NoticeService/UpdateNotice"
 	NoticeService_UpdateNoticeStatus_FullMethodName = "/publicNotice.NoticeService/UpdateNoticeStatus"
 )
 
@@ -34,6 +35,7 @@ type NoticeServiceClient interface {
 	GetAllNotices(ctx context.Context, in *GetAllNoticesRequest, opts ...grpc.CallOption) (*GetAllNoticesResponse, error)
 	AddNotice(ctx context.Context, in *AddNoticeRequest, opts ...grpc.CallOption) (*AddNoticeResponse, error)
 	DeleteNotice(ctx context.Context, in *DeleteNoticeRequest, opts ...grpc.CallOption) (*DeleteNoticeResponse, error)
+	UpdateNotice(ctx context.Context, in *UpdateNoticeRequest, opts ...grpc.CallOption) (*UpdateNoticeResponse, error)
 	UpdateNoticeStatus(ctx context.Context, in *UpdateNoticeStatusRequest, opts ...grpc.CallOption) (*UpdateNoticeStatusResponse, error)
 }
 
@@ -75,6 +77,16 @@ func (c *noticeServiceClient) DeleteNotice(ctx context.Context, in *DeleteNotice
 	return out, nil
 }
 
+func (c *noticeServiceClient) UpdateNotice(ctx context.Context, in *UpdateNoticeRequest, opts ...grpc.CallOption) (*UpdateNoticeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateNoticeResponse)
+	err := c.cc.Invoke(ctx, NoticeService_UpdateNotice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *noticeServiceClient) UpdateNoticeStatus(ctx context.Context, in *UpdateNoticeStatusRequest, opts ...grpc.CallOption) (*UpdateNoticeStatusResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateNoticeStatusResponse)
@@ -94,6 +106,7 @@ type NoticeServiceServer interface {
 	GetAllNotices(context.Context, *GetAllNoticesRequest) (*GetAllNoticesResponse, error)
 	AddNotice(context.Context, *AddNoticeRequest) (*AddNoticeResponse, error)
 	DeleteNotice(context.Context, *DeleteNoticeRequest) (*DeleteNoticeResponse, error)
+	UpdateNotice(context.Context, *UpdateNoticeRequest) (*UpdateNoticeResponse, error)
 	UpdateNoticeStatus(context.Context, *UpdateNoticeStatusRequest) (*UpdateNoticeStatusResponse, error)
 	mustEmbedUnimplementedNoticeServiceServer()
 }
@@ -113,6 +126,9 @@ func (UnimplementedNoticeServiceServer) AddNotice(context.Context, *AddNoticeReq
 }
 func (UnimplementedNoticeServiceServer) DeleteNotice(context.Context, *DeleteNoticeRequest) (*DeleteNoticeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteNotice not implemented")
+}
+func (UnimplementedNoticeServiceServer) UpdateNotice(context.Context, *UpdateNoticeRequest) (*UpdateNoticeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateNotice not implemented")
 }
 func (UnimplementedNoticeServiceServer) UpdateNoticeStatus(context.Context, *UpdateNoticeStatusRequest) (*UpdateNoticeStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateNoticeStatus not implemented")
@@ -192,6 +208,24 @@ func _NoticeService_DeleteNotice_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NoticeService_UpdateNotice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateNoticeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NoticeServiceServer).UpdateNotice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NoticeService_UpdateNotice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NoticeServiceServer).UpdateNotice(ctx, req.(*UpdateNoticeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _NoticeService_UpdateNoticeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateNoticeStatusRequest)
 	if err := dec(in); err != nil {
@@ -228,6 +262,10 @@ var NoticeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteNotice",
 			Handler:    _NoticeService_DeleteNotice_Handler,
+		},
+		{
+			MethodName: "UpdateNotice",
+			Handler:    _NoticeService_UpdateNotice_Handler,
 		},
 		{
 			MethodName: "UpdateNoticeStatus",
