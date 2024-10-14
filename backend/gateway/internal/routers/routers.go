@@ -41,9 +41,10 @@ func StartApiGateways() {
 		// 一般用户登录和注册相关路由
 		userPublic.POST("/login", handler.HandleUserLogin) // rpc实现
 
-		userPublic.POST("/mail/register/get", SendVerifyEmail)
-		userPublic.POST("/mail/register/verify", HandleVerifyEmailCode)
-		userPublic.POST("/register/register", handler.HandleUserRegister) // rpc实现
+		userPublic.POST("/mail/register/get", handler.HandleSendRegisterVerifyEmail) // 发送的是注册的验证码
+		userPublic.POST("mail/retrieve/get", handler.HandleSendRetrieveVerifyEmail)  // 忘记密码的验证码
+		userPublic.POST("/mail/register/verify", handler.HandleVerifyEmailCode)      // 这个可以是通用的函数
+		userPublic.POST("/register/register", handler.HandleUserRegister)            // rpc实现
 	}
 
 	protectedRoutes := router.Group("/api")
@@ -113,7 +114,7 @@ func StartApiGateways() {
 		//userAuthorized.GET("/orders", orders.HandleGetOrders)
 	}
 
-	if err := router.Run("localhost:8081"); err != nil {
+	if err := router.Run("0.0.0.0:8081"); err != nil {
 		log.Println("启动服务器失败", err)
 	}
 }

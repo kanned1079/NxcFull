@@ -9,8 +9,11 @@ import (
 	"mailServices/internal/dao"
 	"mailServices/internal/model"
 	"mailServices/internal/smtp"
+	"math/rand"
 	"time"
 )
+
+const CodeLength = 6
 
 //// 渲染 HTML 模板，替换占位符
 //func (v *VerifyEmailData) RenderEmailTemplate(templatePath string) (string, error) {
@@ -147,4 +150,15 @@ func GetSMTPConfig() (model.SMTPConfig, error) {
 	}
 
 	return smtpConfig, nil
+}
+
+// RandCode 生成验证码
+func RandCode() string {
+	s := "1234567890"
+	code := ""
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < CodeLength; i++ {
+		code += string(s[rand.Intn(len(s))])
+	}
+	return code
 }

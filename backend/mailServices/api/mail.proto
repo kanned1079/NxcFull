@@ -38,7 +38,8 @@ message VerifyEmailCodeRequest {
 
 message VerifyEmailCodeResponse {
   int32 code = 1;
-  string  msg = 2;
+  string msg = 2;
+  bool passed = 3;
 }
 
 // ---------------------------------

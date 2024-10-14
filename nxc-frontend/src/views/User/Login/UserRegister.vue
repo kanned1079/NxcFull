@@ -155,7 +155,7 @@ let sendVerifyCode = async () => {
   } else {
     console.log("邮件校验通过 发送邮箱验证")
     try {
-      let {data} = await authInstance.post(apiAddrStore.apiAddr.user.sendAuthMail, {
+      let {data} = await authInstance.post('/api/user/v1/mail/register/get', {
         email: formValue.value.user.email
       })
       if (data.code === 200) {
@@ -177,11 +177,11 @@ let sendVerifyCode = async () => {
 let verifyCode = async () => {
   console.log('验证验证码是否正确')
   try {
-    let {data} = await authInstance.post(apiAddrStore.apiAddr.user.verifyAuthMail, {
+    let {data} = await authInstance.post('/api/user/v1/mail/register/verify', {
       email: formValue.value.user.email,
       code: formValue.value.user.verify_code
     })
-    if (data.code === 200) {
+    if (data.code === 200 && data.passed) {
       console.log('verifyCode 验证码正确返回true')
       console.log(data)
       return true
@@ -207,7 +207,7 @@ let backToLogin = () => {
 // 处理注册
 let handleRegister = async () => {
   try {
-    let {data} = await instance.post('http://localhost:8081/api/user/v1/register/register', {
+    let {data} = await instance.post('/api/user/v1/register/register', {
       email: formValue.value.user.email,
       password: hashPassword(formValue.value.user.password),
       invite_user_id: formValue.value.user.invite_user_id,
@@ -404,7 +404,7 @@ export default {
                 :disabled="!enableSendCode"
                 secondary type="primary"
                 @click="sendVerifyCode"
-                style="margin-left: 12px; height: 45px"
+                style="margin-left: 12px;"
                 size="large">
               {{ t('userRegister.sendVerifyCode') }}
               {{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}

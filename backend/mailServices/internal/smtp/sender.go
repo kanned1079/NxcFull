@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"gopkg.in/gomail.v2"
 	"log"
-	"mailServices/internal/model"
+	//"mailServices/internal/model"
 )
 
-var smtpConfig model.SMTPConfig
+//var smtpConfig model.SMTPConfig
 
 // SendEmail 发送邮件序列化字符串后的数据
 func SendEmail(to string, subject string, body string) error {
