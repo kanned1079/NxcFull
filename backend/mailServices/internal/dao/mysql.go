@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"NxcFull/backend/mailServices/internal/config"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"mailServices/internal/config"
 )
 
 const (

@@ -1,11 +1,14 @@
 package services
 
 import (
-	"NxcFull/nxc-backend/dao"
+	"bytes"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	"html/template"
 	"log"
+	"mailServices/internal/dao"
 	"math/rand"
 	"net/http"
 	"time"
@@ -132,4 +135,29 @@ func RandCode() string {
 		code += string(s[rand.Intn(len(s))])
 	}
 	return code
+}
+
+// VerifyEmailData 验证码邮件的替换数据
+type VerifyEmailData struct {
+	Code string
+	URL  string
+	Name string
+}
+
+// RenderEmailTemplate 渲染 HTML 模板，替换占位符 验证码邮件
+func (v *VerifyEmailData) RenderEmailTemplate(templatePath string) (string, error) {
+	log.Println("renderEmailTemplate", v)
+	// 解析模板文件
+	tmpl, err := template.ParseFiles(templatePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse template file: %v", err)
+	}
+
+	// 渲染模板，替换占位符
+	var rendered bytes.Buffer
+	if err := tmpl.Execute(&rendered, v); err != nil {
+		return "", fmt.Errorf("failed to execute template: %v", err)
+	}
+
+	return rendered.String(), nil
 }

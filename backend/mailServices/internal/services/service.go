@@ -5,7 +5,7 @@ import (
 )
 
 type MailServices struct {
-	pb.UnimplementedGroupServiceServer
+	pb.UnimplementedMailServiceServer
 }
 
 func NewMailServices() *MailServices {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, ref, h} from "vue"
+import {h, reactive, ref} from "vue"
 // import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
@@ -7,7 +7,7 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import instance from "@/axios/index";
 // import {makeNotify} from "@/utils/notify"
 import {HourglassOutline as waitIcon} from '@vicons/ionicons5'
-import {type NotificationType, useNotification, useDialog, useMessage, NIcon} from 'naive-ui'
+import {NIcon, type NotificationType, useDialog, useMessage, useNotification} from 'naive-ui'
 
 const notification = useNotification()
 const userInfoStore = useUserInfoStore()
@@ -34,7 +34,8 @@ let sendTestMail = async () => {
     icon: () => h(NIcon, null, {default: () => h(waitIcon)})
   })
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.admin.sendTestMail, {
+    // let {data} = await instance.post(apiAddrStore.apiAddr.admin.sendTestMail, {
+    let {data} = await instance.post('/api/admin/v1/mail/test', {
       email: userInfoStore.thisUser.email
     })
     show.value = false

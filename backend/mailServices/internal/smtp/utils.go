@@ -1,14 +1,14 @@
-package services
+package smtp
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 	"log"
 	"mailServices/internal/dao"
 	"mailServices/internal/model"
-	"mailServices/internal/smtp"
 	"time"
 )
 
@@ -30,6 +30,23 @@ import (
 //	return rendered.String(), nil
 //}
 
+// ReadSettingFromDB 从数据库中取出一条记录
+func ReadSettingFromDB(category, key string) (json.RawMessage, error) {
+	var setting model.SiteSetting
+
+	// 查找设置记录
+	if err := dao.Db.Where("`category` = ? AND `key` = ?", category, key).First(&setting).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Println("Setting not found for:", key)
+			return nil, nil // 返回空值和nil表示找不到记录
+		}
+		return nil, err // 其他错误直接返回
+	}
+
+	log.Println("Setting retrieved successfully:", key)
+	return setting.Value, nil
+}
+
 // GetConfigFromDB 从数据库获取所有相关的邮件配置项
 func GetConfigFromDB() (model.SMTPConfig, error) {
 	log.Println("从数据库中读取邮件配置")
@@ -37,7 +54,7 @@ func GetConfigFromDB() (model.SMTPConfig, error) {
 
 	// 从数据库逐个读取配置
 	// 邮件主机
-	host, err := smtp.ReadSettingFromDB("sendmail", "email_host")
+	host, err := ReadSettingFromDB("sendmail", "email_host")
 	if err != nil {
 		return model.SMTPConfig{}, err
 	}
@@ -46,7 +63,7 @@ func GetConfigFromDB() (model.SMTPConfig, error) {
 	}
 
 	// 邮件端口
-	port, err := smtp.ReadSettingFromDB("sendmail", "email_port")
+	port, err := ReadSettingFromDB("sendmail", "email_port")
 	if err != nil {
 		return model.SMTPConfig{}, err
 	}
@@ -55,7 +72,7 @@ func GetConfigFromDB() (model.SMTPConfig, error) {
 	}
 
 	// 邮件用户名
-	username, err := smtp.ReadSettingFromDB("sendmail", "email_username")
+	username, err := ReadSettingFromDB("sendmail", "email_username")
 	if err != nil {
 		return model.SMTPConfig{}, err
 	}
@@ -64,7 +81,7 @@ func GetConfigFromDB() (model.SMTPConfig, error) {
 	}
 
 	// 邮件密码
-	password, err := smtp.ReadSettingFromDB("sendmail", "email_password")
+	password, err := ReadSettingFromDB("sendmail", "email_password")
 	if err != nil {
 		return model.SMTPConfig{}, err
 	}
@@ -73,7 +90,7 @@ func GetConfigFromDB() (model.SMTPConfig, error) {
 	}
 
 	// 发件人地址
-	from, err := smtp.ReadSettingFromDB("sendmail", "email_from_address")
+	from, err := ReadSettingFromDB("sendmail", "email_from_address")
 	if err != nil {
 		return model.SMTPConfig{}, err
 	}
@@ -82,7 +99,7 @@ func GetConfigFromDB() (model.SMTPConfig, error) {
 	}
 
 	// 邮件模版
-	mailTemplate, err := smtp.ReadSettingFromDB("sendmail", "email_template")
+	mailTemplate, err := ReadSettingFromDB("sendmail", "email_template")
 	if err != nil {
 		return model.SMTPConfig{}, err
 	}
@@ -91,7 +108,7 @@ func GetConfigFromDB() (model.SMTPConfig, error) {
 	}
 
 	// 加密方式 (SSL / TLS)
-	encryption, err := smtp.ReadSettingFromDB("sendmail", "email_encryption")
+	encryption, err := ReadSettingFromDB("sendmail", "email_encryption")
 	if err != nil {
 		return model.SMTPConfig{}, err
 	}

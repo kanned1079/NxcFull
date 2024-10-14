@@ -33,7 +33,7 @@ const useApiAddrStore = defineStore('apiAddrStore', () => {
             addANotice: '/api/admin/v1/notice/add',     // 添加一条通知
             deleteANotice: '/api/admin/v1/notice/delete', // 删除一条通知
             // 邮件测试部分
-            sendTestMail: '/api/admin/v1/mail/test',
+            sendTestMail: '/api/admin/v1/sendmail/test',
             // 添加新文档
             addNewDocument: '/api/admin/v1/document/add',
             addNewCoupon: '/api/admin/v1/coupon/add',   // 添加新的优惠券

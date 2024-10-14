@@ -9,13 +9,14 @@ import (
 	groupPb "gateway/internal/grpc/api/group/proto"
 	"gateway/internal/grpc/api/notice"
 	noticePb "gateway/internal/grpc/api/notice/proto"
+	"gateway/internal/grpc/api/sendmail"
+	mailPb "gateway/internal/grpc/api/sendmail/proto"
 	"gateway/internal/grpc/api/settings"
 	settingPb "gateway/internal/grpc/api/settings/proto"
 	"gateway/internal/grpc/api/subscription"
 	subscribePb "gateway/internal/grpc/api/subscription/proto"
 	"gateway/internal/grpc/api/user"
 	userPb "gateway/internal/grpc/api/user/proto"
-	//"google.golang.org/grpc"
 )
 
 type Clients struct {
@@ -26,6 +27,7 @@ type Clients struct {
 	SubscriptionServiceClient subscribePb.SubscriptionServiceClient
 	CouponServiceClient       couponPb.CouponServiceClient
 	SettingServiceClient      settingPb.SettingsServiceClient
+	MailServicesClient        mailPb.MailServiceClient
 }
 
 func NewClients() Clients {
@@ -38,6 +40,7 @@ func NewClients() Clients {
 		SubscriptionServiceClient: subscription.NewSubscriptionClient(),
 		CouponServiceClient:       coupon.NewCouponServiceClient(),
 		SettingServiceClient:      settings.NewSettingClient(),
+		MailServicesClient:        sendmail.NewMailClient(),
 	}
 
 }

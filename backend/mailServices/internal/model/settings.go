@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// SiteSetting 这是数据库中的定义
 type SiteSetting struct {
 	ID       uint            `gorm:"primaryKey" json:"id"`
 	Category string          `gorm:"size:50;not null;index" json:"category"`

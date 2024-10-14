@@ -1,10 +1,11 @@
 package main
 
 import (
-	"NxcFull/backend/mailServices/internal/config"
-	"NxcFull/backend/mailServices/internal/etcd"
-	"NxcFull/backend/mailServices/internal/handler"
 	"log"
+	"mailServices/internal/config"
+	"mailServices/internal/dao"
+	"mailServices/internal/etcd"
+	"mailServices/internal/handler"
 )
 
 var err error
@@ -16,9 +17,11 @@ func init() {
 		log.Println("读取配置文件出错", err)
 		return
 	}
+	dao.InitMysqlServer()
+	dao.InitRedisServer()
 }
 
 func main() {
-	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "mailServices", "localhost:50002")
+	go etcd.RegisterService2Etcd("api.ikanned.com:22379", 60, "mailServices", "localhost:50008")
 	handler.RunGRPCServer()
 }

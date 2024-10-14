@@ -41,8 +41,8 @@ func StartApiGateways() {
 		// 一般用户登录和注册相关路由
 		userPublic.POST("/login", handler.HandleUserLogin) // rpc实现
 
-		//userPublic.POST("/register/vc/get", SendVerifyEmail)
-		//userPublic.POST("/register/vc/verify", HandleVerifyEmailCode)
+		userPublic.POST("/mail/register/get", SendVerifyEmail)
+		userPublic.POST("/mail/register/verify", HandleVerifyEmailCode)
 		userPublic.POST("/register/register", handler.HandleUserRegister) // rpc实现
 	}
 
@@ -67,7 +67,7 @@ func StartApiGateways() {
 		adminAuthorized.PUT("/notice/status", handler.HandleUpdateNoticeStatus) // 更新通知的状态
 		adminAuthorized.DELETE("/notice", handler.HandleDeleteNotice)           // 删除一条通知
 
-		//adminAuthorized.POST("/mail/test", HandleSendTestMail)               // 发送测试邮件
+		adminAuthorized.POST("/mail/test", handler.HandleSendTestMail) // 发送测试邮件
 
 		adminAuthorized.GET("/plan", handler.HandleGetAllPlans)          // 获取所有的订阅
 		adminAuthorized.POST("/plan", handler.HandleAddNewPlan)          // 添加新的订阅
