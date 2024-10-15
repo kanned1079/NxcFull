@@ -1,8 +1,22 @@
 <script setup lang="ts">
 import {RouterView} from "vue-router";
 import useConfigStore from "@/store/useConfigStore";
+import {instance} from "@/axios"
 
 const configStore = useConfigStore();
+
+let handleSubmitRedisConfig = async () => {
+  try {
+    let {data} = await instance.post('/api/v1/config/redis', {
+      ...configStore.redisConfig
+    })
+    if (data.code === 200) {
+      console.log('ok')
+    }
+  } catch (error: any) {
+    console.log(error)
+  }
+}
 
 </script>
 

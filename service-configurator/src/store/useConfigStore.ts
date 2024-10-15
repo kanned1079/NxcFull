@@ -29,10 +29,18 @@ interface RedisConfig {
     password: string
 }
 
+interface MqConfig {
+    host: string
+    port: number
+    username: string
+    password: string
+}
+
 interface ApiServerConfig {
     listen_ip: string
     port : number
 }
+
 
 
 interface Config {
@@ -49,6 +57,7 @@ const useConfigStore = defineStore('configStore', () => {
     })
     let redisConfig = ref<RedisConfig>({})
     let apiServerConfig = ref<ApiServerConfig>({})
+    let mqConfig = ref<MqConfig>({})
 
     // saveEtcdConfig2LocalStorage 将etcd数据存储到本地存储
     let saveEtcdConfig2LocalStorage = () => {
@@ -93,6 +102,7 @@ const useConfigStore = defineStore('configStore', () => {
         mysqlConfig,
         redisConfig,
         apiServerConfig,
+        mqConfig,
         submitConfig2Server
     }
 

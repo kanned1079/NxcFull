@@ -12,6 +12,7 @@ type MySqlConfig struct {
 type RedisConfig struct {
 	Host     string `yaml:"host"`
 	Port     string `yaml:"port"`
+	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 }
 
@@ -20,6 +21,14 @@ type EtcdConfig struct {
 	Port     string `yaml:"port"`
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
+}
+
+type MqConfig struct {
+	Host       string `yaml:"host"`
+	Port       string `yaml:"port"`
+	Username   string `yaml:"username"`
+	Password   string `yaml:"password"`
+	SwitchName string `yaml:"switch_name"`
 }
 
 type RpcConfig struct {
