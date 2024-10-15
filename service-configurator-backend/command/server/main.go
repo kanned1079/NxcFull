@@ -14,15 +14,15 @@ func init() {
 		log.Println("Etcd服务器连接成功")
 	}
 
+	//etcd.RegisterConfig2Etcd("mysql1", "aaaaaa")
+}
+
+func main() {
+	routers.StartRoute()
+
 	defer func() {
 		if err := etcd.EtcdCli.Close(); err != nil {
 			log.Println(err)
 		}
 	}()
-
-	//etcd.RegisterConfig2Etcd(60, "mysql", "aaaaaa")
-}
-
-func main() {
-	routers.StartRoute()
 }

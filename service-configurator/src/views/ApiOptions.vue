@@ -52,7 +52,7 @@ export default {
 
 
 .card-bg {
-  background-color: #f4f4f4;
+  //background-color: #f4f4f4;
 }
 
 .item {
@@ -74,6 +74,16 @@ export default {
 
     .describe {
       opacity: 0.6;
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .l-content {
+      flex-direction: row;
+      align-items: center;
+      .describe {
+        margin-left: 10px;
+      }
     }
   }
 

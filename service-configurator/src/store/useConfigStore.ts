@@ -19,7 +19,7 @@ interface MySqlConfig {
     port: number
     username: string
     password: string
-    database: string
+    database: number
 }
 
 interface RedisConfig {
@@ -27,6 +27,7 @@ interface RedisConfig {
     port: number
     username: string
     password: string
+    database: number
 }
 
 interface MqConfig {
@@ -55,7 +56,13 @@ const useConfigStore = defineStore('configStore', () => {
     let mysqlConfig = ref<MySqlConfig>({
         protocol: 'tcp',
     })
-    let redisConfig = ref<RedisConfig>({})
+    let redisConfig = ref<RedisConfig>({
+        host: '',
+        port: 6379,
+        username: '',
+        password: '',
+        database: 0,
+    })
     let apiServerConfig = ref<ApiServerConfig>({})
     let mqConfig = ref<MqConfig>({})
 

@@ -68,7 +68,7 @@ export default {
 
 <template>
   <div class="root">
-    <n-card :embedded="true" :bordered="true" title="配置项" class="aside-card" content-style="padding: 5px">
+    <n-card :embedded="true" :bordered="!themeStore.darkThemeEnabled" hoverable title="配置项" class="aside-card1" content-style="padding: 5px">
       <n-menu
           v-model:value="themeStore.menuSelected"
           :root-indent="36"
@@ -78,17 +78,41 @@ export default {
       />
     </n-card>
     <!--    <n-icon><mysqlIcon/></n-icon>-->
+
+    <n-card :embedded="true" :bordered="!themeStore.darkThemeEnabled" hoverable title="本地配置项" class="aside-card2" content-style="padding: 5px">
+     <div class="left-btn-items">
+       <n-form-item label="启用深色" label-placement="left">
+         <n-switch v-model:value="themeStore.darkThemeEnabled" />
+       </n-form-item>
+     </div>
+    </n-card>
   </div>
 
 </template>
 
 <style scoped lang="less">
 .root {
-  width: 240px;
+  background-color: rgba(0,0,0,0.0);
+  height: calc(100vh - 50px);
+  display: flex;
+  flex-direction: column;
+  .aside-card1 {
+    margin: 20px 20px 0 20px;
+    width: 240px;
+    flex: 8;
 
-  .aside-card {
-    height: calc(100vh - 90px);
-    background-color: #f4f4f4;
+    //background-color: #f4f4f4;
+  }
+  .aside-card2{
+    margin: 20px;
+    width: 240px;
+    //height: calc(50vh - 90px);
+    flex: 2;
+    //background-color: #f4f4f4;
+    .left-btn-items {
+      margin-left: 20px;
+    }
+
   }
 }
 </style>

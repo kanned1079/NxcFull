@@ -54,7 +54,8 @@ make build-windows-amd64 # 构建windows平台amd64架构的可执行文件
 
 - 打包服务到docker镜像文件
 ```shell
-# 打包为镜像
+# 打包可执行文件为镜像
+# 注意需要修改对应Dockerfile的内容 默认打包linux-arm64
 docker build -t <用户名>/<镜像名>@<标签名>
 # 使用docker run来运行
 ``` 

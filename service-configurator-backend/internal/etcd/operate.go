@@ -31,7 +31,7 @@ func GetConfigFromEtcd(configName string) (string, error) {
 	defer cancel()
 
 	// 从 etcd 中获取指定的配置
-	getResp, err := EtcdCli.Get(ctx, "/config/"+configName)
+	getResp, err := EtcdCli.Get(ctx, "/config/"+configName) // 此处已经有前缀
 	if err != nil {
 		log.Printf("获取设置 %s 失败: %v\n", configName, err)
 		return "", err

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import {ref} from "vue"
 import useConfigStore from "@/store/useConfigStore";
+import useThemeStore from "@/store/useThemeStore";
 import {SaveOutline as saveIcon} from "@vicons/ionicons5"
 
 const configStore = useConfigStore();
+const themeStore = useThemeStore();
 
 </script>
 
@@ -15,13 +17,13 @@ export default {
 
 <template>
   <div class="root" style="">
-    <n-card class="card-bg" :embedded="true" :bordered="true" hoverable title="Etcd配置"></n-card>
+    <n-card class="card-bg" :embedded="true" :bordered="!themeStore.darkThemeEnabled" hoverable title="Etcd配置"></n-card>
 
-    <n-alert type="info" style="margin: 20px 0">
+    <n-alert :bordered="!themeStore.darkThemeEnabled" type="info" style="margin: 20px 0">
       Etcd的配置仅保存在本地localStorage
     </n-alert>
 
-    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="true" hoverable>
+    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="!themeStore.darkThemeEnabled" hoverable>
 
 
       <div class="item">
@@ -85,7 +87,7 @@ export default {
 }
 
 .card-bg {
-  background-color: #f4f4f4;
+  //background-color: #f4f4f4;
 }
 
 .item {
@@ -107,6 +109,16 @@ export default {
 
     .describe {
       opacity: 0.6;
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .l-content {
+      flex-direction: row;
+      align-items: center;
+      .describe {
+        margin-left: 10px;
+      }
     }
   }
 
