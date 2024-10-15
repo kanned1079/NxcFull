@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import yamlIcon from "@/assets/yaml.svg"
 </script>
 
 <script lang="ts">
@@ -9,23 +10,36 @@ export default {
 
 <template>
   <div class="root">
-    <n-card :embedded="true" :bordered="false" hoverable class="header-content" content-style="padding: 0px" title="微服务配置">
-      <p class="name"></p>
-    </n-card>
+    <div class="header-content">
+
+      <span class="name">
+        <n-icon size="20" style="margin-right: 10px"><yamlIcon/></n-icon>
+        微服务配置
+      </span>
+    </div>
   </div>
 
 </template>
 
 <style lang="less" scoped>
 .root {
-  margin: 20px 20px 0 20px;
+  background-color: #4cae4c;
   .header-content {
     width: 100%;
-    background-color: #e3e5e7;
+    height: 50px;
+    line-height: 50px;
+    background-color: #66afe9;
+    display: flex;
+    align-items: center;
+    justify-content: left;
     .name {
-      font-size: 1.2rem;
-      padding-left: 30px;
-
+      font-size: 1rem;
+      color: white;
+      margin-left: 30px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
     }
   }
 }
