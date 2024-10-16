@@ -8,14 +8,14 @@ import (
 	"systemServices/internal/config/remote"
 )
 
-const (
-	dbUser  = "nxc"          // 使用哪个用户来连接数据库
-	dbPass  = "Password1!"   // 用户的密码
-	dbProto = "tcp"          // 连接的协议
-	dbHost  = "ikanned.com"  // 数据库主机的IP或域名
-	dbPort  = "24407"        // 数据库连接端口
-	dbName  = "nxc_networks" // 操作哪一个数据库
-)
+//const (
+//	dbUser  = "nxc"          // 使用哪个用户来连接数据库
+//	dbPass  = "Password1!"   // 用户的密码
+//	dbProto = "tcp"          // 连接的协议
+//	dbHost  = "ikanned.com"  // 数据库主机的IP或域名
+//	dbPort  = "24407"        // 数据库连接端口
+//	dbName  = "nxc_networks" // 操作哪一个数据库
+//)
 
 var (
 	Db  *gorm.DB

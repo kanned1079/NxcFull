@@ -1,6 +1,6 @@
 <LocalConfig>
   <rpc_config>
-    <rpc_name>systemServices</rpc_name>
+    <rpc_name>settingServices</rpc_name>
     <listen_addr>localhost</listen_addr>
     <listen_port>50007</listen_port>
   </rpc_config>

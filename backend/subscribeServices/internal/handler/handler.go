@@ -2,13 +2,14 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
-	"strconv"
 	"subscribeServices/api/proto"
+	"subscribeServices/internal/config/local"
 	"subscribeServices/internal/services"
 )
 
@@ -29,8 +30,9 @@ func loggingInterceptor(
 }
 
 func RunGRPCServer() {
-	port := 50005
-	listener, err := net.Listen("tcp", "localhost:"+strconv.Itoa(port))
+	//port := 50005
+	listenAddr := fmt.Sprintf("%s:%d", local.MyLocalConfig.RpcConfig.ListenAddr, local.MyLocalConfig.RpcConfig.ListenPort)
+	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		log.Println("设置监听端口失败", err)
 	}
@@ -48,7 +50,7 @@ func RunGRPCServer() {
 	// 注册UserService到grpcServer服务器
 	orderServices := services.NewOrderServices()
 	proto.RegisterSubscriptionServiceServer(grpcServer, orderServices)
-	log.Printf("gRPC 服务器正在 %v 端口监听...", port)
+	log.Printf("gRPC 服务器正在 %v 端口监听...", listenAddr)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Println("启动gRPC服务器失败", err)
 	}
