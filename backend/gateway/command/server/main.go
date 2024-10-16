@@ -2,8 +2,6 @@ package main
 
 import (
 	"gateway/internal/etcd"
-	//pb "NxcFull/backend/gateway/internal/grpc/api/proto"
-	"gateway/internal/routers"
 )
 
 //var GrpcClients grpc2.Clients
@@ -31,5 +29,5 @@ func init() {
 }
 
 func main() {
-	routers.StartApiGateways()
+	//routers.StartApiGateways()
 }

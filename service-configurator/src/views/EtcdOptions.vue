@@ -3,9 +3,31 @@ import {ref} from "vue"
 import useConfigStore from "@/store/useConfigStore";
 import useThemeStore from "@/store/useThemeStore";
 import {SaveOutline as saveIcon} from "@vicons/ionicons5"
+import {instance} from "@/axios";
+import {useMessage} from "naive-ui";
 
+const message = useMessage()
 const configStore = useConfigStore();
 const themeStore = useThemeStore();
+
+let handleInitEtcdClient = async () => {
+  try {
+    let {data} = await instance.post('/api/v1/config/etcd/init', {
+      ...configStore.etcdConfig
+    })
+    if (data.code === 200) {
+      console.log('ok')
+      message.success(data.msg)
+      // await handleGetRedisConfig()
+      await configStore.checkEtcd()
+    } else {
+      message.error("初始化失败： " + data.msg)
+    }
+  } catch (error: any) {
+    console.log(error)
+    message.error(error)
+  }
+}
 
 </script>
 
@@ -17,13 +39,13 @@ export default {
 
 <template>
   <div class="root" style="">
-    <n-card class="card-bg" :embedded="true" :bordered="!themeStore.darkThemeEnabled" hoverable title="Etcd配置"></n-card>
+    <n-card class="card-bg" :embedded="true" :bordered="false" hoverable title="Etcd配置"></n-card>
 
-    <n-alert :bordered="!themeStore.darkThemeEnabled" type="info" style="margin: 20px 0">
-      Etcd的配置仅保存在本地localStorage
+    <n-alert :bordered="false" type="info" style="margin: 20px 0">
+      Etcd的配置仅保存在本地LocalStorage，配置其他选项需要先提交Etcd配置进行初始化。
     </n-alert>
 
-    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="!themeStore.darkThemeEnabled" hoverable>
+    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="false" hoverable>
 
 
       <div class="item">
@@ -67,7 +89,7 @@ export default {
       </div>
 
       <div class="save-part" style="display: flex; justify-content: right">
-        <n-button style="width: 200px" size="large" type="primary" @click="configStore.saveEtcdConfig2LocalStorage">
+        <n-button style="width: 200px" size="large" type="primary" @click="configStore.saveEtcdConfig2LocalStorage(); handleInitEtcdClient()">
           <n-icon style="margin-right: 8px" size="18"><saveIcon/></n-icon>
           保存设置
         </n-button>

@@ -1,8 +1,50 @@
 <script setup lang="ts">
 import useConfigStore from "@/store/useConfigStore";
-const configStore = useConfigStore();
-
+import {onMounted} from "vue";
 import {SaveOutline as saveIcon} from "@vicons/ionicons5"
+import {useLoadingBar} from "naive-ui"
+import {instance} from "@/axios";
+
+import { useMessage } from 'naive-ui'
+
+const configStore = useConfigStore();
+const message = useMessage()
+
+// const loadingBar = useLoadingBar()
+
+let handleSubmitMysqlOptions = async () => {
+  // loadingBar.start()
+  try {
+    let {data} = await instance.post('/api/v1/config/mysql', {
+      ...configStore.mysqlConfig
+    })
+    if (data.code === 200) {
+      console.log('ok')
+      // loadingBar.finish()
+      message.success('保存Mysql配置信息成功')
+      await handleGetMysqlConfig()
+    }
+  } catch (error: any) {
+    console.log(error)
+    message.error(error)
+  }
+}
+
+let handleGetMysqlConfig = async () => {
+  try {
+    let {data} = await instance.get('/api/v1/config/mysql')
+    if (data.code === 200) {
+      Object.assign(configStore.mysqlConfig, data.mysql_config)
+      console.log('ok')
+    }
+  } catch (error: any) {
+    console.log(error)
+  }
+}
+
+onMounted(() => {
+  handleGetMysqlConfig()
+})
 
 </script>
 
@@ -14,9 +56,9 @@ export default {
 
 <template>
   <div class="root">
-    <n-card class="card-bg" :embedded="true" :bordered="true" hoverable title="MySQL配置"></n-card>
+    <n-card class="card-bg" :embedded="true" :bordered="false" hoverable title="MySQL配置"></n-card>
 
-    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="true" hoverable>
+    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="false" hoverable>
 
       <div class="item">
         <div class="l-content">
@@ -69,7 +111,7 @@ export default {
       </div>
 
       <div class="save-part" style="display: flex; justify-content: right">
-        <n-button style="width: 200px" size="large" type="primary">
+        <n-button style="width: 200px" size="large" type="primary" @click="handleSubmitMysqlOptions">
           <n-icon style="margin-right: 8px" size="18"><saveIcon/></n-icon>
           保存设置
         </n-button>

@@ -1,8 +1,45 @@
 <script setup lang="ts">
+import {onMounted} from "vue";
 import useConfigStore from "@/store/useConfigStore";
 import {SaveOutline as saveIcon} from "@vicons/ionicons5"
+import { useMessage } from 'naive-ui'
+import {instance} from "@/axios";
+const message = useMessage()
 
 const configStore = useConfigStore();
+
+
+let handleSubmitMqOptions = async () => {
+  try {
+    let {data} = await instance.post('/api/v1/config/mq', {
+      ...configStore.mqConfig
+    })
+    if (data.code === 200) {
+      console.log('ok')
+      message.success('保存RabbitMQ设置成功')
+      // await handleGetRedisConfig()
+    }
+  } catch (error: any) {
+    console.log(error)
+    message.error(error)
+  }
+}
+
+let handleGetMqOptions = async () => {
+  try {
+    let {data} = await instance.get('/api/v1/config/mq')
+    if (data.code === 200) {
+      Object.assign(configStore.mqConfig, data.mq_config)
+      console.log('ok')
+    }
+  } catch (error: any) {
+    console.log(error)
+  }
+}
+
+onMounted(() => {
+  handleGetMqOptions()
+})
 </script>
 
 <script lang="ts">
@@ -16,7 +53,7 @@ export default {
     <n-card class="card-bg" :embedded="true" :bordered="false" hoverable title="RabbitMQ配置"></n-card>
 
 
-    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="true" hoverable>
+    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="false" hoverable>
 
 
       <div class="item">
@@ -25,7 +62,7 @@ export default {
           <span class="describe">这里是RabbitMQ服务器的域名或IP</span>
         </div>
         <div class="r-content">
-          <n-input v-model:value="configStore.mqConfig.host" class="inp" size="large" placeholder="请输入节点名，多个使用空格隔开"></n-input>
+          <n-input v-model:value="configStore.mqConfig.endpoints" class="inp" size="large" placeholder="请输入节点名，多个使用空格隔开"></n-input>
         </div>
       </div>
 
@@ -60,7 +97,7 @@ export default {
       </div>
 
       <div class="save-part" style="display: flex; justify-content: right">
-        <n-button style="width: 200px" size="large" type="primary" @click="configStore.saveEtcdConfig2LocalStorage">
+        <n-button style="width: 200px" size="large" type="primary" @click="handleSubmitMqOptions">
           <n-icon style="margin-right: 8px" size="18"><saveIcon/></n-icon>
           保存设置
         </n-button>

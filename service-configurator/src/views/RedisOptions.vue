@@ -3,6 +3,8 @@ import {onMounted} from "vue";
 import useConfigStore from "@/store/useConfigStore";
 import {instance} from "@/axios"
 import {SaveOutline as saveIcon} from "@vicons/ionicons5"
+import { useMessage } from 'naive-ui'
+const message = useMessage()
 
 
 const configStore = useConfigStore();
@@ -14,9 +16,12 @@ let handleSubmitRedisConfig = async () => {
     })
     if (data.code === 200) {
       console.log('ok')
+      message.success('保存Redis设置成功')
+      await handleGetRedisConfig()
     }
   } catch (error: any) {
     console.log(error)
+    message.error(error)
   }
 }
 
@@ -46,9 +51,9 @@ export default {
 
 <template>
   <div class="root">
-    <n-card class="card-bg" :embedded="true" :bordered="true" hoverable title="Redis配置"></n-card>
+    <n-card class="card-bg" :embedded="true" :bordered="false" hoverable title="Redis配置"></n-card>
 
-    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="true" hoverable>
+    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="false" hoverable>
 
       <div class="item">
         <div class="l-content">

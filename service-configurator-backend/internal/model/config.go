@@ -3,7 +3,7 @@ package model
 type MysqlConfig struct {
 	Protocol string `yaml:"protocol" json:"protocol"`
 	Host     string `yaml:"host" json:"host"`
-	Port     string `yaml:"port" json:"port"`
+	Port     int32  `yaml:"port" json:"port"`
 	Username string `yaml:"username" json:"username"`
 	Password string `yaml:"password" json:"password"`
 	Database string `yaml:"database" json:"database"`
@@ -17,16 +17,16 @@ type RedisConfig struct {
 	Database int    `yaml:"database" json:"database"`
 }
 
-type EtcdConfig struct {
-	Host     string `yaml:"host" json:"host"`
-	Port     string `yaml:"port" json:"port"`
-	Username string `yaml:"username" json:"username"`
-	Password string `yaml:"password" json:"password"`
-}
+//type EtcdConfig struct {
+//	Host     string `yaml:"host" json:"host"`
+//	Port     string `yaml:"port" json:"port"`
+//	Username string `yaml:"username" json:"username"`
+//	Password string `yaml:"password" json:"password"`
+//}
 
 type MqConfig struct {
-	Host       string `yaml:"host" json:"host"`
-	Port       string `yaml:"port" json:"port"`
+	Endpoints  string `yaml:"host" json:"endpoints"`
+	Port       int32  `yaml:"port" json:"port"`
 	Username   string `yaml:"username" json:"username"`
 	Password   string `yaml:"password" json:"password"`
 	SwitchName string `yaml:"switch_name" json:"switch_name"`
@@ -37,9 +37,14 @@ type RpcConfig struct {
 	Port string `yaml:"port"`
 }
 
+type ApiServerConfig struct {
+	ListenAddr string `yaml:"listen_addr" json:"listen_addr"`
+	ListenPort int32  `yaml:"listen_port" json:"listen_port"`
+}
+
 type Config struct {
 	MySql MysqlConfig `yaml:"mysql"`
 	Redis RedisConfig `yaml:"redis"`
-	Etcd  EtcdConfig  `yaml:"etcd"`
-	Rpc   RpcConfig   `yaml:"rpc"`
+	//Etcd  EtcdConfig  `yaml:"etcd"`
+	Rpc RpcConfig `yaml:"rpc"`
 }

@@ -40,7 +40,7 @@ func GetConfigFromEtcd(configName string) (string, error) {
 	// 检查是否找到值
 	if len(getResp.Kvs) > 0 {
 		configValue := string(getResp.Kvs[0].Value)
-		log.Printf("成功获取设置 %s, 值: %s\n", configName, configValue)
+		//log.Printf("成功获取设置 %s, 值: %s\n", configName, configValue)
 		return configValue, nil
 	}
 

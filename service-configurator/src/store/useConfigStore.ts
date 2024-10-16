@@ -1,9 +1,9 @@
-import {ref} from 'vue'
+import {ref, reactive} from 'vue'
 import {defineStore} from "pinia";
 import {internalSelectionDark} from "naive-ui";
+import {instance} from "@/axios";
 // import {useRouter} from "vue-router";
 // // import {useMessage} from "naive-ui"
-
 
 
 interface EtcdConfig {
@@ -15,11 +15,11 @@ interface EtcdConfig {
 
 interface MySqlConfig {
     protocol: string
-    host: string
-    port: number
-    username: string
-    password: string
-    database: number
+    host?: string
+    port?: number
+    username?: string
+    password?: string
+    database?: number
 }
 
 interface RedisConfig {
@@ -38,23 +38,33 @@ interface MqConfig {
 }
 
 interface ApiServerConfig {
-    listen_ip: string
-    port : number
+    listen_addr: string
+    listen_port : number
 }
 
 
 
-interface Config {
-    EtcdConfig,
-    MySqlConfig,
-    RedisConfig,
-    ApiServerConfig,
-}
+// interface Config {
+//     EtcdConfig,
+//     MySqlConfig,
+//     RedisConfig,
+//     ApiServerConfig,
+// }
 
 const useConfigStore = defineStore('configStore', () => {
-    let etcdConfig = ref<EtcdConfig>({})
+    let etcdConfig = ref<EtcdConfig>({
+        endpoints: '',
+        port: 2379,
+        username: '',
+        password: '',
+    })
     let mysqlConfig = ref<MySqlConfig>({
         protocol: 'tcp',
+        host: '',
+        port: 3306,
+        username: '',
+        password: '',
+        database: '',
     })
     let redisConfig = ref<RedisConfig>({
         host: '',
@@ -63,8 +73,19 @@ const useConfigStore = defineStore('configStore', () => {
         password: '',
         database: 0,
     })
-    let apiServerConfig = ref<ApiServerConfig>({})
-    let mqConfig = ref<MqConfig>({})
+    let apiServerConfig = ref<ApiServerConfig>({
+        listen_addr: '',
+        listen_port : 8080,
+    })
+    let mqConfig = ref<MqConfig>({
+        host: '',
+        port: 5672,
+        username: '',
+        password: '',
+    })
+
+    let etcdClientIsInitialized = ref<boolean>(false)
+
 
     // saveEtcdConfig2LocalStorage 将etcd数据存储到本地存储
     let saveEtcdConfig2LocalStorage = () => {
@@ -84,20 +105,38 @@ const useConfigStore = defineStore('configStore', () => {
     }
 
     // 提交所有的配置信息
-    let submitConfig2Server = async () => {
-        let postData = {
-            etcd_config: {
-                ...etcdConfig
-            },
-            config: {
-                mysql_config: mysqlConfig.value,
-                redis_config: redisConfig.value,
-                api_server_config: apiServerConfig.value,
+    // let submitConfig2Server = async () => {
+    //     let postData = {
+    //         etcd_config: {
+    //             ...etcdConfig
+    //         },
+    //         config: {
+    //             mysql_config: mysqlConfig.value,
+    //             redis_config: redisConfig.value,
+    //             api_server_config: apiServerConfig.value,
+    //         }
+    //     }
+    //
+    //     console.log(postData)
+    // }
+
+    let checkEtcd = async () => {
+        try {
+            let {data} = await instance.get('/api/v1/config/etcd/check')
+            console.log('1', data.initialled)
+            if (data.code === 200 && data.initialled) {
+                console.log("Etcd已初始化")
+                etcdClientIsInitialized.value = true
+            } else {
+                etcdClientIsInitialized.value = false
             }
+        } catch (error: any) {
+            console.log(error)
         }
 
-        console.log(postData)
     }
+
+
 
 
 
@@ -110,11 +149,13 @@ const useConfigStore = defineStore('configStore', () => {
         redisConfig,
         apiServerConfig,
         mqConfig,
-        submitConfig2Server
+        // submitConfig2Server,
+        etcdClientIsInitialized,
+        checkEtcd
     }
 
 }, {
-    persist: false,
+    persist: true,
 })
 
 export default useConfigStore;
