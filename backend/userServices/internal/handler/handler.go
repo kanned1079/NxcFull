@@ -30,8 +30,6 @@ func loggingInterceptor(
 }
 
 func RunGRPCServer() {
-	//addr := local.MyLocalConfig.RpcConfig.ListenAddr
-	//port := local.MyLocalConfig.RpcConfig.ListenPort
 	listenAddr := fmt.Sprintf("%s:%d", local.MyLocalConfig.RpcConfig.ListenAddr, local.MyLocalConfig.RpcConfig.ListenPort)
 	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {

@@ -1,0 +1,13 @@
+<LocalConfig>
+  <rpc_config>
+    <rpc_name>noticeServices</rpc_name>
+    <listen_addr>localhost</listen_addr>
+    <listen_port>50003</listen_port>
+  </rpc_config>
+  <etcd_config>
+    <host>api.ikanned.com</host>
+    <port>22379</port>
+    <username>services</username>
+    <password>Passcode1!</password>
+  </etcd_config>
+</LocalConfig>
