@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"log"
-	"systemServices/internal/config/remote"
+	"userServices/internal/config/remote"
 )
 
 var (

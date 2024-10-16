@@ -33,6 +33,7 @@ func init() {
 	}
 
 	dao.InitMysqlServer() // 初始化主数据库
+	dao.InitRedisServer() // 初始化Redis服务器
 
 }
 
