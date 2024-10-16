@@ -1,7 +1,10 @@
 package main
 
 import (
+	"gateway/internal/config"
 	"gateway/internal/etcd"
+	"gateway/internal/routers"
+	"log"
 )
 
 //var GrpcClients grpc2.Clients
@@ -30,4 +33,10 @@ func init() {
 
 func main() {
 	//routers.StartApiGateways()
+	if err = config.GetServerEnv(); err != nil {
+		log.Println("获取运行环境参数错误")
+		panic(err)
+	}
+	routers.StartApiGateways()
+
 }

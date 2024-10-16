@@ -1,6 +1,6 @@
 package model
 
 type ServerConfig struct {
-	Host string `json:"host"`
-	Port string `json:"port"`
+	ListenAddr string `json:"listen_addr"`
+	ListenPort int32  `json:"listen_port"`
 }

@@ -2,6 +2,7 @@ package etcd
 
 import (
 	"context"
+	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"sync"
@@ -22,6 +23,8 @@ func InitEtcdClient() {
 	cli, err = clientv3.New(clientv3.Config{
 		Endpoints:   etcdServersAddr,
 		DialTimeout: 5 * time.Second,
+		Username:    "services",
+		Password:    "Passcode1!",
 	})
 	if err != nil {
 		log.Fatalf("Failed to connect to etcd: %v", err)
@@ -53,12 +56,13 @@ func GetServiceAddress(serviceName string) string {
 
 	resp, err := cli.Get(ctx, "/services/"+serviceName)
 	if err != nil || len(resp.Kvs) == 0 {
-		log.Printf("Failed to get services address for %s: %v", serviceName, err)
+		//log.Printf("获取服务 %s 地址错误: %v", serviceName, err)
+		panic(fmt.Sprintf("获取服务 %s 地址错误: %v", serviceName, err))
 		return ""
 	}
 
 	serviceAddress := string(resp.Kvs[0].Value)
-	log.Printf("Get services %s address: %s\n", serviceName, serviceAddress)
+	log.Printf("获取服务 %s 地址成功 地址为： %s\n", serviceName, serviceAddress)
 
 	// 更新缓存
 	cacheMux.Lock()

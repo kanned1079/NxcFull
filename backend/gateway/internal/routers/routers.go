@@ -1,11 +1,14 @@
 package routers
 
 import (
+	"fmt"
+	"gateway/internal/config"
 	"gateway/internal/handler"
 	"gateway/internal/middleware"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func StartApiGateways() {
@@ -114,7 +117,10 @@ func StartApiGateways() {
 		//userAuthorized.GET("/orders", orders.HandleGetOrders)
 	}
 
-	if err := router.Run("0.0.0.0:8081"); err != nil {
+	//if err := router.Run("0.0.0.0:8081"); err != nil {
+	//	log.Println("启动服务器失败", err)
+	//}
+	if err := router.Run(fmt.Sprintf("%s:%s", config.MyServerConfig.ListenAddr, strconv.Itoa(int(config.MyServerConfig.ListenPort)))); err != nil {
 		log.Println("启动服务器失败", err)
 	}
 }
