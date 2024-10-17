@@ -38,6 +38,7 @@ func HandleUserLogin(context *gin.Context) {
 	resp, err := grpcClient.UserServiceClient.Login(ctx, rpcReq)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 	if resp == nil {
 		context.JSON(http.StatusOK, gin.H{

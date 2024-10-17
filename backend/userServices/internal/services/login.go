@@ -23,6 +23,7 @@ func NewUserService() *UserService {
 	return &UserService{}
 }
 
+//// v1
 //// Login 实现用户登录的逻辑
 //func (s *UserService) Login(cxt context.Context, req *pb.UserLoginRequest) (*pb.UserLoginResponse, error) {
 //	if utils.IsUserExist(req.Email) == model.User_Exist {
@@ -157,7 +158,7 @@ func (s *UserService) Login(ctx context.Context, req *pb.UserLoginRequest) (*pb.
 	if errors.Is(err, redis.Nil) {
 		// Redis 缓存中不存在用户信息，从数据库查询
 		log.Println("用户信息在Redis中不存在")
-		if utils.IsUserExist(req.Email) == model.User_Exist {
+		if utils.IsUserExist(req.Email) == model.User_Exist { // 数据库查询
 			// 验证用户密码
 			if utils.AuthUserInfo(req.Email, req.Password) == model.Auth_Pass {
 				// 从数据库获取用户信息

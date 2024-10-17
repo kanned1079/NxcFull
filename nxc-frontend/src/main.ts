@@ -18,6 +18,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import naive, {zhCN} from "naive-ui";
+// import bcrypt from 'bcryptjs'
+// Vue.use(bcrypt)
 
 const messages = {
     en_US,
@@ -43,6 +45,8 @@ pinia.use(piniaPluginPersistedstate)
 const app = createApp(App)
 
 app.use(naive)
+
+// app.use(bcrypt)
 
 app.use(pinia)
 app.use(i18n)

@@ -2,7 +2,7 @@
   <rpc_config>
     <rpc_name>userServices</rpc_name>
     <listen_addr>localhost</listen_addr>
-    <listen_port>50001</listen_port>
+    <listen_port>51001</listen_port>
   </rpc_config>
   <etcd_config>
     <host>api.ikanned.com</host>

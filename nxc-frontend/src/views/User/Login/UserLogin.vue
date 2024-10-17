@@ -18,7 +18,7 @@ import {
   ChevronBackOutline as backIcon,
 } from '@vicons/ionicons5'
 import useApiAddrStore from "@/stores/useApiAddrStore";
-import {hashPassword} from "@/utils/encryptor";
+import {hashPassword, encodeToBase64} from "@/utils/encryptor";
 
 const {t} = useI18n()
 const appInfoStore = useAppInfosStore()
@@ -133,10 +133,12 @@ let handleLogin = async () => {
   console.log('用户数据')
   console.log(formValue.value.user.email, formValue.value.user.password)
   try {
+    // let hashedPwd = await hashPassword(formValue.value.user.password)
+    // console.log('测试用hashedPwd ', hashedPwd)
     let {data} = await instance.post("http://localhost:8081/api/user/v1/login", {
       email: formValue.value.user.email,
-      // password: encodeToBase64(formValue.value.user.password),
-      password: hashPassword(formValue.value.user.password),
+      password: encodeToBase64(formValue.value.user.password),
+      // password: hashedPwd,
       role: 'user',
     })
     console.log(data)

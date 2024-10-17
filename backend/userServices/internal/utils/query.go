@@ -96,11 +96,22 @@ func AuthUserInfo(email string, password string) (code int) {
 	}
 
 	// 验证用户密码
-	if password == userAuth.Password {
+	var decodedPwd string
+	if decodedPwd, err = DecodeBase64(password); err != nil {
+		log.Println(err)
+		return model.Unknow_Error
+	}
+
+	if ComparePasswordHash(decodedPwd, userAuth.Password) {
 		code = model.Auth_Pass
 	} else {
 		code = model.Auth_Failure
 	}
+
+	//if password == userAuth.Password {
+	//} else {
+	//}
+	//return
 	return
 }
 

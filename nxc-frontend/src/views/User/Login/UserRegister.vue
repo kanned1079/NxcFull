@@ -207,9 +207,10 @@ let backToLogin = () => {
 // 处理注册
 let handleRegister = async () => {
   try {
+    let hashedPassword = await hashPassword(formValue.value.user.password.trim() as string)
     let {data} = await instance.post('/api/user/v1/register/register', {
       email: formValue.value.user.email,
-      password: hashPassword(formValue.value.user.password),
+      password: hashedPassword,
       invite_user_id: formValue.value.user.invite_user_id,
     })
     if (data.code === 200 && data.is_registered) {

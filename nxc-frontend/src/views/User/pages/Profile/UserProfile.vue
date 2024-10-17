@@ -8,7 +8,7 @@ import useAppInfosStore from "@/stores/useAppInfosStore";
 import type {FormInst, FormRules, NotificationType} from 'naive-ui'
 import {NIcon, useMessage, useNotification} from 'naive-ui'
 import {Wallet as walletIcon} from "@vicons/ionicons5"
-import {hashPassword} from "@/utils/encryptor";
+import {hashPassword, encodeToBase64} from "@/utils/encryptor";
 import instance from "@/axios";
 
 interface ModelType {
@@ -61,7 +61,8 @@ let verifyOldPassword = async (): Promise<boolean> => {
   try {
     let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/verify', {
       email: userInfoStore.thisUser.email,
-      old_password: hashPassword(modelRef.value.old_password.trim() as string)
+      // old_password: hashPassword(modelRef.value.old_password.trim() as string)
+      old_password: encodeToBase64(modelRef.value.old_password.trim() as string)
     });
     if (data.code === 200) {
       return data.verified as boolean;
@@ -84,9 +85,11 @@ let saveNewPassword = async () => {
         console.log('验证ok');
         if (await verifyOldPassword()) { // 等待验证旧密码的结果
           try {
+            let hashedNewPassword = await hashPassword(modelRef.value.new_password.trim() as string)
             let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/update', {
               email: userInfoStore.thisUser.email,
-              new_password: hashPassword(modelRef.value.new_password)
+              // new_password: hashPassword(modelRef.value.new_password)
+              new_password: hashedNewPassword
             });
             if (data.code === 200 && data.updated as boolean) {
               modelRef.value.old_password = ''
