@@ -108,6 +108,13 @@ func StartApiGateways() {
 		userAuthorized.POST("/coupon/verify", handler.HandleVerifyCoupon) // 验证优惠券可用性	// POST
 		userAuthorized.POST("/auth/passcode/verify", handler.HandleCheckPreviousPassword)
 		userAuthorized.POST("/auth/passcode/update", handler.HandleApplyNewPassword)
+
+		userAuthorized.GET("/auth/2fa/status", handler.HandleGet2FAStatus)            // 检查是否启用了2FA
+		userAuthorized.POST("/auth/2fa/setup", handler.HandleSetup2FA)                // 新建2fa请求
+		userAuthorized.POST("/auth/2fa/setup/test", handler.HandleTest2FA)            // 测试2FA是否可用
+		userAuthorized.DELETE("/auth/2fa/setup/cancel", handler.HandleCancelSetup2FA) // 取消2fa在redis中的暂存
+		userAuthorized.DELETE("auth/2fa/disable", handler.HandleDisable2FA)
+
 		userAuthorized.GET("/plan/info/fetch", handler.GetActivePlanListByUserId)
 		//userAuthorized.GET("/keys", keys.HandleGetAllUserKeys)
 		//

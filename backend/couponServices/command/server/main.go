@@ -37,7 +37,7 @@ func init() {
 }
 
 func main() {
-	go etcd.RegisterService2Etcd(3600)
+	go etcd.RegisterService2Etcd(86400)
 	handler.RunGRPCServer()
 
 }

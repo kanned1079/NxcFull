@@ -42,7 +42,7 @@ func main() {
 	//log.Println(local.MyLocalConfig)
 	//log.Println(remote.MyRedisConfig)
 	//log.Println(remote.MyDbConfig)
-	go etcd.RegisterService2Etcd(3600)
+	go etcd.RegisterService2Etcd(86400)
 	handler.RunGRPCServer()
 
 }

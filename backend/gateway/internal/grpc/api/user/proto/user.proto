@@ -24,6 +24,15 @@ service UserService {
   // 更新用户密码
   rpc ApplyNewPassword(ApplyNewPasswordRequest) returns (ApplyNewPasswordResponse);
 
+  rpc Setup2FA(Setup2FARequest) returns (Setup2FAResponse);
+
+  rpc Test2FA(Test2FARequest) returns (Test2FAResponse);
+
+  rpc CancelSetup2FA(CancelSetup2FARequest) returns (CancelSetup2FAResponse);
+
+  rpc Get2FAStatus(Get2FAStatusRequest) returns (Get2FAStatusResponse);
+
+  rpc Disable2FA(Disable2FARequest) returns (Disable2FAResponse);
 
 }
 
@@ -98,4 +107,68 @@ message ApplyNewPasswordResponse {
   int64 code = 1;
   bool updated = 2; // 密码是否更新成功
   string msg = 3;   // 消息提示
+}
+
+// -----------------
+
+message Setup2FARequest {
+  int64 id = 1;
+  string email = 2;
+}
+
+message Setup2FAResponse {
+  int32 code = 1;
+  string msg = 2;
+  string url = 3;
+}
+
+// -----------
+
+message Test2FARequest {
+  int64 id = 1;
+  string email = 2;
+  string two_fa_code = 3;
+}
+
+message Test2FAResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// ----------
+
+message CancelSetup2FARequest {
+  int64 id = 1;
+  string email = 2;
+}
+
+message CancelSetup2FAResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// ---------
+
+message Get2FAStatusRequest {
+  int64 id = 1;
+  string email = 2;
+}
+
+message Get2FAStatusResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool enabled = 3;
+}
+
+// ---------------
+
+message Disable2FARequest {
+  int64 id = 1;
+  string email = 2;
+}
+
+message Disable2FAResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool disabled = 3;
 }

@@ -8,7 +8,7 @@ import useAppInfosStore from "@/stores/useAppInfosStore";
 import type {FormInst, FormRules, NotificationType} from 'naive-ui'
 import {NIcon, useMessage, useNotification} from 'naive-ui'
 import {Wallet as walletIcon} from "@vicons/ionicons5"
-import {hashPassword, encodeToBase64} from "@/utils/encryptor";
+import {encodeToBase64, hashPassword} from "@/utils/encryptor";
 import instance from "@/axios";
 
 interface ModelType {
@@ -16,6 +16,8 @@ interface ModelType {
   new_password: string
   new_password_again: string
 }
+
+const message = useMessage()
 
 const {t} = useI18n()
 const formRef = ref<FormInst | null>(null)
@@ -57,6 +59,7 @@ let notify = (type: NotificationType, title: string, meta?: string) => {
   })
 }
 
+// verifyOldPassword 验证旧密码是否正确
 let verifyOldPassword = async (): Promise<boolean> => {
   try {
     let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/verify', {
@@ -78,6 +81,7 @@ let verifyOldPassword = async (): Promise<boolean> => {
   }
 }
 
+// saveNewPassword 保存新的密码
 let saveNewPassword = async () => {
   if (modelRef.value.old_password.trim() !== '') {
     if (modelRef.value.new_password.trim() !== '' && modelRef.value.new_password_again.trim() !== '') {
@@ -120,11 +124,142 @@ let saveNewPassword = async () => {
   }
 }
 
+let url = ref<string>('')
+let showModal = ref<boolean>(false)
+
+// handleSetup2FA 创建一个新的2FA新建请求
+let handleSetup2FA = async () => {
+  try {
+    let {data} = await instance.post('/api/user/v1/auth/2fa/setup', {
+      id: userInfoStore.thisUser.id,
+      email: userInfoStore.thisUser.email,
+    })
+    if (data.code === 200) {
+      console.log(data)
+      url.value = data.url
+      showModal.value = true
+      handleCalTime()
+    }
+  } catch (error: any) {
+    console.log(error)
+  }
+}
+
+let twoFaCode = ref<string>('')
+
+// handleTest2FA 测试2FA可用性 如果可用则写入进数据库
+let handleTest2FA = async () => {
+  try {
+    let {data} = await instance.post('/api/user/v1/auth/2fa/setup/test', {
+      id: userInfoStore.thisUser.id,
+      email: userInfoStore.thisUser.email,
+      two_fa_code: twoFaCode.value.trim(),
+    })
+    if (data.code === 200) {
+      console.log('绑定2fa成功', data)
+      showModal.value = false
+      message.success('绑定两步验证成功')
+    } else {
+      message.error(data.msg)
+    }
+  } catch (error: any) {
+    console.log(error)
+  }
+}
+
+// handleCancelSetup2FA 删除redis中的新建临时2FA数据
+let handleCancelSetup2FA = async () => {
+  try {
+    let {data} = await instance.delete('/api/user/v1/auth/2fa/setup/cancel', {
+    params: {
+      // id: userInfoStore.thisUser.id,
+      email: userInfoStore.thisUser.email,
+    }
+    })
+    if (data.code === 200) {
+      console.log('取消2fa成功', data)
+      message.info('已取消')
+    }
+  } catch (error: any) {
+    console.log(error)
+    message.info('错误' + error)
+  }
+}
+
+let twoFAEnabled = ref<boolean>(false)
+// handleGet2FAStatus 测试2FA可用性 如果可用则写入进数据库
+let handleGet2FAStatus = async () => {
+  try {
+    let {data} = await instance.get('/api/user/v1/auth/2fa/status', {
+      params: {
+        id: userInfoStore.thisUser.id,
+      }
+    })
+    if (data.code === 200) {
+      twoFAEnabled.value = data.enabled as boolean
+    } else {
+      message.error(data.msg)
+    }
+  } catch (error: any) {
+    message.info('错误' + error)
+    console.log(error)
+  }
+}
+
+// let handleClose = () => {
+//   // handleCancelSetup2FA()
+//   showModal.value = false
+// }
+
+let leftTime = ref<number>(0)
+
+let intervalId // 定时器ID
+
+let handleCalTime = () => {
+  leftTime.value = 60
+  if (intervalId) {
+    clearInterval(intervalId) // 清除之前的定时器，防止多次调用重复计时
+  }
+
+  intervalId = setInterval(() => {
+    if (leftTime.value <= 1) {
+      showModal.value = false // 关闭二维码modal
+      setTimeout(() => {
+        clearInterval(intervalId) // 计时结束时清除定时器
+        return
+      }, 1)
+    }
+    leftTime.value -= 1
+  }, 1000)
+}
+
+let handleDisable2FA = async () => {
+  try {
+    let {data} = await instance.delete('/api/user/v1/auth/2fa/disable', {
+      params: {
+        // id: userInfoStore.thisUser.id,
+        email: userInfoStore.thisUser.email,
+      }
+    })
+    if (data.code === 200) {
+      console.log('关闭2fa成功', data)
+      message.info('已关闭2fa验证')
+      // 再次查询2fa状态
+      await handleGet2FAStatus()
+    }
+  } catch (error: any) {
+    console.log(error)
+    message.info('错误' + error)
+  }
+}
 
 onMounted(() => {
   console.log('挂载个人中心')
   themeStore.menuSelected = 'user-profile'
   themeStore.userPath = '/dashboard/profile'
+
+  //
+  handleGet2FAStatus()
 })
 
 </script>
@@ -207,6 +342,36 @@ export default {
     </n-card>
 
     <n-card
+        class="two-fa-card"
+        :embedded="true"
+        hoverable
+        content-style="padding: 0"
+        :bordered="false"
+    >
+      <n-p class="title">两步验证2FA</n-p>
+      <n-alert :bordered="false" style="margin: 20px" type="info">
+        雙重驗證（縮寫為
+        2FA）是一個驗證過程，要求透過兩個不同的驗證因素來確立身分。簡而言之，這意味著使用者必須先以兩種不同的方式證明其身分，然後才會被授予存取權限。2FA
+        是多重要素驗證的一種形式。
+      </n-alert>
+      <div class="form">
+        <div style="display: flex; flex-direction: row; margin-bottom: 20px; align-items: center">
+          <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">两步验证状态</p>
+          <n-tag v-if="twoFAEnabled" type="success"> 已启用</n-tag>
+          <n-tag v-else type="default"> 未启用</n-tag>
+        </div>
+        <n-button :disabled="twoFAEnabled" @click="handleSetup2FA" :bordered="false" style="margin-bottom: 20px" type="primary">
+          设置两步验证
+        </n-button>
+        <n-button :disabled="!twoFAEnabled" @click="handleDisable2FA" :bordered="false" style="margin-bottom: 20px; margin-left: 10px" type="primary" secondary>
+          关闭两步验证
+        </n-button>
+
+      </div>
+
+    </n-card>
+
+    <n-card
         class="del-card"
         :embedded="true"
         hoverable
@@ -221,9 +386,75 @@ export default {
         <n-button strong style="margin-top: 20px;" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
       </div>
     </n-card>
-
-
   </div>
+
+  <n-modal
+      v-model:show="showModal"
+      auto-focus
+      @after-hide="handleCancelSetup2FA"
+  >
+    <n-card
+        class="qr-modal-root"
+        :bordered="false"
+        size="huge"
+    >
+      <template #header-extra></template>
+      <!--      <n-h4 style="opacity: 0.8">按照以下步骤以设置验证器</n-h4>-->
+
+      <p style="font-weight: 700; font-size: 1.25rem">STEP1</p>
+      <p style="opacity: 0.8; margin-bottom: 20px">根据提示在您的验证器上加入</p>
+      <div class="qr-modal-body">
+        <div class="l-part">
+          <n-qr-code
+              size="180"
+              :value="url"
+              type="svg"
+          />
+        </div>
+        <div class="r-part">
+          <h3>按照以下步骤以启用2FA</h3>
+          <n-p>1. 您的移动设备上需要有一个通用的验证器</n-p>
+          <n-p>2. 点击右上角的Scan按钮来扫描左侧的QR Code</n-p>
+          <n-p>3. 该QR Code中包含有您的验证信息和唯一密钥，请妥善保存</n-p>
+        </div>
+
+      </div>
+      <n-hr></n-hr>
+      <p style="font-weight: 700; font-size: 1.25rem">STEP2</p>
+      <p style="opacity: 0.8; margin-bottom: 20px">为了确保您的验证器能够正常使用 我们需要进行测试</p>
+      <div class="code-test-body">
+        <n-input
+            class="code-inp"
+            :placeholder="leftTime + 's'"
+            maxlength="6"
+            show-count
+            size="large"
+            v-model:value="twoFaCode"
+        >
+        </n-input>
+        <n-button
+            @click="handleTest2FA"
+            size="large"
+            class="test-btn"
+            type="primary"
+            :bordered="false"
+        >
+          测试
+        </n-button>
+        <n-button
+            @click="showModal=false"
+            size="large"
+            class="cancel-btn"
+            type="primary"
+            secondary
+            :bordered="false"
+        >
+          取消
+        </n-button>
+      </div>
+    </n-card>
+  </n-modal>
+
 </template>
 
 <style scoped lang="less">
@@ -320,6 +551,23 @@ export default {
     margin-bottom: 20px;
   }
 
+  .two-fa-card {
+    .title {
+      font-size: 1.1rem;
+      font-weight: 400;
+      background-color: rgba(216, 216, 216, 0.1);
+      padding: 10px 20px 10px 20px;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .form {
+      margin: 20px 20px 0 20px;
+
+    }
+
+    margin-bottom: 20px;
+  }
+
   .del-card {
     .title {
       font-size: 1.1rem;
@@ -343,6 +591,131 @@ export default {
 //  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
 //  border: 0;
 //}
+
+.qr-modal-root {
+  width: 720px;
+
+  .qr-modal-body {
+    display: flex;
+    flex-direction: row;
+    //background-color: #4cae4c;
+
+    .l-part {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      //background-color: #66afe9;
+    }
+
+    .r-part {
+      flex: 4;
+      margin-left: 40px;
+      align-items: center;
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .qr-modal-body {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      justify-content: center;
+
+      .l-part {
+        width: 100%;
+        //background-color: #4cae4c;
+      }
+
+      .r-part {
+        flex: 1;
+        margin: 30px 0 20px 0;
+        //background-color: #66afe9;
+      }
+    }
+
+  }
+}
+
+@media (max-width: 1000px) {
+  .qr-modal-root {
+    width: 60%;
+  }
+}
+
+@media (max-width: 768px) {
+  .qr-modal-root {
+    width: 90%;
+  }
+}
+
+.code-test-body {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+
+  .code-inp {
+    flex: 4;
+    margin-right: 20px;
+  }
+
+  .test-btn {
+    flex: 1;
+    margin-right: 20px;
+  }
+
+  .cancel-btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 1000px) {
+  .code-test-body {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+
+    .code-inp {
+      flex: 4;
+      margin-right: 20px;
+    }
+
+    .test-btn {
+      flex: 1;
+      margin-right: 20px;
+    }
+
+    .cancel-btn {
+      flex: 1;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .code-test-body {
+    flex-direction: column;
+    margin-bottom: 10px;
+    height: auto;
+
+    .code-inp {
+      flex: auto;
+    }
+
+    .test-btn {
+      flex: auto;
+      margin-right: 0;
+      margin-top: 10px;
+    }
+
+    .cancel-btn {
+      flex: auto;
+      margin-top: 10px;
+    }
+  }
+}
 
 
 </style>

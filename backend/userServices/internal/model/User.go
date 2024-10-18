@@ -16,6 +16,7 @@ type User struct {
 	Balance      float32        `json:"balance"`                              // 余额
 	LastLogin    *time.Time     `json:"last_login"`                           // 上一次登录时间
 	LastLoginIp  string         `json:"last_login_ip"`                        // 上一次登录Ip
+	IsTwoFA      bool           `json:"is_two_fa"`                            // 启用两步验证
 	CreatedAt    time.Time      `json:"createdAt"`                            // 账户创建日期
 	UpdatedAt    time.Time      `json:"updatedAt"`                            // 更新日期
 	DeletedAt    gorm.DeletedAt `json:"deletedAt"`                            // 账户删除日期

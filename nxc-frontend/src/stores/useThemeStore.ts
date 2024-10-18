@@ -136,6 +136,10 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 borderHover: '1px solid #385894',
                 borderFocus: '1px solid #385894',
             },
+            InputNumber: {
+                borderHover: '1px solid #385894',
+                borderFocus: '1px solid #385894',
+            },
             Card: {
                 colorEmbedded: '#fff',
             },
@@ -151,6 +155,9 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
             },
             Dropdown: {
                 color: 'rgba(40, 41, 41, 1)'
+            },
+            QrCode: {
+                // borderHover: '1px solid #385894',
             }
         } as GlobalThemeOverrides)
     })

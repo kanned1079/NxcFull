@@ -10,15 +10,15 @@ import type {NotificationType} from 'naive-ui'
 import {type FormInst, useMessage, useNotification} from 'naive-ui'
 import instance from '@/axios/index'
 import {
+  ChevronBackOutline as backIcon,
   LogInOutline as loginIcon,
   LogoApple as appleIcon,
   LogoGithub as githubIcon,
   LogoGoogle as googleIcon,
-    LogoMicrosoft as microsoftIcon,
-  ChevronBackOutline as backIcon,
+  LogoMicrosoft as microsoftIcon,
 } from '@vicons/ionicons5'
 import useApiAddrStore from "@/stores/useApiAddrStore";
-import {hashPassword, encodeToBase64} from "@/utils/encryptor";
+import {encodeToBase64} from "@/utils/encryptor";
 
 const {t} = useI18n()
 const appInfoStore = useAppInfosStore()
@@ -56,6 +56,7 @@ let formValue = ref({
   user: {
     email: '',
     password: '',
+    twoFa_code: '',
   }
 })
 let rules = {
@@ -136,8 +137,9 @@ let handleLogin = async () => {
     // let hashedPwd = await hashPassword(formValue.value.user.password)
     // console.log('测试用hashedPwd ', hashedPwd)
     let {data} = await instance.post("http://localhost:8081/api/user/v1/login", {
-      email: formValue.value.user.email,
-      password: encodeToBase64(formValue.value.user.password),
+      email: formValue.value.user.email.trim(),
+      password: encodeToBase64(formValue.value.user.password.trim() as strin),
+      twoFa_code: formValue.value.user.twoFa_code.trim(),
       // password: hashedPwd,
       role: 'user',
     })
@@ -174,12 +176,12 @@ let handleLogin = async () => {
   }
 }
 
-let toRegister = () => {
-  console.log('跳转到注册页面')
-  router.push({
-    path: '/register',
-  })
-}
+// let toRegister = () => {
+//   console.log('跳转到注册页面')
+//   router.push({
+//     path: '/register',
+//   })
+// }
 
 // 处理忘记密码
 let handleForgetPassword = () => {
@@ -252,14 +254,38 @@ export default {
       <div class="r-content-color3"></div>
       <n-card class="login-card" :embedded="false" :bordered="false">
         <n-button class="back" text :bordered="false" @click="router.back()">
-          <n-icon style="margin-right: 5px" size="20"><backIcon/></n-icon>
+          <n-icon style="margin-right: 5px" size="20">
+            <backIcon/>
+          </n-icon>
           {{ t('userLogin.backHomePage') }}
         </n-button>
         <p class="login-title">{{ t('userLogin.loginToContinue') }}</p>
-        <n-input size="large" :style="placeholderBgColor" :bordered="false" type="text" class="username"
-                 :placeholder="t('userLogin.email')" v-model:value="formValue.user.email"></n-input>
-        <n-input size="large" :style="placeholderBgColor" :bordered="false" type="password" class="password"
-                 :placeholder="t('userLogin.password')" v-model:value="formValue.user.password"></n-input>
+        <n-input
+            size="large"
+            :style="placeholderBgColor"
+            :bordered="false"
+            type="text"
+            class="username"
+            :placeholder="t('userLogin.email')" v-model:value="formValue.user.email"
+        ></n-input>
+        <n-input
+            size="large"
+            :style="placeholderBgColor"
+            :bordered="false"
+            type="password"
+            class="password"
+            :placeholder="t('userLogin.password')"
+            v-model:value="formValue.user.password"
+        ></n-input>
+
+        <n-input
+            size="large"
+            type="text"
+            :style="placeholderBgColor"
+            :bordered="false"
+            class="password"
+            :placeholder="'如果您启用了两步验证（2FA）'"
+        ></n-input>
         <div class="no-account">
           <p class="no-account-prefix">{{ t('userLogin.haveNoAccount') }}</p>
           <n-button class="no-account-btn" text @click="router.push({path: '/register'})">{{
@@ -283,23 +309,23 @@ export default {
           </n-icon>
           {{ t('userLogin.github') }}
         </n-button>
-        <n-button :bordered="false" class="other-login-method apple" type="primary">
-          <n-icon style="margin-right: 10px;" size="25">
-            <appleIcon/>
-          </n-icon>
-          {{ t('userLogin.apple') }}&nbsp;
-        </n-button>
-        <n-button :bordered="false" class="other-login-method google" type="primary">
-          <n-icon style="margin-right: 10px;" size="25">
-            <googleIcon/>
-          </n-icon>
-          {{ t('userLogin.google') }}
-        </n-button>
+<!--        <n-button :bordered="false" class="other-login-method apple" type="primary">-->
+<!--          <n-icon style="margin-right: 10px;" size="25">-->
+<!--            <appleIcon/>-->
+<!--          </n-icon>-->
+<!--          {{ t('userLogin.apple') }}&nbsp;-->
+<!--        </n-button>-->
+<!--        <n-button :bordered="false" class="other-login-method google" type="primary">-->
+<!--          <n-icon style="margin-right: 10px;" size="25">-->
+<!--            <googleIcon/>-->
+<!--          </n-icon>-->
+<!--          {{ t('userLogin.google') }}-->
+<!--        </n-button>-->
         <n-button :bordered="false" class="other-login-method microsoft" type="primary">
           <n-icon style="margin-right: 10px;" size="23">
             <microsoftIcon/>
           </n-icon>
-          {{ t('userLogin.google') }}
+          {{ t('userLogin.microsoft') }}
         </n-button>
       </n-card>
     </div>
@@ -521,6 +547,7 @@ export default {
       color: white;
       background-color: #3a4754;
     }
+
     .github:hover {
       box-shadow: #3a4754 0 5px 20px 0;
     }
@@ -529,6 +556,7 @@ export default {
       color: white;
       background-color: #e84d40;
     }
+
     .google:hover {
       box-shadow: #e84d40 0 5px 20px 0;
     }
@@ -537,6 +565,7 @@ export default {
       color: white;
       background-color: #000;
     }
+
     .apple:hover {
       box-shadow: #000 0 5px 20px 0;
     }
@@ -545,6 +574,7 @@ export default {
       color: white;
       background-color: #00a4ef;
     }
+
     .microsoft:hover {
       box-shadow: #00a4ef 0 5px 20px 0;
     }

@@ -5,6 +5,8 @@ import (
 	"gateway/internal/grpc"
 	pb "gateway/internal/grpc/api/user/proto"
 	"github.com/gin-gonic/gin"
+	"strconv"
+
 	//"google.golang.org/grpc"
 	"log"
 	"net/http"
@@ -185,5 +187,182 @@ func HandleApplyNewPassword(context *gin.Context) {
 		"code":    resp.Code,
 		"updated": resp.Updated,
 		"msg":     resp.Msg,
+	})
+}
+
+func HandleSetup2FA(context *gin.Context) {
+	postData := &struct {
+		Id    int64  `json:"id"`
+		Email string `json:"email"`
+	}{}
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusInternalServerError,
+			"error": err.Error(),
+		})
+		return
+	}
+	log.Println(postData)
+	resp, err := grpcClient.UserServiceClient.Setup2FA(sysContext.Background(), &pb.Setup2FARequest{
+		Id:    postData.Id,
+		Email: postData.Email,
+	})
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "rpc服务调用失败无返回值",
+		})
+		return
+	}
+	log.Println(resp)
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+		"url":  resp.Url,
+	})
+}
+
+func HandleTest2FA(context *gin.Context) {
+	postData := &struct {
+		Id        int64  `json:"id"`
+		Email     string `json:"email"`
+		TwoFaCode string `json:"two_fa_code"`
+	}{}
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	log.Println(postData)
+	resp, err := grpcClient.UserServiceClient.Test2FA(sysContext.Background(), &pb.Test2FARequest{
+		Id:        postData.Id,
+		Email:     postData.Email,
+		TwoFaCode: postData.TwoFaCode,
+	})
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "rpc服务器调用失败无返回值",
+		})
+		return
+	}
+	log.Println(resp)
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}
+
+// HandleGet2FAStatus GET请求查询是否有使用2FA
+func HandleGet2FAStatus(context *gin.Context) {
+	//postData := &struct {
+	//	Id    int64  `json:"id"`
+	//	Email string `json:"email"`
+	//}{}
+	//if err := context.ShouldBind(&postData); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
+	tempIdStr := context.Query("id")
+	id, err := strconv.Atoi(tempIdStr)
+	log.Println(id)
+
+	resp, err := grpcClient.UserServiceClient.Get2FAStatus(sysContext.Background(), &pb.Get2FAStatusRequest{
+		Id: int64(id),
+		//Email: postData.Email,
+	})
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "rpc调用失败无返回值",
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":    resp.Code,
+		"msg":     resp.Msg,
+		"enabled": resp.Enabled,
+	})
+}
+
+func HandleCancelSetup2FA(context *gin.Context) {
+	//idStr := context.Query("id")
+	email := context.Query("email")
+	resp, err := grpcClient.UserServiceClient.CancelSetup2FA(sysContext.Background(), &pb.CancelSetup2FARequest{
+		Email: email,
+	})
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "rpc服务器调用失败无返回值",
+		})
+		return
+	}
+	log.Println(resp)
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}
+
+func HandleDisable2FA(context *gin.Context) {
+	email := context.Query("email")
+	resp, err := grpcClient.UserServiceClient.Disable2FA(sysContext.Background(), &pb.Disable2FARequest{
+		Email: email,
+	})
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code":     http.StatusInternalServerError,
+			"disabled": false,
+			"msg":      err.Error(),
+		})
+		return
+	}
+	if resp == nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":     http.StatusInternalServerError,
+			"disabled": false,
+			"msg":      "rpc服务器调用失败无返回值",
+		})
+		return
+	}
+	log.Println(resp)
+	context.JSON(http.StatusOK, gin.H{
+		"code":     resp.Code,
+		"disabled": resp.Disabled,
+		"msg":      resp.Msg,
 	})
 }
