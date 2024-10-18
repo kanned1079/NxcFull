@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package order;
+
+option go_package = "./proto";
+
+// 定义 Order 服务
+service DocumentService {
+  // GetActivePlanListByUserId 獲取該用戶所有有效的訂單
+  rpc GetActivePlanListByUserId(GetActivePlanListByUserIdRequest) returns (GetActivePlanListByUserIdResponse);
+  // CommitNewOrder 提交新訂單時
+  rpc CommitNewOrder(CommitNewOrderRequest) returns (CommitNewOrderResponse);
+  // GetAllMyOrders 獲取該用戶所有的訂單 不管是有效還是無效
+  rpc GetAllMyOrders(GetAllMyOrdersRequest) returns (GetAllMyOrdersResponse);
+
+}
+
+// -------------------------
+
+message GetActivePlanListByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetActivePlanListByUserIdResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes my_plans = 3;
+}
+
+// -------------------------
+
+message CommitNewOrderRequest {
+  int64 user_id = 1;
+  int64 plan_id = 2;
+  string period = 3;
+  int64 coupon_id = 4;
+}
+
+message CommitNewOrderResponse {
+  int32 code = 1;
+  string msg = 2;
+  string order_id = 3;
+  string plan_name = 4;
+  float original_price = 5;
+  float discount_amount = 6;
+  float pay_price = 7;
+  string period = 8;
+  string created_at = 9;
+}
+
+// -------------------------
+
+message GetAllMyOrdersRequest {
+  int32 user_id = 1;
+}
+
+message GetAllMyOrdersResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes order_list = 3;
+}
+

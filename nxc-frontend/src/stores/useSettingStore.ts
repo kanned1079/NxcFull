@@ -188,7 +188,7 @@ const useSettingStore = defineStore('SettingStore', () => {
                 Object.assign(settings, data.settings)
                 console.log(data.msg)
             }
-        } catch (error: Error) {
+        } catch (error: any) {
             console.error(error.toString())
         }
     }

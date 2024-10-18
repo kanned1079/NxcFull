@@ -1,15 +1,14 @@
 package handler
 
 import (
-	"NxcFull/backend/noticeServices/api/proto"
-	"NxcFull/backend/noticeServices/internal/services"
+	"NxcFull/backend/orderServices/internal/config/local"
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
-	"strconv"
 )
 
 // 日志拦截器
@@ -29,8 +28,9 @@ func loggingInterceptor(
 }
 
 func RunGRPCServer() {
-	port := 50003
-	listener, err := net.Listen("tcp", "localhost:"+strconv.Itoa(port))
+	//port := 50003
+	listenAddr := fmt.Sprintf("%s:%d", local.MyLocalConfig.RpcConfig.ListenAddr, local.MyLocalConfig.RpcConfig.ListenPort)
+	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		log.Println("设置监听端口失败", err)
 	}
@@ -46,9 +46,9 @@ func RunGRPCServer() {
 	// 注册反射服务 方便grpc调试工具使用
 	reflection.Register(grpcServer)
 	// 注册UserService到grpcServer服务器
-	documentServices := services.NewNoticeServices()
+	documentServices := services.NewOrderServices()
 	proto.RegisterNoticeServiceServer(grpcServer, documentServices)
-	log.Printf("gRPC 服务器正在 %v 端口监听...", port)
+	log.Printf("gRPC 服务器正在 %v 端口监听...", listenAddr)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Println("启动gRPC服务器失败", err)
 	}

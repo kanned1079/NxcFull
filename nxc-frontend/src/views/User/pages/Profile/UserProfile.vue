@@ -391,7 +391,7 @@ export default {
   <n-modal
       v-model:show="showModal"
       auto-focus
-      @after-hide="handleCancelSetup2FA"
+      @after-hide=""
   >
     <n-card
         class="qr-modal-root"
@@ -442,7 +442,7 @@ export default {
           测试
         </n-button>
         <n-button
-            @click="showModal=false"
+            @click="handleCancelSetup2FA()"
             size="large"
             class="cancel-btn"
             type="primary"

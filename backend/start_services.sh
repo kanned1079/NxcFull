@@ -12,7 +12,6 @@ start_services() {
     "groupServices"
     "mailServices"
     "noticeServices"
-    "orderServices"
     "subscribeServices"
     "systemServices"
     "userServices"
@@ -31,7 +30,7 @@ start_services() {
 
   # 等待 5 秒启动 gateway 服务
   echo "Waiting 5 seconds to start gateway service..."
-  sleep 5
+  sleep 10
 
   # 启动 gateway 服务
   echo "Starting gateway service..."

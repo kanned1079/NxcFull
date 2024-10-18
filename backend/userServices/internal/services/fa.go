@@ -103,10 +103,9 @@ func (s *UserService) Test2FA(ctx context.Context, request *pb.Test2FARequest) (
 			Msg:  "更新用户 2FA 状态失败",
 		}, err
 	}
-
 	// 删除 Redis 中的 2FA 数据
 	// 此处的HDel
-	if err := dao.Rdb.Del(ctx, redisKey).Err(); err != nil {
+	if err := dao.Rdb.Del(ctx, redisKey, "user:"+request.Email).Err(); err != nil {
 		return &pb.Test2FAResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "删除 Redis 数据失败",
@@ -173,6 +172,24 @@ func (s *UserService) Disable2FA(context context.Context, request *pb.Disable2FA
 			Msg:      "关闭失败" + result.Error.Error(),
 			Disabled: false,
 		}, nil
+	}
+	// 刪除密鑰
+	if result := dao.Db.Model(&model.TwoFA{}).Where("email = ?", request.Email).Delete(&model.TwoFA{
+		Email: request.Email,
+	}); result.Error != nil {
+		log.Println("刪除密鑰失敗" + result.Error.Error())
+		return &pb.Disable2FAResponse{
+			Code:     http.StatusInternalServerError,
+			Msg:      "刪除密鑰失敗" + result.Error.Error(),
+			Disabled: false,
+		}, nil
+	}
+	// 清除用戶的緩存
+	if err := dao.Rdb.Del(context, "user:"+request.Email).Err(); err != nil {
+		return &pb.Disable2FAResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "删除 Redis 数据失败",
+		}, err
 	}
 	return &pb.Disable2FAResponse{
 		Code:     http.StatusOK,

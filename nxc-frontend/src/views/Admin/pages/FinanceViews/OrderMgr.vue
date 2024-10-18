@@ -10,7 +10,7 @@ export default {
 
 <template>
 <div class="root">
-  <n-card :embedded="trur" hoverable :bordered="false" :title="'订单管理'">
+  <n-card :embedded="true" hoverable :bordered="false" :title="'订单管理'">
 
   </n-card>
 </div>

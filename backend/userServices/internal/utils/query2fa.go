@@ -6,17 +6,6 @@ import (
 	"userServices/internal/model"
 )
 
-// IsUser2FAEnabled 检查用户是否启用了2FA验证
-//func IsUser2FAEnabled(userId int64) (enabled bool, err error) {
-//	var data bool
-//	if result := dao.Db.Model(&model.User{}).Where("id = ?", userId).Select("is_two_fa").Scan(&data); result.Error != nil {
-//		log.Println("查询失败" + result.Error.Error())
-//		return false, result.Error
-//	}
-//	log.Println(data)
-//	return data, nil
-//}
-
 func IsUser2FAEnabled(userId int64) (enabled bool, err error) {
 	var data bool
 	// 使用 Row() 获取单个值

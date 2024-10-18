@@ -17,21 +17,23 @@ var grpcClient = grpc.NewClients()
 
 func HandleUserLogin(context *gin.Context) {
 	var req = struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-		Role     string `json:"role"`
+		Email     string `json:"email"`
+		Password  string `json:"password"`
+		TwoFaCode string `json:"two_fa_code"`
+		Role      string `json:"role"`
 	}{}
 	if err := context.ShouldBind(&req); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 	//log.Println(req)
-	log.Println("用户输入凭证 ", req.Email, req.Password)
+	log.Println("用户输入凭证 ", req.Email, req.Password, req.TwoFaCode, req.Role)
 	// 在这里发送rpc请求
 	// 构造grpc请求
 	rpcReq := &pb.UserLoginRequest{
-		Email:    req.Email,
-		Password: req.Password,
-		Role:     req.Role,
+		Email:     req.Email,
+		Password:  req.Password,
+		TwoFaCode: req.TwoFaCode,
+		Role:      req.Role,
 	}
 	// 调用grpc的login方法
 	ctx, cancel := sysContext.WithTimeout(sysContext.Background(), time.Second)

@@ -1,5 +1,5 @@
 // authConfig.ts
-import { Configuration } from "@azure/msal-browser";
+import { type Configuration } from "@azure/msal-browser";
 
 export const msalConfig: Configuration = {
     auth: {

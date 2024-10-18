@@ -40,7 +40,8 @@ service UserService {
 message UserLoginRequest {
   string email = 1;
   string password = 2;
-  string role = 3;
+  string two_fa_code = 3;
+  string role = 4;
 }
 
 
@@ -68,7 +69,8 @@ message UserLoginResponse {
   bool isAuthed = 2;
   string msg = 3;
   string token = 4;
-  User user_data = 5;
+  bytes user_data2 = 5;
+  User user_data = 6;
 }
 
 // 定义用户注册请求消息

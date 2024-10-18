@@ -56,7 +56,7 @@ let formValue = ref({
   user: {
     email: '',
     password: '',
-    twoFa_code: '',
+    two_fa_code: '',
   }
 })
 let rules = {
@@ -138,8 +138,8 @@ let handleLogin = async () => {
     // console.log('测试用hashedPwd ', hashedPwd)
     let {data} = await instance.post("http://localhost:8081/api/user/v1/login", {
       email: formValue.value.user.email.trim(),
-      password: encodeToBase64(formValue.value.user.password.trim() as strin),
-      twoFa_code: formValue.value.user.twoFa_code.trim(),
+      password: encodeToBase64(formValue.value.user.password.trim() as string),
+      two_fa_code: formValue.value.user.two_fa_code.trim(),
       // password: hashedPwd,
       role: 'user',
     })
@@ -156,18 +156,7 @@ let handleLogin = async () => {
       await router.push({path: '/dashboard'});
     } else {
       enableLogin.value = true
-      switch (data.msg) {
-        case 'incorrect_password': {
-          notifyErr('error', '密码不正确')
-          enableLogin.value = true
-          break
-        }
-        case 'user_not_exist': {
-          notifyErr('error', '用户不存在 请注册')
-          enableLogin.value = true
-          break
-        }
-      }
+      notifyErr("error", data.msg)
     }
   } catch (error) {
     console.log(error)
@@ -285,6 +274,7 @@ export default {
             :bordered="false"
             class="password"
             :placeholder="'如果您启用了两步验证（2FA）'"
+            v-model:value="formValue.user.two_fa_code"
         ></n-input>
         <div class="no-account">
           <p class="no-account-prefix">{{ t('userLogin.haveNoAccount') }}</p>
