@@ -118,10 +118,10 @@ func StartApiGateways() {
 		userAuthorized.GET("/plan/info/fetch", handler.GetActivePlanListByUserId)
 		//userAuthorized.GET("/keys", keys.HandleGetAllUserKeys)
 		//
-		//userAuthorized.PUT("/subscription", orders.HandleCommitNewOrder) // 下单新的订阅
-		//// 这里将生成订单号后推送至消息队列 交由第二个进程进行处理
+		userAuthorized.POST("/order", handler.HandleCommitNewOrder) // 下单新的订阅
+		// 这里将生成订单号后推送至消息队列 交由第二个进程进行处理
 		//
-		//userAuthorized.GET("/orders", orders.HandleGetOrders)
+		userAuthorized.GET("/orders", handler.HandleGetAllMyOrders)
 	}
 
 	//if err := router.Run("0.0.0.0:8081"); err != nil {

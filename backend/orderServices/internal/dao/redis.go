@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"NxcFull/backend/orderServices/internal/config/remote"
 	"context"
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"log"
+	"orderServices/internal/config/remote"
 )
 
 var (

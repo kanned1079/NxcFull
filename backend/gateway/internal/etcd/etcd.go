@@ -2,7 +2,6 @@ package etcd
 
 import (
 	"context"
-	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"sync"
@@ -57,7 +56,8 @@ func GetServiceAddress(serviceName string) string {
 	resp, err := cli.Get(ctx, "/services/"+serviceName)
 	if err != nil || len(resp.Kvs) == 0 {
 		//log.Printf("获取服务 %s 地址错误: %v", serviceName, err)
-		panic(fmt.Sprintf("获取服务 %s 地址错误: %v", serviceName, err))
+		log.Printf("\033[31m **START** 获取服务 %s 地址错误: %v **END**\033[0m", serviceName, err)
+		//panic(fmt.Sprintf("获取服务 %s 地址错误: %v", serviceName, err))
 		return ""
 	}
 

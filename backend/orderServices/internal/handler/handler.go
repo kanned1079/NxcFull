@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"NxcFull/backend/orderServices/internal/config/local"
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
@@ -9,6 +8,9 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
+	"orderServices/api/proto"
+	"orderServices/internal/config/local"
+	"orderServices/internal/services"
 )
 
 // 日志拦截器
@@ -46,8 +48,9 @@ func RunGRPCServer() {
 	// 注册反射服务 方便grpc调试工具使用
 	reflection.Register(grpcServer)
 	// 注册UserService到grpcServer服务器
-	documentServices := services.NewOrderServices()
-	proto.RegisterNoticeServiceServer(grpcServer, documentServices)
+	orderServices := services.NewOrderServices()
+	//proto.Reg(grpcServer, documentServices)
+	proto.RegisterOrderServiceServer(grpcServer, orderServices)
 	log.Printf("gRPC 服务器正在 %v 端口监听...", listenAddr)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Println("启动gRPC服务器失败", err)

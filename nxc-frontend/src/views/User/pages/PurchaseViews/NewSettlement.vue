@@ -2,7 +2,7 @@
 import {useI18n} from "vue-i18n";
 import {onBeforeMount, onMounted, ref, computed} from "vue"
 import type {MenuOption, NotificationType} from 'naive-ui'
-import {NIcon, useNotification} from 'naive-ui'
+import {NIcon, useNotification, useMessage} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore"
 import usePaymentStore from "@/stores/usePaymentStore";
@@ -16,6 +16,7 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 
 const {t} = useI18n();
 const notification = useNotification()
+const message = useMessage()
 const userInfoStore = useUserInfoStore();
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
@@ -176,7 +177,7 @@ let discountPrice = computed(()  => couponInfo.value.verified ? ((couponInfo.val
 let saveOrder = async () => {
   console.log('提交订单准备支付')
   try{
-    let {data} = await instance.put('/api/user/v1/order', {
+    let {data} = await instance.post('/api/user/v1/order', {
       plan_id: plan.id,
       user_id: userInfoStore.thisUser.id,
       coupon_id: couponInfo.value.id || null,
@@ -188,10 +189,10 @@ let saveOrder = async () => {
       paymentStore.confirmOrder = data
       console.log('选择支付方式')
       await router.push({path: '/dashboard/purchase/confirm'})
-
     }
-  }catch (error) {
+  }catch (error: any) {
     console.log(error)
+    message.error(error)
   }
 }
 

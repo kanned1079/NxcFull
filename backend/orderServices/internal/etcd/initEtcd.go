@@ -1,10 +1,10 @@
 package etcd
 
 import (
-	"NxcFull/backend/orderServices/internal/config/local"
 	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
+	"orderServices/internal/config/local"
 	"time"
 )
 

@@ -1,8 +1,8 @@
 package remote
 
 import (
-	"NxcFull/backend/orderServices/internal/etcd"
 	"encoding/xml"
+	"orderServices/internal/etcd"
 )
 
 var (

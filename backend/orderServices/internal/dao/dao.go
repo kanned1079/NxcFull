@@ -1,11 +1,12 @@
 package dao
 
 import (
-	"NxcFull/backend/orderServices/internal/config/remote"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"orderServices/internal/config/remote"
+	"orderServices/internal/model"
 )
 
 //const (
@@ -44,6 +45,12 @@ func InitMysqlServer() {
 		panic(err)
 	} else {
 		log.Println("初始化数据库成功")
+	}
+	if err := Db.AutoMigrate(&model.Orders{}); err != nil {
+		panic(err)
+	}
+	if err := Db.AutoMigrate(&model.ActiveOrders{}); err != nil {
+		panic(err)
 	}
 }
 

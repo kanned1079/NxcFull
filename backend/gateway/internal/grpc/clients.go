@@ -9,6 +9,8 @@ import (
 	groupPb "gateway/internal/grpc/api/group/proto"
 	"gateway/internal/grpc/api/notice"
 	noticePb "gateway/internal/grpc/api/notice/proto"
+	"gateway/internal/grpc/api/order"
+	orderPb "gateway/internal/grpc/api/order/proto"
 	"gateway/internal/grpc/api/sendmail"
 	mailPb "gateway/internal/grpc/api/sendmail/proto"
 	"gateway/internal/grpc/api/settings"
@@ -28,6 +30,7 @@ type Clients struct {
 	CouponServiceClient       couponPb.CouponServiceClient
 	SettingServiceClient      settingPb.SettingsServiceClient
 	MailServicesClient        mailPb.MailServiceClient
+	OrderServicesClient       orderPb.OrderServiceClient
 }
 
 func NewClients() Clients {
@@ -41,6 +44,7 @@ func NewClients() Clients {
 		CouponServiceClient:       coupon.NewCouponServiceClient(),
 		SettingServiceClient:      settings.NewSettingClient(),
 		MailServicesClient:        sendmail.NewMailClient(),
+		OrderServicesClient:       order.NewOrderClient(),
 	}
 
 }

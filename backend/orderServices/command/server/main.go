@@ -1,12 +1,12 @@
 package main
 
 import (
-	"NxcFull/backend/orderServices/internal/config/local"
-	"NxcFull/backend/orderServices/internal/config/remote"
-	"NxcFull/backend/orderServices/internal/dao"
-	"NxcFull/backend/orderServices/internal/etcd"
-	"NxcFull/backend/orderServices/internal/handler"
 	"log"
+	"orderServices/internal/config/local"
+	"orderServices/internal/config/remote"
+	"orderServices/internal/dao"
+	"orderServices/internal/etcd"
+	"orderServices/internal/handler"
 )
 
 var err error
