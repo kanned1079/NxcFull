@@ -24,6 +24,7 @@ func HandleUserLogin(context *gin.Context) {
 	}{}
 	if err := context.ShouldBind(&req); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	//log.Println(req)
 	log.Println("用户输入凭证 ", req.Email, req.Password, req.TwoFaCode, req.Role)
@@ -58,6 +59,13 @@ func HandleUserLogin(context *gin.Context) {
 		"token":     resp.Token,
 		"user_data": resp.UserData,
 	})
+	//context.JSON(http.StatusOK, gin.H{
+	//	"code":      http.StatusOK,
+	//	"isAuthed":  true,
+	//	"msg":       resp.Msg,
+	//	"token":     resp.Token,
+	//	"user_data": resp.UserData,
+	//})
 
 }
 

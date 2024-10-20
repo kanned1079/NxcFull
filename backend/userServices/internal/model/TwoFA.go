@@ -6,8 +6,8 @@ import (
 )
 
 type TwoFA struct {
-	Id        int64          `json:"id" gorm:"primary_key"`
-	Email     string         `json:"email"`
+	Id        int64          `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
+	Email     string         `json:"email" gorm:"not null"`
 	TwoFAKey  string         `json:"two_fa_key"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`

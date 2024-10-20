@@ -24,6 +24,7 @@ type Orders struct {
 	CreatedAt      time.Time      `json:"created_at"`                           // 下单时间
 	UpdatedAt      time.Time      `json:"updated_at"`                           // 更新时间
 	DeletedAt      gorm.DeletedAt `json:"deleted_at"`                           // 软删除时间
+	User           User           `gorm:"foreignKey:UserId;references:Id"`      // 多对一关联，User 表中的用户
 }
 
 func (Orders) TableName() string {

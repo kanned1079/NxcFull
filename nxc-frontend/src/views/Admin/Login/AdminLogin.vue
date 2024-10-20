@@ -122,10 +122,14 @@ let handleLogin = async () => {
   enableLogin.value = false
   console.log('管理员密码hash: ', hashPassword(password.value))
   try {
+    // let hashedPwd =  hashPassword(password.value.trim())
     let { data } = await instance.post('http://localhost:8081/api/admin/v1/login', {
       email: username.value,
+
+      password: encodeToBase64(password.value.trim()),
       // password: encodeToBase64(password.value),
-      password: hashPassword(password.value),
+      // password: hashPassword(password.value),
+      // password: hashedPwd,
       role: 'admin', // 限制权限
     })
     console.log(data)

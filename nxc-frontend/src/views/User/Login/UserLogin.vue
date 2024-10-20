@@ -12,9 +12,7 @@ import instance from '@/axios/index'
 import {
   ChevronBackOutline as backIcon,
   LogInOutline as loginIcon,
-  LogoApple as appleIcon,
   LogoGithub as githubIcon,
-  LogoGoogle as googleIcon,
   LogoMicrosoft as microsoftIcon,
 } from '@vicons/ionicons5'
 import useApiAddrStore from "@/stores/useApiAddrStore";
@@ -273,18 +271,29 @@ export default {
             :style="placeholderBgColor"
             :bordered="false"
             class="password"
+            maxlength="6"
+            show-count
             :placeholder="'如果您启用了两步验证（2FA）'"
             v-model:value="formValue.user.two_fa_code"
         ></n-input>
         <div class="no-account">
           <p class="no-account-prefix">{{ t('userLogin.haveNoAccount') }}</p>
-          <n-button class="no-account-btn" text @click="router.push({path: '/register'})">{{
+          <n-button
+              class="no-account-btn"
+              text
+              @click="router.push({path: '/register'})">{{
               t('userLogin.reg')
             }}
           </n-button>
         </div>
-        <n-button :bordered="false" type="primary" class="login-btn" @click="handleValidateClick"
-                  :disabled="!enableLogin">
+        <n-button
+            :bordered="false"
+            type="primary"
+            class="login-btn"
+            size="large"
+            @click="handleValidateClick"
+            :disabled="!enableLogin"
+        >
           <n-icon style="margin-right: 10px" size="25">
             <loginIcon/>
           </n-icon>
@@ -293,25 +302,36 @@ export default {
         <n-divider>
           <p style="opacity: 0.5;  font-weight: 400; font-size: 0.8rem">{{ t('userLogin.otherMethods') }}</p>
         </n-divider>
-        <n-button :bordered="false" class="other-login-method github" type="primary" @click=" ">
+        <n-button
+            :bordered="false"
+            class="other-login-method github"
+            type="primary"
+            @click=" "
+            size="large"
+        >
           <n-icon style="margin-right: 10px;" size="25">
             <githubIcon/>
           </n-icon>
           {{ t('userLogin.github') }}
         </n-button>
-<!--        <n-button :bordered="false" class="other-login-method apple" type="primary">-->
-<!--          <n-icon style="margin-right: 10px;" size="25">-->
-<!--            <appleIcon/>-->
-<!--          </n-icon>-->
-<!--          {{ t('userLogin.apple') }}&nbsp;-->
-<!--        </n-button>-->
-<!--        <n-button :bordered="false" class="other-login-method google" type="primary">-->
-<!--          <n-icon style="margin-right: 10px;" size="25">-->
-<!--            <googleIcon/>-->
-<!--          </n-icon>-->
-<!--          {{ t('userLogin.google') }}-->
-<!--        </n-button>-->
-        <n-button :bordered="false" class="other-login-method microsoft" type="primary">
+        <!--        <n-button :bordered="false" class="other-login-method apple" type="primary">-->
+        <!--          <n-icon style="margin-right: 10px;" size="25">-->
+        <!--            <appleIcon/>-->
+        <!--          </n-icon>-->
+        <!--          {{ t('userLogin.apple') }}&nbsp;-->
+        <!--        </n-button>-->
+        <!--        <n-button :bordered="false" class="other-login-method google" type="primary">-->
+        <!--          <n-icon style="margin-right: 10px;" size="25">-->
+        <!--            <googleIcon/>-->
+        <!--          </n-icon>-->
+        <!--          {{ t('userLogin.google') }}-->
+        <!--        </n-button>-->
+        <n-button
+            :bordered="false"
+            class="other-login-method microsoft"
+            type="primary"
+            size="large"
+        >
           <n-icon style="margin-right: 10px;" size="23">
             <microsoftIcon/>
           </n-icon>
@@ -474,7 +494,6 @@ export default {
 
     .username {
       margin-top: 20px;
-      height: 45px;
       border-radius: 3px;
       align-items: center;
       //background-color: #f2fafd;
@@ -483,7 +502,6 @@ export default {
 
     .password {
       margin-top: 30px;
-      height: 45px;
       border-radius: 3px;
       align-items: center;
       //background-color: #f2fafd;
@@ -510,7 +528,6 @@ export default {
     .login-btn {
       margin-top: 50px;
       width: 100%;
-      height: 45px;
       color: white;
       background: linear-gradient(to right, rgba(167, 112, 239, 0.5), rgba(207, 139, 243, 0.9), rgba(253, 185, 155, 0.5));
       box-shadow: rgba(139, 129, 195, 0.5) 3px 3px 200px 0;
@@ -524,7 +541,7 @@ export default {
 
     .other-login-method {
       width: 100%;
-      height: 45px;
+      //height: 45px;
       margin-bottom: 20px;
       transition: ease 200ms;
     }

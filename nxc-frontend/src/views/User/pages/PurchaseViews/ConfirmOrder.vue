@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, onMounted, ref, computed} from "vue"
-import {type MenuOption, NIcon} from 'naive-ui'
+import {computed, onBeforeMount, onMounted, ref} from "vue"
+import {NIcon} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore"
 import usePaymentStore from "@/stores/usePaymentStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useRouter} from "vue-router";
 import 'md-editor-v3/lib/preview.css';
-import instance from "@/axios";
-
+let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 const {t} = useI18n();
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
@@ -74,7 +73,6 @@ let orderData = ref([
 ])
 
 
-
 onMounted(() => {
   console.log('settlement挂载', paymentStore.plan_id_selected)
   // appendCycleOptions()
@@ -129,29 +127,45 @@ export default {
             <p class="item-content">{{ item.content }}</p>
           </div>
 
-          <n-button class=""> 关闭订单</n-button>
+          <n-hr style="margin: 20px"></n-hr>
+
+          <n-button
+              class="change-plan-btn"
+              type="primary"
+              tertiary
+          >
+            切换订阅
+          </n-button>
+          <n-button
+              class="cancel-order-btn"
+              type="error"
+              text
+          >
+            取消订单
+          </n-button>
         </n-card>
       </div>
 
       <div class="r-part">
-
         <n-card style="color: white" class="r-part-btn" :embedded="true" hoverable>
-          <p class="r-title">{{ t('newSettlement.orderTotalTitle') }}</p>
+          <p class="r-title">您的价格</p>
+          1
           <div class="price-small">
             <p class="summary">{{ 111 }} x {{ 222 }}</p>
-            <p class="price-small">{{ 222 }} {{ appInfosStore.appCommonConfig.currency }}</p>
+            <p class="price-small">{{ 222 }} </p>
           </div>
           <n-hr></n-hr>
           <div class="price-discount" v-if="true">
-            <p class="coupon-title">{{ t('newSettlement.coupon') }}</p>
+            <p class="coupon-title">1</p>
             <div class="coupon-detail">
-              <p class="coupon-name">{{  }}</p>
-              <p class="discount">- {{ 11.11 }} {{ appInfosStore.appCommonConfig.currency }}</p>
+              <p class="coupon-name">{{ '优惠券名' }}</p>
+              <p class="discount">- {{ 11.11 }} </p>
             </div>
             <n-hr></n-hr>
+            22222222222222
           </div>
-          <p class="total-title">{{ t('newSettlement.total') }}</p>
-          <p class="price-large">{{ 11 }} {{ appInfosStore.appCommonConfig.currency }}</p>
+          <p class="total-title">统计</p>
+          <p class="price-large">{{ 11 }} </p>
           <n-button
               @click=""
               class="settleBtn"
@@ -161,7 +175,7 @@ export default {
           >
             <n-icon style="margin-right: 5px">
             </n-icon>
-            {{ t('newSettlement.submitOrder') }}
+            提交
           </n-button>
         </n-card>
       </div>
@@ -181,16 +195,19 @@ export default {
 
     .l-part {
       flex: 2;
+
       .good-info {
         padding-bottom: 15px;
         margin-bottom: 20px;
+
         .title {
           font-size: 1.1rem;
           font-weight: 400;
-          background-color: rgba(216,216,216,0.1);
+          background-color: rgba(216, 216, 216, 0.1);
           padding: 10px 20px 15px 20px;
           border-radius: 3px 3px 0 0;
         }
+
         .good-info-item {
           display: flex;
           flex-direction: row;
@@ -204,29 +221,118 @@ export default {
             min-width: 100px;
             //background-color: #66afe9;
           }
+
           .item-content {
             font-size: 0.9rem;
             margin-left: 120px;
             opacity: 1;
             font-weight: 400;
           }
+
         }
       }
 
+      .change-plan-btn {
+        margin-left: 20px;
+        width: 120px;
+      }
+
+      .cancel-order-btn {
+        margin-left: 20px;
+        width: 80px;
+
+      }
+
+
     }
+
 
     .r-part {
       flex: 1;
 
+      .r-part-head {
+        //background-color: v-bind(rightSideCardBgColor);
+
+        .r-border {
+          border: rgba(62, 151, 195, 0.0) 1px solid;
+
+        }
+
+        .r-border:hover {
+          //border: rgba(62, 151, 195, 0.5) 1px solid;
+        }
+      }
+
+      .r-part-btn {
+        //background-color: rgba(145, 145, 145, 0.2);
+        background-color: v-bind(rightSideCardBgColor);
+        color: white;
+        //margin-top: 20px;
+
+        .r-title {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin: 0 0 20px 0;
+          color: white;
+        }
+
+        .price-small {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          margin-bottom: 5px;
+
+          .summary {
+          }
+
+          .price-small {
+          }
+        }
+
+        .price-discount {
+          margin-bottom: 10px;
+
+          .coupon-title {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.6;
+            margin-bottom: 20px;
+          }
+
+          .coupon-detail {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: 5px;
+          }
+        }
+
+        .total-title {
+          font-size: 1rem;
+          font-weight: 400;
+          opacity: 0.6;
+        }
+
+        .price-large {
+          margin-top: 10px;
+          font-size: 2rem;
+          font-weight: 600;
+        }
+
+        .settleBtn {
+          width: 100%;
+          margin-top: 10px;
+          color: white;
+        }
+      }
     }
 
     @media (max-width: 1000px) {
       .r-part {
-        margin-top: 20px;
+        //margin-top: 20px;
 
       }
     }
-
     @media (min-width: 1000px) {
       .l-part {
         margin-right: 20px;
@@ -234,7 +340,9 @@ export default {
     }
 
 
+
   }
+
   @media (max-width: 1000px) {
     .root-layout {
       flex-direction: column;
@@ -243,8 +351,6 @@ export default {
 
 
 }
-
-
 
 
 </style>

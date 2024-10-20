@@ -2,6 +2,7 @@ package dao
 
 import (
 	"couponServices/internal/config/remote"
+	"couponServices/internal/model"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -45,6 +46,15 @@ func InitMysqlServer() {
 	} else {
 		log.Println("初始化数据库成功")
 	}
+	if err := Db.AutoMigrate(&model.Coupon{}); err != nil {
+		panic(err)
+	}
+	if err := Db.AutoMigrate(&model.CouponUsage{}); err != nil {
+		panic(err)
+	}
+	//if err := Db.AutoMigrate(&model.User{}); err != nil {
+	//}
+
 }
 
 //func init() {

@@ -6,9 +6,9 @@ import (
 )
 
 type Auth struct {
-	Id       int64  `json:"id" gorm:"primary_key;"` // 用户Id
-	Email    string `json:"email" `                 // 用户名
-	Password string `json:"password"`               // 用户密码
+	Id       int64  `json:"id" gorm:"primary_key;"`   // 用户Id
+	Email    string `json:"email" gorm:"not null"`    // 用户名
+	Password string `json:"password" gorm:"not null"` // 用户密码
 
 	CreatedAt time.Time      `json:"createdAt"` // 账户创建日期
 	UpdatedAt time.Time      `json:"updatedAt"` // 更新日期

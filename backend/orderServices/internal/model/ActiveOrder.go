@@ -18,6 +18,7 @@ type ActiveOrders struct {
 	ExpirationDate *time.Time     `json:"expiration_date"`                      // 到期日期
 	UpdatedAt      time.Time      `json:"updated_at"`                           // 更新时间
 	DeletedAt      gorm.DeletedAt `json:"deleted_at"`                           // 删除时间
+	User           User           `gorm:"foreignKey:UserId;references:Id"`      // 多对一关联，User 表中的用户
 }
 
 func (ActiveOrders) TableName() string {

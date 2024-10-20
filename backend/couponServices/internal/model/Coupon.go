@@ -20,6 +20,7 @@ type Coupon struct {
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
 	DeletedAt    gorm.DeletedAt `json:"deleted_at"`
+	CouponUsages []CouponUsage  `gorm:"foreignKey:CouponId"` // 一对多关联：一个用户可以有多个使用记录
 }
 
 func (Coupon) TableName() string {

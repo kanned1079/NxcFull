@@ -19,6 +19,9 @@ type User struct {
 	CreatedAt    time.Time      `json:"createdAt"`                            // 账户创建日期
 	UpdatedAt    time.Time      `json:"updatedAt"`                            // 更新日期
 	DeletedAt    gorm.DeletedAt `json:"deletedAt"`                            // 账户删除日期
+	ActiveOrders []ActiveOrders `gorm:"foreignKey:UserId"`                    // 一对多关联：一个用户可以有多个订单
+	Orders       []Orders       `gorm:"foreignKey:UserId"`                    // 一对多关联：一个用户可以有多个订单
+
 }
 
 func (User) TableName() string {

@@ -9,6 +9,8 @@ type CouponUsage struct {
 	UsedAt    time.Time `json:"used_at"`                              // 使用时间
 	CreatedAt time.Time `json:"created_at"`                           // 创建时间
 	UpdatedAt time.Time `json:"updated_at"`                           // 更新时间
+	Coupon    Coupon    `gorm:"foreignKey:CouponId;references:Id"`    // 一个Coupon可以有多个CouponUseage
+	//User      User      `gorm:"foreignKey:UserId;references:UserId"`
 }
 
 func (CouponUsage) TableName() string {
