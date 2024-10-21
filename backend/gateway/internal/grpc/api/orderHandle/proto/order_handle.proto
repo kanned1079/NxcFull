@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package orderHandle;
+
+option go_package = "./proto";
+
+// 定义 Order 服务
+service OrderHandleService {
+  // 查询订单是否成功
+  rpc GetOrderStatus(GetOrderStatusRequest) returns (GetOrderStatusResponse);
+
+}
+
+// ------------------------
+
+message GetOrderStatusRequest {
+  string order_id = 1;
+}
+
+message GetOrderStatusResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool is_finished = 3;
+  string failure_reason = 4;
+}
+
+// --------------------
+
+message SetNewOrderRequest {
+
+}
+
+message SetNewOrderResponse {
+  int32 code = 1;
+  string msg = 2;
+
+}

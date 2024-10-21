@@ -2,7 +2,7 @@ package remote
 
 import (
 	"encoding/xml"
-	"orderServices/internal/etcd"
+	"orderHandleServices/internal/etcd"
 )
 
 var (
@@ -14,8 +14,6 @@ var (
 
 func (m *MysqlConfig) Get() error {
 	var tempData []byte
-	//log.Println(5)
-
 	if tempData, err = etcd.GetConfigFromEtcdBytes("mysql"); err != nil {
 		return err
 	}

@@ -11,6 +11,8 @@ import (
 	noticePb "gateway/internal/grpc/api/notice/proto"
 	"gateway/internal/grpc/api/order"
 	orderPb "gateway/internal/grpc/api/order/proto"
+	"gateway/internal/grpc/api/orderHandle"
+	orderHandlePb "gateway/internal/grpc/api/orderHandle/proto"
 	"gateway/internal/grpc/api/sendmail"
 	mailPb "gateway/internal/grpc/api/sendmail/proto"
 	"gateway/internal/grpc/api/settings"
@@ -31,6 +33,7 @@ type Clients struct {
 	SettingServiceClient      settingPb.SettingsServiceClient
 	MailServicesClient        mailPb.MailServiceClient
 	OrderServicesClient       orderPb.OrderServiceClient
+	OrderHandleServicesClient orderHandlePb.OrderHandleServiceClient
 }
 
 func NewClients() Clients {
@@ -45,6 +48,7 @@ func NewClients() Clients {
 		SettingServiceClient:      settings.NewSettingClient(),
 		MailServicesClient:        sendmail.NewMailClient(),
 		OrderServicesClient:       order.NewOrderClient(),
+		OrderHandleServicesClient: orderHandle.NewOrderHandleClient(),
 	}
 
 }

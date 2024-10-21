@@ -31,9 +31,13 @@ func init() {
 	if err := remote.MyRedisConfig.Get(); err != nil {
 		panic(err)
 	}
+	if err := remote.MyMqConfig.Get(); err != nil {
+		panic(err)
+	}
 
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer() // 初始化Redis服务器
+	dao.InitMq()
 
 }
 

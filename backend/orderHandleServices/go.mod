@@ -1,4 +1,4 @@
-module orderServices
+module orderHandleServices
 
 go 1.22
 
@@ -7,7 +7,7 @@ require (
 	github.com/redis/go-redis/v9 v9.7.0
 	go.etcd.io/etcd/client/v3 v3.5.16
 	google.golang.org/grpc v1.67.1
-	google.golang.org/protobuf v1.35.1
+	google.golang.org/protobuf v1.34.2
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
 )
