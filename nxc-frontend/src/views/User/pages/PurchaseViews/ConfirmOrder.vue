@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, onBeforeMount, onMounted, ref, onBeforeUnmount} from "vue"
-import {NIcon} from 'naive-ui'
+import {NIcon, useMessage} from 'naive-ui'
 import instance from "@/axios/index"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -12,6 +12,7 @@ import {useRouter} from "vue-router";
 import 'md-editor-v3/lib/preview.css';
 let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 const {t} = useI18n();
+const message = useMessage()
 const userInfoStore = useUserInfoStore()
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
@@ -87,9 +88,10 @@ let queryOrderInfoAndStatus = async () => {
     if (data.code === 200) {
       console.log('获取成功', data);
       // 如果订单状态已完成或达到某个条件，停止轮询
-      if (data.status === 'completed') {
+      if (data.order_info.is_finished && !data.order_info.is_success) {
         clearInterval(intervalId); // 清除轮询
-        console.log('订单已完成，停止轮询');
+        console.log('订单已超时，停止轮询');
+        message.error('订单已超时')
       }
     }
   } catch (error: any) {
