@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	PendingOrderKeyPrefix = "pending_order:"
+	PendingOrderKeyPrefix = "pending_order"
 )
 
 func ProcessOrder(jsonData []byte) error {
@@ -44,6 +44,7 @@ func ProcessOrder(jsonData []byte) error {
 		IsFinished:     false,                // 还未完成购买
 		Status:         0,                    // 新购买
 		CouponId:       postOrderData.CouponId,
+		CreatedAt:      time.Now(),
 	}
 
 	// -----------
@@ -89,6 +90,7 @@ func ProcessOrder(jsonData []byte) error {
 		ProcessErrorOrder(&order) // 直接处理失败的订单 跳过后面的步骤
 		return errors.New("订阅剩余不足")
 	}
+
 	var originalPrice float64
 	switch postOrderData.Period {
 	case "month":
@@ -102,11 +104,15 @@ func ProcessOrder(jsonData []byte) error {
 	}
 	log.Println("原始价格", originalPrice)
 
+	// 抵折百分比
 	var discountPercent float64 = couponInfo.PercentOff / 100
-
+	// 抵折的金额
 	var disCountAmount float64 = originalPrice * discountPercent
 
 	log.Println(discountPercent, disCountAmount, originalPrice-disCountAmount)
+
+	order.DiscountAmount = disCountAmount                          // 优惠了的价格
+	order.Amount = originalPrice - disCountAmount - disCountAmount // 订单价格
 
 	log.Println(order)
 
@@ -127,17 +133,9 @@ func ProcessOrder(jsonData []byte) error {
 		}
 	}
 
-	//if result := dao.Db.Model(&model.Orders{}).Create(&order); result.Error != nil {
-	//	order.IsSuccess = false
-	//	order.IsFinished = false
-	//	order.FailureReason = "创建订单错误"
-	//	ProcessErrorOrder(&order) // 直接处理失败的订单 跳过后面的步骤
-	//	return errors.New("创建订单错误" + result.Error.Error())
-	//}
-
 	// 存储到 Redis 并设置 5 分钟超时
 	log.Println(postOrderData.OrderId)
-	orderKey := fmt.Sprintf("%s:%s", PendingOrderKeyPrefix, postOrderData.OrderId)
+	orderKey := fmt.Sprintf("%s:%d:%s", PendingOrderKeyPrefix, postOrderData.UserId, postOrderData.OrderId)
 	orderJSON, err := json.Marshal(order)
 	if err != nil {
 		log.Println("订单序列化失败")
@@ -145,7 +143,7 @@ func ProcessOrder(jsonData []byte) error {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := dao.Rdb.Set(ctx, orderKey, orderJSON, 5*time.Minute).Err(); err != nil {
+	if err := dao.Rdb.Set(ctx, orderKey, orderJSON, 6*time.Minute).Err(); err != nil {
 		log.Println("Redis 存储失败")
 		return err
 	}
@@ -155,16 +153,18 @@ func ProcessOrder(jsonData []byte) error {
 	// 并删除redis中此键值
 	go func(orderId string) {
 		// 休眠五分钟
+		log.Println("开始计时5分钟 订单号:", orderId)
 		time.Sleep(5 * time.Minute)
-
+		log.Println("订单确认失败")
 		var order model.Orders
 		// 查询订单，假设你在 Redis 中使用 orderId 作为键存储订单信息
 		//redisKey := "pending_order:" + orderId
-		orderKey := fmt.Sprintf("%s:%s", PendingOrderKeyPrefix, orderId)
-
+		orderKey := fmt.Sprintf("%s:%d:%s", PendingOrderKeyPrefix, postOrderData.UserId, orderId)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
 		val, err := dao.Rdb.Get(ctx, orderKey).Result()
 		if errors.Is(err, redis.Nil) {
-			// 如果 Redis 中没有此订单，说明可能已处理，直接返回
+			// 如果 Redis 中没有此订单，说明可能已处理，直接返回 关闭此协程
 			return
 		} else if err != nil {
 			// 处理 Redis 错误
@@ -186,6 +186,8 @@ func ProcessOrder(jsonData []byte) error {
 		}
 
 		// 如果订单未完成，插入数据库
+		order.IsFinished = true // 订单已经完成但是没有成功
+		order.FailureReason = "Not confirmed within the validity period"
 		if err := dao.Db.Model(&model.Orders{}).Create(&order).Error; err != nil {
 			log.Println("Failed to insert order into database:", err)
 			return

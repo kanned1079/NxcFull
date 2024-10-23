@@ -61,13 +61,17 @@ const usePaymentStore = defineStore('paymentStore', () => {
 
     let plan_id_selected = ref<number>(-1)
 
+    let submittedOrderId = ref<string>('666666')
+
     let confirmOrder = ref<ConfirmOrder | undefined>()
+
 
     return {
         plan_list,
         getAllPlans,
         plan_id_selected,
-        confirmOrder
+        confirmOrder,
+        submittedOrderId,
     }
 
 }, {

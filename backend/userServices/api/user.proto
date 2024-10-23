@@ -34,6 +34,8 @@ service UserService {
 
   rpc Disable2FA(Disable2FARequest) returns (Disable2FAResponse);
 
+  rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
+
 }
 
 // 定义用户登录请求消息
@@ -173,4 +175,16 @@ message Disable2FAResponse {
   int32 code = 1;
   string msg = 2;
   bool disabled = 3;
+}
+
+// UpdateUserInfo
+
+message UpdateUserInfoRequest {
+  int64 user_id = 1;
+}
+
+message UpdateUserInfoResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes user_info = 3;
 }

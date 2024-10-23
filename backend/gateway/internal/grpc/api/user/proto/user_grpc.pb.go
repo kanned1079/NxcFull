@@ -28,6 +28,7 @@ const (
 	UserService_CancelSetup2FA_FullMethodName        = "/proto.UserService/CancelSetup2FA"
 	UserService_Get2FAStatus_FullMethodName          = "/proto.UserService/Get2FAStatus"
 	UserService_Disable2FA_FullMethodName            = "/proto.UserService/Disable2FA"
+	UserService_UpdateUserInfo_FullMethodName        = "/proto.UserService/UpdateUserInfo"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -47,6 +48,7 @@ type UserServiceClient interface {
 	CancelSetup2FA(ctx context.Context, in *CancelSetup2FARequest, opts ...grpc.CallOption) (*CancelSetup2FAResponse, error)
 	Get2FAStatus(ctx context.Context, in *Get2FAStatusRequest, opts ...grpc.CallOption) (*Get2FAStatusResponse, error)
 	Disable2FA(ctx context.Context, in *Disable2FARequest, opts ...grpc.CallOption) (*Disable2FAResponse, error)
+	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoResponse, error)
 }
 
 type userServiceClient struct {
@@ -147,6 +149,16 @@ func (c *userServiceClient) Disable2FA(ctx context.Context, in *Disable2FAReques
 	return out, nil
 }
 
+func (c *userServiceClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserInfoResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdateUserInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -164,6 +176,7 @@ type UserServiceServer interface {
 	CancelSetup2FA(context.Context, *CancelSetup2FARequest) (*CancelSetup2FAResponse, error)
 	Get2FAStatus(context.Context, *Get2FAStatusRequest) (*Get2FAStatusResponse, error)
 	Disable2FA(context.Context, *Disable2FARequest) (*Disable2FAResponse, error)
+	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -200,6 +213,9 @@ func (UnimplementedUserServiceServer) Get2FAStatus(context.Context, *Get2FAStatu
 }
 func (UnimplementedUserServiceServer) Disable2FA(context.Context, *Disable2FARequest) (*Disable2FAResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Disable2FA not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -384,6 +400,24 @@ func _UserService_Disable2FA_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateUserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserInfo(ctx, req.(*UpdateUserInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -426,6 +460,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Disable2FA",
 			Handler:    _UserService_Disable2FA_Handler,
+		},
+		{
+			MethodName: "UpdateUserInfo",
+			Handler:    _UserService_UpdateUserInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

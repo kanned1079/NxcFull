@@ -2,6 +2,7 @@ import {defineStore} from "pinia";
 import {ref, reactive, computed, toRaw} from "vue"
 // import {useRouter} from "vue-router";
 import router from "@/router"
+import instance from "@/axios";
 
 // const router = useRouter()
 
@@ -57,10 +58,32 @@ const useUserInfoStore = defineStore('userInfoS',() => {
         });
     }
 
+
+    let updateUserInfo = async ():Promise<boolean> => {
+        try {
+            let {data} = await instance.get('/api/user/v1/user', {
+                params: {
+                    user_id: thisUser.id
+                }
+            })
+            if ((data.code as number) === 200) {
+                thisUser.balance = data.user_info.balance
+                console.log('ok')
+                return true
+            } else {
+                return false
+            }
+        } catch (error: any) {
+            console.log(error)
+            return false
+        }
+    }
+
     return {
         isAuthed,
         thisUser,
         setAndSaveAuthStatus,
+        updateUserInfo,
         logout
     }
 

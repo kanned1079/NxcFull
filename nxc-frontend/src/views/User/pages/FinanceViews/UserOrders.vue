@@ -22,6 +22,7 @@ interface OrderList {
   coupon_id: number
   status: number
   is_success: boolean
+  is_finished: boolean
   failure_reason: string
   discount_amount: number
   amount: number
@@ -31,11 +32,32 @@ interface OrderList {
   deleted_at: any
 }
 
+let orderStatusTagColor = (is_finished: boolean, is_success: boolean): string => {
+  if (!is_success && !is_finished) {
+    return 'warning'
+  } else if (is_finished && !is_success) {
+    return 'error'
+  } else {
+    return 'success'
+  }
+}
+
+let orderStatusText = (is_finished: boolean, is_success: boolean): string => {
+  if (!is_success && !is_finished) {
+    return '未支付'
+  } else if (is_finished && !is_success) {
+    return '交易失败'
+  } else {
+    return '成功'
+  }
+}
+
+
 let orderList = ref<OrderList[]>([])
 
 // 定义表格的列
 const columns = [
-  { title: '# 订单号', key: 'id' },
+  { title: '# 订单号', key: 'order_id' },
   {
     title: '周期', key: 'period', render(row: OrderList) {
       return h(NTag, { bordered: false }, { default: () => {
@@ -59,9 +81,11 @@ const columns = [
   {
     title: '订单状态', key: 'is_success', render(row: OrderList) {
       return h(NTag, {
-        type: row.is_success ? 'success' : 'error',
+
+        // type: row.is_success ? 'success' : 'error',
+        type: orderStatusTagColor(row.is_finished, row.is_success),
         bordered: false,
-      }, { default: () => row.is_success ? '已完成' : '已取消' });
+      }, { default: () => orderStatusText(row.is_finished, row.is_success) });
     }
   },
   {

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onBeforeMount, onMounted, ref} from "vue"
+import {computed, onBeforeMount, onMounted, ref, onBeforeUnmount} from "vue"
 import {NIcon} from 'naive-ui'
+import instance from "@/axios/index"
 import useThemeStore from "@/stores/useThemeStore";
+import useUserInfoStore from "@/stores/useUserInfoStore";
 import useApiAddrStore from "@/stores/useApiAddrStore"
 import usePaymentStore from "@/stores/usePaymentStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -10,6 +12,7 @@ import {useRouter} from "vue-router";
 import 'md-editor-v3/lib/preview.css';
 let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 const {t} = useI18n();
+const userInfoStore = useUserInfoStore()
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
 const apiAddrStore = useApiAddrStore();
@@ -72,6 +75,38 @@ let orderData = ref([
 
 ])
 
+let queryOrderInfoAndStatus = async () => {
+  try {
+    let { data } = await instance.get('/api/user/v1/order/status', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        order_id: paymentStore.submittedOrderId.trim()
+      }
+    });
+
+    if (data.code === 200) {
+      console.log('获取成功', data);
+      // 如果订单状态已完成或达到某个条件，停止轮询
+      if (data.status === 'completed') {
+        clearInterval(intervalId); // 清除轮询
+        console.log('订单已完成，停止轮询');
+      }
+    }
+  } catch (error: any) {
+    console.log(error);
+  }
+}
+
+let intervalId: any;
+
+let queryOrderInterval = () => {
+  intervalId = setInterval(() => {
+    queryOrderInfoAndStatus();
+  }, 1000); // 每隔5秒查询一次
+}
+
+
+
 
 onMounted(() => {
   console.log('settlement挂载', paymentStore.plan_id_selected)
@@ -79,13 +114,21 @@ onMounted(() => {
   themeStore.userPath = '/dashboard/purchase/confirm'
 
   console.log(paymentStore.confirmOrder)
-  if (paymentStore.confirmOrder)
-    confirmOrder.value = paymentStore.confirmOrder
+  // if (paymentStore.confirmOrder)
+  //   confirmOrder.value = paymentStore.confirmOrder
 
+  // queryOrderInfoAndStatus()
+
+  // 开始轮询
+  queryOrderInterval();
 })
 
 onBeforeMount(() => {
 
+})
+
+onBeforeUnmount(() => {
+  clearInterval(intervalId)
 })
 
 </script>

@@ -5,6 +5,7 @@ import (
 	"gateway/internal/grpc"
 	pb "gateway/internal/grpc/api/user/proto"
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
 	"strconv"
 
 	//"google.golang.org/grpc"
@@ -374,5 +375,58 @@ func HandleDisable2FA(context *gin.Context) {
 		"code":     resp.Code,
 		"disabled": resp.Disabled,
 		"msg":      resp.Msg,
+	})
+}
+
+func HandleUpdateUserInfo(context *gin.Context) {
+	paramsUserId := context.Query("user_id")
+	var userId int64
+	var err error
+	if paramsUserId == "" {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "请提供用户Id",
+		})
+		return
+	}
+	userId, err = strconv.ParseInt(paramsUserId, 10, 64)
+	log.Println("查询的用户id：", userId)
+	resp, err := grpcClient.UserServiceClient.UpdateUserInfo(sysContext.Background(), &pb.UpdateUserInfoRequest{
+		UserId: userId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	//if err != nil {
+	//	context.JSON(http.StatusInternalServerError, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "rpc调用错误" + err.Error(),
+	//	})
+	//	return
+	//}
+	//if resp == nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "rpc调用错误无返回值",
+	//	})
+	//	return
+	//}
+	var userMap map[string]interface{}
+	err = json.Unmarshal(resp.UserInfo, &userMap)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":      resp.Code,
+		"msg":       resp.Msg,
+		"user_info": userMap,
 	})
 }

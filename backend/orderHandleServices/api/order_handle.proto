@@ -14,14 +14,17 @@ service OrderHandleService {
 // ------------------------
 
 message GetOrderStatusRequest {
-  string order_id = 1;
+  int64 user_id = 1;
+  string order_id = 2;
 }
 
 message GetOrderStatusResponse {
   int32 code = 1;
   string msg = 2;
   bool is_finished = 3;
-  string failure_reason = 4;
+  bool is_success = 4;
+  string failure_reason = 5;
+  bytes order_info = 6;
 }
 
 // --------------------

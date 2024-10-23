@@ -102,6 +102,8 @@ func StartApiGateways() {
 		userAuthorized.GET("/profile")
 		////...其他用户路由
 		//// 开始首页
+		userAuthorized.GET("/user", handler.HandleUpdateUserInfo)
+
 		userAuthorized.GET("/notice", handler.HandleGetAllNotices)        // 获取所有的通知列表
 		userAuthorized.GET("/document", handler.HandleGetAllDocuments)    // 按照分类获取所有的文档列表	// rpc实现
 		userAuthorized.GET("/plan", handler.HandleGetAllPlans)            // 获取所有的有效订阅
@@ -122,6 +124,8 @@ func StartApiGateways() {
 		// 这里将生成订单号后推送至消息队列 交由第二个进程进行处理
 		//
 		userAuthorized.GET("/orders", handler.HandleGetAllMyOrders)
+
+		userAuthorized.GET("/order/status", handler.HandleCheckOrderStatus)
 	}
 
 	//if err := router.Run("0.0.0.0:8081"); err != nil {

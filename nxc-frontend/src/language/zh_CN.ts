@@ -10,7 +10,7 @@ export default {
         user: {
             dashboard: '儀表板',
             document: '使用文檔',
-            subscribe: '訂閱',
+            subscription: '訂閱',
             purchase: '購買訂閱',
             surplus: '我的密鑰',
             fiance: '財務',

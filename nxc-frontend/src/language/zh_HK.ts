@@ -12,7 +12,7 @@ export default {
         user: {
             dashboard: '仪表板',
             document: '使用文档',
-            subscribe: '订阅',
+            subscription: '订阅',
             purchase: '购买订阅',
             surplus: '我的密钥',
             fiance: '财务',

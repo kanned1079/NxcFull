@@ -180,6 +180,7 @@ let handleCancelSetup2FA = async () => {
       console.log('取消2fa成功', data)
       message.info('已取消')
     }
+    showModal.value = false
   } catch (error: any) {
     console.log(error)
     message.info('错误' + error)
@@ -253,13 +254,17 @@ let handleDisable2FA = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   console.log('挂载个人中心')
   themeStore.menuSelected = 'user-profile'
   themeStore.userPath = '/dashboard/profile'
 
   //
-  handleGet2FAStatus()
+  let isUpdated = await userInfoStore.updateUserInfo()
+  console.log(isUpdated)
+  !isUpdated?notify('error', '失败', '个人信息更新失败以下当前数据可能不是最新的'):null
+  await handleGet2FAStatus()
+
 })
 
 </script>

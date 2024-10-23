@@ -186,9 +186,11 @@ let saveOrder = async () => {
     if (data.code === 200) {
       console.log('订单创建成功')
       // Object.assign(data, paymentStore.confirmOrder)
-      paymentStore.confirmOrder = data
+      // paymentStore.confirmOrder = data
+      paymentStore.submittedOrderId = data.order_id as string   // 仅保存订单号
       console.log('选择支付方式')
       await router.push({path: '/dashboard/purchase/confirm'})
+
     }
   }catch (error: any) {
     console.log(error)

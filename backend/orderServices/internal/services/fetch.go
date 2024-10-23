@@ -8,12 +8,42 @@ import (
 	pb "orderServices/api/proto"
 	"orderServices/internal/dao"
 	"orderServices/internal/model"
+	"strconv"
 )
 
+// v1
 // GetAllMyOrders 返回用户所有的订单 包括所有提交的 支付成功或失败的
 // 请求参数 用户id 返回一个序列化的对象数组
+//func (s *OrderServices) GetAllMyOrders(context context.Context, request *pb.GetAllMyOrdersRequest) (*pb.GetAllMyOrdersResponse, error) {
+//	var orders []model.Orders
+//	if result := dao.Db.Model(&model.Orders{}).Where("user_id = ?", request.UserId).Find(&orders); result.Error != nil {
+//		log.Println(result.Error)
+//		return &pb.GetAllMyOrdersResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "查询订单信息错误" + result.Error.Error(),
+//		}, nil
+//	}
+//	// 还需要增加redis中还未完成的订单 因为未超时的订单不存储在数据库中
+//	// redis中的键路径为 "pending_order:" + <userId> + ":" + <订单号> 这里可能有好多个订单
+//
+//	if tempJson, err := json.Marshal(orders); err != nil {
+//		log.Println(err.Error())
+//		return &pb.GetAllMyOrdersResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "序列化数据失败" + err.Error(),
+//		}, nil
+//	} else {
+//		return &pb.GetAllMyOrdersResponse{
+//			Code:      http.StatusOK,
+//			Msg:       "查询成功",
+//			OrderList: tempJson,
+//		}, nil
+//	}
+//}
+
 func (s *OrderServices) GetAllMyOrders(context context.Context, request *pb.GetAllMyOrdersRequest) (*pb.GetAllMyOrdersResponse, error) {
 	var orders []model.Orders
+	// 查询数据库中的订单
 	if result := dao.Db.Model(&model.Orders{}).Where("user_id = ?", request.UserId).Find(&orders); result.Error != nil {
 		log.Println(result.Error)
 		return &pb.GetAllMyOrdersResponse{
@@ -21,6 +51,34 @@ func (s *OrderServices) GetAllMyOrders(context context.Context, request *pb.GetA
 			Msg:  "查询订单信息错误" + result.Error.Error(),
 		}, nil
 	}
+
+	// 查询Redis中未完成的订单
+	pendingOrders := make([]model.Orders, 0)
+	redisKeyPattern := "pending_order:" + strconv.FormatInt(request.UserId, 10) + ":*"
+	iter := dao.Rdb.Scan(context, 0, redisKeyPattern, 0).Iterator()
+	for iter.Next(context) {
+		orderData, err := dao.Rdb.Get(context, iter.Val()).Result()
+		if err != nil {
+			log.Println("获取Redis订单失败:", err)
+			continue
+		}
+
+		var order model.Orders
+		if err := json.Unmarshal([]byte(orderData), &order); err != nil {
+			log.Println("解析Redis订单失败:", err)
+			continue
+		}
+
+		pendingOrders = append(pendingOrders, order)
+	}
+	if err := iter.Err(); err != nil {
+		log.Println("Redis扫描出错:", err)
+	}
+
+	// 合并数据库订单和Redis订单
+	orders = append(orders, pendingOrders...)
+
+	// 序列化订单列表
 	if tempJson, err := json.Marshal(orders); err != nil {
 		log.Println(err.Error())
 		return &pb.GetAllMyOrdersResponse{
