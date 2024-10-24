@@ -17,26 +17,46 @@ start_services() {
     "userServices"
   )
 
+  # 检查是否已有服务在运行
+  if [ -f "$PID_FILE" ]; then
+    echo "Services are already running. Stop them first."
+    exit 1
+  fi
+
   # 清空 PID 文件
   > "$PID_FILE"
 
   # 遍历启动每个服务
   for service in "${services[@]}"; do
     echo "Starting $service..."
-    (cd "$service" && go run command/server/main.go &) 
-    # 保存每个服务的进程 ID
-    echo "$service: $!" >> "$PID_FILE"
+    (cd "$service" && nohup go run command/server/main.go > /dev/null 2>&1 &)
+    sleep 1  # 等待进程启动
+
+    # 使用 ps 获取服务的 PID
+    pid=$(ps -ef | grep "[g]o run command/server/main.go" | awk '{print $2}')
+    if [ -n "$pid" ]; then
+      echo "$service: $pid" >> "$PID_FILE"
+    else
+      echo "Failed to find PID for $service"
+    fi
   done
 
-  # 等待 5 秒启动 gateway 服务
-  echo "Waiting 5 seconds to start gateway service..."
+  # 等待 10 秒启动 gateway 服务
+  echo "Waiting 10 seconds to start gateway service..."
   sleep 10
 
   # 启动 gateway 服务
   echo "Starting gateway service..."
-  (cd "gateway" && go run command/server/main.go &)
-  # 保存 gateway 的进程 ID
-  echo "gateway: $!" >> "$PID_FILE"
+  (cd "gateway" && nohup go run command/server/main.go > /dev/null 2>&1 &)
+  sleep 1  # 等待进程启动
+
+  # 使用 ps 获取 gateway 的 PID
+  pid=$(ps -ef | grep "[g]o run command/server/main.go" | awk '{print $2}')
+  if [ -n "$pid" ]; then
+    echo "gateway: $pid" >> "$PID_FILE"
+  else
+    echo "Failed to find PID for gateway"
+  fi
 
   echo "All services started."
 }
@@ -55,7 +75,7 @@ stop_services() {
 
     if kill -0 "$pid" 2>/dev/null; then
       echo "Stopping $service with PID $pid..."
-      kill "$pid"
+      kill -TERM "$pid"
     else
       echo "$service is not running."
     fi

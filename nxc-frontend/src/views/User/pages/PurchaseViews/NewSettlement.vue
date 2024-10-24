@@ -189,7 +189,10 @@ let saveOrder = async () => {
       // paymentStore.confirmOrder = data
       paymentStore.submittedOrderId = data.order_id as string   // 仅保存订单号
       console.log('选择支付方式')
-      await router.push({path: '/dashboard/purchase/confirm'})
+      // 执行异步
+       setTimeout(async () => {
+         await router.push({path: '/dashboard/purchase/confirm'})
+      }, 500) // 延迟500ms
 
     }
   }catch (error: any) {

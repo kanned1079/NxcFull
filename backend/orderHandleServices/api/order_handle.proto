@@ -9,6 +9,8 @@ service OrderHandleService {
   // 查询订单是否成功
   rpc GetOrderStatus(GetOrderStatusRequest) returns (GetOrderStatusResponse);
 
+  rpc CancelOrder() returns ();
+
 }
 
 // ------------------------
@@ -36,5 +38,17 @@ message SetNewOrderRequest {
 message SetNewOrderResponse {
   int32 code = 1;
   string msg = 2;
+}
 
+// -----------
+
+message CancelOrderRequest {
+  int64 user_id = 1;
+  string order_id = 2;
+}
+
+message CancelOrderResponse {
+  int32 code = 1;
+  bool cancelled = 2;
+  string msg = 3;
 }

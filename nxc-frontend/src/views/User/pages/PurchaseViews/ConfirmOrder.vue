@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onBeforeMount, onMounted, ref, onBeforeUnmount} from "vue"
+import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue"
 import {NIcon, useMessage} from 'naive-ui'
 import instance from "@/axios/index"
 import useThemeStore from "@/stores/useThemeStore";
@@ -10,6 +10,10 @@ import usePaymentStore from "@/stores/usePaymentStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useRouter} from "vue-router";
 import 'md-editor-v3/lib/preview.css';
+import {formatDate} from "@/utils/timeFormat";
+import {CheckmarkCircleOutline as confirmIcon} from "@vicons/ionicons5"
+
+
 let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 const {t} = useI18n();
 const message = useMessage()
@@ -22,16 +26,46 @@ const router = useRouter();
 
 interface ConfirmOrder {
   code: number | null,
-  order_id: number | null,
+  order_id: string,
   plan_name: string | null,
-  original_price: number | null,
-  discount_amount: number | null,
+  price: number, // 原始价格
+  discount_amount?: number, // 抵折金额
+  amount: number, // 最终价格
   pay_price: number | null,
   period: string | null,
+  coupon_name?: string,
   created_at: string | null
 }
 
-let confirmOrder = ref<ConfirmOrder>()
+let confirmOrder = ref<ConfirmOrder>({
+  code: 0,
+  order_id: '',
+  plan_name: '',
+  price: 0.00,
+  discount_amount: 0.00,
+  amount: 0.00,
+  pay_price: 0.00,
+  period: '',
+  created_at: '',
+  coupon_name: '',
+})
+
+let periodCode2Text = computed((): string => { // pass
+  switch (confirmOrder.value?.period) {
+    case 'month': {
+      return computed(() => '月付')
+    }
+    case 'quarter': {
+      return computed(() => '季付')
+    }
+    case 'half-year': {
+      return computed(() => '半年付')
+    }
+    case 'year': {
+      return computed(() => '年付')
+    }
+  }
+})
 
 
 let goodInfoData = ref([
@@ -41,7 +75,7 @@ let goodInfoData = ref([
   },
   {
     title: computed(() => '周期/类型'),
-    content: computed(() => {
+    content: computed((): string => { // pass
       switch (confirmOrder.value?.period) {
         case 'month': {
           return computed(() => '月付')
@@ -67,7 +101,7 @@ let orderData = ref([
   },
   {
     title: computed(() => '创建日期'),
-    content: computed(() => confirmOrder.value?.created_at)
+    content: computed(() => confirmOrder.value?.created_at ? formatDate(confirmOrder.value?.created_at) : '')
   },
   {
     title: computed(() => '订单号'),
@@ -76,39 +110,75 @@ let orderData = ref([
 
 ])
 
+let intervalId = ref<number | null>();
+
 let queryOrderInfoAndStatus = async () => {
   try {
-    let { data } = await instance.get('/api/user/v1/order/status', {
+    let {data} = await instance.get('/api/user/v1/order/status', {
       params: {
         user_id: userInfoStore.thisUser.id,
         order_id: paymentStore.submittedOrderId.trim()
       }
     });
-
     if (data.code === 200) {
       console.log('获取成功', data);
+      Object.assign(confirmOrder.value, data.order_info)
+      console.log('订单号：', data.order_info.order_id)
       // 如果订单状态已完成或达到某个条件，停止轮询
-      if (data.order_info.is_finished && !data.order_info.is_success) {
-        clearInterval(intervalId); // 清除轮询
-        console.log('订单已超时，停止轮询');
-        message.error('订单已超时')
+      if (data.order_info.is_finished && data.order_info.is_success) {  // 订单完成且成功
+        console.log('订单成功')
+        clearInterval(intervalId)
+        console.log('去往下一个页面')
+        // toOrderResult(data.code)
+        toOrderResult(data.code)
+      } else if (data.order_info.is_finished && !data.order_info.is_success) {
+        console.log('订单完成但未成功')
+        clearInterval(intervalId)
+        toOrderResult(data.code)
+      } else {
+
       }
+      console.log('订单未支付，进行下一次轮询查询')
+    } else {
+      console.log('订单已超时，停止轮询');
+      message.error('订单已超时')
+      clearInterval(intervalId); // 清除轮询
     }
+// pass
   } catch (error: any) {
     console.log(error);
   }
 }
 
-let intervalId: any;
 
 let queryOrderInterval = () => {
   intervalId = setInterval(() => {
     queryOrderInfoAndStatus();
-  }, 1000); // 每隔5秒查询一次
+  }, 3000); // 每隔3秒查询一次
 }
 
+let toOrderResult = (code: number) => {
+  console.log('转到结果页', code)
+  // router.push({
+  //   path: '',
+  // })
+}
 
-
+let cancelOrder = async () => {
+  try {
+    let {data} = await instance.delete("/api/user/v1/order", {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        order_id: confirmOrder.value.order_id,
+      }
+    })
+    if (data.code === 200){
+      console.log(data)
+    }
+  } catch (error: any) {
+    console.log(error)
+  }
+}
 
 onMounted(() => {
   console.log('settlement挂载', paymentStore.plan_id_selected)
@@ -122,11 +192,11 @@ onMounted(() => {
   // queryOrderInfoAndStatus()
 
   // 开始轮询
-  queryOrderInterval();
 })
 
-onBeforeMount(() => {
-
+onBeforeMount(async () => {
+  await queryOrderInfoAndStatus()
+  queryOrderInterval();
 })
 
 onBeforeUnmount(() => {
@@ -182,6 +252,7 @@ export default {
             切换订阅
           </n-button>
           <n-button
+              @click="cancelOrder"
               class="cancel-order-btn"
               type="error"
               text
@@ -192,25 +263,25 @@ export default {
       </div>
 
       <div class="r-part">
-        <n-card style="color: white" class="r-part-btn" :embedded="true" hoverable>
+        <n-card style="color: white" class="r-part-btn" :bordered="false" :embedded="true" hoverable>
           <p class="r-title">您的价格</p>
-          1
+
           <div class="price-small">
-            <p class="summary">{{ 111 }} x {{ 222 }}</p>
-            <p class="price-small">{{ 222 }} </p>
+            <p class="summary">{{ confirmOrder.plan_name }} x {{ periodCode2Text }}</p>
+            <p class="price-small">{{ confirmOrder.price }} {{ appInfosStore.appCommonConfig.currency }}</p>
           </div>
           <n-hr></n-hr>
-          <div class="price-discount" v-if="true">
-            <p class="coupon-title">1</p>
+          <div class="price-discount" v-if="confirmOrder.discount_amount != 0">
+            <p class="coupon-title">优惠券抵折</p>
             <div class="coupon-detail">
-              <p class="coupon-name">{{ '优惠券名' }}</p>
-              <p class="discount">- {{ 11.11 }} </p>
+              <p class="coupon-name">{{ confirmOrder.coupon_name }}</p>
+              <p class="discount">- {{ confirmOrder.discount_amount.toFixed(2) }}
+                {{ appInfosStore.appCommonConfig.currency }}</p>
             </div>
-            <n-hr></n-hr>
-            22222222222222
+            <n-hr v-if="confirmOrder.discount_amount != 0"></n-hr>
           </div>
-          <p class="total-title">统计</p>
-          <p class="price-large">{{ 11 }} </p>
+          <p class="total-title">价格</p>
+          <p class="price-large">{{ confirmOrder.amount.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
           <n-button
               @click=""
               class="settleBtn"
@@ -219,6 +290,7 @@ export default {
               size="large"
           >
             <n-icon style="margin-right: 5px">
+              <confirmIcon/>
             </n-icon>
             提交
           </n-button>
@@ -383,7 +455,6 @@ export default {
         margin-right: 20px;
       }
     }
-
 
 
   }

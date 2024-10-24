@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"log"
+	"math"
 	"orderHandleServices/internal/dao"
 	"orderHandleServices/internal/model"
 	"time"
@@ -72,6 +73,8 @@ func ProcessOrder(jsonData []byte) error {
 		}
 	}
 
+	order.CouponName = couponInfo.Name
+
 	var plan model.Plan
 	if result := dao.Db.Where("id = ?", postOrderData.PlanId).First(&plan); result.Error != nil {
 		log.Println(result.Error.Error())
@@ -91,6 +94,8 @@ func ProcessOrder(jsonData []byte) error {
 		return errors.New("订阅剩余不足")
 	}
 
+	order.PlanName = plan.Name
+
 	var originalPrice float64
 	switch postOrderData.Period {
 	case "month":
@@ -103,6 +108,7 @@ func ProcessOrder(jsonData []byte) error {
 		originalPrice = plan.YearPrice
 	}
 	log.Println("原始价格", originalPrice)
+	order.Price = originalPrice
 
 	// 抵折百分比
 	var discountPercent float64 = couponInfo.PercentOff / 100
@@ -111,8 +117,9 @@ func ProcessOrder(jsonData []byte) error {
 
 	log.Println(discountPercent, disCountAmount, originalPrice-disCountAmount)
 
-	order.DiscountAmount = disCountAmount                          // 优惠了的价格
-	order.Amount = originalPrice - disCountAmount - disCountAmount // 订单价格
+	order.DiscountAmount = disCountAmount // 优惠了的价格
+	//order.Amount = originalPrice - disCountAmount // 订单价格
+	order.Amount = math.Round((originalPrice-disCountAmount)*100) / 100 // 取整
 
 	log.Println(order)
 
