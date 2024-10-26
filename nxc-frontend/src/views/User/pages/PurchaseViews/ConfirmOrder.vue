@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue"
-import {NIcon, useMessage} from 'naive-ui'
+import {NIcon, useMessage, useNotification} from 'naive-ui'
 import instance from "@/axios/index"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -13,10 +13,10 @@ import 'md-editor-v3/lib/preview.css';
 import {formatDate} from "@/utils/timeFormat";
 import {CheckmarkCircleOutline as confirmIcon} from "@vicons/ionicons5"
 
-
 let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 const {t} = useI18n();
 const message = useMessage()
+const notify = useNotification()
 const userInfoStore = useUserInfoStore()
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
@@ -126,15 +126,15 @@ let queryOrderInfoAndStatus = async () => {
       console.log('订单号：', data.order_info.order_id)
       // 如果订单状态已完成或达到某个条件，停止轮询
       if (data.order_info.is_finished && data.order_info.is_success) {  // 订单完成且成功
-        console.log('订单成功')
         clearInterval(intervalId)
+        console.log('订单成功')
         console.log('去往下一个页面')
         // toOrderResult(data.code)
         toOrderResult(data.code)
       } else if (data.order_info.is_finished && !data.order_info.is_success) {
         console.log('订单完成但未成功')
         clearInterval(intervalId)
-        toOrderResult(data.code)
+        toOrderResult(data.code)  // 去往下一个页面
       } else {
 
       }
@@ -164,19 +164,37 @@ let toOrderResult = (code: number) => {
   // })
 }
 
-let cancelOrder = async () => {
+let placeOrder = async () => {
   try {
-    let {data} = await instance.delete("/api/user/v1/order", {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        order_id: confirmOrder.value.order_id,
-      }
+    let {data} = await instance.put('/api/user/v1/order', {
+      user_id: userInfoStore.thisUser.id,
+      order_id: confirmOrder.value.order_id,
     })
-    if (data.code === 200){
+    if (data.code === 200) {
       console.log(data)
     }
   } catch (error: any) {
     console.log(error)
+  }
+}
+
+let cancelOrder = async () => {
+  try {
+    let {data} = await instance.delete('/api/user/v1/order', {
+        params: {
+          user_id: userInfoStore.thisUser.id,
+          order_id: confirmOrder.value.order_id,
+        }
+    })
+    if (data.code === 200) {
+      console.log(data)
+      message.info('订单已取消')
+      clearInterval(intervalId)
+      router.back()
+    }
+  } catch (error: any) {
+    console.log(error)
+
   }
 }
 
@@ -190,7 +208,6 @@ onMounted(() => {
   //   confirmOrder.value = paymentStore.confirmOrder
 
   // queryOrderInfoAndStatus()
-
   // 开始轮询
 })
 
@@ -283,7 +300,7 @@ export default {
           <p class="total-title">价格</p>
           <p class="price-large">{{ confirmOrder.amount.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
           <n-button
-              @click=""
+              @click="placeOrder"
               class="settleBtn"
               type="primary"
               :bordered="false"

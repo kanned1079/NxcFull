@@ -3,6 +3,7 @@ package handler
 import (
 	sysContext "context"
 	"encoding/json"
+	"errors"
 	orderPb "gateway/internal/grpc/api/order/proto"
 	orderHandlePb "gateway/internal/grpc/api/orderHandle/proto"
 	"github.com/gin-gonic/gin"
@@ -148,5 +149,90 @@ func HandleCheckOrderStatus(context *gin.Context) {
 		"failure_reason": resp.FailureReason,
 		"order_info":     orderInfoKvData,
 	})
+}
 
+func HandleCancelOrder(context *gin.Context) {
+	if err, userId, orderId := getUserIdAndOrderIdFromContextViaGetMethod(context); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "提供的信息不正确",
+		})
+		return
+	} else {
+		resp, err := grpcClient.OrderHandleServicesClient.CancelOrder(sysContext.Background(), &orderHandlePb.CancelOrderRequest{
+			OrderId: orderId,
+			UserId:  userId,
+		})
+		if err := failOnRpcError(err, resp); err != nil {
+			context.JSON(http.StatusOK, gin.H{
+				"code": http.StatusInternalServerError,
+				"msg":  err.Error(),
+			})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"code":      resp.Code,
+			"cancelled": resp.Cancelled,
+			"msg":       resp.Msg,
+		})
+	}
+}
+
+func HandlePlaceOrder(context *gin.Context) {
+	if err, userId, orderId := getUserIdAndOrderIdFromContextViaPostMethod(context); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "提供的信息不正确",
+		})
+		return
+	} else {
+		resp, err := grpcClient.OrderHandleServicesClient.PlaceOrder(sysContext.Background(), &orderHandlePb.PlaceOrderRequest{
+			OrderId: orderId,
+			UserId:  userId,
+		})
+		if err := failOnRpcError(err, resp); err != nil {
+			context.JSON(http.StatusOK, gin.H{
+				"code": http.StatusInternalServerError,
+				"msg":  err.Error(),
+			})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"code":          resp.Code,
+			"order_id":      resp.OrderId,
+			"msg":           resp.Msg,
+			"placed":        resp.Placed,
+			"expired_date":  resp.ExpiredDate,
+			"key_generated": resp.KeyGenerated,
+			"user_balance":  resp.UserBalance,
+		})
+	}
+}
+
+func getUserIdAndOrderIdFromContextViaGetMethod(context *gin.Context) (err error, userId int64, orderId string) {
+	orderId = context.Query("order_id")
+	userIdStr := context.Query("user_id")
+	userId, err = strconv.ParseInt(userIdStr, 10, 64)
+	if orderId == "" || userIdStr == "" || err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "提供的信息不正确",
+		})
+	}
+	log.Println(userId, orderId, err)
+	return
+}
+
+func getUserIdAndOrderIdFromContextViaPostMethod(context *gin.Context) (err error, userId int64, orderId string) {
+	postData := &struct {
+		UserId  int64  `json:"user_id"`
+		OrderId string `json:"order_id"`
+	}{}
+	if err = context.BindJSON(postData); err != nil {
+		err = errors.New("提供的信息不正确" + err.Error())
+		return
+	}
+	userId = postData.UserId
+	orderId = postData.OrderId
+	return
 }

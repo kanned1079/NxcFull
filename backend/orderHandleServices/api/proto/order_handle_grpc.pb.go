@@ -20,6 +20,8 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	OrderHandleService_GetOrderStatus_FullMethodName = "/orderHandle.OrderHandleService/GetOrderStatus"
+	OrderHandleService_CancelOrder_FullMethodName    = "/orderHandle.OrderHandleService/CancelOrder"
+	OrderHandleService_PlaceOrder_FullMethodName     = "/orderHandle.OrderHandleService/PlaceOrder"
 )
 
 // OrderHandleServiceClient is the client API for OrderHandleService service.
@@ -28,8 +30,12 @@ const (
 //
 // 定义 Order 服务
 type OrderHandleServiceClient interface {
-	// 查询订单是否成功
+	// 查询订单是否成功 轮询请求
 	GetOrderStatus(ctx context.Context, in *GetOrderStatusRequest, opts ...grpc.CallOption) (*GetOrderStatusResponse, error)
+	// 取消订单
+	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
+	// 确认订单
+	PlaceOrder(ctx context.Context, in *PlaceOrderRequest, opts ...grpc.CallOption) (*PlaceOrderResponse, error)
 }
 
 type orderHandleServiceClient struct {
@@ -50,14 +56,38 @@ func (c *orderHandleServiceClient) GetOrderStatus(ctx context.Context, in *GetOr
 	return out, nil
 }
 
+func (c *orderHandleServiceClient) CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CancelOrderResponse)
+	err := c.cc.Invoke(ctx, OrderHandleService_CancelOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderHandleServiceClient) PlaceOrder(ctx context.Context, in *PlaceOrderRequest, opts ...grpc.CallOption) (*PlaceOrderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlaceOrderResponse)
+	err := c.cc.Invoke(ctx, OrderHandleService_PlaceOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderHandleServiceServer is the server API for OrderHandleService service.
 // All implementations must embed UnimplementedOrderHandleServiceServer
 // for forward compatibility.
 //
 // 定义 Order 服务
 type OrderHandleServiceServer interface {
-	// 查询订单是否成功
+	// 查询订单是否成功 轮询请求
 	GetOrderStatus(context.Context, *GetOrderStatusRequest) (*GetOrderStatusResponse, error)
+	// 取消订单
+	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
+	// 确认订单
+	PlaceOrder(context.Context, *PlaceOrderRequest) (*PlaceOrderResponse, error)
 	mustEmbedUnimplementedOrderHandleServiceServer()
 }
 
@@ -70,6 +100,12 @@ type UnimplementedOrderHandleServiceServer struct{}
 
 func (UnimplementedOrderHandleServiceServer) GetOrderStatus(context.Context, *GetOrderStatusRequest) (*GetOrderStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrderStatus not implemented")
+}
+func (UnimplementedOrderHandleServiceServer) CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelOrder not implemented")
+}
+func (UnimplementedOrderHandleServiceServer) PlaceOrder(context.Context, *PlaceOrderRequest) (*PlaceOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PlaceOrder not implemented")
 }
 func (UnimplementedOrderHandleServiceServer) mustEmbedUnimplementedOrderHandleServiceServer() {}
 func (UnimplementedOrderHandleServiceServer) testEmbeddedByValue()                            {}
@@ -110,6 +146,42 @@ func _OrderHandleService_GetOrderStatus_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderHandleService_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderHandleServiceServer).CancelOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderHandleService_CancelOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderHandleServiceServer).CancelOrder(ctx, req.(*CancelOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderHandleService_PlaceOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlaceOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderHandleServiceServer).PlaceOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderHandleService_PlaceOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderHandleServiceServer).PlaceOrder(ctx, req.(*PlaceOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderHandleService_ServiceDesc is the grpc.ServiceDesc for OrderHandleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -120,6 +192,14 @@ var OrderHandleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrderStatus",
 			Handler:    _OrderHandleService_GetOrderStatus_Handler,
+		},
+		{
+			MethodName: "CancelOrder",
+			Handler:    _OrderHandleService_CancelOrder_Handler,
+		},
+		{
+			MethodName: "PlaceOrder",
+			Handler:    _OrderHandleService_PlaceOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

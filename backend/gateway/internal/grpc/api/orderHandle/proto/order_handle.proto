@@ -6,8 +6,12 @@ option go_package = "./proto";
 
 // 定义 Order 服务
 service OrderHandleService {
-  // 查询订单是否成功
+  // 查询订单是否成功 轮询请求
   rpc GetOrderStatus(GetOrderStatusRequest) returns (GetOrderStatusResponse);
+  // 取消订单
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+  // 确认订单
+  rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse);
 
 }
 
@@ -36,5 +40,34 @@ message SetNewOrderRequest {
 message SetNewOrderResponse {
   int32 code = 1;
   string msg = 2;
+}
 
+// -----------
+
+message CancelOrderRequest {
+  int64 user_id = 1;
+  string order_id = 2;
+}
+
+message CancelOrderResponse {
+  int32 code = 1;
+  bool cancelled = 2;
+  string msg = 3;
+}
+
+// --------------
+
+message PlaceOrderRequest {
+  int64 user_id = 1;
+  string order_id = 2;
+}
+
+message PlaceOrderResponse {
+  int32 code = 1;
+  bool placed = 2;  // 订单是否成功插入数据库
+  string msg = 3;
+  string order_id = 4;  // 订单号
+  bool key_generated = 5; // 是否生成了密钥
+  string expired_date = 6;
+  float user_balance = 7; // 剩余的余额
 }
