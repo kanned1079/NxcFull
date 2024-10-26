@@ -234,6 +234,7 @@ func ProcessOrder(jsonData []byte) error {
 		CouponId:       postOrderData.CouponId,
 		CreatedAt:      time.Now(),
 		CouponName:     couponInfo.Name,
+		GroupId:        plan.GroupId,
 		PlanName:       plan.Name,
 	}
 
@@ -252,7 +253,7 @@ func ProcessOrder(jsonData []byte) error {
 	var discountPercent float64 = couponInfo.PercentOff / 100
 	var disCountAmount float64 = originalPrice * discountPercent
 	order.Price = originalPrice
-	order.DiscountAmount = disCountAmount
+	order.DiscountAmount = math.Round((disCountAmount)*100) / 100
 	order.Amount = math.Round((originalPrice-disCountAmount)*100) / 100
 
 	// 插入订单记录

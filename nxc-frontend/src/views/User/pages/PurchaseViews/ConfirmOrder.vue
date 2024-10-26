@@ -172,6 +172,17 @@ let placeOrder = async () => {
     })
     if (data.code === 200) {
       console.log(data)
+      if (data.placed && data.key_generated) {
+        console.log("订单成功")
+        clearInterval(intervalId) // 停止定时器
+        message.success("付款成功感谢您的支持")
+      }
+    } else if (data.code == 402) {
+        // 用户余额不足
+      message.warning("您的余额不足请先充值 该订单保留5分钟")
+    } else {
+      message.error("订单遇到错误" + data.msg)
+      clearInterval(intervalId)
     }
   } catch (error: any) {
     console.log(error)

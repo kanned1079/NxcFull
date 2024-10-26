@@ -13,9 +13,25 @@ import (
 )
 
 func HandleGetAllMyOrders(context *gin.Context) {
-	var userId int
+	var userId int64
+	var page int64
+	var size int64
 	var err error
-	if userId, err = strconv.Atoi(context.Query("user_id")); err != nil {
+	if userId, err = strconv.ParseInt(context.Query("user_id"), 10, 64); err != nil {
+		log.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "解析数据失败",
+		})
+	}
+	if page, err = strconv.ParseInt(context.Query("page"), 10, 64); err != nil {
+		log.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "解析数据失败",
+		})
+	}
+	if size, err = strconv.ParseInt(context.Query("size"), 10, 64); err != nil {
 		log.Println(err)
 		context.JSON(http.StatusBadRequest, gin.H{
 			"code": http.StatusBadRequest,
@@ -23,7 +39,9 @@ func HandleGetAllMyOrders(context *gin.Context) {
 		})
 	}
 	resp, err := grpcClient.OrderServicesClient.GetAllMyOrders(sysContext.Background(), &orderPb.GetAllMyOrdersRequest{
-		UserId: int64(userId),
+		UserId: userId,
+		Page:   page,
+		Size:   size,
 	})
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
@@ -50,6 +68,7 @@ func HandleGetAllMyOrders(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"code":       http.StatusOK,
 		"order_list": orders,
+		"page_count": resp.PageCount,
 	})
 }
 
@@ -186,6 +205,7 @@ func HandlePlaceOrder(context *gin.Context) {
 		})
 		return
 	} else {
+		log.Println("用户确认下单请求", userId, orderId)
 		resp, err := grpcClient.OrderHandleServicesClient.PlaceOrder(sysContext.Background(), &orderHandlePb.PlaceOrderRequest{
 			OrderId: orderId,
 			UserId:  userId,

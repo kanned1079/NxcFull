@@ -10,6 +10,7 @@ type Orders struct {
 	Id             int64          `json:"id" gorm:"primary_key;AUTO_INCREMENT"` // 订单数据Id
 	OrderId        string         `json:"order_id" gorm:"unique"`               // 订单号码
 	UserId         int64          `json:"user_id"`                              // 用户ID
+	GroupId        int64          `json:"group_id"`                             // 群组id
 	Email          string         `json:"email"`                                // 用户邮箱地址
 	PlanId         int64          `json:"plan_id"`                              // 选择的订阅计划ID
 	PlanName       string         `json:"plan_name"`                            // 订阅计划名

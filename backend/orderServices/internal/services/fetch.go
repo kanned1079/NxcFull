@@ -42,9 +42,39 @@ import (
 //}
 
 func (s *OrderServices) GetAllMyOrders(context context.Context, request *pb.GetAllMyOrdersRequest) (*pb.GetAllMyOrdersResponse, error) {
+	// 每页订单数量
+	size := request.Size
+	if size <= 0 {
+		size = 10 // 默认每页显示10条
+	}
+
+	// 当前页码
+	page := request.Page
+	if page <= 0 {
+		page = 1 // 默认第一页
+	}
+
+	// 查询数据库中的订单总数
+	var totalOrders int64
+	if result := dao.Db.Model(&model.Orders{}).Where("user_id = ?", request.UserId).Count(&totalOrders); result.Error != nil {
+		log.Println(result.Error)
+		return &pb.GetAllMyOrdersResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查询订单总数失败" + result.Error.Error(),
+		}, nil
+	}
+
+	// 计算总页数
+	pageCount := (totalOrders + int64(size) - 1) / int64(size)
+
+	// 查询数据库中的订单（分页并按时间降序排序）
 	var orders []model.Orders
-	// 查询数据库中的订单
-	if result := dao.Db.Model(&model.Orders{}).Where("user_id = ?", request.UserId).Find(&orders); result.Error != nil {
+	if result := dao.Db.Model(&model.Orders{}).
+		Where("user_id = ?", request.UserId).
+		Order("created_at DESC").
+		Limit(int(size)).
+		Offset(int((page - 1) * size)).
+		Find(&orders); result.Error != nil {
 		log.Println(result.Error)
 		return &pb.GetAllMyOrdersResponse{
 			Code: http.StatusInternalServerError,
@@ -54,29 +84,31 @@ func (s *OrderServices) GetAllMyOrders(context context.Context, request *pb.GetA
 
 	// 查询Redis中未完成的订单
 	pendingOrders := make([]model.Orders, 0)
-	redisKeyPattern := "pending_order:" + strconv.FormatInt(request.UserId, 10) + ":*"
-	iter := dao.Rdb.Scan(context, 0, redisKeyPattern, 0).Iterator()
-	for iter.Next(context) {
-		orderData, err := dao.Rdb.Get(context, iter.Val()).Result()
-		if err != nil {
-			log.Println("获取Redis订单失败:", err)
-			continue
+	if page == 1 {
+		redisKeyPattern := "pending_order:" + strconv.FormatInt(request.UserId, 10) + ":*"
+		iter := dao.Rdb.Scan(context, 0, redisKeyPattern, 0).Iterator()
+		for iter.Next(context) {
+			orderData, err := dao.Rdb.Get(context, iter.Val()).Result()
+			if err != nil {
+				log.Println("获取Redis订单失败:", err)
+				continue
+			}
+
+			var order model.Orders
+			if err := json.Unmarshal([]byte(orderData), &order); err != nil {
+				log.Println("解析Redis订单失败:", err)
+				continue
+			}
+
+			pendingOrders = append(pendingOrders, order)
 		}
-
-		var order model.Orders
-		if err := json.Unmarshal([]byte(orderData), &order); err != nil {
-			log.Println("解析Redis订单失败:", err)
-			continue
+		if err := iter.Err(); err != nil {
+			log.Println("Redis扫描出错:", err)
 		}
-
-		pendingOrders = append(pendingOrders, order)
-	}
-	if err := iter.Err(); err != nil {
-		log.Println("Redis扫描出错:", err)
 	}
 
-	// 合并数据库订单和Redis订单
-	orders = append(orders, pendingOrders...)
+	// 合并 Redis 和数据库的订单，Redis 订单优先
+	orders = append(pendingOrders, orders...)
 
 	// 序列化订单列表
 	if tempJson, err := json.Marshal(orders); err != nil {
@@ -90,6 +122,7 @@ func (s *OrderServices) GetAllMyOrders(context context.Context, request *pb.GetA
 			Code:      http.StatusOK,
 			Msg:       "查询成功",
 			OrderList: tempJson,
+			PageCount: pageCount,
 		}, nil
 	}
 }

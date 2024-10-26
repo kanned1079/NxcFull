@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package key;
+
+option go_package = "./proto";
+
+// 定义 Key 服务
+service KeyService {
+  // 获取用户所有的key 包含有效和无效的 按照时间和是否有效升序排序
+  rpc GetAllMyKeysByUserIdAsc(GetAllMyKeysByUserIdAscRequest) returns (GetAllMyKeysByUserIdAscResponse);
+  // 第三方API 激活密钥
+  rpc RegisterClientWithKey(RegisterClientWithKeyRequest) returns (RegisterClientWithKeyResponse);
+  // 第三方API 取消激活密钥
+  rpc CancelRegisterClientWithKey(CancelRegisterClientWithKeyRequest) returns (CancelRegisterClientWithKeyResponse);
+
+
+
+}
+
+message GetAllMyKeysByUserIdAscRequest {
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message GetAllMyKeysByUserIdAscResponse {
+  int32 code = 1;
+  string msg = 2;
+  int64 page_count = 3;
+  bytes keys = 4;
+}
+
+// ------
+
+message RegisterClientWithKeyRequest {
+  string email = 1;
+  string password = 2;
+  string client_id = 3;
+  string key = 4;
+}
+
+message RegisterClientWithKeyResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes register_result = 3;
+}
+
+//
+
+message CancelRegisterClientWithKeyRequest {
+
+}
+
+message CancelRegisterClientWithKeyResponse {
+
+}

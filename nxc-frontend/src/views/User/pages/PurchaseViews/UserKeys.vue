@@ -41,11 +41,13 @@ let getAllMyKeys = async () => {
     let {data} = await instance.get('/api/user/v1/keys', {
       params: {
         user_id: userInfoStore.thisUser.id,
+        page: 1,
+        size: 100,
       }
     })
     if (data.code === 200) {
       console.log(data)
-        data.key_list.forEach((key: Key) => myKeys.value.push(key))
+        data.my_keys.forEach((key: Key) => myKeys.value.push(key))
       //
     }
   } catch (error) {

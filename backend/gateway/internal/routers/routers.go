@@ -128,6 +128,8 @@ func StartApiGateways() {
 		userAuthorized.POST("/order", handler.HandleCommitNewOrder) // 下单新的订阅
 		userAuthorized.DELETE("/order", handler.HandleCancelOrder)  // 取消订阅
 		userAuthorized.PUT("/order", handler.HandlePlaceOrder)      // 确认并下单
+
+		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
 	}
 
 	//if err := router.Run("0.0.0.0:8081"); err != nil {

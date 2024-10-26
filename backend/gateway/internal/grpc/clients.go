@@ -7,6 +7,8 @@ import (
 	documentPb "gateway/internal/grpc/api/document/proto"
 	"gateway/internal/grpc/api/group"
 	groupPb "gateway/internal/grpc/api/group/proto"
+	"gateway/internal/grpc/api/key"
+	keyPb "gateway/internal/grpc/api/key/proto"
 	"gateway/internal/grpc/api/notice"
 	noticePb "gateway/internal/grpc/api/notice/proto"
 	"gateway/internal/grpc/api/order"
@@ -34,6 +36,7 @@ type Clients struct {
 	MailServicesClient        mailPb.MailServiceClient
 	OrderServicesClient       orderPb.OrderServiceClient
 	OrderHandleServicesClient orderHandlePb.OrderHandleServiceClient
+	KeyServicesClient         keyPb.KeyServiceClient
 }
 
 func NewClients() Clients {
@@ -49,6 +52,7 @@ func NewClients() Clients {
 		MailServicesClient:        sendmail.NewMailClient(),
 		OrderServicesClient:       order.NewOrderClient(),
 		OrderHandleServicesClient: orderHandle.NewOrderHandleClient(),
+		KeyServicesClient:         key.NewKeyClient(),
 	}
 
 }
