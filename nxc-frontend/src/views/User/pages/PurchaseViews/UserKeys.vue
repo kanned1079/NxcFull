@@ -6,7 +6,7 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {useMessage} from "naive-ui";
 import instance from "@/axios";
-import {CloseOutline as closeIcon, CopyOutline as copyIcon} from "@vicons/ionicons5"
+import {CloseOutline as closeIcon, CopyOutline as copyIcon, CheckmarkOutline as copiedIcon} from "@vicons/ionicons5"
 
 const {t} = useI18n();
 const message = useMessage()
@@ -57,20 +57,21 @@ let getAllMyKeys = async () => {
 }
 
 // 复制成功的反馈
-// const copySuccess = ref(false);
+const copySuccess = ref(false);
 
 // 复制文本的函数
 const copyText = async (key: string, event: MouseEvent) => {
   event.stopPropagation()
   try {
     await navigator.clipboard.writeText(key);
-    message.success('复制成功')
-
+    message.success('密钥复制成功，请参照文档说明继续接下来的操作。')
+    copySuccess.value = true
     // copySuccess.value = true;
-    // setTimeout(() => {
-    //   // copySuccess.value = false;
-    //   message.success('复制成功')
-    // }, 2000); // 显示2秒成功信息
+    setTimeout(() => {
+      copySuccess.value = false
+      // copySuccess.value = false;
+      // message.success('复制成功')
+    }, 1200); // 显示2秒成功信息
   } catch (err) {
     console.error("复制失败:", err);
   }
@@ -95,6 +96,27 @@ export default {
     <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">
     </n-card>
 
+
+    <n-watermark
+        content="核心机密"
+        cross
+        selectable
+        :font-size="16"
+        :line-height="16"
+        :width="192"
+        :height="128"
+        :x-offset="12"
+        :y-offset="28"
+        :rotate="-15"
+    >
+
+
+
+
+
+    </n-watermark>
+
+
     <n-card
         @click="showModal = true; keyIndex = index"
         class="key-card"
@@ -105,50 +127,74 @@ export default {
         v-for="(item, index) in myKeys"
         :key="item.key_id"
     >
-      <div class="key-item">
-        <div class="l-part">
-          <p class="plan-name">{{ item.plan_name }}</p>
-          <!--          <p class="key-id">{{ item.key }}</p>-->
-          <n-popover trigger="hover" placement="bottom" :show-arrow="false">
-            <template #trigger>
-              <!--              <n-button>悬浮</n-button>-->
-              <!--                        <span class="key-id" style="width: auto">{{ item.key }}</span>-->
-              <n-tag
-                  class="key-tag"
-                  style="margin: 5px 0 5px 0;"
-                  size="large"
-                  type="default"
-                  :bordered="true"
-                  checkable
-                  @click="copyText(item.key, $event)"
-              >
 
-                <div class="key-inner" style="display: flex; flex-direction: row; align-items: center;">
-                  {{ item.key }}
-                  <n-icon class="copy-icon" size="16" style="margin: 0 10px">
-                    <copyIcon/>
-                  </n-icon>
-                </div>
+      <n-watermark
+          :content="userInfoStore.thisUser.email"
+          cross
+          selectable
+          :font-size="16"
+          :line-height="10"
+          :width="192"
+          :height="128"
+          :x-offset="12"
+          :y-offset="28"
+          :rotate="-10"
+      >
 
+
+        <div class="key-item">
+          <div class="l-part">
+            <p class="plan-name">{{ item.plan_name }}</p>
+            <!--          <p class="key-id">{{ item.key }}</p>-->
+            <n-popover trigger="hover" placement="top-end" :show-arrow="false">
+              <template #trigger>
+                <!--              <n-button>悬浮</n-button>-->
+                <!--                        <span class="key-id" style="width: auto">{{ item.key }}</span>-->
+                <n-tag
+                    class="key-tag"
+                    style="margin: 5px 0 5px 0;"
+                    size="large"
+                    type="default"
+                    :bordered="true"
+                    checkable
+                    @click="copyText(item.key, $event)"
+                >
+
+                  <div class="key-inner" style="display: flex; flex-direction: row; align-items: center;">
+                    {{ item.key }}
+                    <n-icon v-if="!copySuccess" class="copy-icon" size="16" style="margin: 0 10px">
+                      <copyIcon/>
+                    </n-icon>
+                    <n-icon v-if="copySuccess" class="copy-icon" size="18" style="margin: 0 10px;">
+                      <copiedIcon/>
+                    </n-icon>
+                  </div>
+
+                </n-tag>
+              </template>
+              <span>点击可以复制到剪贴板</span>
+            </n-popover>
+            <div style="display: flex; flex-direction: row">
+              <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_active?'success':'error'">
+                {{ item.is_active ? '订阅活躍' : '订阅非活跃' }}
               </n-tag>
-            </template>
-            <span>点击可以复制到剪贴板</span>
-          </n-popover>
-          <div style="display: flex; flex-direction: row">
-            <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_active?'success':'error'">
-              {{ item.is_active ? '订阅活躍' : '订阅非活跃' }}
-            </n-tag>
-            <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_valid?'success':'warning'">
-              {{ item.is_valid ? '密钥有效' : '密钥不可用' }}
-            </n-tag>
-            <n-tag :bordered="false" size="small" :type="item.is_used?'info':'success'">
-              {{ item.is_used ? '已激活使用' : '待使用' }}
-            </n-tag>
+              <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_valid?'success':'warning'">
+                {{ item.is_valid ? '密钥有效' : '密钥不可用' }}
+              </n-tag>
+              <n-tag :bordered="false" size="small" :type="item.is_used?'info':'success'">
+                {{ item.is_used ? '已激活使用' : '待使用' }}
+              </n-tag>
+            </div>
+          </div>
+          <div class="r-part">
           </div>
         </div>
-        <div class="r-part">
-        </div>
-      </div>
+
+
+      </n-watermark>
+
+
+
     </n-card>
   </div>
 
