@@ -33,6 +33,20 @@ interface ConfirmOrder {
     created_at: string | null
 }
 
+interface Order {
+    order_id: string
+    plan_name: string
+    period: string
+
+    is_success: boolean
+    is_finished: boolean
+    failure_reason: string
+
+    amount: number
+    paid_at: any
+    created_at: string
+}
+
 const usePaymentStore = defineStore('paymentStore', () => {
     const userInfoStore = useUserInfoStore()
     let plan_list = ref<Plan[]>([])
@@ -65,6 +79,18 @@ const usePaymentStore = defineStore('paymentStore', () => {
 
     let confirmOrder = ref<ConfirmOrder | undefined>()
 
+    let orderDetail = ref<Order>({
+        order_id: '',
+        plan_name: '',
+        period: '',
+        is_success: false,
+        is_finished: false,
+        failure_reason: '',
+        amount: 0.00,
+        paid_at: '',
+        created_at: '',
+    })
+
 
     return {
         plan_list,
@@ -72,6 +98,7 @@ const usePaymentStore = defineStore('paymentStore', () => {
         plan_id_selected,
         confirmOrder,
         submittedOrderId,
+        orderDetail
     }
 
 }, {

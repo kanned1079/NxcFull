@@ -15,6 +15,7 @@ type ActiveOrders struct {
 	KeyId          int64          `json:"key_id" gorm:"unique"`                 // 对应表x_keys的密钥Id
 	IsActive       bool           `json:"is_active"`                            // 订阅是否有效
 	IsUsed         bool           `json:"is_used"`                              // 订阅密钥是否被使用过
+	IsValid        bool           `json:"is_valid"`                             // 该密钥是否有效
 	CreatedAt      time.Time      `json:"created_at"`                           // 创建日期
 	ExpirationDate *time.Time     `json:"expiration_date"`                      // 到期日期
 	UpdatedAt      time.Time      `json:"updated_at"`                           // 更新时间

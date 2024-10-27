@@ -111,13 +111,10 @@ import (
 
 func (s *KeyServices) GetAllMyKeysByUserIdAsc(context context.Context, request *pb.GetAllMyKeysByUserIdAscRequest) (*pb.GetAllMyKeysByUserIdAscResponse, error) {
 	log.Println(request.UserId, request.Page, request.Size)
-	// 每页大小
 	size := request.Size
 	if size <= 0 {
 		size = 10 // 默认每页大小为10
 	}
-
-	// 页码
 	page := request.Page
 	if page < 1 {
 		page = 1 // 默认页码为1
@@ -155,12 +152,13 @@ func (s *KeyServices) GetAllMyKeysByUserIdAsc(context context.Context, request *
 
 	// 创建返回的 key 列表
 	var responseDataList []struct {
-		OrderId        int64  `json:"order_id"`
+		OrderId        string `json:"order_id"`
 		KeyId          int64  `json:"key_id"`
 		Key            string `json:"key"`
 		PlanId         int64  `json:"plan_id"`
 		PlanName       string `json:"plan_name"`
 		IsActive       bool   `json:"is_active"`
+		IsValid        bool   `json:"is_valid"`
 		IsUsed         bool   `json:"is_used"`
 		ClientId       string `json:"client_id"`
 		CreatedAt      string `json:"created_at"`
@@ -181,24 +179,26 @@ func (s *KeyServices) GetAllMyKeysByUserIdAsc(context context.Context, request *
 		}
 
 		responseData := struct {
-			OrderId        int64  `json:"order_id"`
+			OrderId        string `json:"order_id"`
 			KeyId          int64  `json:"key_id"`
 			Key            string `json:"key"`
 			PlanId         int64  `json:"plan_id"`
 			PlanName       string `json:"plan_name"`
 			IsActive       bool   `json:"is_active"`
+			IsValid        bool   `json:"is_valid"`
 			IsUsed         bool   `json:"is_used"`
 			ClientId       string `json:"client_id"`
 			CreatedAt      string `json:"created_at"`
 			ExpirationDate string `json:"expiration_date"`
 		}{
-			OrderId:        order.ID,
+			OrderId:        order.OrderId,
 			KeyId:          order.KeyId,
 			Key:            key.Key,
 			PlanId:         order.PlanId,
 			PlanName:       plan.Name,
 			IsActive:       order.IsActive,
 			IsUsed:         order.IsUsed,
+			IsValid:        order.IsValid,
 			ClientId:       key.ClientId,
 			CreatedAt:      key.CreatedAt.Format("2006-01-02 15:04:05"),
 			ExpirationDate: order.ExpirationDate.Format("2006-01-02 15:04:05"),

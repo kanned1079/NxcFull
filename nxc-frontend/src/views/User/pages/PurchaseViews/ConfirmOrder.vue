@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import GoodInfo from "@/views/User/pages/PurchaseViews/Parts/GoodInfo.vue";
+import OrderInfo from "@/views/User/pages/PurchaseViews/Parts/OrderInfo.vue";
 import {useI18n} from "vue-i18n";
 import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue"
 import {NIcon, useMessage, useNotification} from 'naive-ui'
@@ -103,10 +105,10 @@ let orderData = ref([
     title: computed(() => '创建日期'),
     content: computed(() => confirmOrder.value?.created_at ? formatDate(confirmOrder.value?.created_at) : '')
   },
-  {
-    title: computed(() => '订单号'),
-    content: computed(() => confirmOrder.value?.plan_name)
-  },
+  // {
+  //   title: computed(() => '订单号'),
+  //   content: computed(() => confirmOrder.value?.plan_name)
+  // },
 
 ])
 
@@ -243,35 +245,37 @@ export default {
   <div class="root" v-if="paymentStore.plan_id_selected != -1">
     <div class="root-layout">
       <div class="l-part">
-        <n-card
-            class="good-info"
-            :embedded="true"
-            hoverable
-            content-style="padding: 0"
-            :bordered="false"
-        >
-          <n-p class="title">商品信息</n-p>
-          <div class="good-info-item" v-for="item in goodInfoData" :key="item.title">
-            <p class="item-head">{{ item.title }}</p>
-            <p class="item-content">{{ item.content }}</p>
-          </div>
-        </n-card>
+<!--        <n-card-->
+<!--            class="good-info"-->
+<!--            :embedded="true"-->
+<!--            hoverable-->
+<!--            content-style="padding: 0"-->
+<!--            :bordered="false"-->
+<!--        >-->
+<!--          <n-p class="title">商品信息</n-p>-->
+<!--          <div class="good-info-item" v-for="item in goodInfoData" :key="item.title">-->
+<!--            <p class="item-head">{{ item.title }}</p>-->
+<!--            <p class="item-content">{{ item.content }}</p>-->
+<!--          </div>-->
+<!--        </n-card>-->
+        <GoodInfo :goodInfoData="goodInfoData"></GoodInfo>
+        <OrderInfo :orderData="orderData"></OrderInfo>
 
-        <n-card
-            class="good-info"
-            :embedded="true"
-            hoverable
-            content-style="padding: 0"
-            :bordered="false"
-        >
-          <n-p class="title">订单信息</n-p>
-          <div class="good-info-item" v-for="item in orderData" :key="item.title">
-            <p class="item-head">{{ item.title }}</p>
-            <p class="item-content">{{ item.content }}</p>
-          </div>
+<!--        <n-card-->
+<!--            class="good-info"-->
+<!--            :embedded="true"-->
+<!--            hoverable-->
+<!--            content-style="padding: 0"-->
+<!--            :bordered="false"-->
+<!--        >-->
+<!--          <n-p class="title">订单信息</n-p>-->
+<!--          <div class="good-info-item" v-for="item in orderData" :key="item.title">-->
+<!--            <p class="item-head">{{ item.title }}</p>-->
+<!--            <p class="item-content">{{ item.content }}</p>-->
+<!--          </div>-->
+<!--        </n-card>-->
 
-          <n-hr style="margin: 20px"></n-hr>
-
+        <n-card :hoverable :bordered="false" :embedded="true">
           <n-button
               class="change-plan-btn"
               type="primary"
@@ -377,17 +381,18 @@ export default {
         }
       }
 
-      .change-plan-btn {
-        margin-left: 20px;
-        width: 120px;
-      }
 
-      .cancel-order-btn {
-        margin-left: 20px;
-        width: 80px;
 
-      }
 
+    }
+
+    .change-plan-btn {
+      width: 120px;
+    }
+
+    .cancel-order-btn {
+      margin-left: 20px;
+      width: 80px;
 
     }
 

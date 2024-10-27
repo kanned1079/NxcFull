@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
+import {useRouter} from "vue-router";
 import {h, onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
+import usePaymentStore from "@/stores/usePaymentStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {NButton, NTag, useMessage} from "naive-ui"
 import instance from "@/axios/index"
 import {formatDate} from "@/utils/timeFormat"
 
 const message = useMessage()
+const router = useRouter()
+const paymentStore = usePaymentStore()
 
 let pageCount = ref(10)
 
@@ -46,6 +50,7 @@ interface OrderList {
   user_id: number
   email: string
   plan_id: number
+  plan_name: string
   payment_method: string
   period: string
   coupon_id: number
@@ -89,6 +94,7 @@ let orderList = ref<OrderList[]>([])
 // 定义表格的列
 const columns = [
   {title: '#', key: 'order_id'},
+  {title: '订阅名', key: 'plan_name'},
   {
     title: '周期', key: 'period', render(row: OrderList) {
       return h(NTag, {bordered: false}, {
@@ -160,6 +166,34 @@ const columns = [
 
 let showOrderDetails = (row: OrderList) => {
   console.log('显示订单详情', row.id)
+  paymentStore.orderDetail.order_id = row.order_id
+  // paymentStore.orderDetail.period = () => {
+  //   switch (row.period) {
+  //     case 'month': {
+  //       return t('userOrders.period.monthPay')
+  //     }
+  //     case 'quarter': {
+  //       return t('userOrders.period.quarterPay')
+  //     }
+  //     case 'half-year': {
+  //       return t('userOrders.period.halfYearPay')
+  //     }
+  //     case 'year': {
+  //       return t('userOrders.period.yearPay')
+  //     }
+  //   }
+  // }
+  paymentStore.orderDetail.plan_name = row.plan_name
+  paymentStore.orderDetail.period = row.period
+  paymentStore.orderDetail.amount = row.amount
+  paymentStore.orderDetail.created_at = row.created_at
+  paymentStore.orderDetail.paid_at = row.paid_at
+  paymentStore.orderDetail.failure_reason = row.failure_reason
+  paymentStore.orderDetail.is_finished = row.is_finished
+  paymentStore.orderDetail.is_success = row.is_success
+  router.push({
+    path: "/dashboard/orders/details"
+  })
 }
 
 let cancelOrder = async (row: OrderList) => {

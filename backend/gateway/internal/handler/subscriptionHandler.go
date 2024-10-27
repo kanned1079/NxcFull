@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	pb "gateway/internal/grpc/api/subscription/proto"
 	"strconv"
 
@@ -34,9 +35,17 @@ func GetActivePlanListByUserId(context *gin.Context) {
 		})
 		return
 	}
+	var myPlansMap []map[string]any
+	if err := json.Unmarshal(resp.MyPlans, &myPlansMap); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "转换格式失败",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":     resp.Code,
-		"my_plans": resp.MyPlans,
+		"my_plans": myPlansMap,
 		"msg":      resp.Msg,
 	})
 }
@@ -56,9 +65,18 @@ func HandleGetAllPlanKeyName(context *gin.Context) {
 		})
 		return
 	}
+	var plansMap []map[string]any
+	if err := json.Unmarshal(resp.Plans, &plansMap); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "转换格式失败",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":  resp.Code,
-		"plans": resp.Plans,
+		"msg":   resp.Msg,
+		"plans": plansMap,
 	})
 }
 
@@ -91,9 +109,18 @@ func HandleGetAllPlans(context *gin.Context) {
 		})
 		return
 	}
+	//log.Println(string(resp.Plans))
+	var plansMap []map[string]any
+	if err := json.Unmarshal(resp.Plans, &plansMap); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  "转换格式失败",
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":  resp.Code,
-		"plans": resp.Plans,
+		"plans": plansMap,
 		"msg":   resp.Msg,
 	})
 }

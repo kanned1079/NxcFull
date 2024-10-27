@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -38,7 +39,13 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 
 	// Create a result array to hold plan_name and expiration_date
 	var result []map[string]interface{}
-	var myPlanResult []*pb.PlanInfo
+	//var myPlanResult []*pb.PlanInfo
+	var myPlanResult []struct {
+		//string plan_name = 1;         // 订阅计划名称
+		//string expiration_date = 2;   // 到期日期
+		PlanName       string `json:"plan_name"`
+		ExpirationDate string `json:"expiration_date"`
+	}
 
 	// Iterate through the active orders and fetch plan details
 	for _, order := range activeOrders {
@@ -58,16 +65,31 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 			"plan_name":       plan.Name,
 			"expiration_date": order.ExpirationDate,
 		})
-		myPlanResult = append(myPlanResult, &pb.PlanInfo{
+		//myPlanResult = append(myPlanResult, &pb.PlanInfo{
+		//	PlanName:       plan.Name,
+		//	ExpirationDate: order.ExpirationDate.Format("2006-01-02 15:04:05"),
+		//})
+		myPlanResult = append(myPlanResult, struct {
+			PlanName       string `json:"plan_name"`
+			ExpirationDate string `json:"expiration_date"`
+		}{
 			PlanName:       plan.Name,
 			ExpirationDate: order.ExpirationDate.Format("2006-01-02 15:04:05"),
 		})
 	}
-	return &pb.GetActivePlanListByUserIdResponse{
-		Code:    http.StatusOK,
-		MyPlans: myPlanResult,
-		Msg:     "获取成功",
-	}, nil
+	if myPlanResultJson, err := json.Marshal(myPlanResult); err != nil {
+		return &pb.GetActivePlanListByUserIdResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "转换格式失败",
+		}, nil
+	} else {
+		return &pb.GetActivePlanListByUserIdResponse{
+			Code:    http.StatusOK,
+			MyPlans: myPlanResultJson,
+			Msg:     "获取成功",
+		}, nil
+	}
+
 }
 
 // CommitNewOrder 提交新订单
@@ -186,11 +208,29 @@ func (s *SubscribeServices) GetOrders(ctx context.Context, request *pb.GetOrders
 			Msg:  "查找用户订单错误",
 		}, nil
 	}
-	return &pb.GetOrdersResponse{
-		Code:      http.StatusInternalServerError,
-		OrderList: ConvertOrder2pbOrder(orders),
-		Msg:       "查找用户订单错误",
-	}, nil
+	//if len(orders) == 0 {
+	//	return &pb.GetOrdersResponse{
+	//		Code: http.StatusNotFound,
+	//		Msg:  "用户还没有订单",
+	//	}, nil
+	//}
+	if ordersJson, err := json.Marshal(orders); err != nil {
+		return &pb.GetOrdersResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查找用户订单错误",
+		}, nil
+	} else {
+		return &pb.GetOrdersResponse{
+			Code:      http.StatusOK,
+			OrderList: ordersJson,
+			Msg:       "查询成功",
+		}, nil
+	}
+	//return &pb.GetOrdersResponse{
+	//	Code:      http.StatusInternalServerError,
+	//	OrderList: ConvertOrder2pbOrder(orders),
+	//	Msg:       "查找用户订单错误",
+	//}, nil
 }
 
 func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *pb.GetAllPlanKeyNameRequest) (*pb.GetAllPlanKeyNameResponse, error) {
@@ -199,7 +239,14 @@ func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *
 	//	Name   string `json:"name"`
 	//	IsSale bool   `json:"is_sale"`
 	//}
-	var planArr []*pb.PlanKV
+	var planArr []struct {
+		//  int64 id = 1;
+		//  string name = 2;
+		//  bool is_sale = 3;
+		Id     int64  `json:"id"`
+		Name   string `json:"name"`
+		IsSale bool   `json:"is_sale"`
+	}
 	if result := dao.Db.Model(&model.Plan{}).Select("id, name, is_sale").Order("sort ASC").Find(&planArr); result.Error != nil {
 		log.Println(result.Error)
 		return &pb.GetAllPlanKeyNameResponse{
@@ -208,11 +255,18 @@ func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *
 		}, nil
 	}
 	log.Println(planArr)
-	return &pb.GetAllPlanKeyNameResponse{
-		Code:  http.StatusOK,
-		Msg:   "查询成功",
-		Plans: planArr,
-	}, nil
+	if planArrJson, err := json.Marshal(planArr); err != nil {
+		return &pb.GetAllPlanKeyNameResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "转换格式失败" + err.Error(),
+		}, nil
+	} else {
+		return &pb.GetAllPlanKeyNameResponse{
+			Code:  http.StatusOK,
+			Msg:   "查询成功",
+			Plans: planArrJson,
+		}, nil
+	}
 }
 
 func (s *SubscribeServices) GetAllPlans(ctx context.Context, request *pb.GetAllPlansRequest) (*pb.GetAllPlansResponse, error) {
@@ -240,11 +294,19 @@ func (s *SubscribeServices) GetAllPlans(ctx context.Context, request *pb.GetAllP
 			}, nil
 		}
 	}
-	return &pb.GetAllPlansResponse{
-		Code:  http.StatusOK,
-		Msg:   "获取订阅列表成功",
-		Plans: ConvertPlan2pbPlan(plans),
-	}, nil
+	if plansJson, err := json.Marshal(plans); err != nil {
+		return &pb.GetAllPlansResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "转换格式失败",
+		}, nil
+	} else {
+		return &pb.GetAllPlansResponse{
+			Code:  http.StatusOK,
+			Msg:   "获取订阅列表成功",
+			Plans: plansJson,
+		}, nil
+	}
+
 }
 
 func (s *SubscribeServices) AddNewPlan(ctx context.Context, request *pb.AddNewPlanRequest) (*pb.AddNewPlanResponse, error) {

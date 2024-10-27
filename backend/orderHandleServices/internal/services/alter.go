@@ -231,6 +231,10 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 
 	// 生成密钥
 	newKey := model.Keys{
+		//UserId:  order.UserId,
+		//IsValid: true,  // 密钥有效
+		//IsUsed:  false, // 还没有被使用
+		//Expired: false, // 还未到期
 		Key: generateKeyCode(order.Period),
 	}
 	log.Println("Key: ", newKey.Key)
@@ -262,6 +266,7 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 		GroupId:        order.GroupId,
 		IsActive:       true,
 		IsUsed:         false,
+		IsValid:        true,
 		KeyId:          newKey.Id,
 		ExpirationDate: &expirationDate,
 	}

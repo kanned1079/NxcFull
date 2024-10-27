@@ -13,6 +13,7 @@ import UserKeys from "@/views/User/pages/PurchaseViews/UserKeys.vue";
 import UserInvite from "@/views/User/pages/FinanceViews/UserInvite.vue";
 import UserOrders from "@/views/User/pages/FinanceViews/UserOrders.vue";
 import ConfirmOrder from "@/views/User/pages/PurchaseViews/ConfirmOrder.vue";
+import PaymentResult from "@/views/User/pages/PurchaseViews/PaymentResult/PaymentResult.vue";
 
 // WhyChooseUs页面
 import WhyChooseUsA from "@/views/Welcome/A/WhyChooseUsA.vue";
@@ -71,6 +72,10 @@ const userRoutes: RouteRecordRaw[] = [
             {
                 path: '/dashboard/purchase/confirm',
                 component: ConfirmOrder,
+            },
+            {
+                path: '/dashboard/orders/details',
+                component: PaymentResult,
             },
             {
                 path: '/dashboard/profile',

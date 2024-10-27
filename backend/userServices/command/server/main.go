@@ -7,6 +7,7 @@ import (
 	"userServices/internal/dao"
 	"userServices/internal/etcd"
 	"userServices/internal/handler"
+	"userServices/internal/model"
 )
 
 var err error
@@ -34,6 +35,16 @@ func init() {
 
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer() // 初始化Redis服务器
+	// 自动迁移
+	if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
+	if err = dao.Db.Model(model.Auth{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
+	if err = dao.Db.Model(model.TwoFA{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
 
 }
 

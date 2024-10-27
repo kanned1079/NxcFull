@@ -7,6 +7,7 @@ import (
 	"orderServices/internal/dao"
 	"orderServices/internal/etcd"
 	"orderServices/internal/handler"
+	"orderServices/internal/model"
 )
 
 var err error
@@ -38,6 +39,25 @@ func init() {
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer() // 初始化Redis服务器
 	dao.InitMq()
+
+	if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
+	if err = dao.Db.Model(model.Coupon{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
+	if err = dao.Db.Model(model.CouponUsage{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
+	if err = dao.Db.Model(model.Plan{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
+	if err = dao.Db.Model(model.ActiveOrders{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
+	if err = dao.Db.Model(model.Orders{}).AutoMigrate(); err != nil {
+		panic(err)
+	}
 
 }
 
