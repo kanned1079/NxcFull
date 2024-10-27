@@ -97,24 +97,24 @@ export default {
     </n-card>
 
 
-    <n-watermark
-        content="核心机密"
-        cross
-        selectable
-        :font-size="16"
-        :line-height="16"
-        :width="192"
-        :height="128"
-        :x-offset="12"
-        :y-offset="28"
-        :rotate="-15"
-    >
+<!--    <n-watermark-->
+<!--        content="核心机密"-->
+<!--        cross-->
+<!--        selectable-->
+<!--        :font-size="16"-->
+<!--        :line-height="16"-->
+<!--        :width="192"-->
+<!--        :height="128"-->
+<!--        :x-offset="12"-->
+<!--        :y-offset="28"-->
+<!--        :rotate="-15"-->
+<!--    >-->
 
 
 
 
 
-    </n-watermark>
+<!--    </n-watermark>-->
 
 
     <n-card
@@ -129,15 +129,15 @@ export default {
     >
 
       <n-watermark
-          :content="userInfoStore.thisUser.email"
+          :content="userInfoStore.thisUser.email + item.order_id"
           cross
           selectable
           :font-size="16"
-          :line-height="10"
-          :width="192"
-          :height="128"
-          :x-offset="12"
-          :y-offset="28"
+          :line-height="20"
+          :width="200"
+          :height="90"
+          :x-offset="30"
+          :y-offset="30"
           :rotate="-10"
       >
 
@@ -218,6 +218,11 @@ export default {
       <div class="key-item-detail">
         <p class="key-item-title">{{ t('userKeys.keyId') }}</p>
         <p class="key-item-content">{{ myKeys[keyIndex].key_id }}</p>
+      </div>
+
+      <div class="key-item-detail">
+        <p class="key-item-title">{{ `密钥KEY 「授权给${userInfoStore.thisUser.email}」` }}</p>
+        <p class="key-item-content">{{ myKeys[keyIndex].key }}</p>
       </div>
 
       <div class="key-item-detail">
