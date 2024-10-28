@@ -19,24 +19,24 @@ const paymentStore = usePaymentStore()
 
 let goodInfoData = ref([
   {
-    title: computed(() => '商品信息'),
+    title: computed(() => t('orderPartUniversal.orderDataHex.goodInfo')),
     content: computed(() => paymentStore.orderDetail.plan_name)
   },
   {
-    title: computed(() => '周期/类型'),
+    title: computed(() => t('orderPartUniversal.orderDataHex.cycleOrType')),
     content: computed((): string => { // pass
       switch (paymentStore.orderDetail.period) {
         case 'month': {
-          return computed(() => '月付')
+          return computed(() => t('orderPartUniversal.period.monthPay'))
         }
         case 'quarter': {
-          return computed(() => '季付')
+          return computed(() => t('orderPartUniversal.period.quarterPay'))
         }
         case 'half-year': {
-          return computed(() => '半年付')
+          return computed(() => t('orderPartUniversal.period.halfYearPay'))
         }
         case 'year': {
-          return computed(() => '年付')
+          return computed(() => t('orderPartUniversal.period.yearPay'))
         }
       }
     })
@@ -45,22 +45,29 @@ let goodInfoData = ref([
 
 let orderData = ref([
   {
-    title: computed(() => '订单号'),
+    title: computed(() => t('orderPartUniversal.orderDataHex.orderNumber')),
     content: computed(() => paymentStore.orderDetail.order_id)
   },
   {
-    title: computed(() => '创建日期'),
+    title: computed(() => t('orderPartUniversal.orderDataHex.createdAt')),
     content: computed(() => paymentStore.orderDetail.created_at ? formatDate(paymentStore.orderDetail.created_at) : '')
   },
   {
-    title: computed(() => '支付金额'),
+    title: computed(() => t('orderPartUniversal.orderDataHex.amount')),
     content: computed(() => paymentStore.orderDetail.amount.toFixed(2) + ' ' + appInfoStore.appCommonConfig.currency)
   },
   {
-    title: computed(() => '支付时间'),
+    title: computed(() => t('orderPartUniversal.orderDataHex.paidAt')),
     content: computed(() => paymentStore.orderDetail.paid_at ? formatDate(paymentStore.orderDetail.paid_at) : '未完成支付')
   },
 ])
+
+let toConfirmOrder = () => {
+  paymentStore.submittedOrderId = paymentStore.orderDetail.order_id
+  router.push({
+    path: '/dashboard/purchase/confirm'
+  })
+}
 
 
 onMounted(() => {
@@ -79,15 +86,19 @@ export default {
   <div class="root">
     <n-card class="result-card" :embedded="true" :bordered="false" hoverable>
 
-      <n-result v-if="paymentStore.orderDetail.is_success && paymentStore.orderDetail.is_finished" status="success"
-                title="已完成" description="订单已成功支付并开通">
+      <n-result
+          v-if="paymentStore.orderDetail.is_success && paymentStore.orderDetail.is_finished"
+          status="success"
+          :title="t('orderDetail.finished')"
+          :description="t('orderDetail.finishedAndSuccessDescription')">
         <template #footer>
           <div style="text-align: right">
             <n-button type="primary" quaternary @click="router.push({path: '/dashboard/document'})">
               <n-icon style="margin-right: 5px" size="16">
                 <docIcon/>
               </n-icon>
-              查看使用教程
+<!--              查看使用教程-->
+              {{ t('orderDetail.useManual') }}
               <n-icon style="margin-left: 5px" size="16">
                 <nextIcon/>
               </n-icon>
@@ -99,16 +110,17 @@ export default {
       <n-result
           v-if="!paymentStore.orderDetail.is_success && !paymentStore.orderDetail.is_finished" s
           tatus="info"
-          title="尚未支付"
-          description="订单暂时保留可以继续执行支付"
+          :title="t('orderDetail.payPending')"
+          :description="t('orderDetail.pendingDescription')"
       >
         <template #footer>
           <div style="text-align: right">
-            <n-button type="primary" quaternary @click="router.push({path: '/dashboard/document'})">
+            <n-button type="primary" quaternary @click="toConfirmOrder">
               <n-icon style="margin-right: 5px" size="16">
                 <docIcon/>
               </n-icon>
-              去支付
+<!--              去支付-->
+              {{ t('orderDetail.toPay') }}
               <n-icon style="margin-left: 5px" size="16">
                 <nextIcon/>
               </n-icon>
@@ -120,13 +132,14 @@ export default {
       <n-result
           v-if="!paymentStore.orderDetail.is_success && paymentStore.orderDetail.is_finished"
           status="404"
-          title="已失效"
-          description="由于您取消了订单或未在指定时间内完成支付，因此该订单已取消，您可以重新选取订阅。"
+          :title="t('orderDetail.outDate')"
+          :description="t('orderDetail.outDateDescription')"
       >
         <template #footer>
           <div style="text-align: right">
             <n-button type="primary" quaternary @click="router.push({path: '/dashboard/purchase'})">
-              选择新的订阅计划
+<!--              选择新的订阅计划-->
+              {{ t('orderDetail.chooseNewPlan') }}
               <n-icon style="margin-left: 5px" size="16">
                 <nextIcon/>
               </n-icon>

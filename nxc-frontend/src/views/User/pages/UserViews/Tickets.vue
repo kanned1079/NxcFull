@@ -1,22 +1,139 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onMounted, ref, h} from "vue"
-import {NButton, NTag, useMessage} from "naive-ui"
+import {computed, h, onMounted, ref} from "vue"
+import {type FormInst, NButton, NTag, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
+import instance from "@/axios/index"
 
 const {t} = useI18n();
 const userInfoStore = useUserInfoStore();
 const themeStore = useThemeStore();
 const message = useMessage();
+const formRef = ref<FormInst | null>(null)
 
-let dialogActive = ref<boolean>(false)
+// let dialogActive = ref<boolean>(false)
+
+let selectValidationStatus = computed(() => {
+  return createStatus(newTicket.value.urgency)
+})
+
+let createStatus = (value: string) => {
+  switch (value) {
+    case 1:
+      return undefined
+    case 2:
+      return undefined
+    case 3:
+      return undefined
+    default:
+      return 'error'
+  }
+}
+
+const rules = {
+  subject: {
+    required: true,
+    trigger: 'blur',
+    message: ''
+  },
+  // urgency: {
+  //   required: true,
+  //   trigger: 'blur',
+  //   message: '',
+  // },
+  body: {
+    required: true,
+    trigger: 'blur',
+    message: '',
+  }
+}
+
+let formIsValid = ref<boolean>(false)
+
+let validateClick = () => {
+  formRef.value?.validate((errors) => {
+    if (!errors) {
+      // message.success('Valid')
+      formIsValid.value = true
+      // return true
+    } else {
+      console.log(errors)
+      // message.error('Invalid')
+      formIsValid.value = false
+      // return false
+    }
+  })
+}
+
+
+let urgencyOptions = [
+  {
+    label: computed(() => t('userTickets.ticketUrgencyLevel.low')).value,
+    value: 1,
+  },
+  {
+    label: computed(() => t('userTickets.ticketUrgencyLevel.med')).value,
+    value: 2,
+  },
+  {
+    label: computed(() => t('userTickets.ticketUrgencyLevel.high')).value,
+    value: 3,
+  }
+]
+
+interface Ticket {
+  subject: string
+  urgency: number | null
+  body: string
+}
+
+let newTicket = ref<Ticket>({
+  subject: '',
+  urgency: null,
+  body: ''
+})
+
+let showNewTicketModal = ref<boolean>(true)
+
+let cancelCreateNewTicket = () => {
+  showNewTicketModal.value = false
+  newTicket.value.subject = ''
+  newTicket.value.urgency = null
+  newTicket.value.body = ''
+}
+
+let commitNewTicket = async () => {
+  validateClick()
+  if (formIsValid.value) {
+    console.log('表單驗證通過')
+    try {
+      let {data} = await instance.post('/api/user/v1/ticket', {
+        user_id: userInfoStore.thisUser.id,
+        ...newTicket.value
+      })
+      if (data.code === 200) {
+        message.success(computed(() => t('userTickets.commitNewTicketSuccess')).value)
+        console.log(data)
+      } else {
+        message.error(computed(() => t('userTickets.commitNewTicketFailure')).value + data.msg as string || '')
+      }
+    } catch (error: any) {
+      console.log(error)
+      // message.error(error.toString)
+    }
+  } else {
+    message.error(computed(() => t('userTickets.form.ticketNotFinished')))
+  }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------x
 
 // 表格的字段名
 // 主题 工单级别 工单状态 创建时间 最后回复 操作（查看工单/关闭工单）
 interface TicketItem {
   id: number  // 工单Id
-  title: string // 工单主题
+  subject: string // 工单主题
   urgency: number // 紧急程度 1低 2中 3高
   status: boolean // true工单未关闭 false工单关闭
   created_at: string  // 工单创建时间
@@ -27,7 +144,7 @@ interface TicketItem {
 let ticketList = ref<TicketItem[]>([
   {
     id: 1,
-    title: '系统登录问题',
+    subject: '系统登录问题',
     urgency: 2,
     status: true,
     created_at: '2024-09-15 14:22',
@@ -35,7 +152,7 @@ let ticketList = ref<TicketItem[]>([
   },
   {
     id: 2,
-    title: '功能反馈',
+    subject: '功能反馈',
     urgency: 1,
     status: false,
     created_at: '2024-09-12 08:30',
@@ -43,7 +160,7 @@ let ticketList = ref<TicketItem[]>([
   },
   {
     id: 3,
-    title: '支付问题',
+    subject: '支付问题',
     urgency: 3,
     status: true,
     created_at: '2024-09-18 16:10',
@@ -51,7 +168,7 @@ let ticketList = ref<TicketItem[]>([
   },
   {
     id: 3,
-    title: '支付问题',
+    subject: '支付问题',
     urgency: 3,
     status: true,
     created_at: '2024-09-18 16:10',
@@ -59,7 +176,7 @@ let ticketList = ref<TicketItem[]>([
   },
   {
     id: 3,
-    title: '支付问题',
+    subject: '支付问题',
     urgency: 3,
     status: true,
     created_at: '2024-09-18 16:10',
@@ -67,7 +184,7 @@ let ticketList = ref<TicketItem[]>([
   },
   {
     id: 3,
-    title: '支付问题',
+    subject: '支付问题',
     urgency: 3,
     status: true,
     created_at: '2024-09-18 16:10',
@@ -78,6 +195,23 @@ let ticketList = ref<TicketItem[]>([
 // 点击打开工单后 单独打开一个聊天窗口
 let openTicket = (ticket: TicketItem) => {
   message.info(`查看工单：${ticket.title}`);
+  const chatDialogWindow = window.open(
+      `http://localhost:5173/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${-12}`,
+      '111111',
+      'width=500,height=640,resizable=yes,scrollbars=yes',
+  );
+  // newWindow.postMessage('Hello from the original window', '*');
+  // newWindow?.open()
+
+  chatDialogWindow.addEventListener('onload', () => {
+    chatDialogWindow.postMessage({ greeting: 'Hello from the parent window!' }, '*'); // * 表示接受来自任何来源的消息
+  });
+
+  // window.opener(
+  //     'http://localhost:5173/dashboard/ticket/chat',
+  //     '111111',
+  //     'width=480,height=640,resizable=yes,scrollbars=yes'
+  // );
 }
 
 // 关闭工单
@@ -92,21 +226,21 @@ onMounted(() => {
 })
 
 // 定义表格的列
-const columns = [
-  {title: '#', key: 'id'},
-  {title: '主题', key: 'title'},
+const columns = ref([
+  {title: computed(() => t('userTickets.ticketId')).value, key: 'id'},
+  {title: computed(() => t('userTickets.ticketSubject')).value, key: 'subject'},
   {
-    title: '工单级别', key: 'urgency', render(row: TicketItem) {
+    title: computed(() => t('userTickets.ticketUrgency')).value, key: 'urgency', render(row: TicketItem) {
       let level = '';
       switch (row.urgency) {
         case 1:
-          level = '低';
+          level = computed(() => t('userTickets.ticketUrgencyLevel.low')).value
           break;
         case 2:
-          level = '中';
+          level = computed(() => t('userTickets.ticketUrgencyLevel.med')).value
           break;
         case 3:
-          level = '高';
+          level = computed(() => t('userTickets.ticketUrgencyLevel.high')).value
           break;
       }
       return h(NTag, {
@@ -116,17 +250,17 @@ const columns = [
     }
   },
   {
-    title: '工单状态', key: 'status', render(row: TicketItem) {
+    title: computed(() => t('userTickets.ticketStatus')).value, key: 'status', render(row: TicketItem) {
       return h(NTag, {
         type: row.status ? 'info' : 'default',
         bordered: false,
-      }, {default: () => row.status ? '未关闭' : '已关闭'});
+      }, {default: () => row.status ? computed(() => t('userTickets.ticketActive')).value : computed(() => t('userTickets.ticketInActive')).value});
     }
   },
-  {title: '创建时间', key: 'created_at'},
-  {title: '最后回复', key: 'last_response'},
+  {title: computed(() => t('userTickets.ticketCreatedAt')), key: 'created_at'},
+  {title: computed(() => t('userTickets.lastResponse')), key: 'last_response'},
   {
-    title: '操作', key: 'actions', fixed: 'right', render(row: TicketItem) {
+    title: computed(() => t('userTickets.operate')).value, key: 'actions', fixed: 'right', render(row: TicketItem) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -134,18 +268,23 @@ const columns = [
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => openTicket(row)
-        }, {default: () => '查看工单'}),
+        }, {
+          default: () => computed(() => t('userTickets.checkTicket')).value
+        }),
         h(NButton, {
           size: 'small',
           type: 'error',
           disabled: !row.status,
           style: {marginLeft: '10px'},
           onClick: () => closeTicket(row)
-        }, {default: () => '关闭工单'})
+        }, {
+          default: () => computed(() => t('userTickets.closeTicket')).value
+        })
       ]);
     }
   }
-]
+])
+
 
 </script>
 
@@ -153,8 +292,11 @@ const columns = [
   <div class="root">
     <n-card class="tickets-history" :embedded="true" hoverable content-style="padding: 0;" :bordered="false">
       <div class="header">
-        <p class="title">{{ t('tickets.userTickets') }}</p>
-        <n-button class="add-btn" type="primary" @click="dialogActive = true">{{ t('tickets.addTicket') }}</n-button>
+        <p class="title">{{ t('userTickets.userTickets') }}</p>
+        <n-button :bordered="false" class="add-btn" type="primary" @click="showNewTicketModal = true">{{
+            t('userTickets.addTicket')
+          }}
+        </n-button>
       </div>
     </n-card>
 
@@ -169,6 +311,64 @@ const columns = [
           :scroll-x="800"
       />
     </n-card>
+
+
+    <n-modal v-model:show="showNewTicketModal">
+      <n-card
+          style="width: 400px"
+          :title="t('userTickets.addTicket')"
+          :bordered="false"
+      >
+        <n-form
+            ref="formRef"
+            :rules="rules"
+            :model="newTicket"
+        >
+          <n-form-item
+              :label="t('userTickets.ticketSubject')"
+              path="subject"
+              required
+              :show-require-mark="true"
+          >
+            <n-input v-model:value="newTicket.subject" clearable
+                     :placeholder="t('userTickets.form.ticketSubjectDescription')"/>
+          </n-form-item>
+          <n-form-item
+              :label="t('userTickets.ticketUrgency')"
+              path="urgency"
+              required
+              :show-require-mark="true"
+              :validation-status="selectValidationStatus"
+          >
+            <n-select
+                :options="urgencyOptions" v-model:value.number="newTicket.urgency as number"
+                :placeholder="t('userTickets.form.ticketUrgencyDescription')"
+
+            ></n-select>
+          </n-form-item>
+          <n-form-item
+              :label="t('userTickets.ticketContent')"
+              path="body"
+              required
+              :show-require-mark="true"
+          >
+            <n-input v-model:value="newTicket.body" show-count type="textarea" :rows="6"
+                     :placeholder="t('userTickets.form.ticketBody')"></n-input>
+          </n-form-item>
+        </n-form>
+        <div style="display: flex; flex-direction: row; justify-content: right">
+          <n-button style="width: 80px; margin-right: 10px;" :bordered="false" secondary type="primary"
+                    @click="cancelCreateNewTicket">{{ t('userTickets.cancel') }}
+          </n-button>
+          <n-button style="width: 80px" :bordered="false" type="primary" @click="commitNewTicket">
+            {{ t('userTickets.submit') }}
+          </n-button>
+
+        </div>
+      </n-card>
+    </n-modal>
+
+
   </div>
 </template>
 

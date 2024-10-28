@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
-import {h, onBeforeMount, onMounted, ref} from "vue";
+import {h, onBeforeMount, onMounted, ref, computed} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -96,25 +96,23 @@ const columns = [
   {title: '#', key: 'order_id'},
   {title: '订阅名', key: 'plan_name'},
   {
-    title: '周期', key: 'period', render(row: OrderList) {
-      return h(NTag, {bordered: false}, {
-        default: () => {
-          switch (row.period) {
-            case 'month': {
-              return t('userOrders.period.monthPay')
-            }
-            case 'quarter': {
-              return t('userOrders.period.quarterPay')
-            }
-            case 'half-year': {
-              return t('userOrders.period.halfYearPay')
-            }
-            case 'year': {
-              return t('userOrders.period.yearPay')
-            }
-          }
+    title: '周期', key: 'period', render(row) {
+      const periodLabel = computed(() => {
+        switch (row.period) {
+          case 'month':
+            return t('userOrders.period.monthPay');
+          case 'quarter':
+            return t('userOrders.period.quarterPay');
+          case 'half-year':
+            return t('userOrders.period.halfYearPay');
+          case 'year':
+            return t('userOrders.period.yearPay');
+          default:
+            return ''; // 若 period 无匹配值
         }
       });
+
+      return h(NTag, { bordered: false }, { default: () => periodLabel.value });
     }
   },
   {

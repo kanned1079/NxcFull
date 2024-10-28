@@ -130,6 +130,8 @@ func StartApiGateways() {
 		userAuthorized.PUT("/order", handler.HandlePlaceOrder)      // 确认并下单
 
 		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
+
+		userAuthorized.POST("/ticket", handler.HandleCreateNewTicket)
 	}
 
 	//if err := router.Run("0.0.0.0:8081"); err != nil {

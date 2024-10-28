@@ -5,8 +5,14 @@ import useApiAddrStore from "@/stores/useApiAddrStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {useMessage} from "naive-ui";
+import {encodeToBase64} from "@/utils/encryptor";
 import instance from "@/axios";
-import {CloseOutline as closeIcon, CopyOutline as copyIcon, CheckmarkOutline as copiedIcon} from "@vicons/ionicons5"
+import {
+  CloseOutline as closeIcon,
+  CopyOutline as copyIcon,
+  CheckmarkOutline as copiedIcon,
+  Key as keyIcon
+} from "@vicons/ionicons5"
 
 const {t} = useI18n();
 const message = useMessage()
@@ -49,6 +55,9 @@ let getAllMyKeys = async () => {
     if (data.code === 200) {
       console.log(data)
       data.my_keys.forEach((key: Key) => myKeys.value.push(key))
+      if (myKeys.value.length === 0) {
+        message.info(t('userKeys.noKeys'))
+      }
       //
     }
   } catch (error) {
@@ -64,7 +73,7 @@ const copyText = async (key: string, event: MouseEvent) => {
   event.stopPropagation()
   try {
     await navigator.clipboard.writeText(key);
-    message.success('密钥复制成功，请参照文档说明继续接下来的操作。')
+    message.success(t('userKeys.copiedSuccessMessage'))
     copySuccess.value = true
     // copySuccess.value = true;
     setTimeout(() => {
@@ -73,7 +82,7 @@ const copyText = async (key: string, event: MouseEvent) => {
       // message.success('复制成功')
     }, 1200); // 显示2秒成功信息
   } catch (err) {
-    console.error("复制失败:", err);
+    console.error(t('userKeys.copyFailure'), err);
   }
 };
 
@@ -96,27 +105,6 @@ export default {
     <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">
     </n-card>
 
-
-<!--    <n-watermark-->
-<!--        content="核心机密"-->
-<!--        cross-->
-<!--        selectable-->
-<!--        :font-size="16"-->
-<!--        :line-height="16"-->
-<!--        :width="192"-->
-<!--        :height="128"-->
-<!--        :x-offset="12"-->
-<!--        :y-offset="28"-->
-<!--        :rotate="-15"-->
-<!--    >-->
-
-
-
-
-
-<!--    </n-watermark>-->
-
-
     <n-card
         @click="showModal = true; keyIndex = index"
         class="key-card"
@@ -128,33 +116,21 @@ export default {
         :key="item.key_id"
     >
 
-      <n-watermark
-          :content="userInfoStore.thisUser.email + item.order_id"
-          cross
-          selectable
-          :font-size="16"
-          :line-height="20"
-          :width="200"
-          :height="90"
-          :x-offset="30"
-          :y-offset="30"
-          :rotate="-10"
-      >
-
-
         <div class="key-item">
           <div class="l-part">
             <p class="plan-name">{{ item.plan_name }}</p>
-            <!--          <p class="key-id">{{ item.key }}</p>-->
+<!--                      <p class="key-id">{{ encodeToBase64(item.key) }}</p>-->
             <n-popover trigger="hover" placement="top-end" :show-arrow="false">
               <template #trigger>
                 <!--              <n-button>悬浮</n-button>-->
                 <!--                        <span class="key-id" style="width: auto">{{ item.key }}</span>-->
-                <n-tag
+                <n-button
+                    :style="themeStore.enableDarkMode?{color: '#fff'}:{color: '#252525'}"
+                    text
                     class="key-tag"
-                    style="margin: 5px 0 5px 0;"
+                    style="margin: 10px 0 15px 0; font-size: 1.25rem; opacity: 0.8"
                     size="large"
-                    type="default"
+                    type="primary"
                     :bordered="true"
                     checkable
                     @click="copyText(item.key, $event)"
@@ -170,28 +146,33 @@ export default {
                     </n-icon>
                   </div>
 
-                </n-tag>
+                </n-button>
               </template>
-              <span>点击可以复制到剪贴板</span>
+              <span>{{ t('userKeys.hoverClickMention') }}</span>
             </n-popover>
             <div style="display: flex; flex-direction: row">
               <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_active?'success':'error'">
-                {{ item.is_active ? '订阅活躍' : '订阅非活跃' }}
+                {{ item.is_active ? t('userKeys.active') : t('userKeys.inActive') }}
               </n-tag>
               <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_valid?'success':'warning'">
-                {{ item.is_valid ? '密钥有效' : '密钥不可用' }}
+                {{ item.is_valid ? t('userKeys.valid') : t('userKeys.invalid') }}
               </n-tag>
               <n-tag :bordered="false" size="small" :type="item.is_used?'info':'success'">
-                {{ item.is_used ? '已激活使用' : '待使用' }}
+                {{ item.is_used ? t('userKeys.isUsed') : t('userKeys.noUsed') }}
               </n-tag>
             </div>
           </div>
           <div class="r-part">
+            <div style="display: flex; flex-direction: row; align-items: center">
+              <n-icon size="16" style="margin-right: 5px"><keyIcon/></n-icon>
+              <p style="margin-right: 5px">{{ t('userKeys.authorizationFor') }}</p>
+              <p style="opacity: 0.8">{{ userInfoStore.thisUser.email }}</p>
+            </div>
           </div>
         </div>
 
 
-      </n-watermark>
+<!--      </n-watermark>-->
 
 
 
@@ -220,10 +201,10 @@ export default {
         <p class="key-item-content">{{ myKeys[keyIndex].key_id }}</p>
       </div>
 
-      <div class="key-item-detail">
-        <p class="key-item-title">{{ `密钥KEY 「授权给${userInfoStore.thisUser.email}」` }}</p>
-        <p class="key-item-content">{{ myKeys[keyIndex].key }}</p>
-      </div>
+<!--      <div class="key-item-detail">-->
+<!--        <p class="key-item-title">{{ `密钥KEY 「授权给${userInfoStore.thisUser.email}」` }}</p>-->
+<!--        <p class="key-item-content">{{ myKeys[keyIndex].key }}</p>-->
+<!--      </div>-->
 
       <div class="key-item-detail">
         <p class="key-item-title">{{ t('userKeys.orderId') }}</p>
@@ -296,7 +277,11 @@ export default {
       }
 
       .r-part {
-        flex: 0;
+        flex: 2;
+        display: flex;
+        align-items: end;
+        justify-content: right;
+        opacity: 0.8;
       }
     }
 

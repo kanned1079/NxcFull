@@ -14,6 +14,8 @@ import UserInvite from "@/views/User/pages/FinanceViews/UserInvite.vue";
 import UserOrders from "@/views/User/pages/FinanceViews/UserOrders.vue";
 import ConfirmOrder from "@/views/User/pages/PurchaseViews/ConfirmOrder.vue";
 import PaymentResult from "@/views/User/pages/PurchaseViews/PaymentResult/PaymentResult.vue";
+import ChatDialog from "@/views/User/pages/UserViews/ChatDialog.vue";
+
 
 // WhyChooseUs页面
 import WhyChooseUsA from "@/views/Welcome/A/WhyChooseUsA.vue";
@@ -50,61 +52,60 @@ const userRoutes: RouteRecordRaw[] = [
         component: WhyChooseUsB,
     },
     {
+        path: '/user/tickets/chat',
+        component: ChatDialog,
+    },
+    {
         path: '/dashboard',
         component: UserDashBoard,
         children: [
             {
-                path: '/dashboard/summary',
+                path: 'summary', // 去掉前导斜杠
                 component: UserSummary,
             },
             {
-                path: '/dashboard/document',
+                path: 'document',
                 component: UserDocument,
             },
             {
-                path: '/dashboard/purchase',
+                path: 'purchase',
                 component: NewPurchase,
             },
             {
-                path: '/dashboard/purchase/settlement',
+                path: 'purchase/settlement',
                 component: NewSettlement,
             },
             {
-                path: '/dashboard/purchase/confirm',
+                path: 'purchase/confirm',
                 component: ConfirmOrder,
             },
             {
-                path: '/dashboard/orders/details',
+                path: 'orders/details',
                 component: PaymentResult,
             },
             {
-                path: '/dashboard/profile',
+                path: 'profile',
                 component: UserProfile,
             },
             {
-                path: '/dashboard/tickets',
+                path: 'tickets',
                 component: Tickets,
             },
-            // {
-            //     path: '/dashboard/themeeditor',
-            //     component: ThemeEditor,
-            // },
+
             {
-                path: '/dashboard/keys',
+                path: 'keys',
                 component: UserKeys
             },
             {
-                path: '/dashboard/orders',
+                path: 'orders',
                 component: UserOrders
             },
             {
-                path: '/dashboard/invite',
+                path: 'invite',
                 component: UserInvite
             }
-
         ]
     }
-
 ];
 
 export default userRoutes;

@@ -111,6 +111,23 @@ export default {
         pwdNotMatch: '二回入力したパスワードが一致しません。',
         oldPwdNotNull: '古いパスワードは空にできません。',
     },
+    orderPartUniversal: {
+        period: {
+            monthPay: '月払い',
+            quarterPay: '四半期払い',
+            halfYearPay: '半年払い',
+            yearPay: '年払い',
+        },
+        orderDataHex: {
+            goodInfo: '商品情報',
+            orderInfo: '注文情報',
+            cycleOrType: '周期/タイプ',
+            orderNumber: '注文番号',
+            createdAt: '作成日',
+            amount: '支払金額',
+            paidAt: '支払日',
+        }
+    },
     tickets: {
         userTickets: '過去のチケット',
         addTicket: '新しいチケットを作成する',

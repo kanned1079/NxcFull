@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import {ref, h, defineProps} from "vue"
+import {useI18n} from "vue-i18n";
+import {defineProps} from "vue"
+
+const {t} = useI18n()
+
+
 let props = defineProps(['orderData'])
 
 </script>
@@ -12,7 +17,7 @@ let props = defineProps(['orderData'])
       content-style="padding: 0"
       :bordered="false"
   >
-    <n-p class="title">订单信息</n-p>
+    <n-p class="title">{{ t('orderPartUniversal.orderDataHex.orderInfo') }}</n-p>
     <div class="good-info-item" v-for="item in props.orderData" :key="item.title">
       <p class="item-head">{{ item.title }}</p>
       <p class="item-content">{{ item.content }}</p>

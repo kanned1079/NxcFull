@@ -307,7 +307,7 @@ func ProcessOrder(jsonData []byte) error {
 
 	go func(orderId string) {
 		log.Println("开始计时1分钟 订单号:", orderId)
-		time.Sleep(1 * time.Minute)
+		time.Sleep(5 * time.Minute)
 		log.Println("订单确认失败")
 
 		var order model.Orders

@@ -55,16 +55,16 @@ let confirmOrder = ref<ConfirmOrder>({
 let periodCode2Text = computed((): string => { // pass
   switch (confirmOrder.value?.period) {
     case 'month': {
-      return computed(() => '月付')
+      return computed(() => t('userConfirmOrder.monthPay'))
     }
     case 'quarter': {
-      return computed(() => '季付')
+      return computed(() => t('userConfirmOrder.quarterPay'))
     }
     case 'half-year': {
-      return computed(() => '半年付')
+      return computed(() => t('userConfirmOrder.halfYearPay'))
     }
     case 'year': {
-      return computed(() => '年付')
+      return computed(() => t('userConfirmOrder.yearPay'))
     }
   }
 })
@@ -72,24 +72,24 @@ let periodCode2Text = computed((): string => { // pass
 
 let goodInfoData = ref([
   {
-    title: computed(() => '商品信息'),
+    title: computed(() => t('userConfirmOrder.goodInfo')),
     content: computed(() => confirmOrder.value?.plan_name)
   },
   {
-    title: computed(() => '周期/类型'),
+    title: computed(() => t('userConfirmOrder.cycleOrType')),
     content: computed((): string => { // pass
       switch (confirmOrder.value?.period) {
         case 'month': {
-          return computed(() => '月付')
+          return computed(() => t('userConfirmOrder.monthPay'))
         }
         case 'quarter': {
-          return computed(() => '季付')
+          return computed(() => t('userConfirmOrder.quarterPay'))
         }
         case 'half-year': {
-          return computed(() => '半年付')
+          return computed(() => t('userConfirmOrder.halfYearPay'))
         }
         case 'year': {
-          return computed(() => '年付')
+          return computed(() => t('userConfirmOrder.yearPay'))
         }
       }
     })
@@ -98,11 +98,11 @@ let goodInfoData = ref([
 
 let orderData = ref([
   {
-    title: computed(() => '订单号'),
+    title: computed(() => t('userConfirmOrder.orderNumber')),
     content: computed(() => confirmOrder.value?.order_id)
   },
   {
-    title: computed(() => '创建日期'),
+    title: computed(() => t('userConfirmOrder.createdAt')),
     content: computed(() => confirmOrder.value?.created_at ? formatDate(confirmOrder.value?.created_at) : '')
   },
   // {
@@ -143,8 +143,10 @@ let queryOrderInfoAndStatus = async () => {
       console.log('订单未支付，进行下一次轮询查询')
     } else {
       console.log('订单已超时，停止轮询');
-      message.error('订单已超时')
+      message.error(t('userConfirmOrder.orderExpired'))
       clearInterval(intervalId); // 清除轮询
+      router.back()
+
     }
 // pass
   } catch (error: any) {
@@ -177,17 +179,22 @@ let placeOrder = async () => {
       if (data.placed && data.key_generated) {
         console.log("订单成功")
         clearInterval(intervalId) // 停止定时器
-        message.success("付款成功感谢您的支持")
+        message.success(t('userConfirmOrder.paySuccessfully'))
+        await router.push({
+          path: '/dashboard/keys'
+        })
       }
     } else if (data.code == 402) {
         // 用户余额不足
-      message.warning("您的余额不足请先充值 该订单保留5分钟")
+      message.warning(t('userConfirmOrder.balanceNotEnough'))
     } else {
-      message.error("订单遇到错误" + data.msg)
+      message.error(t('userConfirmOrder.orderErrorOccur') + data.msg)
       clearInterval(intervalId)
+      router.back()
     }
   } catch (error: any) {
     console.log(error)
+    router.back()
   }
 }
 
@@ -201,7 +208,7 @@ let cancelOrder = async () => {
     })
     if (data.code === 200) {
       console.log(data)
-      message.info('订单已取消')
+      message.info(t('userConfirmOrder.orderCancelled'))
       clearInterval(intervalId)
       router.back()
     }
@@ -242,22 +249,10 @@ export default {
 </script>
 
 <template>
-  <div class="root" v-if="paymentStore.plan_id_selected != -1">
+<!--  <div class="root" v-if="paymentStore.plan_id_selected != -1">-->
+    <div class="root">
     <div class="root-layout">
       <div class="l-part">
-<!--        <n-card-->
-<!--            class="good-info"-->
-<!--            :embedded="true"-->
-<!--            hoverable-->
-<!--            content-style="padding: 0"-->
-<!--            :bordered="false"-->
-<!--        >-->
-<!--          <n-p class="title">商品信息</n-p>-->
-<!--          <div class="good-info-item" v-for="item in goodInfoData" :key="item.title">-->
-<!--            <p class="item-head">{{ item.title }}</p>-->
-<!--            <p class="item-content">{{ item.content }}</p>-->
-<!--          </div>-->
-<!--        </n-card>-->
         <GoodInfo :goodInfoData="goodInfoData"></GoodInfo>
         <OrderInfo :orderData="orderData"></OrderInfo>
 
@@ -281,7 +276,7 @@ export default {
               type="primary"
               tertiary
           >
-            切换订阅
+            {{ t('userConfirmOrder.switchPlan') }}
           </n-button>
           <n-button
               @click="cancelOrder"
@@ -289,14 +284,16 @@ export default {
               type="error"
               text
           >
-            取消订单
+<!--            取消订单-->
+            {{ t('userConfirmOrder.cancelOrder') }}
+
           </n-button>
         </n-card>
       </div>
 
       <div class="r-part">
         <n-card style="color: white" class="r-part-btn" :bordered="false" :embedded="true" hoverable>
-          <p class="r-title">您的价格</p>
+          <p class="r-title">{{ t('userConfirmOrder.yourPrice') }}</p>
 
           <div class="price-small">
             <p class="summary">{{ confirmOrder.plan_name }} x {{ periodCode2Text }}</p>
@@ -304,7 +301,7 @@ export default {
           </div>
           <n-hr></n-hr>
           <div class="price-discount" v-if="confirmOrder.discount_amount != 0">
-            <p class="coupon-title">优惠券抵折</p>
+            <p class="coupon-title">{{ t('userConfirmOrder.couponOffset') }}</p>
             <div class="coupon-detail">
               <p class="coupon-name">{{ confirmOrder.coupon_name }}</p>
               <p class="discount">- {{ confirmOrder.discount_amount.toFixed(2) }}
@@ -312,7 +309,7 @@ export default {
             </div>
             <n-hr v-if="confirmOrder.discount_amount != 0"></n-hr>
           </div>
-          <p class="total-title">价格</p>
+          <p class="total-title">{{ t('userConfirmOrder.price') }}</p>
           <p class="price-large">{{ confirmOrder.amount.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
           <n-button
               @click="placeOrder"
@@ -324,7 +321,8 @@ export default {
             <n-icon style="margin-right: 5px">
               <confirmIcon/>
             </n-icon>
-            提交
+<!--            提交-->
+            {{ t('userConfirmOrder.submit') }}
           </n-button>
         </n-card>
       </div>
