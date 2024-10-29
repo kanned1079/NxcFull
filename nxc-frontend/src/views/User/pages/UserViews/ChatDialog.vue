@@ -1,7 +1,40 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, ref} from "vue"
+import {computed, onBeforeMount, ref} from "vue"
 import {useMessage} from "naive-ui";
+import useThemeStore from "@/stores/useThemeStore";
+import useUserInfoStore from "@/stores/useUserInfoStore";
+
+const themeStore = useThemeStore()
+const userInfoStore = useUserInfoStore()
+
+let isAuthed = ref<boolean>(false)
+isAuthed.value = userInfoStore.thisUser.isAdmin
+
+interface ChatBobbleTheme {
+  senderBgColor: string
+  senderTextColor: string
+  receiverBgColor: string
+  receiverTextColor: string
+  senderBgShallow: string
+  receiverBgShallow: string
+}
+
+let chatBobbleColorTheme = computed(() => !themeStore.enableDarkMode ? {
+  senderBgColor: '#5d8fc2',
+  senderTextColor: '#fff',
+  receiverBgColor: '#dadada',
+  receiverTextColor: '#000',
+  senderBgShallow: 'rgba(93,143,193,0.5)',
+  receiverBgShallow: 'rgba(218,218,218,0.5)'
+} as ChatBobbleTheme : {
+  senderBgColor: '#486993',
+  senderTextColor: '#fff',
+  receiverBgColor: '#696969',
+  receiverTextColor: '#fff',
+  senderBgShallow: 'rgba(30,45,58,0.5)',
+  receiverBgShallow: 'rgba(71,71,71,0.5)'
+} as ChatBobbleTheme).value as ChatBobbleTheme
 
 let paramsData = ref<{
   userId: number
@@ -20,7 +53,7 @@ let messages = ref<{
   {
     id: 0,
     sender: 1,
-    body: '不是你们真没赶上车啊',
+    body: '这是用户说的',
     date: '2024-10-28 14:13:23'
   },
   {
@@ -38,7 +71,7 @@ let messages = ref<{
   {
     id: 4,
     sender: 1,
-    body: '@菠萝味百岁山文艺复兴 ',
+    body: '菠萝味百岁山文艺复兴菠萝味百岁山文艺复兴菠萝味百岁山文艺复兴 ',
     date: '2024-10-28 14:13:23'
   },
   {
@@ -54,8 +87,14 @@ let messages = ref<{
     date: '2024-10-28 14:13:23'
   },
   {
+    id: 1,
+    sender: 0,
+    body: '这不是很这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗戏剧吗这不是很戏剧吗这不是很戏剧吗',
+    date: '2024-10-28 14:13:23'
+  },
+  {
     id: 6,
-    sender: 1,
+    sender: 0,
     body: '在你身后',
     date: '2024-10-28 14:13:23'
   },
@@ -69,6 +108,18 @@ let messages = ref<{
     id: 6,
     sender: 1,
     body: '在你身后',
+    date: '2024-10-28 14:13:23'
+  },
+  {
+    id: 5,
+    sender: 0,
+    body: '那我明天课也不去了吧',
+    date: '2024-10-28 14:13:23'
+  },
+  {
+    id: 4,
+    sender: 1,
+    body: '@菠萝味百岁山文艺复兴 ',
     date: '2024-10-28 14:13:23'
   },
   {
@@ -106,49 +157,49 @@ export default {
 
   <n-layout>
     <n-layout-header>
-      <div class="header">
+      <n-card :bordered="false" :embedded="true" hoverable content-style="padding: 0; border-radius: 0;" class="header">
         <p class="subject-name">充值未到帳問題</p>
-      </div>
+      </n-card>
     </n-layout-header>
-    <n-layout-content style="margin-top: 50px" content-style="padding: 24px;">
+
+    <n-layout-content class="content" style="margin: 60px 0 70px 0" content-style="padding: 0;">
       <n-scrollbar class="sc">
         <div class="message-p" v-for="msg in messages" :key="msg.id">
           <div class="left" v-if="msg.sender === 0">
-            <div class="l-text">
-              <div class="l-text-body">{{ msg.body }}</div>
-              <p style="margin-left: 5px; opacity: 0.3">{{ msg.date }}</p>
+            <div class="left-message-body">
+              <p class="left-message-body-tag">{{ msg.body }}</p>
             </div>
-
+            <div class="left-date">
+              <p class="left-date-tag">{{ msg.date }}</p>
+            </div>
           </div>
           <div class="right" v-if="msg.sender === 1">
-            <div style="display: flex; flex-direction: column; justify-content: end">
-              <p style="margin-right: 5px; opacity: 0.3">{{ msg.date }}</p>
+            <div class="right-message-body">
+              <p class="right-message-body-tag">{{ msg.body }}</p>
             </div>
-            <div class="r-text">{{ msg.body }}</div>
+            <div class="right-date">
+              <p class="right-date-tag">{{ msg.date }}</p>
+            </div>
           </div>
-
         </div>
       </n-scrollbar>
     </n-layout-content>
+
     <n-layout-footer>
+
       <div class="send-box">
-        <div>
-          <n-input style="width: 240px"></n-input>
-          <n-button>發送</n-button>
-        </div>
+        <n-card class="send-box-btn" content-style="padding: 0">
+          <div class="send-box-btn-body">
+            <n-input size="large" class="text-input" placeholder="輸入要發送的消息"></n-input>
+            <n-button size="large" secondary type="primary" class="send-btn">發送</n-button>
+          </div>
+
+        </n-card>
       </div>
+
     </n-layout-footer>
   </n-layout>
 
-
-  <!--  <n-card :bordered="false" class="root" content-style="padding: 0">-->
-
-  <!--    <div class="message-box">-->
-  <!--      -->
-
-  <!--    </div>-->
-  <!--    -->
-  <!--  </n-card>-->
 </template>
 
 <style scoped lang="less">
@@ -156,7 +207,6 @@ export default {
 
 .header {
   height: 60px;
-  background-color: #454545;
   position: fixed;
   left: 0;
   right: 0;
@@ -164,62 +214,130 @@ export default {
   line-height: 60px;
 
   .subject-name {
-    margin-left: 10px;
-    font-size: 1.25rem;
-    font-weight: 400;
+    margin-left: 20px;
+    font-size: 1.2rem;
+    font-weight: 500;
   }
 }
 
-.sc {
-  margin-top: 60px;
+.content {
+  height: 100vh;
 }
 
-.message-box {
-  padding-top: 60px;
+.sc {
+  max-height: 80vh;
+  overflow-y: auto;
+
+  /* 自定义滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: #cfcfcf #f5f5f5;
 
   .message-p {
-    height: 30px;
-    margin: 40px 0;
+    margin: 20px 0;
+    display: flex;
 
+
+    /* 控制左右消息的对齐 */
+
+    .left,
+    .right {
+      max-width: 80%;
+      display: flex;
+      flex-direction: column;
+    }
 
     .left {
-      display: flex;
-      flex-direction: row;
-      justify-content: left;
+      margin-left: 20px;
+      align-items: flex-start;
+      margin-right: auto; /* 保证左侧对齐 */
+      //background-color: @primary-color;
 
-      .l-text {
-        display: flex;
-        flex-direction: column;
-
-        .l-text-body {
-          font-size: 1rem;
-          background-color: #656565;
-          padding: 5px;
-          border-radius: 3px;
+      .left-message-body {
+        .left-message-body-tag {
+          max-width: 100%;
+          background-color: v-bind('chatBobbleColorTheme.receiverBgColor');
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-size: 0.9rem;
+          line-height: 1.5;
+          color: v-bind('chatBobbleColorTheme.receiverTextColor');
+          transition: ease 250ms;
         }
 
+        .left-message-body-tag:hover {
+          box-shadow: 5px 8px 16px v-bind('chatBobbleColorTheme.receiverBgShallow');
+          transform: translateX(0px) translateY(-3px);
+        }
+      }
+
+      .left-date {
+        font-size: 0.7rem;
+        color: #3a4754;
+        margin-top: 5px;
+        align-self: flex-start;
       }
     }
 
     .right {
-      display: flex;
-      flex-direction: row;
-      justify-content: right;
+      margin-right: 20px;
+      align-items: flex-end;
+      margin-left: auto; /* 保证右侧对齐 */
+      //background-color: @secondary-color;
 
-      .r-text {
-        font-size: 1rem;
-        background-color: #858585;
-        color: white;
-        padding: 5px;
-        border-radius: 3px;
+      .right-message-body {
+        .right-message-body-tag {
+          max-width: 100%;
+          background-color: v-bind('chatBobbleColorTheme.senderBgColor');
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-size: 0.9rem;
+          line-height: 1.5;
+          color: v-bind('chatBobbleColorTheme.senderTextColor');
+          transition: ease 250ms;
+        }
+
+        .right-message-body-tag:hover {
+          box-shadow: 5px 8px 16px v-bind('chatBobbleColorTheme.senderBgShallow');
+          transform: translateX(0px) translateY(-3px);
+        }
+      }
+
+      .right-date {
+        font-size: 0.7rem;
+        color: #3a4754;
+        margin-top: 5px;
+        align-self: flex-end;
       }
     }
   }
 }
 
 .send-box {
-  height: 50px;
-  background-color: #0e1b42;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+
+  .send-box-btn {
+    padding: 15px;
+
+    .send-box-btn-body {
+      display: flex;
+      flex-direction: row;
+
+      .text-input {
+        flex: 8;
+        margin-right: 15px;
+      }
+
+      .send-btn {
+        flex: 2;
+      }
+    }
+
+
+  }
+
+
 }
 
 </style>

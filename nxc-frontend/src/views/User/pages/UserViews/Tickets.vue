@@ -94,7 +94,7 @@ let newTicket = ref<Ticket>({
   body: ''
 })
 
-let showNewTicketModal = ref<boolean>(true)
+let showNewTicketModal = ref<boolean>(false)
 
 let cancelCreateNewTicket = () => {
   showNewTicketModal.value = false
