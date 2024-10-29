@@ -5,6 +5,7 @@ import {type FormInst, NButton, NTag, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import instance from "@/axios/index"
+import {formatDate} from "@/utils/timeFormat";
 
 const {t} = useI18n();
 const userInfoStore = useUserInfoStore();
@@ -112,8 +113,10 @@ let commitNewTicket = async () => {
         user_id: userInfoStore.thisUser.id,
         ...newTicket.value
       })
-      if (data.code === 200) {
+      if (data.code === 200 && data.created) {
         message.success(computed(() => t('userTickets.commitNewTicketSuccess')).value)
+        cancelCreateNewTicket()
+        await getAllMyTickets()
         console.log(data)
       } else {
         message.error(computed(() => t('userTickets.commitNewTicketFailure')).value + data.msg as string || '')
@@ -127,6 +130,25 @@ let commitNewTicket = async () => {
   }
 }
 
+let closeTicket = async (ticket_id: number) => {
+  try {
+    let {data} = await instance.delete('/api/user/v1/ticket', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        ticket_id,
+      }
+    })
+    if (data.code === 200 && data.closed) {
+      message.success(computed(() => t('userTickets.ticketCloseSuccess')).value)
+      await getAllMyTickets()
+    } else {
+      message.error(computed(() => t('userTickets.ticketCloseFailure')).value + data.msg as string || '')
+    }
+  }catch (error: any) {
+    console.log(error)
+  }
+}
+
 // -------------------------------------------------------------------------------------------------------------------------------------------------x
 
 // 表格的字段名
@@ -135,68 +157,42 @@ interface TicketItem {
   id: number  // 工单Id
   subject: string // 工单主题
   urgency: number // 紧急程度 1低 2中 3高
-  status: boolean // true工单未关闭 false工单关闭
+  status: number // true工单未关闭 false工单关闭
   created_at: string  // 工单创建时间
-  last_response: string // 最后一次回复
+  last_reply: string // 最后一次回复
+}
+
+let getAllMyTickets = async () => {
+  ticketList.value = []
+  try {
+    let {data} = await instance.get('/api/user/v1/ticket', {
+      params: {
+        user_id: userInfoStore.thisUser.id
+      }
+    })
+    if (data.code === 200) {
+      message.success('获取成功')
+      data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket)
+      )
+    } else if (data.code === 404) {
+      message.info(computed(() => t('userTickets.noTickets')).value)
+    } else {
+        message.error(data.msg || '' as string)
+    }
+  } catch (error: any) {
+    message.error(error.toString)
+  }
+
 }
 
 // 假数据
-let ticketList = ref<TicketItem[]>([
-  {
-    id: 1,
-    subject: '系统登录问题',
-    urgency: 2,
-    status: true,
-    created_at: '2024-09-15 14:22',
-    last_response: '2024-09-16 10:00'
-  },
-  {
-    id: 2,
-    subject: '功能反馈',
-    urgency: 1,
-    status: false,
-    created_at: '2024-09-12 08:30',
-    last_response: '2024-09-12 09:45'
-  },
-  {
-    id: 3,
-    subject: '支付问题',
-    urgency: 3,
-    status: true,
-    created_at: '2024-09-18 16:10',
-    last_response: '2024-09-19 11:30'
-  },
-  {
-    id: 3,
-    subject: '支付问题',
-    urgency: 3,
-    status: true,
-    created_at: '2024-09-18 16:10',
-    last_response: '2024-09-19 11:30'
-  },
-  {
-    id: 3,
-    subject: '支付问题',
-    urgency: 3,
-    status: true,
-    created_at: '2024-09-18 16:10',
-    last_response: '2024-09-19 11:30'
-  },
-  {
-    id: 3,
-    subject: '支付问题',
-    urgency: 3,
-    status: true,
-    created_at: '2024-09-18 16:10',
-    last_response: '2024-09-19 11:30'
-  },
-])
+let ticketList = ref<TicketItem[]>([])
 
 // 点击打开工单后 单独打开一个聊天窗口
 let openTicket = (ticket: TicketItem) => {
   message.info(`查看工单：${ticket.title}`);
   const chatDialogWindow = window.open(
-      `http://localhost:5173/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${-12}`,
+      `http://localhost:5173/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${12}`,
       '111111',
       'width=500,height=640,resizable=yes,scrollbars=yes',
   );
@@ -204,7 +200,7 @@ let openTicket = (ticket: TicketItem) => {
   // newWindow?.open()
 
   chatDialogWindow.addEventListener('onload', () => {
-    chatDialogWindow.postMessage({ greeting: 'Hello from the parent window!' }, '*'); // * 表示接受来自任何来源的消息
+    chatDialogWindow.postMessage({greeting: 'Hello from the parent window!'}, '*'); // * 表示接受来自任何来源的消息
   });
 
   // window.opener(
@@ -215,14 +211,16 @@ let openTicket = (ticket: TicketItem) => {
 }
 
 // 关闭工单
-let closeTicket = (ticket: TicketItem) => {
-  message.success(`工单已关闭：${ticket.title}`);
-  ticket.status = false;
-}
+// let closeTicket = (ticket: TicketItem) => {
+//   message.success(`工单已关闭：${ticket.title}`);
+//   ticket.status = false;
+// }
 
 onMounted(() => {
   themeStore.menuSelected = ''
   themeStore.userPath = '/dashboard/tickets'
+
+  getAllMyTickets()
 })
 
 // 定义表格的列
@@ -257,8 +255,16 @@ const columns = ref([
       }, {default: () => row.status ? computed(() => t('userTickets.ticketActive')).value : computed(() => t('userTickets.ticketInActive')).value});
     }
   },
-  {title: computed(() => t('userTickets.ticketCreatedAt')), key: 'created_at'},
-  {title: computed(() => t('userTickets.lastResponse')), key: 'last_response'},
+  {
+    title: computed(() => t('userTickets.ticketCreatedAt')), key: 'created_at', render(row: TicketItem) {
+      return formatDate(row.created_at)
+    }
+  },
+  {
+    title: computed(() => t('userTickets.lastResponse')), key: 'last_response', render(row: TicketItem) {
+      return row.last_reply ? formatDate(row.last_reply) : computed(() => t('userTickets.noReply')).value
+    }
+  },
   {
     title: computed(() => t('userTickets.operate')).value, key: 'actions', fixed: 'right', render(row: TicketItem) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
@@ -266,6 +272,7 @@ const columns = ref([
           size: 'small',
           type: 'primary',
           bordered: false,
+          disabled: false,
           style: {marginLeft: '10px'},
           onClick: () => openTicket(row)
         }, {
@@ -274,9 +281,9 @@ const columns = ref([
         h(NButton, {
           size: 'small',
           type: 'error',
-          disabled: !row.status,
+          disabled: row.status === 204,
           style: {marginLeft: '10px'},
-          onClick: () => closeTicket(row)
+          onClick: () => closeTicket(row.id)
         }, {
           default: () => computed(() => t('userTickets.closeTicket')).value
         })

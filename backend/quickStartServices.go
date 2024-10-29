@@ -25,6 +25,7 @@ var services = []string{
 	"orderServices",
 	"orderHandleServices",
 	"keyServices",
+	"ticketHandleServices",
 }
 
 var gatewayService = "gateway"

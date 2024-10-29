@@ -8,6 +8,7 @@ import (
 var (
 	MyDbConfig    MysqlConfig
 	MyRedisConfig RedisConfig
+	MyMqConfig    MqConfig
 	err           error
 )
 
@@ -27,6 +28,17 @@ func (m *MysqlConfig) Get() error {
 func (r *RedisConfig) Get() error {
 	var tempData []byte
 	if tempData, err = etcd.GetConfigFromEtcdBytes("redis"); err != nil {
+		return err
+	}
+	if err := xml.Unmarshal(tempData, r); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *MqConfig) Get() error {
+	var tempData []byte
+	if tempData, err = etcd.GetConfigFromEtcdBytes("mq"); err != nil {
 		return err
 	}
 	if err := xml.Unmarshal(tempData, r); err != nil {

@@ -36,6 +36,10 @@ service UserService {
 
   rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
 
+  rpc CreateNewTicket(CreateNewTicketRequest) returns (CreateNewTicketResponse);
+
+  rpc SendChatMessage(SendChatMessageRequest) returns (SendChatMessageResponse);
+
 }
 
 // 定义用户登录请求消息
@@ -187,4 +191,34 @@ message UpdateUserInfoResponse {
   int32 code = 1;
   string msg = 2;
   bytes user_info = 3;
+}
+
+// -----------------------
+
+message CreateNewTicketRequest {
+  int64 user_id = 1;
+  string subject = 2;
+  int32 urgency = 3;
+  string content = 4;
+}
+
+message CreateNewTicketResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool created = 3;
+}
+
+// --------------
+
+message SendChatMessageRequest {
+    int64 user_id = 1;
+    int64 ticket_id = 2;
+    string role = 3;
+    string content = 4;
+}
+
+message SendChatMessageResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool sent = 3;
 }

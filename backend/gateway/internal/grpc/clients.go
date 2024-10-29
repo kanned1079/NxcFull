@@ -21,6 +21,8 @@ import (
 	settingPb "gateway/internal/grpc/api/settings/proto"
 	"gateway/internal/grpc/api/subscription"
 	subscribePb "gateway/internal/grpc/api/subscription/proto"
+	"gateway/internal/grpc/api/ticketHandle"
+	ticketHandlePb "gateway/internal/grpc/api/ticketHandle/proto"
 	"gateway/internal/grpc/api/user"
 	userPb "gateway/internal/grpc/api/user/proto"
 )
@@ -37,6 +39,7 @@ type Clients struct {
 	OrderServicesClient       orderPb.OrderServiceClient
 	OrderHandleServicesClient orderHandlePb.OrderHandleServiceClient
 	KeyServicesClient         keyPb.KeyServiceClient
+	TicketHandleClient        ticketHandlePb.TicketHandleServiceClient
 }
 
 func NewClients() Clients {
@@ -53,6 +56,7 @@ func NewClients() Clients {
 		OrderServicesClient:       order.NewOrderClient(),
 		OrderHandleServicesClient: orderHandle.NewOrderHandleClient(),
 		KeyServicesClient:         key.NewKeyClient(),
+		TicketHandleClient:        ticketHandle.NewTicketHandleClient(),
 	}
 
 }

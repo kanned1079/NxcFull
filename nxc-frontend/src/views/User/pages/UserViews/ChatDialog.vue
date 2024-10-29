@@ -1,148 +1,145 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onBeforeMount, ref} from "vue"
+import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue";
 import {useMessage} from "naive-ui";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 
-const themeStore = useThemeStore()
-const userInfoStore = useUserInfoStore()
+const themeStore = useThemeStore();
+const userInfoStore = useUserInfoStore();
+const {t} = useI18n();
+const message = useMessage();
 
-let isAuthed = ref<boolean>(false)
-isAuthed.value = userInfoStore.thisUser.isAdmin
+let token = ref<string>(sessionStorage.getItem('token') || '');
 
+// WebSocket 连接实例
+let socket: WebSocket | null = null;
+
+// 创建和管理 WebSocket 连接
+const createWebSocket = () => {
+  if (socket) socket.close(); // 先关闭已有连接
+
+  socket = new WebSocket(`ws://localhost:8081/ws/user/v1/chat?token=${token.value}`);
+
+  socket.onopen = () => {
+    console.log("WebSocket connection established");
+  };
+
+  socket.onmessage = (event: MessageEvent) => {
+    try {
+      const messageData = JSON.parse(event.data);
+      console.log(messageData)
+      message.info("Received message: " + messageData.id + " " + messageData.name);
+    } catch (error) {
+      console.error("Failed to parse message:", error);
+    }
+  };
+
+  socket.onclose = () => {
+    console.log("WebSocket connection closed. Reconnecting...");
+    setTimeout(createWebSocket, 5000); // 每5秒尝试重新连接
+  };
+
+  socket.onerror = (error) => {
+    console.error("WebSocket error:", error);
+  };
+};
+
+// 发送消息函数
+const sendWsMessage = (content: any) => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    const msg = JSON.stringify({content});
+    socket.send(msg);
+    console.log("Message sent:", msg);
+    message.success("发送成功 " + msg);
+  } else {
+    message.error("WebSocket is not open. Unable to send message.");
+  }
+};
+
+let isAuthed = ref<boolean>(userInfoStore.thisUser.isAdmin);
+
+// 处理主题色的逻辑
 interface ChatBobbleTheme {
-  senderBgColor: string
-  senderTextColor: string
-  receiverBgColor: string
-  receiverTextColor: string
-  senderBgShallow: string
-  receiverBgShallow: string
+  senderBgColor: string;
+  senderTextColor: string;
+  receiverBgColor: string;
+  receiverTextColor: string;
+  senderBgShallow: string;
+  receiverBgShallow: string;
 }
 
-let chatBobbleColorTheme = computed(() => !themeStore.enableDarkMode ? {
-  senderBgColor: '#5d8fc2',
-  senderTextColor: '#fff',
-  receiverBgColor: '#dadada',
-  receiverTextColor: '#000',
-  senderBgShallow: 'rgba(93,143,193,0.5)',
-  receiverBgShallow: 'rgba(218,218,218,0.5)'
-} as ChatBobbleTheme : {
-  senderBgColor: '#486993',
-  senderTextColor: '#fff',
-  receiverBgColor: '#696969',
-  receiverTextColor: '#fff',
-  senderBgShallow: 'rgba(30,45,58,0.5)',
-  receiverBgShallow: 'rgba(71,71,71,0.5)'
-} as ChatBobbleTheme).value as ChatBobbleTheme
+let chatBobbleColorTheme = computed(
+    () =>
+        !themeStore.enableDarkMode
+            ? {
+              senderBgColor: "#5d8fc2",
+              senderTextColor: "#fff",
+              receiverBgColor: "#dadada",
+              receiverTextColor: "#000",
+              senderBgShallow: "rgba(93,143,193,0.5)",
+              receiverBgShallow: "rgba(218,218,218,0.5)",
+            }
+            : {
+              senderBgColor: "#486993",
+              senderTextColor: "#fff",
+              receiverBgColor: "#696969",
+              receiverTextColor: "#fff",
+              senderBgShallow: "rgba(30,45,58,0.5)",
+              receiverBgShallow: "rgba(71,71,71,0.5)",
+            }
+).value as ChatBobbleTheme;
 
 let paramsData = ref<{
-  userId: number
-  ticketId: number
+  userId: number;
+  ticketId: number;
 }>({
   userId: 0,
   ticketId: 0,
-})
+});
 
-let messages = ref<{
-  id: number
-  sender: number
-  body: string
-  date: string
-}[]>([
-  {
-    id: 0,
-    sender: 1,
-    body: '这是用户说的',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 1,
-    sender: 0,
-    body: '这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 3,
-    sender: 0,
-    body: '别走啊',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 4,
-    sender: 1,
-    body: '菠萝味百岁山文艺复兴菠萝味百岁山文艺复兴菠萝味百岁山文艺复兴 ',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 5,
-    sender: 0,
-    body: '那我明天课也不去了吧',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 6,
-    sender: 1,
-    body: '在你身后',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 1,
-    sender: 0,
-    body: '这不是很这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗这不是很戏剧吗戏剧吗这不是很戏剧吗这不是很戏剧吗',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 6,
-    sender: 0,
-    body: '在你身后',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 6,
-    sender: 1,
-    body: '在你身后',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 6,
-    sender: 1,
-    body: '在你身后',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 5,
-    sender: 0,
-    body: '那我明天课也不去了吧',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 4,
-    sender: 1,
-    body: '@菠萝味百岁山文艺复兴 ',
-    date: '2024-10-28 14:13:23'
-  },
-  {
-    id: 6,
-    sender: 1,
-    body: '在你身后',
-    date: '2024-10-28 14:13:23'
-  },
-])
-
-const {t} = useI18n()
-const message = useMessage()
-
-onBeforeMount(() => {
-  message.info('beforeMount')
-  const urlParams = new URLSearchParams(window.location.search);
-  let user_id = Number(urlParams.get('user_id'));
-  let ticket_id = Number(urlParams.get('ticket_id'));
-  if (user_id <= 0 || ticket_id <= 0) {
-    message.warning('非法訪問')
+// 消息输入和显示逻辑
+let msgInput = ref<string>("");
+let handleSendMsgBtnClicked = () => {
+  if (msgInput.value.trim() !== "") {
+    sendWsMessage({
+      user_id: paramsData.value.userId,
+      ticket_id: paramsData.value.ticketId,
+      role: "user",
+      content: msgInput.value.trim(),
+    });
+    msgInput.value = ""; // 清空输入框
+  } else {
+    message.error("消息内容不能为空");
   }
-  paramsData.value.userId = user_id
-  paramsData.value.ticketId = ticket_id
+};
+
+// 生命周期函数
+onBeforeMount(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const user_id = Number(urlParams.get("user_id"));
+  const ticket_id = Number(urlParams.get("ticket_id"));
+
+  if (user_id <= 0 || ticket_id <= 0) {
+    message.warning("非法訪問");
+  }
+  paramsData.value.userId = user_id;
+  paramsData.value.ticketId = ticket_id;
+});
+
+onMounted(() => {
+  if (token.value) {
+    createWebSocket();
+  } else {
+    message.error("Token is missing. Cannot establish WebSocket connection.");
+  }
+});
+
+onBeforeUnmount(() => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.close();
+    console.log("WebSocket connection closed on unmount");
+  }
 })
 </script>
 
@@ -187,15 +184,17 @@ export default {
 
     <n-layout-footer>
 
-      <div class="send-box">
+      <n-card content-style="padding: 0" class="send-box">
         <n-card class="send-box-btn" content-style="padding: 0">
           <div class="send-box-btn-body">
-            <n-input size="large" class="text-input" placeholder="輸入要發送的消息"></n-input>
-            <n-button size="large" secondary type="primary" class="send-btn">發送</n-button>
+            <n-input size="large" class="text-input" placeholder="輸入要發送的消息" v-model:value="msgInput"></n-input>
+            <n-button :bordered="false" size="large" type="primary" class="send-btn" @click="handleSendMsgBtnClicked">
+              發送
+            </n-button>
           </div>
 
         </n-card>
-      </div>
+      </n-card>
 
     </n-layout-footer>
   </n-layout>

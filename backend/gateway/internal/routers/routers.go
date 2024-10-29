@@ -26,6 +26,7 @@ func StartApiGateways() {
 	})
 
 	publicRoutes := router.Group("/api")
+	//publicRoutes := router.Group("/ws")
 
 	// 这里是获取网站的标题 颜色 说明 配置
 	//publicRoutes.GET("/admin/getStartTheme", getStartTheme)
@@ -53,6 +54,9 @@ func StartApiGateways() {
 	protectedRoutes := router.Group("/api")
 	protectedRoutes.Use(middleware.AuthMiddleware()) // 验证Token中间价
 	protectedRoutes.Use(middleware.RoleMiddleware()) // 鉴权中间件
+	//protectedRoutesWs := router.Group("/ws")
+	//protectedRoutesWs.Use(middleware.AuthMiddleware())
+	//protectedRoutesWs.Use(middleware.RoleMiddleware())
 
 	adminAuthorized := protectedRoutes.Group("/admin/v1", middleware.RoleMiddleware())
 	{
@@ -100,8 +104,6 @@ func StartApiGateways() {
 	{
 		//// 用户特定的路由
 		userAuthorized.GET("/profile")
-		////...其他用户路由
-		//// 开始首页
 		userAuthorized.GET("/user", handler.HandleUpdateUserInfo)
 
 		userAuthorized.GET("/notice", handler.HandleGetAllNotices)        // 获取所有的通知列表
@@ -118,11 +120,8 @@ func StartApiGateways() {
 		userAuthorized.DELETE("auth/2fa/disable", handler.HandleDisable2FA)
 
 		userAuthorized.GET("/plan/info/fetch", handler.GetActivePlanListByUserId)
-		//userAuthorized.GET("/keys", keys.HandleGetAllUserKeys)
-		//
 
 		// 这里将生成订单号后推送至消息队列 交由第二个进程进行处理
-		//
 		userAuthorized.GET("/orders", handler.HandleGetAllMyOrders)
 		userAuthorized.GET("/order/status", handler.HandleCheckOrderStatus)
 		userAuthorized.POST("/order", handler.HandleCommitNewOrder) // 下单新的订阅
@@ -131,12 +130,26 @@ func StartApiGateways() {
 
 		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
 
-		userAuthorized.POST("/ticket", handler.HandleCreateNewTicket)
+		userAuthorized.GET("/ticket", handler.HandleGetAllMyTickets)
+		userAuthorized.POST("/ticket", handler.HandleCreateNewTicket)     // 新建工单
+		userAuthorized.DELETE("/ticket", handler.HandleCloseTicket)       // 关闭工单
+		userAuthorized.PUT("/ticket/chat", handler.HandleSendChatContent) // 发送消息
+		userAuthorized.GET("/ticket/chat", handler.HandleGetChatContent)  // 获取聊天消息内容
+
 	}
 
-	//if err := router.Run("0.0.0.0:8081"); err != nil {
-	//	log.Println("启动服务器失败", err)
+	// WebSocket 路由组
+	wsRoutes := router.Group("/ws")
+	//wsRoutes.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware())
+	// 为 WebSocket 配置单独的用户路由
+	userWsRoutes := wsRoutes.Group("/user/v1")
+	userWsRoutes.GET("/chat", handler.HandleChatWs)
+
+	//userAuthorizedWs := protectedRoutes.Group("/user/v1", middleware.RoleMiddleware())
+	//{
+	//	userAuthorizedWs.GET("/chat", handler.HandleChatWs)
 	//}
+
 	if err := router.Run(fmt.Sprintf("%s:%s", config.MyServerConfig.ListenAddr, strconv.Itoa(int(config.MyServerConfig.ListenPort)))); err != nil {
 		log.Println("启动服务器失败", err)
 	}

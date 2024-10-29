@@ -38,7 +38,7 @@ func InitMysqlServer() {
 		DontSupportRenameColumn:   true,
 		SkipInitializeWithVersion: true,
 	}), &gorm.Config{
-		SkipDefaultTransaction: true,
+		SkipDefaultTransaction: false,
 	})
 	if err != nil {
 		log.Println("初始化数据库失败 err: ", err)

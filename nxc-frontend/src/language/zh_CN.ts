@@ -287,6 +287,10 @@ export default {
         submit: '提交',
         commitNewTicketSuccess: '提交新的工單成功',
         commitNewTicketFailure: '提交新的工單錯誤',
+        noReply: '還沒有回覆',
+        noTickets: '您還沒有提交過工單',
+        ticketCloseSuccess: '工單關閉成功',
+        ticketCloseFailure: '工單關閉失敗'
 
     },
     welcome: {

@@ -6,6 +6,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.10.0
 	github.com/pquerna/otp v1.4.0
+	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/redis/go-redis/v9 v9.6.2
 	go.etcd.io/etcd/client/v3 v3.5.16
 	golang.org/x/crypto v0.26.0

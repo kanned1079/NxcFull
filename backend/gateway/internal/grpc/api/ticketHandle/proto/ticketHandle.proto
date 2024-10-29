@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package ticketHandle;
+
+option go_package = "./proto";
+
+service TicketHandleService {
+  // 查询用户提交的所有工单列表 用户的请求
+  rpc GetUserTicketsByUserId (GetUserTicketsByUserIdRequest) returns (GetUserTicketsByUserIdResponse);
+  // 关闭对应id的工单 用户和管理员都可请求
+  rpc CloseTicketByTicketId (CloseTicketByTicketIdRequest) returns (CloseTicketByTicketIdResponse);
+  // 拉取最新的对话记录
+  rpc GetChatContent (GetChatContentRequest) returns (GetChatContentResponse);
+}
+
+message GetUserTicketsByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetUserTicketsByUserIdResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes tickets = 3;
+}
+
+message CloseTicketByTicketIdRequest {
+  int64 user_id = 1;
+  int64 ticket_id = 2;
+}
+
+message CloseTicketByTicketIdResponse {
+  int32 code = 1;
+  bool closed = 2;
+  string msg = 3;
+}
+
+message GetChatContentRequest {
+  int64 user_id = 1;
+  int64 ticket_id = 2;
+}
+
+message GetChatContentResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes content = 3;
+}

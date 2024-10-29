@@ -29,6 +29,8 @@ const (
 	UserService_Get2FAStatus_FullMethodName          = "/proto.UserService/Get2FAStatus"
 	UserService_Disable2FA_FullMethodName            = "/proto.UserService/Disable2FA"
 	UserService_UpdateUserInfo_FullMethodName        = "/proto.UserService/UpdateUserInfo"
+	UserService_CreateNewTicket_FullMethodName       = "/proto.UserService/CreateNewTicket"
+	UserService_SendChatMessage_FullMethodName       = "/proto.UserService/SendChatMessage"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -49,6 +51,8 @@ type UserServiceClient interface {
 	Get2FAStatus(ctx context.Context, in *Get2FAStatusRequest, opts ...grpc.CallOption) (*Get2FAStatusResponse, error)
 	Disable2FA(ctx context.Context, in *Disable2FARequest, opts ...grpc.CallOption) (*Disable2FAResponse, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoResponse, error)
+	CreateNewTicket(ctx context.Context, in *CreateNewTicketRequest, opts ...grpc.CallOption) (*CreateNewTicketResponse, error)
+	SendChatMessage(ctx context.Context, in *SendChatMessageRequest, opts ...grpc.CallOption) (*SendChatMessageResponse, error)
 }
 
 type userServiceClient struct {
@@ -159,6 +163,26 @@ func (c *userServiceClient) UpdateUserInfo(ctx context.Context, in *UpdateUserIn
 	return out, nil
 }
 
+func (c *userServiceClient) CreateNewTicket(ctx context.Context, in *CreateNewTicketRequest, opts ...grpc.CallOption) (*CreateNewTicketResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateNewTicketResponse)
+	err := c.cc.Invoke(ctx, UserService_CreateNewTicket_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SendChatMessage(ctx context.Context, in *SendChatMessageRequest, opts ...grpc.CallOption) (*SendChatMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendChatMessageResponse)
+	err := c.cc.Invoke(ctx, UserService_SendChatMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -177,6 +201,8 @@ type UserServiceServer interface {
 	Get2FAStatus(context.Context, *Get2FAStatusRequest) (*Get2FAStatusResponse, error)
 	Disable2FA(context.Context, *Disable2FARequest) (*Disable2FAResponse, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error)
+	CreateNewTicket(context.Context, *CreateNewTicketRequest) (*CreateNewTicketResponse, error)
+	SendChatMessage(context.Context, *SendChatMessageRequest) (*SendChatMessageResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -216,6 +242,12 @@ func (UnimplementedUserServiceServer) Disable2FA(context.Context, *Disable2FAReq
 }
 func (UnimplementedUserServiceServer) UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
+}
+func (UnimplementedUserServiceServer) CreateNewTicket(context.Context, *CreateNewTicketRequest) (*CreateNewTicketResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateNewTicket not implemented")
+}
+func (UnimplementedUserServiceServer) SendChatMessage(context.Context, *SendChatMessageRequest) (*SendChatMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendChatMessage not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -418,6 +450,42 @@ func _UserService_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_CreateNewTicket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNewTicketRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreateNewTicket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_CreateNewTicket_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreateNewTicket(ctx, req.(*CreateNewTicketRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SendChatMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendChatMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SendChatMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_SendChatMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SendChatMessage(ctx, req.(*SendChatMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -464,6 +532,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserInfo",
 			Handler:    _UserService_UpdateUserInfo_Handler,
+		},
+		{
+			MethodName: "CreateNewTicket",
+			Handler:    _UserService_CreateNewTicket_Handler,
+		},
+		{
+			MethodName: "SendChatMessage",
+			Handler:    _UserService_SendChatMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
