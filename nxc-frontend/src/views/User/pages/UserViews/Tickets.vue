@@ -192,9 +192,9 @@ let ticketList = ref<TicketItem[]>([])
 let openTicket = (ticket: TicketItem) => {
   message.info(`查看工单：${ticket.title}`);
   const chatDialogWindow = window.open(
-      `http://localhost:5173/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${12}`,
+      `http://localhost:5173/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=1`,
       '111111',
-      'width=500,height=640,resizable=yes,scrollbars=yes',
+      'width=480,height=640,resizable=yes,scrollbars=yes',
   );
   // newWindow.postMessage('Hello from the original window', '*');
   // newWindow?.open()

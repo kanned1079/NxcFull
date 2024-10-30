@@ -10,12 +10,18 @@ import {createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router'
 // import UserManager from "@/views/Admin/UserManager.vue";
 import useUserInfoStore from '@/stores/useUserInfoStore'
 
+import ErrorPage from "@/views/ErrorPage.vue";
+
 import adminRoutes from "@/router/admin";
 import userRoutes from "@/router/user"
 
 const routes: RouteRecordRaw[] = [
     ...adminRoutes,
-    ...userRoutes
+    ...userRoutes,
+    {
+        path: '/error',
+        component: ErrorPage,
+    }
 ]
 
 const router = createRouter({
@@ -180,29 +186,99 @@ const router = createRouter({
 //     }
 // });
 
+// v5
+// router.beforeEach((to, from, next) => {
+//     console.log(from.path, to.path);
+//
+//     const userInfoStore = useUserInfoStore();
+//
+//     // 检查用户是否已登录
+//     if (!userInfoStore.isAuthed) {
+//         // 未登录用户
+//         if (to.path.startsWith('/admin')) {
+//             if (to.path !== '/admin/login') {
+//                 next('/admin/login');
+//             } else {
+//                 next();
+//             }
+//         } else if (to.path === '/register' || to.path === '/welcome' || to.path === '/welcome2' || to.path === '/dashboard/ticket/chat') {
+//             // 允许未登录用户访问注册页面、欢迎页面、和聊天页面
+//             next();
+//         } else {
+//             // 未登录用户重定向到普通用户登录页面
+//             if (to.path !== '/login') {
+//                 next('/login');
+//             } else {
+//                 next();
+//             }
+//         }
+//     } else {
+//         // 用户已登录
+//         if (to.path.startsWith('/admin')) {
+//             if (!userInfoStore.thisUser.isAdmin) {
+//                 // 非管理员用户禁止访问 /admin 路径，重定向到普通用户的 dashboard
+//                 if (to.path !== '/dashboard/summary') {
+//                     next('/dashboard/summary');
+//                 } else {
+//                     next();
+//                 }
+//             } else {
+//                 if (to.path === '/admin/login') {
+//                     // 管理员已经登录，避免再次访问登录页面，重定向到 /admin/dashboard/summary
+//                     if (to.path !== '/admin/dashboard/summary') {
+//                         next('/admin/dashboard/summary');
+//                     } else {
+//                         next();
+//                     }
+//                 } else {
+//                     next();
+//                 }
+//             }
+//         } else if (to.path === '/login') {
+//             // 已登录用户访问普通用户登录页面，重定向到 dashboard
+//             if (to.path !== '/dashboard/summary') {
+//                 next('/dashboard/summary');
+//             } else {
+//                 next();
+//             }
+//         } else if (to.path === '/user/tickets/chat') {
+//             // 允许已登录用户访问聊天页面
+//             next();
+//         } else {
+//             next(); // 正常放行
+//         }
+//     }
+// });
+
 router.beforeEach((to, from, next) => {
     console.log(from.path, to.path);
 
     const userInfoStore = useUserInfoStore();
+
+    // // 检查路径是否存在，若不存在则重定向到 /error
+    // if (!router.hasRoute(to.path)) {
+    //     console.warn('Invalid route, redirecting to /error');
+    //     return next('/error'); // 立即重定向到错误页面
+    // }
 
     // 检查用户是否已登录
     if (!userInfoStore.isAuthed) {
         // 未登录用户
         if (to.path.startsWith('/admin')) {
             if (to.path !== '/admin/login') {
-                next('/admin/login');
+                return next('/admin/login');
             } else {
-                next();
+                return next();
             }
-        } else if (to.path === '/register' || to.path === '/welcome' || to.path === '/welcome2' || to.path === '/dashboard/ticket/chat') {
+        } else if (['/register', '/welcome', '/welcome2', '/dashboard/ticket/chat'].includes(to.path)) {
             // 允许未登录用户访问注册页面、欢迎页面、和聊天页面
-            next();
+            return next();
         } else {
             // 未登录用户重定向到普通用户登录页面
             if (to.path !== '/login') {
-                next('/login');
+                return next('/login');
             } else {
-                next();
+                return next();
             }
         }
     } else {
@@ -211,34 +287,34 @@ router.beforeEach((to, from, next) => {
             if (!userInfoStore.thisUser.isAdmin) {
                 // 非管理员用户禁止访问 /admin 路径，重定向到普通用户的 dashboard
                 if (to.path !== '/dashboard/summary') {
-                    next('/dashboard/summary');
+                    return next('/dashboard/summary');
                 } else {
-                    next();
+                    return next();
                 }
             } else {
                 if (to.path === '/admin/login') {
                     // 管理员已经登录，避免再次访问登录页面，重定向到 /admin/dashboard/summary
                     if (to.path !== '/admin/dashboard/summary') {
-                        next('/admin/dashboard/summary');
+                        return next('/admin/dashboard/summary');
                     } else {
-                        next();
+                        return next();
                     }
                 } else {
-                    next();
+                    return next();
                 }
             }
         } else if (to.path === '/login') {
             // 已登录用户访问普通用户登录页面，重定向到 dashboard
             if (to.path !== '/dashboard/summary') {
-                next('/dashboard/summary');
+                return next('/dashboard/summary');
             } else {
-                next();
+                return next();
             }
         } else if (to.path === '/user/tickets/chat') {
             // 允许已登录用户访问聊天页面
-            next();
+            return next();
         } else {
-            next(); // 正常放行
+            return next(); // 正常放行
         }
     }
 });

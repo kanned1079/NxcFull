@@ -34,6 +34,6 @@ func PublishChatMessage(postChatData []byte) error {
 		return err
 	}
 
-	log.Printf("Order %s has been published to MQ")
+	log.Printf("Chat Msg %s has been published to MQ", string(postChatData))
 	return nil
 }

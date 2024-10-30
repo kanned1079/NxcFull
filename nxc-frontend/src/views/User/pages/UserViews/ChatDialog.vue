@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue";
-import {useMessage} from "naive-ui";
+import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref, nextTick} from "vue";
+import {NScrollbar, useMessage,} from "naive-ui";
+import {formatDate} from "@/utils/timeFormat";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 
@@ -10,7 +11,19 @@ const userInfoStore = useUserInfoStore();
 const {t} = useI18n();
 const message = useMessage();
 
+const scrollbar = ref<HTMLElement | null>(null);
+
 let token = ref<string>(sessionStorage.getItem('token') || '');
+
+interface ChatHistoryItem {
+  id: number
+  user_id: number
+  sent_at: string
+  sender_type: string
+  content: string
+}
+
+let chatHistory = ref<ChatHistoryItem[]>([])
 
 // WebSocket 连接实例
 let socket: WebSocket | null = null;
@@ -19,7 +32,7 @@ let socket: WebSocket | null = null;
 const createWebSocket = () => {
   if (socket) socket.close(); // 先关闭已有连接
 
-  socket = new WebSocket(`ws://localhost:8081/ws/user/v1/chat?token=${token.value}`);
+  socket = new WebSocket(`ws://localhost:8081/ws/user/v1/chat?token=${token.value}&user_id=${paramsData.value.userId}&ticket_id=${paramsData.value.ticketId}`);
 
   socket.onopen = () => {
     console.log("WebSocket connection established");
@@ -28,16 +41,52 @@ const createWebSocket = () => {
   socket.onmessage = (event: MessageEvent) => {
     try {
       const messageData = JSON.parse(event.data);
-      console.log(messageData)
-      message.info("Received message: " + messageData.id + " " + messageData.name);
+      console.log(messageData.type)
+      // 判断 Type 字段并根据类型执行不同操作
+      if (messageData.type === "history") {
+        // 清空现有聊天记录并添加新记录
+        let previousLength = chatHistory.value.length
+        console.log('previousLength', previousLength)
+        chatHistory.value = [];
+        console.log(messageData.history)
+        // let chatMsgItem = messageData.history
+        messageData.history.forEach((chatMsgItem: ChatHistoryItem) => {
+          chatHistory.value.push(chatMsgItem);
+        });
+        let newLength = chatHistory.value.length
+        // 使用 scrollTo 将滚动条滚动到底部
+        if (previousLength != newLength) {
+          setTimeout(() => {
+            nextTick(() => {
+              scrollbar.value?.scrollTo({top: 999999, behavior: 'smooth'});
+            });
+          }, 300)
+        }
+        // 如果工单已经结束 那么请求一次之后就停止ws连接
+        if (paramsData.value.status === 204) {
+          if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
+            console.log("WebSocket connection closed on unmount");
+          }
+        }
+
+      } else if (messageData.type === "check") {
+        // 处理单一消息（或成功响应）
+        message.success("发送消息成功");
+      } else {
+        console.warn("Unknown message type received:", messageData.type);
+      }
+
     } catch (error) {
       console.error("Failed to parse message:", error);
     }
   };
 
   socket.onclose = () => {
-    console.log("WebSocket connection closed. Reconnecting...");
-    setTimeout(createWebSocket, 5000); // 每5秒尝试重新连接
+    if (paramsData.value.status !== 204) {
+      console.log("WebSocket connection closed. Reconnecting...");
+      setTimeout(createWebSocket, 5000); // 每5秒尝试重新连接
+    }
   };
 
   socket.onerror = (error) => {
@@ -48,10 +97,10 @@ const createWebSocket = () => {
 // 发送消息函数
 const sendWsMessage = (content: any) => {
   if (socket && socket.readyState === WebSocket.OPEN) {
-    const msg = JSON.stringify({content});
+    const msg = JSON.stringify(content);
     socket.send(msg);
-    console.log("Message sent:", msg);
-    message.success("发送成功 " + msg);
+    // console.log("发送的消息为:", msg);
+    // message.success("发送消息成功");
   } else {
     message.error("WebSocket is not open. Unable to send message.");
   }
@@ -93,9 +142,15 @@ let chatBobbleColorTheme = computed(
 let paramsData = ref<{
   userId: number;
   ticketId: number;
+  subject: string;
+  status: number;
+  role: number;
 }>({
   userId: 0,
   ticketId: 0,
+  subject: '',
+  status: 201,
+  role: 1
 });
 
 // 消息输入和显示逻辑
@@ -105,10 +160,10 @@ let handleSendMsgBtnClicked = () => {
     sendWsMessage({
       user_id: paramsData.value.userId,
       ticket_id: paramsData.value.ticketId,
-      role: "user",
+      role: paramsData.value.role === 0 ? 'admin' : 'user',
       content: msgInput.value.trim(),
     });
-    msgInput.value = ""; // 清空输入框
+    msgInput.value = ''; // 清空输入框
   } else {
     message.error("消息内容不能为空");
   }
@@ -117,14 +172,22 @@ let handleSendMsgBtnClicked = () => {
 // 生命周期函数
 onBeforeMount(() => {
   const urlParams = new URLSearchParams(window.location.search);
-  const user_id = Number(urlParams.get("user_id"));
-  const ticket_id = Number(urlParams.get("ticket_id"));
+  let user_id = Number(urlParams.get("user_id"));
+  let ticket_id = Number(urlParams.get("ticket_id"));
+  let subject = urlParams.get("subject")?.trim() as string;
+  let status = Number(urlParams.get("status"));
+  let role = Number(urlParams.get("role"));
 
   if (user_id <= 0 || ticket_id <= 0) {
     message.warning("非法訪問");
   }
   paramsData.value.userId = user_id;
   paramsData.value.ticketId = ticket_id;
+  paramsData.value.subject = subject;
+  paramsData.value.status = status;
+  paramsData.value.role = role
+
+  console.log("params: ", paramsData)
 });
 
 onMounted(() => {
@@ -135,6 +198,7 @@ onMounted(() => {
   }
 });
 
+// 挂载前关闭ws连接
 onBeforeUnmount(() => {
   if (socket && socket.readyState === WebSocket.OPEN) {
     socket.close();
@@ -150,32 +214,30 @@ export default {
 </script>
 
 <template>
-
-
   <n-layout>
     <n-layout-header>
       <n-card :bordered="false" :embedded="true" hoverable content-style="padding: 0; border-radius: 0;" class="header">
-        <p class="subject-name">充值未到帳問題</p>
+        <p class="subject-name">{{ paramsData.subject }}</p>
       </n-card>
     </n-layout-header>
 
     <n-layout-content class="content" style="margin: 60px 0 70px 0" content-style="padding: 0;">
-      <n-scrollbar class="sc">
-        <div class="message-p" v-for="msg in messages" :key="msg.id">
-          <div class="left" v-if="msg.sender === 0">
+      <n-scrollbar class="sc" ref="scrollbar">
+        <div class="message-p" v-for="msg in chatHistory" :key="msg.id">
+          <div class="left" v-if=" paramsData.role===1?msg.sender_type === 'admin':msg.sender_type === 'user'">
             <div class="left-message-body">
-              <p class="left-message-body-tag">{{ msg.body }}</p>
+              <p class="left-message-body-tag">{{ msg.content }}</p>
             </div>
             <div class="left-date">
-              <p class="left-date-tag">{{ msg.date }}</p>
+              <p class="left-date-tag">{{ formatDate(msg.sent_at) }}</p>
             </div>
           </div>
-          <div class="right" v-if="msg.sender === 1">
+          <div class="right" v-else>
             <div class="right-message-body">
-              <p class="right-message-body-tag">{{ msg.body }}</p>
+              <p class="right-message-body-tag">{{ msg.content }}</p>
             </div>
             <div class="right-date">
-              <p class="right-date-tag">{{ msg.date }}</p>
+              <p class="right-date-tag">{{ formatDate(msg.sent_at) }}</p>
             </div>
           </div>
         </div>
@@ -187,8 +249,21 @@ export default {
       <n-card content-style="padding: 0" class="send-box">
         <n-card class="send-box-btn" content-style="padding: 0">
           <div class="send-box-btn-body">
-            <n-input size="large" class="text-input" placeholder="輸入要發送的消息" v-model:value="msgInput"></n-input>
-            <n-button :bordered="false" size="large" type="primary" class="send-btn" @click="handleSendMsgBtnClicked">
+            <n-input
+                @keyup.enter="handleSendMsgBtnClicked"
+                :disabled="paramsData.status===204"
+                size="large" class="text-input"
+                :placeholder="paramsData.status===204?'工单已经结束':'輸入要發送的消息'"
+                v-model:value="msgInput"
+            ></n-input>
+            <n-button
+                :disabled="paramsData.status===204"
+                :bordered="false"
+                size="large"
+                type="primary"
+                class="send-btn"
+                @click="handleSendMsgBtnClicked"
+            >
               發送
             </n-button>
           </div>
@@ -234,9 +309,6 @@ export default {
   .message-p {
     margin: 20px 0;
     display: flex;
-
-
-    /* 控制左右消息的对齐 */
 
     .left,
     .right {
@@ -332,11 +404,6 @@ export default {
         flex: 2;
       }
     }
-
-
   }
-
-
 }
-
 </style>

@@ -25,12 +25,12 @@ func StartConsumeOrders() {
 	go func() {
 		for d := range msgs {
 			// 处理订单
-			log.Println("有新工单消息")
+			log.Println("ticket 有新工单消息")
 			err = ProcessTicket(d.Body)
 			if err != nil {
-				fmt.Printf("订单处理失败: %v\n", err)
+				fmt.Printf("ticket 工单信息处理失败: %v\n", err)
 			} else {
-				fmt.Printf("订单处理成功\n")
+				fmt.Printf("ticket 工单信息处理成功\n")
 			}
 		}
 	}()

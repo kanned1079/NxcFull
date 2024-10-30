@@ -74,7 +74,7 @@ func (s *UserService) SendChatMessage(context context.Context, request *pb.SendC
 			Sent: false,
 		}, nil
 	} else {
-		log.Println("准备推入消息队列")
+		log.Println("user准备推入消息队列")
 		if err := puiblisher.PublishChatMessage(jsonMsg); err != nil {
 			return &pb.SendChatMessageResponse{
 				Code: http.StatusInternalServerError,
@@ -82,6 +82,7 @@ func (s *UserService) SendChatMessage(context context.Context, request *pb.SendC
 				Sent: false,
 			}, nil
 		}
+		log.Println("user推入消息队列成功")
 	}
 	return &pb.SendChatMessageResponse{
 		Code: http.StatusOK,
