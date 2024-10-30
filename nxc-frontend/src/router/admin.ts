@@ -14,6 +14,7 @@ import NoticeManager from "@/views/Admin/pages/UserMgrViews/NoticeManager.vue";
 import SubscribeMgr from "@/views/Admin/pages/FinanceViews/SubscribeMgr.vue";
 import DocumentMgr from "@/views/Admin/pages/UserMgrViews/DocumentMgr.vue";
 import PrivilegeGroupMgr from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue";
+import TicketMgr from "@/views/Admin/pages/UserMgrViews/TicketMgr.vue";
 
 const adminRoutes: RouteRecordRaw[] = [
     {
@@ -96,6 +97,10 @@ const adminRoutes: RouteRecordRaw[] = [
                 path: '/admin/dashboard/group',
                 name: 'privilege-group-mgr',
                 component: PrivilegeGroupMgr,
+            },
+            {
+                path: '/admin/dashboard/ticket',
+                component: TicketMgr,
             }
 
         ]

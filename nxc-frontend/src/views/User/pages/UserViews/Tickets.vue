@@ -13,8 +13,6 @@ const themeStore = useThemeStore();
 const message = useMessage();
 const formRef = ref<FormInst | null>(null)
 
-// let dialogActive = ref<boolean>(false)
-
 let selectValidationStatus = computed(() => {
   return createStatus(newTicket.value.urgency)
 })
@@ -38,11 +36,6 @@ const rules = {
     trigger: 'blur',
     message: ''
   },
-  // urgency: {
-  //   required: true,
-  //   trigger: 'blur',
-  //   message: '',
-  // },
   body: {
     required: true,
     trigger: 'blur',
@@ -144,7 +137,7 @@ let closeTicket = async (ticket_id: number) => {
     } else {
       message.error(computed(() => t('userTickets.ticketCloseFailure')).value + data.msg as string || '')
     }
-  }catch (error: any) {
+  } catch (error: any) {
     console.log(error)
   }
 }
@@ -177,7 +170,7 @@ let getAllMyTickets = async () => {
     } else if (data.code === 404) {
       message.info(computed(() => t('userTickets.noTickets')).value)
     } else {
-        message.error(data.msg || '' as string)
+      message.error(data.msg || '' as string)
     }
   } catch (error: any) {
     message.error(error.toString)
@@ -185,7 +178,6 @@ let getAllMyTickets = async () => {
 
 }
 
-// 假数据
 let ticketList = ref<TicketItem[]>([])
 
 // 点击打开工单后 单独打开一个聊天窗口
@@ -196,25 +188,12 @@ let openTicket = (ticket: TicketItem) => {
       '111111',
       'width=480,height=640,resizable=yes,scrollbars=yes',
   );
-  // newWindow.postMessage('Hello from the original window', '*');
-  // newWindow?.open()
-
   chatDialogWindow.addEventListener('onload', () => {
     chatDialogWindow.postMessage({greeting: 'Hello from the parent window!'}, '*'); // * 表示接受来自任何来源的消息
   });
 
-  // window.opener(
-  //     'http://localhost:5173/dashboard/ticket/chat',
-  //     '111111',
-  //     'width=480,height=640,resizable=yes,scrollbars=yes'
-  // );
 }
 
-// 关闭工单
-// let closeTicket = (ticket: TicketItem) => {
-//   message.success(`工单已关闭：${ticket.title}`);
-//   ticket.status = false;
-// }
 
 onMounted(() => {
   themeStore.menuSelected = ''

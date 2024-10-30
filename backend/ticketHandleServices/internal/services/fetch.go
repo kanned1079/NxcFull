@@ -20,12 +20,12 @@ func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, r
 		}, nil
 	}
 	//log.Println("tickets:", tickets)
-	if len(tickets) == 0 {
-		return &pb.GetUserTicketsByUserIdResponse{
-			Code: http.StatusNotFound,
-			Msg:  "没有工单记录",
-		}, nil
-	}
+	//if len(tickets) == 0 {
+	//	return &pb.GetUserTicketsByUserIdResponse{
+	//		Code: http.StatusNotFound,
+	//		Msg:  "没有工单记录",
+	//	}, nil
+	//}
 	if ticketsJson, err := json.Marshal(tickets); err != nil {
 		return &pb.GetUserTicketsByUserIdResponse{
 			Code: http.StatusInternalServerError,

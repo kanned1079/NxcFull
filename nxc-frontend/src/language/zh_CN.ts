@@ -316,5 +316,9 @@ export default {
             subscribeUs: '關注我們',
             filingsCode: '備案號 {code}',
         }
+    },
+    adminTicket: {
+        ticketMgr: '工單管理',
+
     }
 }

@@ -136,7 +136,7 @@ let MenuOption = [
       },
       {
         label: '工单管理',
-        key: 'prob-manager',
+        key: 'ticket-mgr',
         icon: renderIcon(helpIcon),
       },
       {
@@ -219,6 +219,10 @@ let update = (key: string) => {
     case 'privilege-group-mgr': {
       themeStore.menuSelected = 'privilege-group-mgr'
       router.push({path: '/admin/dashboard/group'})
+      break
+    }
+    case 'ticket-mgr': {
+      router.push({path: '/admin/dashboard/ticket'})
       break
     }
   }
