@@ -240,9 +240,6 @@ func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *
 	//	IsSale bool   `json:"is_sale"`
 	//}
 	var planArr []struct {
-		//  int64 id = 1;
-		//  string name = 2;
-		//  bool is_sale = 3;
 		Id     int64  `json:"id"`
 		Name   string `json:"name"`
 		IsSale bool   `json:"is_sale"`
@@ -269,44 +266,104 @@ func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *
 	}
 }
 
+//func (s *SubscribeServices) GetAllPlans(ctx context.Context, request *pb.GetAllPlansRequest) (*pb.GetAllPlansResponse, error) {
+//	var plans []model.Plan
+//	//if result := dao.Db.Model(&Plan{}).Find(&plans); result.Error != nil {
+//	log.Println("request.User: ", request.IsUser)
+//	if request.IsUser == true {
+//		// 如果是用户的请求
+//		//log.Println("用户的请求")
+//		if result := dao.Db.Model(&model.Plan{}).Where("is_sale = ?", true).Order("sort ASC").Find(&plans); result.Error != nil {
+//			log.Println(result.Error)
+//			return &pb.GetAllPlansResponse{
+//				Code: http.StatusInternalServerError,
+//				Msg:  "Get plans failure.",
+//			}, nil
+//		}
+//	} else {
+//		// 如果是管理员的请求
+//		//log.Println("Request from admin")
+//		if result := dao.Db.Model(&model.Plan{}).Order("sort ASC").Find(&plans); result.Error != nil {
+//			log.Println(result.Error)
+//			return &pb.GetAllPlansResponse{
+//				Code: http.StatusInternalServerError,
+//				Msg:  "Get plans failure.",
+//			}, nil
+//		}
+//	}
+//	if plansJson, err := json.Marshal(plans); err != nil {
+//		return &pb.GetAllPlansResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "Marshal data failure.",
+//		}, nil
+//	} else {
+//		return &pb.GetAllPlansResponse{
+//			Code:  http.StatusOK,
+//			Msg:   "Get plans ok",
+//			Plans: plansJson,
+//		}, nil
+//	}
+//
+//}
+
 func (s *SubscribeServices) GetAllPlans(ctx context.Context, request *pb.GetAllPlansRequest) (*pb.GetAllPlansResponse, error) {
 	var plans []model.Plan
-	//if result := dao.Db.Model(&Plan{}).Find(&plans); result.Error != nil {
-	log.Println("request.User: ", request.IsUser)
-	if request.IsUser == true {
-		// 如果是用户的请求
-		log.Println("用户的请求")
-		if result := dao.Db.Model(&model.Plan{}).Where("is_sale = ?", true).Order("sort ASC").Find(&plans); result.Error != nil {
-			log.Println(result.Error)
-			return &pb.GetAllPlansResponse{
-				Code: http.StatusInternalServerError,
-				Msg:  "获取订阅列表失败",
-			}, nil
-		}
+	var redisKey string
+
+	if request.IsUser {
+		redisKey = "plans:user:all"
 	} else {
-		// 如果是管理员的请求
-		log.Println("管理员的请求")
-		if result := dao.Db.Model(&model.Plan{}).Order("sort ASC").Find(&plans); result.Error != nil {
-			log.Println(result.Error)
-			return &pb.GetAllPlansResponse{
-				Code: http.StatusInternalServerError,
-				Msg:  "获取订阅列表失败",
-			}, nil
-		}
+		redisKey = "plans:admin:all"
 	}
-	if plansJson, err := json.Marshal(plans); err != nil {
-		return &pb.GetAllPlansResponse{
-			Code: http.StatusInternalServerError,
-			Msg:  "转换格式失败",
-		}, nil
-	} else {
+
+	// 尝试从 Redis 中获取数据
+	redisData, err := dao.Rdb.Get(ctx, redisKey).Result()
+	if err == nil && redisData != "" {
+		// 如果 Redis 中有数据，直接返回
+		log.Println("Plans existed in redis.")
 		return &pb.GetAllPlansResponse{
 			Code:  http.StatusOK,
-			Msg:   "获取订阅列表成功",
-			Plans: plansJson,
+			Msg:   "Get plans successfully.",
+			Plans: []byte(redisData),
+		}, nil
+	}
+	log.Println("Plans not in redis, query in mysql.")
+
+	// Redis 中无数据，查询 MySQL
+	db := dao.Db.Model(&model.Plan{}).Order("sort ASC")
+	if request.IsUser {
+		db = db.Where("is_sale = ?", true)
+	}
+
+	if result := db.Find(&plans); result.Error != nil {
+		log.Println("query failure:", result.Error)
+		return &pb.GetAllPlansResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "Get plans failure.",
 		}, nil
 	}
 
+	// 将查询结果序列化为 JSON
+	plansJson, err := json.Marshal(plans)
+	if err != nil {
+		log.Println("JSON Marshal failure:", err)
+		return &pb.GetAllPlansResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "JSON Marshal failure",
+		}, nil
+	}
+
+	// 将查询结果缓存到 Redis
+	if err := dao.Rdb.Set(ctx, redisKey, plansJson, time.Hour).Err(); err != nil {
+		log.Println("Store in redis failure:", err)
+	}
+
+	// 返回响应
+	return &pb.GetAllPlansResponse{
+		Code:  http.StatusOK,
+		Msg:   "Get plans successfully.",
+		Plans: plansJson,
+	}, nil
 }
 
 func (s *SubscribeServices) AddNewPlan(ctx context.Context, request *pb.AddNewPlanRequest) (*pb.AddNewPlanResponse, error) {
@@ -333,6 +390,23 @@ func (s *SubscribeServices) AddNewPlan(ctx context.Context, request *pb.AddNewPl
 			Msg:  "插入数据库失败",
 		}, nil
 	}
+	// 在这里清空redis的plans
+	//var redisKey string
+	//redisKey = "plans:user:all"
+	//redisKey = "plans:admin:all"
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+	if err := ClearPlansRedisCache(ctx); err != nil {
+		log.Println(err)
+		return &pb.AddNewPlanResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  err.Error(),
+		}, nil
+	}
+
+	// 在这里清空redis的plans
+	// 清空用户计划缓存
+
 	return &pb.AddNewPlanResponse{
 		Code: http.StatusOK,
 		Msg:  "插入数据成功",
@@ -356,6 +430,17 @@ func (s *SubscribeServices) UpdatePlan(ctx context.Context, request *pb.UpdatePl
 		// 以下Sort用于在前端进行排序 优先级从低到高，添加新订阅时，它的优先级为上一个的优先级+1，如果表内为空不存在数据，则第一个添加的sort为1000
 		Sort: request.Sort,
 	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+	if err := ClearPlansRedisCache(ctx); err != nil {
+		log.Println(err)
+		return &pb.UpdatePlanResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  err.Error(),
+		}, nil
+	}
+
 	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", plan.Id).Updates(&plan); result.Error != nil {
 		log.Println(result.Error)
 		return &pb.UpdatePlanResponse{
@@ -370,6 +455,15 @@ func (s *SubscribeServices) UpdatePlan(ctx context.Context, request *pb.UpdatePl
 }
 
 func (s *SubscribeServices) DeletePlan(ctx context.Context, request *pb.DeletePlanRequest) (*pb.DeletePlanResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+	if err := ClearPlansRedisCache(ctx); err != nil {
+		log.Println(err)
+		return &pb.DeletePlanResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  err.Error(),
+		}, nil
+	}
 	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", request.PlanId).Delete(&model.Plan{Id: request.PlanId}); result.Error != nil {
 		return &pb.DeletePlanResponse{
 			Code: http.StatusInternalServerError,
@@ -382,8 +476,19 @@ func (s *SubscribeServices) DeletePlan(ctx context.Context, request *pb.DeletePl
 	}, nil
 }
 
-func (s *SubscribeServices) UpdatePlanIsSale(context context.Context, request *pb.UpdatePlanIsSaleRequest) (*pb.UpdatePlanIsSaleResponse, error) {
+func (s *SubscribeServices) UpdatePlanIsSale(ctx context.Context, request *pb.UpdatePlanIsSaleRequest) (*pb.UpdatePlanIsSaleResponse, error) {
 	log.Println("UpdatePlanIsSale", request.Id, request.IsSale)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+	if err := ClearPlansRedisCache(ctx); err != nil {
+		log.Println(err)
+		return &pb.UpdatePlanIsSaleResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  err.Error(),
+		}, nil
+	}
+
 	var plan = model.Plan{}
 	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", request.Id).First(&plan); result.Error != nil {
 		return &pb.UpdatePlanIsSaleResponse{
@@ -404,8 +509,19 @@ func (s *SubscribeServices) UpdatePlanIsSale(context context.Context, request *p
 	}, nil
 }
 
-func (s *SubscribeServices) UpdatePlanRenew(context context.Context, request *pb.UpdatePlanRenewRequest) (*pb.UpdatePlanRenewResponse, error) {
+func (s *SubscribeServices) UpdatePlanRenew(ctx context.Context, request *pb.UpdatePlanRenewRequest) (*pb.UpdatePlanRenewResponse, error) {
 	log.Println("UpdatePlanRenew", request.Id, request.IsRenew)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+	if err := ClearPlansRedisCache(ctx); err != nil {
+		log.Println(err)
+		return &pb.UpdatePlanRenewResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  err.Error(),
+		}, nil
+	}
+
 	var plan = model.Plan{}
 	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", request.Id).Update("is_renew", request.IsRenew); result.Error != nil {
 		return &pb.UpdatePlanRenewResponse{

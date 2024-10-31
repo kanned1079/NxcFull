@@ -98,6 +98,8 @@ func StartApiGateways() {
 		adminAuthorized.PUT("/coupon/status", handler.HandleActiveCoupon) // PUT
 		adminAuthorized.DELETE("/coupon", handler.HandleDeleteCoupon)
 
+		adminAuthorized.GET("/ticket", handler.HandleGetAllTickets)
+
 	}
 
 	userAuthorized := protectedRoutes.Group("/user/v1", middleware.RoleMiddleware())
@@ -131,10 +133,10 @@ func StartApiGateways() {
 		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
 
 		userAuthorized.GET("/ticket", handler.HandleGetAllMyTickets)
-		userAuthorized.POST("/ticket", handler.HandleCreateNewTicket)     // 新建工单
-		userAuthorized.DELETE("/ticket", handler.HandleCloseTicket)       // 关闭工单
-		userAuthorized.PUT("/ticket/chat", handler.HandleSendChatContent) // 发送消息
-		userAuthorized.GET("/ticket/chat", handler.HandleGetChatContent)  // 获取聊天消息内容
+		userAuthorized.POST("/ticket", handler.HandleCreateNewTicket) // 新建工单
+		userAuthorized.DELETE("/ticket", handler.HandleCloseTicket)   // 关闭工单
+		//userAuthorized.PUT("/ticket/chat", handler.HandleSendChatContent) // 发送消息
+		//userAuthorized.GET("/ticket/chat", handler.HandleGetChatContent)  // 获取聊天消息内容
 
 	}
 

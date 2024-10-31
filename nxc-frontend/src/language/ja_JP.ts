@@ -131,6 +131,7 @@ export default {
     tickets: {
         userTickets: '過去のチケット',
         addTicket: '新しいチケットを作成する',
+
     },
     userKeys: {
         myKeys: 'マイキー',

@@ -161,6 +161,7 @@ export default {
         hoverClickMention: '點擊可以複製到剪貼板',
         copiedSuccessMessage: '密鑰複製成功，請參照文檔說明繼續操作。',
         copyFailure: '複製失敗',
+        hoverCopiedSuccessMention: '複製成功'
     },
     userOrders: {
         myOrders: '我的訂單',

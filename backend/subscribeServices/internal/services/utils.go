@@ -1,5 +1,11 @@
 package services
 
+import (
+	"context"
+	"errors"
+	"subscribeServices/internal/dao"
+)
+
 //func ConvertOrder2pbOrder(getModel []model.Orders) []*pb.OrderInfo {
 //	var pbOrders []*pb.OrderInfo
 //	for _, order := range getModel {
@@ -70,3 +76,18 @@ package services
 //
 //	return pbPlans
 //}
+
+// ClearPlansRedisCache 用于清除缓存
+func ClearPlansRedisCache(ctx context.Context) (err error) {
+	// 清空用户计划缓存
+	if err = dao.Rdb.Del(ctx, "plans:user:all").Err(); err != nil {
+		//log.Println("Failed to delete user plans from Redis:", err)
+		return errors.New("Failed to delete user plans from Redis")
+	}
+	// 清空管理员计划缓存
+	if err = dao.Rdb.Del(ctx, "plans:admin:all").Err(); err != nil {
+		//log.Println("Failed to delete admin plans from Redis:", err)
+		return errors.New("Failed to delete admin plans from Redis")
+	}
+	return
+}

@@ -20,6 +20,8 @@ import {
 import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 
+let animated = ref<boolean>(false)
+
 const message = useMessage()
 const dialog = useDialog()
 const {t, locale} = useI18n()
@@ -170,14 +172,15 @@ let goCartPage = () => {
 
 }
 
-onMounted(() => {
+onMounted(async () => {
   console.log('用户summary挂载')
   themeStore.userPath = '/dashboard/summary'
   themeStore.menuSelected = 'user-dashboard'
 
-  getAllNotices()
-  getActivePlanList()
+  await getAllNotices()
+  await getActivePlanList()
 
+  animated.value = true
 
 })
 </script>
@@ -189,145 +192,150 @@ export default {
 </script>
 
 <template>
-  <div class="root">
-    <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
-      <n-carousel show-arrow autoplay style="border-radius: 3px">
+
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
+        <n-carousel show-arrow autoplay style="border-radius: 3px">
+          <n-card
+              v-for="item in thisNotices"
+              :key="item.id"
+              class="item"
+              :style="!item.hasOwnProperty('bg_img')?{backgroundImage: `url(${noticeUniversalBgDay})`}:{backgroundImage: `url(${item.img_url})`}"
+              @click="handleConfirm(item.title, item.content)"
+              :bordered="false"
+          >
+            <div class="content">
+              <n-tag class="tag" type="warning">{{ item.tags }}</n-tag>
+              <div class="inner">
+                <p class="title">{{ item.title }}</p>
+                <p class="date">{{ item.created_at }}</p>
+              </div>
+            </div>
+          </n-card>
+
+          <template #arrow="{ prev, next }">
+            <div class="custom-arrow">
+              <button type="button" class="custom-arrow--left" @click="prev">
+                <n-icon>
+                  <ArrowBack/>
+                </n-icon>
+              </button>
+              <button type="button" class="custom-arrow--right" @click="next">
+                <n-icon>
+                  <ArrowForward/>
+                </n-icon>
+              </button>
+            </div>
+          </template>
+          <template #dots="{ total, currentIndex, to }">
+            <ul class="custom-dots">
+              <li
+                  v-for="index of total"
+                  :key="index"
+                  :class="{ ['is-active']: currentIndex === index - 1 }"
+                  @click="to(index - 1)"
+              />
+            </ul>
+          </template>
+        </n-carousel>
+
+      </n-card>
+
+
+      <n-card
+          class="my-subscribe"
+          :embedded="true"
+          hoverable
+          :title="t('userSummary.myPlan')"
+          content-style="padding: 0"
+          :bordered="false"
+      >
+
+        <!--      <h1 v-for="i in 3" :key="i">{{i}}</h1>-->
+        <!--      {{userInfoStore.thisUser}}-->
+
         <n-card
-            v-for="item in thisNotices"
-            :key="item.id"
-            class="item"
-            :style="!item.hasOwnProperty('bg_img')?{backgroundImage: `url(${noticeUniversalBgDay})`}:{backgroundImage: `url(${item.img_url})`}"
-            @click="handleConfirm(item.title, item.content)"
+            v-if="!haveActive"
+            class="no-license"
+            style="background-color: rgba(0,0,0,0.0)"
+            content-style="padding: 0;"
+            @click="router.push({path: '/dashboard/purchase'})"
             :bordered="false"
         >
-          <div class="content">
-            <n-tag class="tag" type="warning">{{ item.tags }}</n-tag>
-            <div class="inner">
-              <p class="title">{{ item.title }}</p>
-              <p class="date">{{ item.created_at }}</p>
-            </div>
+          <div
+              style="display: flex;text-align: center;justify-content: flex-end;line-height: 20px;flex-direction: column;align-items: center;padding: 20px; background-color: rgba(0,0,0,0.0)">
+            <n-icon style="text-align: center" size="40">
+              <cartIcon/>
+            </n-icon>
+            <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">
+              {{ t('userSummary.toPurchase') }}</p>
           </div>
         </n-card>
 
-        <template #arrow="{ prev, next }">
-          <div class="custom-arrow">
-            <button type="button" class="custom-arrow--left" @click="prev">
-              <n-icon>
-                <ArrowBack/>
-              </n-icon>
-            </button>
-            <button type="button" class="custom-arrow--right" @click="next">
-              <n-icon>
-                <ArrowForward/>
-              </n-icon>
-            </button>
+        <n-card
+            v-else-if="haveActive"
+            v-for="(plan, index) in myActivePlans"
+            :key="index"
+            class="license-active"
+            content-style="padding: 0;"
+            style="padding: 0 25px 0 25px; background-color: rgba(0,0,0,0.0)"
+            :bordered="false"
+        >
+          <div class="plan-item">
+            <p style="font-size: 1.1rem; font-weight: bold;opacity: 0.9;">{{ plan.plan_name }}</p>
+            <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">
+              {{ t('userSummary.timeLeft', {msg: plan.expiration_date,}) }}</p>
           </div>
-        </template>
-        <template #dots="{ total, currentIndex, to }">
-          <ul class="custom-dots">
-            <li
-                v-for="index of total"
-                :key="index"
-                :class="{ ['is-active']: currentIndex === index - 1 }"
-                @click="to(index - 1)"
-            />
-          </ul>
-        </template>
-      </n-carousel>
 
-    </n-card>
+          <n-hr v-if="!(index === (myActivePlans.length - 1))"></n-hr>
+        </n-card>
 
 
-    <n-card
-        class="my-subscribe"
-        :embedded="true"
-        hoverable
-        :title="t('userSummary.myPlan')"
-        content-style="padding: 0"
-        :bordered="false"
-    >
-
-      <!--      <h1 v-for="i in 3" :key="i">{{i}}</h1>-->
-      <!--      {{userInfoStore.thisUser}}-->
-
-      <n-card
-          v-if="!haveActive"
-          class="no-license"
-          style="background-color: rgba(0,0,0,0.0)"
-          content-style="padding: 0;"
-          @click="router.push({path: '/dashboard/purchase'})"
-          :bordered="false"
-      >
-        <div
-            style="display: flex;text-align: center;justify-content: flex-end;line-height: 20px;flex-direction: column;align-items: center;padding: 20px; background-color: rgba(0,0,0,0.0)">
-          <n-icon style="text-align: center" size="40">
-            <cartIcon/>
-          </n-icon>
-          <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">
-            {{ t('userSummary.toPurchase') }}</p>
-        </div>
       </n-card>
 
       <n-card
-          v-else-if="haveActive"
-          v-for="(plan, index) in myActivePlans"
-          :key="index"
-          class="license-active"
+          style="margin: 20px 0; padding-right: 20px"
+          :embedded="true"
+          hoverable
+          :title="t('userSummary.shortcut')"
           content-style="padding: 0;"
-          style="padding: 0 25px 0 25px; background-color: rgba(0,0,0,0.0)"
           :bordered="false"
       >
-        <div class="plan-item">
-          <p style="font-size: 1.1rem; font-weight: bold;opacity: 0.9;">{{ plan.plan_name }}</p>
-          <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">
-            {{ t('userSummary.timeLeft', {msg: plan.expiration_date,}) }}</p>
+        <div
+            :class="themeStore.enableDarkMode?'help-day':'help-night'"
+            v-for="item in helpData"
+            :key="item.id"
+            style="display: flex; justify-content: space-between; width: 100%; height: auto; padding: 10px"
+            @click="router.push({ path: pathById[item.id].path})"
+        >
+          <div style="height: 100%; text-align: left; padding-left: 20px">
+            <p style="font-size: 16px;">{{ item.title }}</p>
+            <p style="font-size: 12px; margin-top: 5px; opacity: 0.5">{{ item.content }}</p>
+          </div>
+          <div
+              style="width: 40px; font-size: 30px; margin-right: 20px; display: flex; flex-direction: column; justify-content: center">
+            <n-icon v-if="item.icon_id===1" style="opacity: 0.5; width: 40px; ">
+              <bookIcon/>
+            </n-icon>
+            <n-icon v-if="item.icon_id===2" style="opacity: 0.5; width: 40px; ">
+              <keyIcon/>
+            </n-icon>
+            <n-icon v-if="item.icon_id===3" style="opacity: 0.5; width: 40px; ">
+              <buyIcon/>
+            </n-icon>
+            <n-icon v-if="item.icon_id===4" style="opacity: 0.5; width: 40px; ">
+              <supportIcon/>
+            </n-icon>
+          </div>
         </div>
-
-        <n-hr v-if="!(index === (myActivePlans.length - 1))"></n-hr>
       </n-card>
 
 
-    </n-card>
-
-    <n-card
-        style="margin: 20px 0; padding-right: 20px"
-        :embedded="true"
-        hoverable
-        :title="t('userSummary.shortcut')"
-        content-style="padding: 0;"
-        :bordered="false"
-    >
-      <div
-          :class="themeStore.enableDarkMode?'help-day':'help-night'"
-          v-for="item in helpData"
-          :key="item.id"
-          style="display: flex; justify-content: space-between; width: 100%; height: auto; padding: 10px"
-          @click="router.push({ path: pathById[item.id].path})"
-      >
-        <div style="height: 100%; text-align: left; padding-left: 20px">
-          <p style="font-size: 16px;">{{ item.title }}</p>
-          <p style="font-size: 12px; margin-top: 5px; opacity: 0.5">{{ item.content }}</p>
-        </div>
-        <div
-            style="width: 40px; font-size: 30px; margin-right: 20px; display: flex; flex-direction: column; justify-content: center">
-          <n-icon v-if="item.icon_id===1" style="opacity: 0.5; width: 40px; ">
-            <bookIcon/>
-          </n-icon>
-          <n-icon v-if="item.icon_id===2" style="opacity: 0.5; width: 40px; ">
-            <keyIcon/>
-          </n-icon>
-          <n-icon v-if="item.icon_id===3" style="opacity: 0.5; width: 40px; ">
-            <buyIcon/>
-          </n-icon>
-          <n-icon v-if="item.icon_id===4" style="opacity: 0.5; width: 40px; ">
-            <supportIcon/>
-          </n-icon>
-        </div>
-      </div>
-    </n-card>
+    </div>
+  </transition>
 
 
-  </div>
 </template>
 
 <style scoped lang="less">

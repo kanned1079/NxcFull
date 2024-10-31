@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted} from 'vue'
+import {onMounted, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {RouterView, useRouter} from 'vue-router';
 import CommonHeader from "@/components/CommonHeader.vue";
@@ -14,12 +14,16 @@ const userInfoStore = useUserInfoStore();
 
 const router = useRouter();
 
+let interfaceAnimated = ref<boolean>(false)
+
 
 onMounted(() => {
   // themeStore.contentPath = '/admin/dashboard/summary'
   // themeStore.menuSelected = 'dashboard'
   console.log('新的dashboard', themeStore.contentPath)
   console.log('dashboard挂载')
+
+  interfaceAnimated.value = true
 
   // getAllNotices()
 
@@ -45,7 +49,8 @@ export default {
 
 <template>
 
-  <n-layout has-sider style="width: 100%; position: fixed; left: 0; top: 0; z-index: 1000">
+  <!--  <transition name="slide-fade">-->
+  <n-layout v-if="interfaceAnimated" has-sider style="width: 100%; position: fixed; left: 0; top: 0; z-index: 1000">
     <n-layout-sider
         v-show="!themeStore.menuCollapsed"
         content-style="padding: 0px;"
@@ -56,26 +61,33 @@ export default {
       <CommonAside></CommonAside>
     </n-layout-sider>
     <n-layout>
+      <!--        <transition name="slide-fade">-->
       <n-layout-header style="position: fixed; z-index: 1001;">
         <CommonHeader></CommonHeader>
       </n-layout-header>
-      <n-layout-content content-style="padding: 0" class="content">
-        <n-scrollbar style="max-height: 100vh">
+      <!--        </transition>-->
+
+<!--      <transition name="slide-fade">-->
+
+        <n-layout-content content-style="padding: 0" class="content">
+          <n-scrollbar style="max-height: 100vh">
 
 
-<!--          <n-config-provider>-->
+            <!--          <n-config-provider>-->
 
             <RouterView></RouterView>
 
-<!--          </n-config-provider>-->
+            <!--          </n-config-provider>-->
 
 
-          <div style="height: 3rem"></div>
-        </n-scrollbar>
-      </n-layout-content>
+            <div style="height: 3rem"></div>
+          </n-scrollbar>
+        </n-layout-content>
+<!--      </transition>-->
       <!--      <n-layout-footer>成府路</n-layout-footer>-->
     </n-layout>
   </n-layout>
+  <!--  </transition>-->
 
 
 </template>

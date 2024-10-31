@@ -301,6 +301,13 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 		return nil, fmt.Errorf("failed to update user info in redis: %v", err)
 	}
 
+	// 删除redis的key
+	redisCtx, cancel := context.WithTimeout(sysContext.Background(), 3*time.Second)
+	defer cancel()
+	if err := ClearUserKeysCache(redisCtx, user.Id); err != nil {
+		return nil, fmt.Errorf("failed to update keys info in redis: %v", err)
+	}
+
 	// 提交事务
 	if err := tx.Commit().Error; err != nil {
 		return nil, fmt.Errorf("failed to commit transaction: %v", err)

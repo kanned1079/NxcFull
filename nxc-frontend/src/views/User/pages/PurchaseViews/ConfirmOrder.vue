@@ -26,6 +26,9 @@ const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
 const router = useRouter();
 
+// let showAnimation = ref<boolean>(false)
+let animated = ref<boolean>(false)
+
 interface ConfirmOrder {
   code: number | null,
   order_id: string,
@@ -185,7 +188,7 @@ let placeOrder = async () => {
         })
       }
     } else if (data.code == 402) {
-        // 用户余额不足
+      // 用户余额不足
       message.warning(t('userConfirmOrder.balanceNotEnough'))
     } else {
       message.error(t('userConfirmOrder.orderErrorOccur') + data.msg)
@@ -201,10 +204,10 @@ let placeOrder = async () => {
 let cancelOrder = async () => {
   try {
     let {data} = await instance.delete('/api/user/v1/order', {
-        params: {
-          user_id: userInfoStore.thisUser.id,
-          order_id: confirmOrder.value.order_id,
-        }
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        order_id: confirmOrder.value.order_id,
+      }
     })
     if (data.code === 200) {
       console.log(data)
@@ -229,6 +232,9 @@ onMounted(() => {
 
   // queryOrderInfoAndStatus()
   // 开始轮询
+  // setTimeout(() => showAnimation.value = true, 0)
+  // showAnimation.value = true
+  animated.value = true
 })
 
 onBeforeMount(async () => {
@@ -249,89 +255,102 @@ export default {
 </script>
 
 <template>
-<!--  <div class="root" v-if="paymentStore.plan_id_selected != -1">-->
-    <div class="root">
-    <div class="root-layout">
-      <div class="l-part">
-        <GoodInfo :goodInfoData="goodInfoData"></GoodInfo>
-        <OrderInfo :orderData="orderData"></OrderInfo>
+  <!--  <div class="root" v-if="paymentStore.plan_id_selected != -1">-->
+  <transition name="slide-fade">
+    <div v-if="animated" class="root" >
+      <div class="root-layout">
+        <div class="l-part">
+          <GoodInfo :goodInfoData="goodInfoData"></GoodInfo>
+          <OrderInfo :orderData="orderData"></OrderInfo>
+          <n-card :hoverable :bordered="false" :embedded="true">
+            <n-button
+                class="change-plan-btn"
+                type="primary"
+                tertiary
+            >
+              {{ t('userConfirmOrder.switchPlan') }}
+            </n-button>
+            <n-button
+                @click="cancelOrder"
+                class="cancel-order-btn"
+                type="error"
+                text
+            >
+              <!--            取消订单-->
+              {{ t('userConfirmOrder.cancelOrder') }}
 
-<!--        <n-card-->
-<!--            class="good-info"-->
-<!--            :embedded="true"-->
-<!--            hoverable-->
-<!--            content-style="padding: 0"-->
-<!--            :bordered="false"-->
-<!--        >-->
-<!--          <n-p class="title">订单信息</n-p>-->
-<!--          <div class="good-info-item" v-for="item in orderData" :key="item.title">-->
-<!--            <p class="item-head">{{ item.title }}</p>-->
-<!--            <p class="item-content">{{ item.content }}</p>-->
-<!--          </div>-->
-<!--        </n-card>-->
+            </n-button>
+          </n-card>
+        </div>
 
-        <n-card :hoverable :bordered="false" :embedded="true">
-          <n-button
-              class="change-plan-btn"
-              type="primary"
-              tertiary
-          >
-            {{ t('userConfirmOrder.switchPlan') }}
-          </n-button>
-          <n-button
-              @click="cancelOrder"
-              class="cancel-order-btn"
-              type="error"
-              text
-          >
-<!--            取消订单-->
-            {{ t('userConfirmOrder.cancelOrder') }}
+        <div class="r-part">
+          <n-card style="color: white" class="r-part-btn" :bordered="false" :embedded="true" hoverable>
+            <p class="r-title">{{ t('userConfirmOrder.yourPrice') }}</p>
 
-          </n-button>
-        </n-card>
-      </div>
-
-      <div class="r-part">
-        <n-card style="color: white" class="r-part-btn" :bordered="false" :embedded="true" hoverable>
-          <p class="r-title">{{ t('userConfirmOrder.yourPrice') }}</p>
-
-          <div class="price-small">
-            <p class="summary">{{ confirmOrder.plan_name }} x {{ periodCode2Text }}</p>
-            <p class="price-small">{{ confirmOrder.price }} {{ appInfosStore.appCommonConfig.currency }}</p>
-          </div>
-          <n-hr></n-hr>
-          <div class="price-discount" v-if="confirmOrder.discount_amount != 0">
-            <p class="coupon-title">{{ t('userConfirmOrder.couponOffset') }}</p>
-            <div class="coupon-detail">
-              <p class="coupon-name">{{ confirmOrder.coupon_name }}</p>
-              <p class="discount">- {{ confirmOrder.discount_amount.toFixed(2) }}
-                {{ appInfosStore.appCommonConfig.currency }}</p>
+            <div class="price-small">
+              <p class="summary">{{ confirmOrder.plan_name }} x {{ periodCode2Text }}</p>
+              <p class="price-small">{{ confirmOrder.price }} {{ appInfosStore.appCommonConfig.currency }}</p>
             </div>
-            <n-hr v-if="confirmOrder.discount_amount != 0"></n-hr>
-          </div>
-          <p class="total-title">{{ t('userConfirmOrder.price') }}</p>
-          <p class="price-large">{{ confirmOrder.amount.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
-          <n-button
-              @click="placeOrder"
-              class="settleBtn"
-              type="primary"
-              :bordered="false"
-              size="large"
-          >
-            <n-icon style="margin-right: 5px">
-              <confirmIcon/>
-            </n-icon>
-<!--            提交-->
-            {{ t('userConfirmOrder.submit') }}
-          </n-button>
-        </n-card>
-      </div>
+            <n-hr></n-hr>
+            <div class="price-discount" v-if="confirmOrder.discount_amount != 0">
+              <p class="coupon-title">{{ t('userConfirmOrder.couponOffset') }}</p>
+              <div class="coupon-detail">
+                <p class="coupon-name">{{ confirmOrder.coupon_name }}</p>
+                <p class="discount">- {{ confirmOrder.discount_amount.toFixed(2) }}
+                  {{ appInfosStore.appCommonConfig.currency }}</p>
+              </div>
+              <n-hr v-if="confirmOrder.discount_amount != 0"></n-hr>
+            </div>
+            <p class="total-title">{{ t('userConfirmOrder.price') }}</p>
+            <p class="price-large">{{ confirmOrder.amount.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
+            <n-button
+                @click="placeOrder"
+                class="settleBtn"
+                type="primary"
+                :bordered="false"
+                size="large"
+            >
+              <n-icon style="margin-right: 5px">
+                <confirmIcon/>
+              </n-icon>
+              <!--            提交-->
+              {{ t('userConfirmOrder.submit') }}
+            </n-button>
+          </n-card>
+        </div>
 
+      </div>
     </div>
-  </div>
+  </transition>
+
 </template>
 
 <style scoped lang="less">
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.fade-slide-enter, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-slide-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .root {
   width: auto;
   margin: 20px;
@@ -378,8 +397,6 @@ export default {
 
         }
       }
-
-
 
 
     }

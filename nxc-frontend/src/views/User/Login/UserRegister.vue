@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, type ComputedRef, onMounted, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 // import useSiteInfo from "@/stores/siteInfo";
 // import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -8,7 +8,7 @@ import useThemeStore from "@/stores/useThemeStore";
 
 import type {NotificationType} from 'naive-ui'
 import {type FormInst, useMessage, useNotification} from 'naive-ui'
-import {  ChevronBackOutline as backIcon,} from "@vicons/ionicons5"
+import {ChevronBackOutline as backIcon,} from "@vicons/ionicons5"
 
 import authInstance from '@/axios/authInstance'
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -28,28 +28,34 @@ const router = useRouter();
 
 const formRef = ref<FormInst | null>(null)
 
-let bgColor = computed(() => themeStore.enableDarkMode?{
+let animated = ref<{
+  leftAnimated: boolean
+  rightAnimated: boolean
+}>({
+  leftAnimated: false,
+  rightAnimated: false
+})
+
+let bgColor = computed(() => themeStore.enableDarkMode ? {
   backgroundColor: 'rgba(40, 41, 41, 1)',
-}:{
+} : {
   backgroundColor: '#fff'
 })
 
-let coverBgColor = computed(() => themeStore.enableDarkMode?{
+let coverBgColor = computed(() => themeStore.enableDarkMode ? {
   backgroundColor: 'rgba(40, 40, 40, 0.2)',
-}:{
+} : {
   backgroundColor: 'rgba(255, 255, 255, 0.0)',
 })
 
-let placeholderBgColor = computed(() => themeStore.enableDarkMode?{
-}:{
+let placeholderBgColor = computed(() => themeStore.enableDarkMode ? {} : {
   backgroundColor: '#f2fafd',
   height: '45px',
 })
 
-let textLeftColor = computed(() => themeStore.enableDarkMode?{
+let textLeftColor = computed(() => themeStore.enableDarkMode ? {
   color: '#fff',
-}:{})
-
+} : {})
 
 
 let agreementChecked = ref<boolean>(false)  // 同意按钮是否被选中
@@ -112,7 +118,7 @@ let notifyErr = (type: NotificationType, title: any, msg: any) => {
   })
 }
 
-let notifyPass = (type: NotificationType, title: any , msg: any) => {
+let notifyPass = (type: NotificationType, title: any, msg: any) => {
   notification[type]({
     content: title,
     meta: msg,
@@ -248,6 +254,9 @@ let backgroundStyle = computed(() => ({
 onMounted(async () => {
   // await getUserIpAddress()
   console.log('挂载普通用户注册')
+
+  setTimeout(() => animated.value.leftAnimated = true, 100)
+  setTimeout(() => animated.value.rightAnimated = true, 150)
 })
 
 let handleValidateClick = async () => {
@@ -353,127 +362,150 @@ export default {
       <div class="l-content-color2"></div>
       <div class="l-content-color3"></div>
       <div class="l-content-color4"></div>
-      <div class="l-container">
-        <p :style="textLeftColor" class="title">{{ appInfosStore.appCommonConfig.app_name }}</p>
-        <p :style="textLeftColor" class="sub">{{ appInfosStore.appCommonConfig.app_description }}</p>
-      </div>
+      <transition name="slide-register-fade">
+        <div v-if="animated.leftAnimated" class="l-container">
+          <p :style="textLeftColor" class="title">{{ appInfosStore.appCommonConfig.app_name }}</p>
+          <p :style="textLeftColor" class="sub">{{ appInfosStore.appCommonConfig.app_description }}</p>
+        </div>
+      </transition>
+
     </div>
     <div class="r-content" :style="bgColor">
       <div class="r-content-color-cover"></div>
       <div class="r-content-color1"></div>
       <div class="r-content-color2"></div>
       <div class="r-content-color3"></div>
-      <n-card class="login-card" :embedded="false" :bordered="false">
-        <n-button class="back" text :bordered="false" @click="router.replace({path: '/welcome'})">
-          <n-icon style="margin-right: 5px" size="20"><backIcon/></n-icon>
-          {{ t('userRegister.backHomePage') }}
-        </n-button>
-        <p class="login-title">{{ t('userRegister.newAccount') }}</p>
+      <transition name="slide-register-fade">
+        <n-card v-if="animated.rightAnimated" class="login-card" :embedded="false" :bordered="false">
+          <n-button class="back" text :bordered="false" @click="router.replace({path: '/welcome'})">
+            <n-icon style="margin-right: 5px" size="20">
+              <backIcon/>
+            </n-icon>
+            {{ t('userRegister.backHomePage') }}
+          </n-button>
+          <p class="login-title">{{ t('userRegister.newAccount') }}</p>
 
-        <n-form
-            ref="formRef"
-            :model="formValue"
-            :rules="rules">
-          <n-form-item
-              path="user.email"
-              :show-feedback="false"
-          >
-            <n-input
-                v-model:value="formValue.user.email"
-                :placeholder="t('userRegister.email')"
-                size="large"
-                :bordered="false"
-                :style="placeholderBgColor"
+          <n-form
+              ref="formRef"
+              :model="formValue"
+              :rules="rules">
+            <n-form-item
+                path="user.email"
+                :show-feedback="false"
+            >
+              <n-input
+                  v-model:value="formValue.user.email"
+                  :placeholder="t('userRegister.email')"
+                  size="large"
+                  :bordered="false"
+                  :style="placeholderBgColor"
 
-            />
-          </n-form-item>
-          <n-form-item
-              path="user.verify_code"
-              :show-feedback="false"
-              v-if="appInfosStore.registerPageConfig.is_email_verify"
-          >
-            <n-input
-                v-model:value.number="formValue.user.verify_code"
-                :placeholder="t('userRegister.verifyCode')"
-                size="large"
-                class="input-general"
-                :bordered="false"
-                :style="placeholderBgColor"
+              />
+            </n-form-item>
+            <n-form-item
+                path="user.verify_code"
+                :show-feedback="false"
+                v-if="appInfosStore.registerPageConfig.is_email_verify"
+            >
+              <n-input
+                  v-model:value.number="formValue.user.verify_code"
+                  :placeholder="t('userRegister.verifyCode')"
+                  size="large"
+                  class="input-general"
+                  :bordered="false"
+                  :style="placeholderBgColor"
 
-            />
-            <n-button
-                :disabled="!enableSendCode"
-                secondary type="primary"
-                @click="sendVerifyCode"
-                style="margin-left: 12px;"
-                size="large">
-              {{ t('userRegister.sendVerifyCode') }}
-              {{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
-            </n-button>
-          </n-form-item>
-          <n-form-item
-              path="user.password"
-              :show-feedback="false"
-          >
-            <n-input
-                type="password"
-                v-model:value="formValue.user.password"
-                :placeholder="t('userRegister.pwd')"
-                size="large"
-                :bordered="false"
-                :style="placeholderBgColor"
+              />
+              <n-button
+                  :disabled="!enableSendCode"
+                  secondary type="primary"
+                  @click="sendVerifyCode"
+                  style="margin-left: 12px;"
+                  size="large">
+                {{ t('userRegister.sendVerifyCode') }}
+                {{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
+              </n-button>
+            </n-form-item>
+            <n-form-item
+                path="user.password"
+                :show-feedback="false"
+            >
+              <n-input
+                  type="password"
+                  v-model:value="formValue.user.password"
+                  :placeholder="t('userRegister.pwd')"
+                  size="large"
+                  :bordered="false"
+                  :style="placeholderBgColor"
 
-            />
-          </n-form-item>
-          <n-form-item
-              path="user.password_confirmation"
-              :show-feedback="false"
-          >
-            <n-input
-                type="password"
-                v-model:value="formValue.user.password_confirmation"
-                :placeholder="t('userRegister.pwdAgain')"
-                size="large"
-                class="input-general"
-                :bordered="false"
-                :style="placeholderBgColor"
+              />
+            </n-form-item>
+            <n-form-item
+                path="user.password_confirmation"
+                :show-feedback="false"
+            >
+              <n-input
+                  type="password"
+                  v-model:value="formValue.user.password_confirmation"
+                  :placeholder="t('userRegister.pwdAgain')"
+                  size="large"
+                  class="input-general"
+                  :bordered="false"
+                  :style="placeholderBgColor"
 
-            />
-          </n-form-item>
-          <n-form-item
-              path="user.invest_code"
-              :show-feedback="false"
-              v-if="appInfosStore.registerPageConfig.is_invite_force"
-          >
-            <n-input
-                v-model:value.number="formValue.user.invite_user_id"
-                :placeholder="t('userRegister.inviteCode')"
-                size="large"
-                class="input-general"
-                :bordered="false"
-                :style="placeholderBgColor"
+              />
+            </n-form-item>
+            <n-form-item
+                path="user.invest_code"
+                :show-feedback="false"
+                v-if="appInfosStore.registerPageConfig.is_invite_force"
+            >
+              <n-input
+                  v-model:value.number="formValue.user.invite_user_id"
+                  :placeholder="t('userRegister.inviteCode')"
+                  size="large"
+                  class="input-general"
+                  :bordered="false"
+                  :style="placeholderBgColor"
 
-            />
-          </n-form-item>
-        </n-form>
-        <n-form>
-          <n-form-item>
-            <n-checkbox v-model:checked="agreementChecked"></n-checkbox>
-            <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">{{ t('userRegister.agreement') }}</p>
-            <n-button text type="primary" style="font-weight: bold; opacity: 0.9; margin-left: 3px">{{ t('userRegister.terminalUserAgreement') }}
-            </n-button>
-          </n-form-item>
-        </n-form>
+              />
+            </n-form-item>
+          </n-form>
+          <n-form>
+            <n-form-item>
+              <n-checkbox v-model:checked="agreementChecked"></n-checkbox>
+              <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">{{ t('userRegister.agreement') }}</p>
+              <n-button text type="primary" style="font-weight: bold; opacity: 0.9; margin-left: 3px">
+                {{ t('userRegister.terminalUserAgreement') }}
+              </n-button>
+            </n-form-item>
+          </n-form>
 
-        <n-button :bordered="false" type="primary" class="login-btn" size="large" @click="handleValidateClick" :disabled="!regBtnEnabled">
-          {{ t('userRegister.reg') }}
-        </n-button>
-      </n-card>
+          <n-button :bordered="false" type="primary" class="login-btn" size="large" @click="handleValidateClick"
+                    :disabled="!regBtnEnabled">
+            {{ t('userRegister.reg') }}
+          </n-button>
+        </n-card>
+      </transition>
     </div>
   </div>
 </template>
 
 <style scoped lang="less">
+.slide-register-fade-enter-active {
+  transition: all 500ms ease;
+}
+
+.slide-register-fade-leave-active {
+  transition: all 500ms ease;
+}
+
+.slide-register-fade-enter-from,
+.slide-register-fade-leave-to {
+  transform: translateY(150px);
+  opacity: 0;
+}
+
 .root {
   height: 100vh;
   display: flex;
@@ -615,7 +647,6 @@ export default {
     }
 
 
-
     .login-title {
       font-size: 2rem;
       font-weight: 500;
@@ -633,6 +664,7 @@ export default {
       margin-bottom: 20px;
       transition: ease 300ms;
     }
+
     .login-btn:hover {
       transform: translateX(0) translateY(-3px);
     }

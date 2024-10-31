@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
-import {h, onBeforeMount, onMounted, ref, computed} from "vue";
+import {computed, h, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -14,6 +14,8 @@ const router = useRouter()
 const paymentStore = usePaymentStore()
 
 let pageCount = ref(10)
+
+let animated = ref<boolean>(false)
 
 let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
@@ -112,7 +114,7 @@ const columns = [
         }
       });
 
-      return h(NTag, { bordered: false }, { default: () => periodLabel.value });
+      return h(NTag, {bordered: false}, {default: () => periodLabel.value});
     }
   },
   {
@@ -218,27 +220,41 @@ let cancelOrder = async (row: OrderList) => {
 
 
 let getAllMyOrders = async () => {
-  orderList.value = []
-  let {data} = await instance.get('api/user/v1/orders', {
-    params: {
-      user_id: userInfoStore.thisUser.id,
-      page: dataSize.value.page,
-      size: dataSize.value.pageSize,
+  try {
+    let {data} = await instance.get('api/user/v1/orders', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        page: dataSize.value.page,
+        size: dataSize.value.pageSize,
+      }
+    })
+    if (data.code === 200) {
+      animated.value = true
+      orderList.value = []
+      console.log('我的所有订单', data)
+      pageCount.value = data.page_count
+      console.log('add')
+      data.order_list.forEach((order: OrderList) => orderList.value.push(order))
     }
-  })
-  console.log('我的所有订单', data)
-  pageCount.value = data.page_count
-  data.order_list.forEach((order: OrderList) => orderList.value.push(order))
+
+  } catch (error: any) {
+    console.log(error)
+  }
+
 }
 
 
-onBeforeMount(() => {
-  getAllMyOrders()
-})
+// onBeforeMount(() => {
+//   getAllMyOrders()
+// })
 
-onMounted(() => {
+onMounted(async () => {
   themeStore.userPath = '/dashboard/orders'
   themeStore.menuSelected = 'user-orders'
+
+  await getAllMyOrders()
+
+  animated.value = true
 })
 
 </script>
@@ -250,38 +266,44 @@ export default {
 </script>
 
 <template>
-  <div class="root">
+  <div style="padding: 20px 20px 0 20px">
     <n-card :bordered="false" :embedded="true" hoverable :title="t('userOrders.myOrders')"></n-card>
-
-    <n-card class="order-table" :bordered="false" :embedded="true" hoverable content-style="padding: 0;">
-      <n-data-table
-          class="table"
-          :columns="columns"
-          :data="orderList"
-          :pagination="false"
-          :bordered="true"
-          style=""
-          :scroll-x="800"
-      />
-    </n-card>
-
-    <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-      <n-pagination
-          size="medium"
-          v-model:page.number="dataSize.page"
-          :page-count="pageCount"
-          @update:page="getAllMyOrders"
-      />
-      <n-select
-          style="width: 160px; margin-left: 20px"
-          v-model:value.number="dataSize.pageSize"
-          size="small"
-          :options="dataCountOptions"
-          :remote="true"
-          @update:value="dataSize.page = 1; getAllMyOrders()"
-      />
-    </div>
   </div>
+
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+
+      <n-card class="order-table" :bordered="false" :embedded="true" hoverable content-style="padding: 0;">
+        <n-data-table
+            class="table"
+            :columns="columns"
+            :data="orderList"
+            :pagination="false"
+            :bordered="true"
+            style=""
+            :scroll-x="800"
+        />
+      </n-card>
+
+      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSize.page"
+            :page-count="pageCount"
+            @update:page="animated=false; getAllMyOrders()"
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSize.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="animated=false; dataSize.page = 1; getAllMyOrders()"
+        />
+      </div>
+    </div>
+  </transition>
+
 
 </template>
 

@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TicketHandleService_GetUserTicketsByUserId_FullMethodName = "/ticketHandle.ticketHandleService/GetUserTicketsByUserId"
-	TicketHandleService_CloseTicketByTicketId_FullMethodName  = "/ticketHandle.ticketHandleService/CloseTicketByTicketId"
-	TicketHandleService_GetChatContent_FullMethodName         = "/ticketHandle.ticketHandleService/GetChatContent"
+	TicketHandleService_GetUserTicketsByUserId_FullMethodName = "/ticketHandle.TicketHandleService/GetUserTicketsByUserId"
+	TicketHandleService_CloseTicketByTicketId_FullMethodName  = "/ticketHandle.TicketHandleService/CloseTicketByTicketId"
+	TicketHandleService_GetChatContent_FullMethodName         = "/ticketHandle.TicketHandleService/GetChatContent"
+	TicketHandleService_GetAllTicket_FullMethodName           = "/ticketHandle.TicketHandleService/GetAllTicket"
 )
 
 // TicketHandleServiceClient is the client API for TicketHandleService service.
@@ -32,8 +33,10 @@ type TicketHandleServiceClient interface {
 	GetUserTicketsByUserId(ctx context.Context, in *GetUserTicketsByUserIdRequest, opts ...grpc.CallOption) (*GetUserTicketsByUserIdResponse, error)
 	// 关闭对应id的工单 用户和管理员都可请求
 	CloseTicketByTicketId(ctx context.Context, in *CloseTicketByTicketIdRequest, opts ...grpc.CallOption) (*CloseTicketByTicketIdResponse, error)
-	// 拉取最新的对话记录
+	// 拉取最新的对话记录 用户和管理员都可请求
 	GetChatContent(ctx context.Context, in *GetChatContentRequest, opts ...grpc.CallOption) (*GetChatContentResponse, error)
+	// 获取所有工单 分为活跃的和所有工单 管理员的请求
+	GetAllTicket(ctx context.Context, in *GetAllTicketRequest, opts ...grpc.CallOption) (*GetAllTicketResponse, error)
 }
 
 type ticketHandleServiceClient struct {
@@ -74,6 +77,16 @@ func (c *ticketHandleServiceClient) GetChatContent(ctx context.Context, in *GetC
 	return out, nil
 }
 
+func (c *ticketHandleServiceClient) GetAllTicket(ctx context.Context, in *GetAllTicketRequest, opts ...grpc.CallOption) (*GetAllTicketResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllTicketResponse)
+	err := c.cc.Invoke(ctx, TicketHandleService_GetAllTicket_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TicketHandleServiceServer is the server API for TicketHandleService service.
 // All implementations must embed UnimplementedTicketHandleServiceServer
 // for forward compatibility.
@@ -82,8 +95,10 @@ type TicketHandleServiceServer interface {
 	GetUserTicketsByUserId(context.Context, *GetUserTicketsByUserIdRequest) (*GetUserTicketsByUserIdResponse, error)
 	// 关闭对应id的工单 用户和管理员都可请求
 	CloseTicketByTicketId(context.Context, *CloseTicketByTicketIdRequest) (*CloseTicketByTicketIdResponse, error)
-	// 拉取最新的对话记录
+	// 拉取最新的对话记录 用户和管理员都可请求
 	GetChatContent(context.Context, *GetChatContentRequest) (*GetChatContentResponse, error)
+	// 获取所有工单 分为活跃的和所有工单 管理员的请求
+	GetAllTicket(context.Context, *GetAllTicketRequest) (*GetAllTicketResponse, error)
 	mustEmbedUnimplementedTicketHandleServiceServer()
 }
 
@@ -102,6 +117,9 @@ func (UnimplementedTicketHandleServiceServer) CloseTicketByTicketId(context.Cont
 }
 func (UnimplementedTicketHandleServiceServer) GetChatContent(context.Context, *GetChatContentRequest) (*GetChatContentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetChatContent not implemented")
+}
+func (UnimplementedTicketHandleServiceServer) GetAllTicket(context.Context, *GetAllTicketRequest) (*GetAllTicketResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllTicket not implemented")
 }
 func (UnimplementedTicketHandleServiceServer) mustEmbedUnimplementedTicketHandleServiceServer() {}
 func (UnimplementedTicketHandleServiceServer) testEmbeddedByValue()                             {}
@@ -178,11 +196,29 @@ func _TicketHandleService_GetChatContent_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TicketHandleService_GetAllTicket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllTicketRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TicketHandleServiceServer).GetAllTicket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TicketHandleService_GetAllTicket_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TicketHandleServiceServer).GetAllTicket(ctx, req.(*GetAllTicketRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TicketHandleService_ServiceDesc is the grpc.ServiceDesc for TicketHandleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TicketHandleService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "ticketHandle.ticketHandleService",
+	ServiceName: "ticketHandle.TicketHandleService",
 	HandlerType: (*TicketHandleServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -196,6 +232,10 @@ var TicketHandleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetChatContent",
 			Handler:    _TicketHandleService_GetChatContent_Handler,
+		},
+		{
+			MethodName: "GetAllTicket",
+			Handler:    _TicketHandleService_GetAllTicket_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

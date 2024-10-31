@@ -133,7 +133,6 @@ let getAllCoupons = async () => {
   // 这里是使用get方法 获取所有的优惠券列表
   // 请求地址 /admin/v1/coupon/fetch
   try {
-    couponList.value = []
     let {data} = await instance.get('http://localhost:8081/api/admin/v1/coupon', {
       params: {
         page: dataSize.value.page,
@@ -141,6 +140,8 @@ let getAllCoupons = async () => {
       }
     });
     if (data.code === 200) {
+      couponList.value = []
+
       // couponList.value = data.coupons;
       data.coupon_list.forEach((item: Coupon, index: number) => {
         couponList.value.push(item)

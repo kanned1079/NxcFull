@@ -71,3 +71,79 @@ func (s *TicketHandleServices) GetChatContent(context context.Context, request *
 		Content: chatHistoryJson,
 	}, nil
 }
+
+func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb.GetAllTicketRequest) (*pb.GetAllTicketResponse, error) {
+	// 初始化变量
+	var err error
+	var tickets []model.Ticket
+	var activeTickets []model.Ticket
+	var ticketsJson, activeTicketsJson json.RawMessage
+
+	// 计算分页的起始位置
+	offset := (request.Page - 1) * request.Size
+	limit := request.Size
+
+	// 查询状态为 204 的工单（所有工单）并分页
+	if result := dao.Db.Model(&model.Ticket{}).
+		Where("status = ?", 204).
+		Order("created_at DESC").
+		Offset(int(offset)).
+		Limit(int(limit)).
+		Find(&tickets); result.Error != nil {
+		log.Println(result.Error)
+		return &pb.GetAllTicketResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查询失败：" + result.Error.Error(),
+		}, nil
+	}
+
+	// 查询所有活跃的工单（status != 204，不分页）
+	if result := dao.Db.Model(&model.Ticket{}).
+		Where("status != ?", 204).
+		Order("created_at DESC").
+		Find(&activeTickets); result.Error != nil {
+		log.Println(result.Error)
+		return &pb.GetAllTicketResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查询失败：" + result.Error.Error(),
+		}, nil
+	}
+
+	// 计算所有工单总数以进行页数计算
+	var totalTickets int64
+	if result := dao.Db.Model(&model.Ticket{}).
+		Where("status = ?", 204).
+		Count(&totalTickets); result.Error != nil {
+		log.Println("无法计算总页数：", result.Error)
+		return &pb.GetAllTicketResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "无法计算总页数：" + result.Error.Error(),
+		}, nil
+	}
+	pageCount := int((totalTickets + int64(request.Size) - 1) / int64(request.Size))
+
+	// 序列化 tickets 和 activeTickets
+	if ticketsJson, err = json.Marshal(tickets); err != nil {
+		log.Println("tickets 序列化失败")
+		return &pb.GetAllTicketResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "序列化失败：" + err.Error(),
+		}, nil
+	}
+	if activeTicketsJson, err = json.Marshal(activeTickets); err != nil {
+		log.Println("activeTickets 序列化失败")
+		return &pb.GetAllTicketResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "序列化失败：" + err.Error(),
+		}, nil
+	}
+
+	// 返回结果
+	return &pb.GetAllTicketResponse{
+		Code:           http.StatusOK,
+		Msg:            "获取成功",
+		Tickets:        ticketsJson,
+		PendingTickets: activeTicketsJson,
+		PageCount:      int64(pageCount), // 设置总页数
+	}, nil
+}

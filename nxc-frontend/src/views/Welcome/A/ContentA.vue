@@ -4,15 +4,30 @@ import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import TreeFront from "./assets/TreeFront.svg";
 import TreeMedium from "./assets/TreeMedium.svg";
-import {useRouter} from "vue-router";
 import Sun from "./assets/Sun.svg";
+import {useRouter} from "vue-router";
+
 import {
+  ChevronForward as userIcon,
   FileTrayFullOutline as mgrIcon,
   GlobeOutline as safeIcon,
   LockClosedOutline as lockIcon,
   SparklesOutline as fastIcon,
-  ChevronForward as userIcon,
 } from "@vicons/ionicons5";
+
+let animated = ref<{
+  treeFrontAnimate: boolean
+  treeMedAnimate: boolean
+  sunAnimate: boolean
+  appNameAnimate: boolean
+  appDescription: boolean
+}>({
+  treeFrontAnimate: false,
+  treeMedAnimate: false,
+  sunAnimate: false,
+  appNameAnimate: false,
+  appDescription: false
+})
 
 const {t} = useI18n();
 const router = useRouter();
@@ -81,20 +96,25 @@ let onScrollFunction = () => {
 
 
 onMounted(() => {
-  // 监听 lay-1 的滚动事件
-  if (lay1Ref.value) {
-    lay1Ref.value.addEventListener('scroll', onScrollFunction, true);
-  }
-  // 监听窗口滚动事件，自动触发滚动
-  window.addEventListener('scroll', onScrollFunction, true);
+  // // 监听 lay-1 的滚动事件
+  // if (lay1Ref.value) {
+  //   lay1Ref.value.addEventListener('scroll', onScrollFunction, true);
+  // }
+  // // 监听窗口滚动事件，自动触发滚动
+  // window.addEventListener('scroll', onScrollFunction, true);
+  setTimeout(() => animated.value.treeFrontAnimate = true, 300)
+  setTimeout(() => animated.value.treeMedAnimate = true, 400)
+  setTimeout(() => animated.value.sunAnimate = true, 500)
+  setTimeout(() => animated.value.appNameAnimate = true, 450)
+  setTimeout(() => animated.value.appDescription = true, 700)
 });
 
 onBeforeUnmount(() => {
-  // 移除 lay-1 的滚动事件监听器
-  if (lay1Ref.value) {
-    lay1Ref.value.removeEventListener('scroll', onScrollFunction, true);
-  }
-  window.removeEventListener('scroll', onScrollFunction, true);
+//   // 移除 lay-1 的滚动事件监听器
+//   if (lay1Ref.value) {
+//     lay1Ref.value.removeEventListener('scroll', onScrollFunction, true);
+//   }
+//   window.removeEventListener('scroll', onScrollFunction, true);
 });
 </script>
 
@@ -108,33 +128,54 @@ export default {
   <div class="root">
     <n-scrollbar style="scrollbar-width: none" content-style="width: 0">
       <div class="lay-1" ref="lay1Ref">
-        <div class="image-wrapper img1">
-          <TreeFront/>
-        </div>
-        <div class="image-wrapper img2">
-          <TreeMedium/>
-        </div>
-        <div class="image-wrapper img3">
-          <Sun/>
-        </div>
-        <!-- 引入悬浮左侧的介绍内容 -->
-        <div class="intro">
-          <div class="web-name">
-            <p class="title">{{ t('welcome.A.welcomeTo') }}</p>
-            <p class="app-name">{{ appInfosStore.appCommonConfig.app_name }}</p>
+        <transition name="slide2-fade">
+          <div v-if="animated.treeFrontAnimate" class="image-wrapper img1">
+            <TreeFront/>
           </div>
-          <p class="desc">
-            {{ t('welcome.A.welcomeToSub') }}
-          </p>
-          <n-button
-              @click="router.push({path: '/dashboard/summary'})"
-              size="large"
-              class="btn-start"
-              text>
-            {{ t('welcome.A.startingUse') }}
-            <n-icon style="margin-left: 12px" size="18"><userIcon/></n-icon>
-          </n-button>
-        </div>
+        </transition>
+
+        <transition name="slide2-fade">
+          <div v-if="animated.treeMedAnimate" class="image-wrapper img2">
+            <TreeMedium/>
+          </div>
+        </transition>
+
+        <transition name="slide2-fade">
+          <div v-if="animated.sunAnimate" class="image-wrapper img3">
+            <Sun/>
+          </div>
+        </transition>
+
+
+        <!--        <div class="image-wrapper img2">-->
+        <!--          <TreeMedium/>-->
+        <!--        </div>-->
+        <!--        <div class="image-wrapper img3">-->
+        <!--          <Sun/>-->
+        <!--        </div>-->
+        <!-- 引入悬浮左侧的介绍内容 -->
+        <transition name="slide2-fade">
+          <div v-if="animated.appNameAnimate" class="intro">
+            <div v-if="animated.appNameAnimate" class="web-name">
+              <p class="title">{{ t('welcome.A.welcomeTo') }}</p>
+              <p class="app-name">{{ appInfosStore.appCommonConfig.app_name }}</p>
+            </div>
+            <p class="desc">
+              {{ t('welcome.A.welcomeToSub') }}
+            </p>
+            <n-button
+                @click="router.push({path: '/dashboard/summary'})"
+                size="large"
+                class="btn-start"
+                text>
+              {{ t('welcome.A.startingUse') }}
+              <n-icon style="margin-left: 12px" size="18">
+                <userIcon/>
+              </n-icon>
+            </n-button>
+          </div>
+        </transition>
+
 
       </div>
 
@@ -179,6 +220,21 @@ export default {
 </template>
 
 <style scoped lang="less">
+
+.slide2-fade-enter-active {
+  transition: all 500ms ease;
+}
+
+.slide2-fade-leave-active {
+  transition: all 500ms ease;
+}
+
+.slide2-fade-enter-from,
+.slide2-fade-leave-to {
+  transform: translateY(150px);
+  opacity: 0;
+}
+
 .root {
   height: 100vh;
 }
@@ -264,6 +320,7 @@ export default {
       box-shadow: rgba(29, 50, 77, 0.2) 5px 5px 20px 0;
       transition: ease 300ms;
     }
+
     .btn-start:hover {
       box-shadow: rgba(29, 50, 77, 0.5) 5px 5px 30px 0;
 

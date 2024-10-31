@@ -79,6 +79,21 @@ onBeforeUnmount(() => {
 
 
 <style lang="less">
+
+.slide-fade-enter-active {
+  transition: all 250ms ease;
+}
+
+.slide-fade-leave-active {
+  transition: all 350ms ease;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
 * {
   padding: 0;
   margin: 0;

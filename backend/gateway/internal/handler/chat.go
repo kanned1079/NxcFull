@@ -174,15 +174,19 @@ func HandleChatWs(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upgrade to WebSocket"})
 		return
 	}
-	defer conn.Close()
-
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.Println("websocket连接关闭失败" + err.Error())
+		}
+	}()
 	// 结束信道
 	done := make(chan struct{})
 	defer close(done)
 
 	// 定时消息发送的 goroutine
 	go func() {
-		ticker := time.NewTicker(1 * time.Second)
+		ticker := time.NewTicker(300 * time.Millisecond)
+		// 修改推送时间为300ms
 		defer ticker.Stop()
 		for {
 			select {

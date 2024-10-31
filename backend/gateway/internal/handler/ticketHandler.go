@@ -161,6 +161,59 @@ func HandleCloseTicket(context *gin.Context) {
 	})
 }
 
-func HandleGetChatContent(context *gin.Context) {
+//func HandleGetChatContent(context *gin.Context) {
+//
+//}
 
+func HandleGetAllTickets(context *gin.Context) {
+	err, page, size := getPage2Size(context)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.TicketHandleClient.GetAllTicket(sysContext.Background(), &ticketPb.GetAllTicketRequest{
+		Size: size,
+		Page: page,
+	})
+	if err = failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var ticketsMap []map[string]any
+	var activeTicketMap []map[string]any
+	if err = json.Unmarshal(resp.Tickets, &ticketsMap); err != nil {
+		log.Println(err)
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	if err = json.Unmarshal(resp.PendingTickets, &activeTicketMap); err != nil {
+		log.Println(err)
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":            resp.Code,
+		"msg":             resp.Msg,
+		"tickets":         ticketsMap,
+		"pending_tickets": activeTicketMap,
+		"page_count":      resp.PageCount,
+	})
+}
+
+func getPage2Size(context *gin.Context) (err error, page int64, size int64) {
+	page, err = strconv.ParseInt(context.Query("page"), 10, 64)
+	size, err = strconv.ParseInt(context.Query("size"), 10, 64)
+	return
 }

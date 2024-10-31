@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, ref} from "vue"
+import {onBeforeMount, ref, onMounted} from "vue"
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
@@ -23,6 +23,9 @@ const themeStore = useThemeStore();
 const showModal = ref<boolean>(false)
 const keyIndex = ref<number>(0)
 
+let showSkeleton = ref<boolean>(false)
+
+let animated = ref<boolean>(false)
 
 interface Key {
   order_id: number;
@@ -43,17 +46,19 @@ let myKeys = ref<Key[]>([])
 
 // getAllMyKeys 获取所有用户的密钥
 let getAllMyKeys = async () => {
-  myKeys.value = []
+  showSkeleton.value = true
   try {
     let {data} = await instance.get('/api/user/v1/keys', {
       params: {
         user_id: userInfoStore.thisUser.id,
         page: 1,
-        size: 100,
+        size: 300,
       }
     })
     if (data.code === 200) {
-      console.log(data)
+      // console.log(data)
+      myKeys.value = []
+      showSkeleton.value = false
       data.my_keys.forEach((key: Key) => myKeys.value.push(key))
       if (myKeys.value.length === 0) {
         message.info(t('userKeys.noKeys'))
@@ -87,10 +92,18 @@ const copyText = async (key: string, event: MouseEvent) => {
 };
 
 onBeforeMount(() => {
+
+
+})
+
+onMounted(async () => {
   themeStore.userPath = '/dashboard/keys'
   themeStore.menuSelected = 'user-keys'
-  getAllMyKeys()
+  await getAllMyKeys()
+  animated.value = true
 })
+
+
 
 </script>
 
@@ -101,25 +114,39 @@ export default {
 </script>
 
 <template>
-  <div class="root">
+  <div style="padding: 20px 20px 0 20px">
     <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">
     </n-card>
+  </div>
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+<!--      <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">-->
+<!--      </n-card>-->
 
-    <n-card
-        @click="showModal = true; keyIndex = index"
-        class="key-card"
-        :embedded="true"
-        hoverable
-        :bordered="false"
-        content-style="padding: 0;"
-        v-for="(item, index) in myKeys"
-        :key="item.key_id"
-    >
+      <!--    <n-skeleton v-if="showSkeleton" style="margin-top: 20px" text :repeat="10" />-->
+      <!--    <n-skeleton text style="width: 60%" />-->
+
+      <n-card style="margin-top: 20px" v-if="myKeys.length === 0">
+        <n-result status="404" title="无结果" description="找不到可用的密钥，请先购买订阅。">
+
+        </n-result>
+      </n-card>
+
+      <n-card
+          @click="showModal = true; keyIndex = index"
+          class="key-card"
+          :embedded="true"
+          hoverable
+          :bordered="false"
+          content-style="padding: 0;"
+          v-for="(item, index) in myKeys"
+          :key="item.key_id"
+      >
 
         <div class="key-item">
           <div class="l-part">
             <p class="plan-name">{{ item.plan_name }}</p>
-<!--                      <p class="key-id">{{ encodeToBase64(item.key) }}</p>-->
+            <!--                      <p class="key-id">{{ encodeToBase64(item.key) }}</p>-->
             <n-popover trigger="hover" placement="top-end" :show-arrow="false">
               <template #trigger>
                 <!--              <n-button>悬浮</n-button>-->
@@ -148,7 +175,7 @@ export default {
 
                 </n-button>
               </template>
-              <span>{{ t('userKeys.hoverClickMention') }}</span>
+              <span>{{ copySuccess?t('userKeys.hoverCopiedSuccessMention'):t('userKeys.hoverClickMention') }}</span>
             </n-popover>
             <div style="display: flex; flex-direction: row">
               <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_active?'success':'error'">
@@ -172,12 +199,15 @@ export default {
         </div>
 
 
-<!--      </n-watermark>-->
+        <!--      </n-watermark>-->
 
 
 
-    </n-card>
-  </div>
+      </n-card>
+    </div>
+  </transition>
+
+
 
   <n-modal v-model:show="showModal">
     <n-card
@@ -239,6 +269,7 @@ export default {
 </template>
 
 <style scoped lang="less">
+
 .root {
   padding: 20px;
 

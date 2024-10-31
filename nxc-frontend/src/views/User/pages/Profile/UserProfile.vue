@@ -19,6 +19,8 @@ interface ModelType {
 
 const message = useMessage()
 
+let animated = ref<boolean>(false)
+
 const {t} = useI18n()
 const formRef = ref<FormInst | null>(null)
 // const message = useMessage()
@@ -171,10 +173,10 @@ let handleTest2FA = async () => {
 let handleCancelSetup2FA = async () => {
   try {
     let {data} = await instance.delete('/api/user/v1/auth/2fa/setup/cancel', {
-    params: {
-      // id: userInfoStore.thisUser.id,
-      email: userInfoStore.thisUser.email,
-    }
+      params: {
+        // id: userInfoStore.thisUser.id,
+        email: userInfoStore.thisUser.email,
+      }
     })
     if (data.code === 200) {
       console.log('取消2fa成功', data)
@@ -262,8 +264,10 @@ onMounted(async () => {
   //
   let isUpdated = await userInfoStore.updateUserInfo()
   console.log(isUpdated)
-  !isUpdated?notify('error', '失败', '个人信息更新失败以下当前数据可能不是最新的'):null
+  !isUpdated ? notify('error', '失败', '个人信息更新失败以下当前数据可能不是最新的') : null
   await handleGet2FAStatus()
+
+  animated.value = true
 
 })
 
@@ -276,122 +280,127 @@ export default {
 </script>
 
 <template>
-  <div class="root">
-    <n-card
-        class="wallet-card"
-        :embedded="true"
-        hoverable
-        content-style="padding: 0"
-        :bordered="false"
-    >
-      <div class="wallet-header">
-        <p class="wallet-title">{{ t('userProfile.myWallet') }}</p>
-        <n-icon size="30" style="opacity: 0.1">
-          <walletIcon/>
-        </n-icon>
-      </div>
-      <div class="wallet-content">
-        <p class="balance">{{ userInfoStore.thisUser.balance }}</p>
-        <p class="unit">{{ appInfosStore.appCommonConfig.currency }}</p>
-      </div>
-      <div class="wallet-bottom">
-        <p class="sub">{{ t('userProfile.walletSub') }}</p>
-      </div>
-    </n-card>
-
-    <n-card
-        class="password-alert-card"
-        :embedded="true"
-        hoverable
-        content-style="padding: 0"
-        :bordered="false"
-    >
-      <n-p class="title">{{ t('userProfile.alertPwd') }}</n-p>
-      <div class="form">
-        <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
-          <n-form-item path="old_password" :label="t('userProfile.oldPwd')">
-            <n-input v-model:value="modelRef.old_password" @keydown.enter.prevent
-                     :placeholder="t('userProfile.oldPwdSub')"/>
-          </n-form-item>
-          <n-form-item path="new_password" :label="t('userProfile.newPwd')">
-            <n-input v-model:value="modelRef.new_password" @keydown.enter.prevent
-                     :placeholder="t('userProfile.newPwdSub')"/>
-          </n-form-item>
-          <n-form-item path="new_password_again" :label="t('userProfile.newPwdAgain')">
-            <n-input v-model:value="modelRef.new_password_again" @keydown.enter.prevent
-                     :placeholder="t('userProfile.newPwdAgainSub')"/>
-          </n-form-item>
-        </n-form>
-        <n-button class="alert-btn" type="primary" @click="saveNewPassword" :bordered="false">
-          {{ t('userProfile.saveBtn') }}
-        </n-button>
-      </div>
-    </n-card>
-
-    <n-card
-        class="notify-card"
-        :embedded="true"
-        hoverable
-        content-style="padding: 0"
-        :bordered="false"
-    >
-      <n-p class="title">{{ t('userProfile.notify') }}</n-p>
-      <div class="form">
-        <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
-          <n-form-item path="old_password" :label="t('userProfile.enableNotify')">
-            <n-switch/>
-          </n-form-item>
-        </n-form>
-      </div>
-
-    </n-card>
-
-    <n-card
-        class="two-fa-card"
-        :embedded="true"
-        hoverable
-        content-style="padding: 0"
-        :bordered="false"
-    >
-      <n-p class="title">两步验证2FA</n-p>
-      <n-alert :bordered="false" style="margin: 20px" type="info">
-        雙重驗證（縮寫為
-        2FA）是一個驗證過程，要求透過兩個不同的驗證因素來確立身分。簡而言之，這意味著使用者必須先以兩種不同的方式證明其身分，然後才會被授予存取權限。2FA
-        是多重要素驗證的一種形式。
-      </n-alert>
-      <div class="form">
-        <div style="display: flex; flex-direction: row; margin-bottom: 20px; align-items: center">
-          <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">两步验证状态</p>
-          <n-tag v-if="twoFAEnabled" type="success"> 已启用</n-tag>
-          <n-tag v-else type="default"> 未启用</n-tag>
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card
+          class="wallet-card"
+          :embedded="true"
+          hoverable
+          content-style="padding: 0"
+          :bordered="false"
+      >
+        <div class="wallet-header">
+          <p class="wallet-title">{{ t('userProfile.myWallet') }}</p>
+          <n-icon size="30" style="opacity: 0.1">
+            <walletIcon/>
+          </n-icon>
         </div>
-        <n-button :disabled="twoFAEnabled" @click="handleSetup2FA" :bordered="false" style="margin-bottom: 20px" type="primary">
-          设置两步验证
-        </n-button>
-        <n-button :disabled="!twoFAEnabled" @click="handleDisable2FA" :bordered="false" style="margin-bottom: 20px; margin-left: 10px" type="primary" secondary>
-          关闭两步验证
-        </n-button>
+        <div class="wallet-content">
+          <p class="balance">{{ userInfoStore.thisUser.balance }}</p>
+          <p class="unit">{{ appInfosStore.appCommonConfig.currency }}</p>
+        </div>
+        <div class="wallet-bottom">
+          <p class="sub">{{ t('userProfile.walletSub') }}</p>
+        </div>
+      </n-card>
 
-      </div>
+      <n-card
+          class="password-alert-card"
+          :embedded="true"
+          hoverable
+          content-style="padding: 0"
+          :bordered="false"
+      >
+        <n-p class="title">{{ t('userProfile.alertPwd') }}</n-p>
+        <div class="form">
+          <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
+            <n-form-item path="old_password" :label="t('userProfile.oldPwd')">
+              <n-input v-model:value="modelRef.old_password" @keydown.enter.prevent
+                       :placeholder="t('userProfile.oldPwdSub')"/>
+            </n-form-item>
+            <n-form-item path="new_password" :label="t('userProfile.newPwd')">
+              <n-input v-model:value="modelRef.new_password" @keydown.enter.prevent
+                       :placeholder="t('userProfile.newPwdSub')"/>
+            </n-form-item>
+            <n-form-item path="new_password_again" :label="t('userProfile.newPwdAgain')">
+              <n-input v-model:value="modelRef.new_password_again" @keydown.enter.prevent
+                       :placeholder="t('userProfile.newPwdAgainSub')"/>
+            </n-form-item>
+          </n-form>
+          <n-button class="alert-btn" type="primary" @click="saveNewPassword" :bordered="false">
+            {{ t('userProfile.saveBtn') }}
+          </n-button>
+        </div>
+      </n-card>
 
-    </n-card>
+      <n-card
+          class="notify-card"
+          :embedded="true"
+          hoverable
+          content-style="padding: 0"
+          :bordered="false"
+      >
+        <n-p class="title">{{ t('userProfile.notify') }}</n-p>
+        <div class="form">
+          <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
+            <n-form-item path="old_password" :label="t('userProfile.enableNotify')">
+              <n-switch/>
+            </n-form-item>
+          </n-form>
+        </div>
 
-    <n-card
-        class="del-card"
-        :embedded="true"
-        hoverable
-        content-style="padding: 0"
-        :bordered="false"
-    >
-      <n-p class="title">{{ t('userProfile.deleteAccount') }}</n-p>
-      <div class="form">
-        <n-alert type="warning" :bordered="false">
-          {{ t('userProfile.deleteAccountSub') }}
+      </n-card>
+
+      <n-card
+          class="two-fa-card"
+          :embedded="true"
+          hoverable
+          content-style="padding: 0"
+          :bordered="false"
+      >
+        <n-p class="title">两步验证2FA</n-p>
+        <n-alert :bordered="false" style="margin: 20px" type="info">
+          雙重驗證（縮寫為
+          2FA）是一個驗證過程，要求透過兩個不同的驗證因素來確立身分。簡而言之，這意味著使用者必須先以兩種不同的方式證明其身分，然後才會被授予存取權限。2FA
+          是多重要素驗證的一種形式。
         </n-alert>
-        <n-button strong style="margin-top: 20px;" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
-      </div>
-    </n-card>
-  </div>
+        <div class="form">
+          <div style="display: flex; flex-direction: row; margin-bottom: 20px; align-items: center">
+            <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">两步验证状态</p>
+            <n-tag v-if="twoFAEnabled" type="success"> 已启用</n-tag>
+            <n-tag v-else type="default"> 未启用</n-tag>
+          </div>
+          <n-button :disabled="twoFAEnabled" @click="handleSetup2FA" :bordered="false" style="margin-bottom: 20px"
+                    type="primary">
+            设置两步验证
+          </n-button>
+          <n-button :disabled="!twoFAEnabled" @click="handleDisable2FA" :bordered="false"
+                    style="margin-bottom: 20px; margin-left: 10px" type="primary" secondary>
+            关闭两步验证
+          </n-button>
+
+        </div>
+
+      </n-card>
+
+      <n-card
+          class="del-card"
+          :embedded="true"
+          hoverable
+          content-style="padding: 0"
+          :bordered="false"
+      >
+        <n-p class="title">{{ t('userProfile.deleteAccount') }}</n-p>
+        <div class="form">
+          <n-alert type="warning" :bordered="false">
+            {{ t('userProfile.deleteAccountSub') }}
+          </n-alert>
+          <n-button strong style="margin-top: 20px;" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
+        </div>
+      </n-card>
+    </div>
+  </transition>
+
 
   <n-modal
       v-model:show="showModal"

@@ -14,6 +14,8 @@ let pagination = ref({pageSize: 4})
 // let page = ref<number>(1)
 let pageCount = ref(10)
 
+let showLoading = ref<boolean>(false)
+
 let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
@@ -167,8 +169,8 @@ let closeModal = () => {
 // let groupList = ref<PrivilegeGroup>([])
 
 let getAllGroups = async () => {
+  showLoading.value = true
   try {
-    groupList.value = []
     let {data} = await instance.get('http://localhost:8081/api/admin/v1/groups', {
       params: {
         page: dataSize.value.page,
@@ -176,6 +178,8 @@ let getAllGroups = async () => {
       }
     })
     if (data.code === 200) {
+      groupList.value = []
+      showLoading.value = false
       console.log('获取到的权限组列表', data)
       data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
       pageCount.value = data.page_count
@@ -196,8 +200,7 @@ let submit = async () => {
 }
 
 let submitUpdate = async () => {
-  console.log(12345)
-  let {data} = await instance.put('http://localhost:8081/api/admin/v1/groups', {
+  let {data} = await instance.put('/api/admin/v1/groups', {
     id: modifyId.value,
     name: newGroupName.value,
   })
@@ -252,12 +255,16 @@ export default {
     <n-card style="margin-top: 20px" :embedded="true" hoverable :bordered="false" content-style="padding: 0;">
       <!--      在這裏放置表格-->
       <!--      表格有五列 列名分別是 權限組ID， 組名稱， 用戶數量（前面使用n-icon放置一個用戶圖標）， 計畫數量（前面使用n-icon放置一個圖標， 操作（內部為兩個按鈕 水平排列分別為編輯和刪除）-->
-      <n-data-table
-          :columns="columns"
-          :data="groupList"
-          :scroll-x="900"
-          :remote="true"
-      />
+      <n-spin :show="showLoading">
+        <n-data-table
+            :columns="columns"
+            :data="groupList"
+            :scroll-x="900"
+            :remote="true"
+        />
+      </n-spin>
+
+
     </n-card>
 
     <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">

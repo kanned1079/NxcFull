@@ -33,6 +33,8 @@ func init() {
 		panic(err)
 	}
 
+	dao.InitRedisServer()
+
 	dao.InitMysqlServer() // 初始化主数据库
 
 	if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {

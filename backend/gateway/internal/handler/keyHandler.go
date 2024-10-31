@@ -61,10 +61,10 @@ func HandleGetAllMyKeys(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(keyMap)
-	for k, v := range keyMap {
-		log.Println(k, v)
-	}
+	//log.Println(keyMap)
+	//for k, v := range keyMap {
+	//	log.Println(k, v)
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":    resp.Code,
 		"msg":     resp.Msg,

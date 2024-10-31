@@ -47,6 +47,9 @@ let handleSelect = (key: string | number) => {
     }
     case 'editProfile': {
       console.log('修改个人资料')
+      router.push({
+        path: '/dashboard/profile'
+      })
       break
     }
     case 'logout': {
