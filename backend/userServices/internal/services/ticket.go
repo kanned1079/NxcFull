@@ -29,7 +29,22 @@ func (s *UserService) CreateNewTicket(context context.Context, request *pb.Creat
 		Urgency: int8(request.Urgency),
 		Status:  http.StatusCreated, // 201表示创建成功
 	}
-	if result := tx.Model(&model.Ticket{}).Create(newTicket); result.Error != nil {
+	if result := tx.Model(&model.Ticket{}).Create(&newTicket); result.Error != nil {
+		tx.Rollback() // 回滚事务
+		return &pb.CreateNewTicketResponse{
+			Code:    http.StatusInternalServerError,
+			Msg:     "插入数据失败: " + result.Error.Error(),
+			Created: false,
+		}, nil
+	}
+	// 创建第一条消息
+	var chatMsg = model.Chat{
+		UserId:     request.UserId,
+		TicketId:   newTicket.Id,
+		SenderType: "user",
+		Content:    request.Content,
+	}
+	if result := tx.Model(&model.Chat{}).Create(&chatMsg); result.Error != nil {
 		tx.Rollback() // 回滚事务
 		return &pb.CreateNewTicketResponse{
 			Code:    http.StatusInternalServerError,

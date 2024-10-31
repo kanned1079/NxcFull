@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onMounted, onBeforeMount, ref} from "vue";
+import {onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
 // import VueMarkdown from 'vue-markdown';
-import { MdPreview } from 'md-editor-v3';
+import {MdPreview} from 'md-editor-v3';
 // import instance from "@/axios";
 import usePaymentStore from "@/stores/usePaymentStore";
 import 'md-editor-v3/lib/preview.css';
@@ -15,6 +15,12 @@ import 'md-editor-v3/lib/preview.css';
 const {t} = useI18n();
 const id = 'preview-only';
 const text = ref('# Hello Editor');
+
+let animated = ref<boolean>(false)
+
+// let isMounted = ref<boolean>(false)
+
+// let transparentDeg = ref<number>(0.0)
 // const scrollElement = document.documentElement;
 
 const paymentStore = usePaymentStore();
@@ -61,10 +67,13 @@ let toPurchase = (plan_id: number) => {
   })
 }
 
-onMounted( () => {
+
+onMounted(() => {
   themeStore.menuSelected = 'user-buy-plan'
   themeStore.userPath = '/dashboard/purchase'
   // paymentStore.getAllPlans()
+  // setTimeout(() => isMounted.value = true, 0)
+  animated.value = true
 })
 
 onBeforeMount(() => {
@@ -80,49 +89,61 @@ export default {
 </script>
 
 <template>
-  <n-p style="font-size: 1.2rem; margin: 20px 0 0 30px; font-weight: 600;">{{ t('newPurchase.headerPlaceholder') }}</n-p>
-  <div class="root">
-    <n-card
-        v-for="(item, index) in paymentStore.plan_list as Plan[]"
-        :key="item.id"
-        class="plan-item"
-        content-style="padding: 0;"
-        :bordered="false"
-    >
+
+  <transition>
+
+  </transition>
+  <n-p style="font-size: 1.2rem; margin: 20px 0 0 30px; font-weight: 600;">{{
+      t('newPurchase.headerPlaceholder')
+    }}
+  </n-p>
+
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
       <n-card
-          class="plan-detail"
-          :embedded="true" hoverable
-          :title="item.name"
+          v-for="(item, index) in paymentStore.plan_list as Plan[]"
+          :key="item.id"
+          class="plan-item"
           content-style="padding: 0;"
-          :style="shadowBg"
           :bordered="false"
       >
-        <div class="price-item">
-          <div class="price-blk">
-            <p class="price">{{ item.month_price }}</p>
-            <p class="price-symbol">{{ appInfosStore.appCommonConfig.currency }}</p>
-          </div>
-          <p class="pay-method">{{ item.month_price?t('newPurchase.monthPay'):t('newPurchase.moreMethod') }}</p>
-        </div>
-
-        <MdPreview
-            style="background-color: rgba(0,0,0,0)"
-            :theme="themeStore.enableDarkMode?'dark':'light'"
-            :editorId="`preview-${index}`"
-            :modelValue="item.describe || ''"
-        />
-        <n-button
-            @click="toPurchase(index)"
-            type="primary"
-            class="purchase"
+        <n-card
+            class="plan-detail"
+            :embedded="true" hoverable
+            :title="item.name"
+            content-style="padding: 0;"
+            :style="shadowBg"
             :bordered="false"
         >
-          {{ t('newPurchase.purchaseBtn') }}
-        </n-button>
-      </n-card>
+          <div class="price-item">
+            <div class="price-blk">
+              <p class="price">{{ item.month_price }}</p>
+              <p class="price-symbol">{{ appInfosStore.appCommonConfig.currency }}</p>
+            </div>
+            <p class="pay-method">{{ item.month_price ? t('newPurchase.monthPay') : t('newPurchase.moreMethod') }}</p>
+          </div>
 
-    </n-card>
-  </div>
+          <MdPreview
+              style="background-color: rgba(0,0,0,0)"
+              :theme="themeStore.enableDarkMode?'dark':'light'"
+              :editorId="`preview-${index}`"
+              :modelValue="item.describe || ''"
+          />
+          <n-button
+              @click="toPurchase(index)"
+              type="primary"
+              class="purchase"
+              :bordered="false"
+          >
+            {{ t('newPurchase.purchaseBtn') }}
+          </n-button>
+        </n-card>
+
+      </n-card>
+    </div>
+  </transition>
+
+
 </template>
 
 <style scoped lang="less">
@@ -131,6 +152,9 @@ export default {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  //opacity: 0;
+  //transform: translateX(0px) translateY(10px);
+  //transition: ease 300ms;
 
   .plan-item {
     background-color: rgba(0, 0, 0, 0);
@@ -139,6 +163,7 @@ export default {
     .plan-detail {
       //box-shadow: 5px 5px 20px rgba(221, 221, 221, 0.5);
       //filter: drop-shadow(5px 5px 10px rgba(220, 220, 220, 0.3));
+
       .price-item {
         background-color: rgba(188, 188, 188, 0.2);
         padding: 0 0 10px 20px;
@@ -177,6 +202,7 @@ export default {
         margin: 20px 0 20px 20px;
       }
     }
+
     .plan-detail:hover {
       transform: translateY(-5px);
       //transition: ease 200ms ;
@@ -194,8 +220,6 @@ export default {
 }
 
 .n-card {
-  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  //border: 0;
   transition: transform 200ms ease;
 }
 </style>

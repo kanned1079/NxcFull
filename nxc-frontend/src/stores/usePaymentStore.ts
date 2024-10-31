@@ -54,7 +54,6 @@ const usePaymentStore = defineStore('paymentStore', () => {
     let getAllPlans = async () => {
         // let apiAddrStore = useApiAddrStore()
         try {
-            plan_list.value = []
             let {data} = await instance.get('/api/user/v1/plan', {
                params: {
                    is_user: !userInfoStore.thisUser.isAdmin
@@ -62,6 +61,7 @@ const usePaymentStore = defineStore('paymentStore', () => {
                }
             })
             if (data.code === 200) {
+                plan_list.value = []
                 data.plans.forEach((item: Plan) => plan_list.value.push(item))
                 // plan_list.value = data.plans
                 console.log(plan_list.value)

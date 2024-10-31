@@ -13,6 +13,7 @@ import 'md-editor-v3/lib/style.css';
 
 const placement = ref<DrawerPlacement>('right')
 
+let animated = ref<boolean>(false)
 
 const {t} = useI18n()
 const message = useMessage()
@@ -94,15 +95,17 @@ let getAllDocuments = async () => {
 // }
 
 onBeforeMount(() => {
-  getAllDocuments()
+
 
 })
 
-onMounted(() => {
+onMounted(async () => {
   console.log('document挂载');
   themeStore.menuSelected = 'user-doc'
   themeStore.userPath = '/dashboard/document'
   // getAllDocuments()
+  await getAllDocuments()
+  animated.value = true
 
 })
 
@@ -116,40 +119,43 @@ export default {
 </script>
 
 <template>
-<div class="root">
-  <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root" :bordered="false">
-    <n-input-group>
-      <n-input v-model:value="search" :bordered="false" size="medium" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
-      <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="medium" class="search-btn">{{ t('userDocument.searchBtn') }}</n-button>
-    </n-input-group>
-  </n-card>
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root" :bordered="false">
+        <n-input-group>
+          <n-input v-model:value="search" :bordered="false" size="medium" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
+          <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="medium" class="search-btn">{{ t('userDocument.searchBtn') }}</n-button>
+        </n-input-group>
+      </n-card>
 
-  <n-card v-for="item in doc_list" :key="item.category" class="doc-card" hoverable :embedded="true" :title="item.category" content-style="padding: 0;" :bordered="false">
-    <div
-        class="doc-item"
-        v-for="doc in item.documents"
-        :key="doc.category"
-        @click="activate(themeStore.menuCollapsed?'bottom':'right', doc.title, doc.body)"
-    >
-      <p class="doc-title">{{ doc.title }}</p>
-      <p class="doc-release">{{ doc.created_at }}</p>
+      <n-card v-for="item in doc_list" :key="item.category" class="doc-card" hoverable :embedded="true" :title="item.category" content-style="padding: 0;" :bordered="false">
+        <div
+            class="doc-item"
+            v-for="doc in item.documents"
+            :key="doc.category"
+            @click="activate(themeStore.menuCollapsed?'bottom':'right', doc.title, doc.body)"
+        >
+          <p class="doc-title">{{ doc.title }}</p>
+          <p class="doc-release">{{ doc.created_at }}</p>
+
+        </div>
+      </n-card>
+
+      <n-card v-if="isEmpty" :embedded="true" hoverable :bordered="false" style="padding: 30px 0">
+        <n-result status="404" title="查无结果" description="尝试换一个关键词吧">
+        </n-result>
+      </n-card>
+
+      <n-drawer v-model:show="active" width="80%" height="80%" :placement="placement">
+        <n-drawer-content :title="drawTitle">
+          <!--      <div v-html="convertMd(drawBody as string)"></div>-->
+          <MdPreview :theme="themeStore.enableDarkMode?'dark':'light'" style="background-color: rgba(0,0,0,0.0)" v-model="drawBody"></MdPreview>
+        </n-drawer-content>
+      </n-drawer>
 
     </div>
-  </n-card>
+  </transition>
 
-  <n-card v-if="isEmpty" :embedded="true" hoverable :bordered="false" style="padding: 30px 0">
-    <n-result status="404" title="查无结果" description="尝试换一个关键词吧">
-    </n-result>
-  </n-card>
-
-  <n-drawer v-model:show="active" width="80%" height="80%" :placement="placement">
-    <n-drawer-content :title="drawTitle">
-<!--      <div v-html="convertMd(drawBody as string)"></div>-->
-      <MdPreview :theme="themeStore.enableDarkMode?'dark':'light'" style="background-color: rgba(0,0,0,0.0)" v-model="drawBody"></MdPreview>
-    </n-drawer-content>
-  </n-drawer>
-
-</div>
 </template>
 
 <style scoped lang="less">

@@ -142,6 +142,7 @@ let submitNewPlan = async () => {
     })
     if (data.code === 200) {
       notify('success', '成功', '成功添加新的订阅')
+      await paymentStore.getAllPlans()
     } else {
       notify('error', '添加出错', data.error)
     }
@@ -179,6 +180,7 @@ let getAllGroups = async () => {
     let {data} = await instance.get('/api/admin/v1/groups/kv', )
     if (data.code === 200) {
       console.log('获取到的权限组列表', data)
+      groupOptions.value = []
       // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
       data.group_list.forEach((group: GroupItemFromServer) => groupOptions.value.push({
         label: group.name,
@@ -316,6 +318,7 @@ let updatePlan = async (row: Plan) => {
     })
     if (data.code === 200) {
       notify('success', '成功', '修改订阅成功')
+      await paymentStore.getAllPlans()
     } else {
       notify('error', '修改出错', data.error)
     }

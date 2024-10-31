@@ -130,13 +130,13 @@ func (s *KeyServices) GetAllMyKeysByUserIdAsc(context context.Context, request *
 		}, nil
 	}
 
-	// 如果没有有效订单
-	if len(activeOrders) == 0 {
-		return &pb.GetAllMyKeysByUserIdAscResponse{
-			Code: http.StatusNotFound,
-			Msg:  "还没有有效的订单",
-		}, nil
-	}
+	//// 如果没有有效订单
+	//if len(activeOrders) == 0 {
+	//	return &pb.GetAllMyKeysByUserIdAscResponse{
+	//		Code: http.StatusNotFound,
+	//		Msg:  "还没有有效的订单",
+	//	}, nil
+	//}
 
 	// 计算总页数
 	totalRecords := int64(len(activeOrders))
@@ -207,7 +207,7 @@ func (s *KeyServices) GetAllMyKeysByUserIdAsc(context context.Context, request *
 		responseDataList = append(responseDataList, responseData)
 	}
 
-	log.Println(responseDataList)
+	//log.Println(responseDataList)
 
 	if myKeyListJson, err := json.Marshal(responseDataList); err != nil {
 		log.Println(err)

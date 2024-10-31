@@ -61,7 +61,7 @@ func HandleGetAllMyKeys(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(keyMap)
+	//log.Println(keyMap)
 	for k, v := range keyMap {
 		log.Println(k, v)
 	}

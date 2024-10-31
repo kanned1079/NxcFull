@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, onMounted, ref, computed} from "vue"
+import {onBeforeMount, onMounted, ref, computed, onBeforeUnmount} from "vue"
 import type {MenuOption, NotificationType} from 'naive-ui'
 import {NIcon, useNotification, useMessage} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
@@ -23,6 +23,8 @@ const themeStore = useThemeStore();
 const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
 const router = useRouter();
+
+let animate = ref<boolean>(false)
 
 interface Plan {
   id: number
@@ -216,6 +218,8 @@ onMounted(() => {
   // appendCycleOptions()
   themeStore.userPath = '/dashboard/purchase/settlement'
 
+  animate.value = true
+
 })
 
 onBeforeMount(() => {
@@ -228,6 +232,13 @@ onBeforeMount(() => {
   }
 })
 
+// let showAni = computed(() => paymentStore.plan_id_selected != -1).value as boolean
+
+onBeforeUnmount(() => {
+  animate.value = false
+})
+
+
 </script>
 
 <script lang="ts">
@@ -237,95 +248,113 @@ export default {
 </script>
 
 <template>
-  <div class="root" v-if="paymentStore.plan_id_selected != -1">
-    <div class="root-layout">
-      <div class="l-part">
-        <n-card class="l-info-head" :embedded="true" hoverable content-style="padding: 0;">
-          <p class="title">{{ plan.name }}</p>
-          <MdPreview
-              style="background-color: rgba(0,0,0,0)"
-              :theme="themeStore.enableDarkMode?'dark':'light'"
-              :editorId="id"
-              :modelValue="plan.describe"
-          />
-        </n-card>
-        <n-card class="l-info-btn" :embedded="true" hoverable content-style="padding: 0;">
-          <p class="detail-title">{{ t('newSettlement.payCycle') }}</p>
-          <n-menu
-              :options="menuOptions"
-              @update:value="cycleSelect"
-              :value="selectedCycle"
-              style="font-size: 0.9rem"
-          />
-        </n-card>
-      </div>
-
-      <div class="r-part">
-        <n-card class="r-part-head" :embedded="true" hoverable>
-          <!--          <n-input-group>-->
-          <div class="r-border" style="display: flex; flex-direction: row; border-radius: 5px; padding: 5px">
-            <n-input
-                size="large"
-                :bordered="true"
-                class="ticket-input"
-                style="margin-right: 10px"
-                v-model:value="couponCode"
-                :placeholder="t('newSettlement.couponPlaceholder')"
+  <transition name="slide-fade">
+    <div class="root" v-if="paymentStore.plan_id_selected != -1 && animate">
+      <div class="root-layout">
+        <div class="l-part">
+          <n-card class="l-info-head" :embedded="true" hoverable content-style="padding: 0;">
+            <p class="title">{{ plan.name }}</p>
+            <MdPreview
+                style="background-color: rgba(0,0,0,0)"
+                :theme="themeStore.enableDarkMode?'dark':'light'"
+                :editorId="id"
+                :modelValue="plan.describe"
             />
-            <n-button
-                style="color: white"
-                size="large"
-                :keyboard="true"
-                type="primary"
-                @click="verifyTicket"
-                :bordered="false"
-            >
-              <n-icon style="margin-right: 10px">
-                <ticketIcon/>
-              </n-icon>
-              {{ t('newSettlement.verifyBtn') }}
-            </n-button>
-          </div>
+          </n-card>
+          <n-card class="l-info-btn" :embedded="true" hoverable content-style="padding: 0;">
+            <p class="detail-title">{{ t('newSettlement.payCycle') }}</p>
+            <n-menu
+                :options="menuOptions"
+                @update:value="cycleSelect"
+                :value="selectedCycle"
+                style="font-size: 0.9rem"
+            />
+          </n-card>
+        </div>
 
-          <!--          </n-input-group>-->
-        </n-card>
-        <n-card style="color: white" class="r-part-btn" :embedded="true" hoverable>
-          <p class="r-title">{{ t('newSettlement.orderTotalTitle') }}</p>
-          <div class="price-small">
-            <p class="summary">{{ plan.name }} x {{ showCycleName }}</p>
-            <p class="price-small">{{ resultPrice }} {{ appInfosStore.appCommonConfig.currency }}</p>
-          </div>
-          <n-hr></n-hr>
-          <div class="price-discount" v-if="couponInfo.verified">
-            <p class="coupon-title">{{ t('newSettlement.coupon') }}</p>
-            <div class="coupon-detail">
-              <p class="coupon-name">{{ couponInfo.name }}</p>
-              <p class="discount">- {{ discountPrice.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
+        <div class="r-part">
+          <n-card class="r-part-head" :embedded="true" hoverable>
+            <!--          <n-input-group>-->
+            <div class="r-border" style="display: flex; flex-direction: row; border-radius: 5px; padding: 5px">
+              <n-input
+                  size="large"
+                  :bordered="true"
+                  class="ticket-input"
+                  style="margin-right: 10px"
+                  v-model:value="couponCode"
+                  :placeholder="t('newSettlement.couponPlaceholder')"
+              />
+              <n-button
+                  style="color: white"
+                  size="large"
+                  :keyboard="true"
+                  type="primary"
+                  @click="verifyTicket"
+                  :bordered="false"
+              >
+                <n-icon style="margin-right: 10px">
+                  <ticketIcon/>
+                </n-icon>
+                {{ t('newSettlement.verifyBtn') }}
+              </n-button>
+            </div>
+
+            <!--          </n-input-group>-->
+          </n-card>
+          <n-card style="color: white" class="r-part-btn" :embedded="true" hoverable>
+            <p class="r-title">{{ t('newSettlement.orderTotalTitle') }}</p>
+            <div class="price-small">
+              <p class="summary">{{ plan.name }} x {{ showCycleName }}</p>
+              <p class="price-small">{{ resultPrice }} {{ appInfosStore.appCommonConfig.currency }}</p>
             </div>
             <n-hr></n-hr>
-          </div>
-          <p class="total-title">{{ t('newSettlement.total') }}</p>
-          <p class="price-large">{{ (resultPrice - discountPrice).toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
-          <n-button
-              @click="saveOrder"
-              class="settleBtn"
-              type="primary"
-              :bordered="false"
-              size="large"
-          >
-            <n-icon style="margin-right: 5px">
-              <settlementIcon/>
-            </n-icon>
-            {{ t('newSettlement.submitOrder') }}
-          </n-button>
-        </n-card>
-      </div>
+            <div class="price-discount" v-if="couponInfo.verified">
+              <p class="coupon-title">{{ t('newSettlement.coupon') }}</p>
+              <div class="coupon-detail">
+                <p class="coupon-name">{{ couponInfo.name }}</p>
+                <p class="discount">- {{ discountPrice.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
+              </div>
+              <n-hr></n-hr>
+            </div>
+            <p class="total-title">{{ t('newSettlement.total') }}</p>
+            <p class="price-large">{{ (resultPrice - discountPrice).toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
+            <n-button
+                @click="saveOrder"
+                class="settleBtn"
+                type="primary"
+                :bordered="false"
+                size="large"
+            >
+              <n-icon style="margin-right: 5px">
+                <settlementIcon/>
+              </n-icon>
+              {{ t('newSettlement.submitOrder') }}
+            </n-button>
+          </n-card>
+        </div>
 
+      </div>
     </div>
-  </div>
+  </transition>
+
 </template>
 
 <style scoped lang="less">
+
+//.slide-fade-enter-active {
+//  transition: all 300ms ease;
+//}
+//
+//.slide-fade-leave-active {
+//  transition: all 300ms ease;
+//}
+//
+//.slide-fade-enter-from,
+//.slide-fade-leave-to {
+//  transform: translateY(10px);
+//  opacity: 0;
+//}
+
 .root {
   width: auto;
   margin: 20px;

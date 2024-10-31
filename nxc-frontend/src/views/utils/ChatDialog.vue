@@ -41,14 +41,14 @@ const createWebSocket = () => {
   socket.onmessage = (event: MessageEvent) => {
     try {
       const messageData = JSON.parse(event.data);
-      console.log(messageData.type)
+      // console.log(messageData.type)
       // 判断 Type 字段并根据类型执行不同操作
       if (messageData.type === "history") {
         // 清空现有聊天记录并添加新记录
         let previousLength = chatHistory.value.length
-        console.log('previousLength', previousLength)
+        // console.log('previousLength', previousLength)
         chatHistory.value = [];
-        console.log(messageData.history)
+        // console.log(messageData.history)
         // let chatMsgItem = messageData.history
         messageData.history.forEach((chatMsgItem: ChatHistoryItem) => {
           chatHistory.value.push(chatMsgItem);

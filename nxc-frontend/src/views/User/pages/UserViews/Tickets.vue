@@ -13,6 +13,8 @@ const themeStore = useThemeStore();
 const message = useMessage();
 const formRef = ref<FormInst | null>(null)
 
+let animated = ref<boolean>(false)
+
 let selectValidationStatus = computed(() => {
   return createStatus(newTicket.value.urgency)
 })
@@ -156,7 +158,6 @@ interface TicketItem {
 }
 
 let getAllMyTickets = async () => {
-  ticketList.value = []
   try {
     let {data} = await instance.get('/api/user/v1/ticket', {
       params: {
@@ -164,6 +165,7 @@ let getAllMyTickets = async () => {
       }
     })
     if (data.code === 200) {
+      ticketList.value = []
       message.success('获取成功')
       data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket)
       )
@@ -195,11 +197,12 @@ let openTicket = (ticket: TicketItem) => {
 }
 
 
-onMounted(() => {
+onMounted(async () => {
   themeStore.menuSelected = ''
   themeStore.userPath = '/dashboard/tickets'
 
-  getAllMyTickets()
+  await getAllMyTickets()
+  animated.value = true
 })
 
 // 定义表格的列
@@ -229,9 +232,9 @@ const columns = ref([
   {
     title: computed(() => t('userTickets.ticketStatus')).value, key: 'status', render(row: TicketItem) {
       return h(NTag, {
-        type: row.status ? 'info' : 'default',
+        type: row.status !== 204 ? 'info' : 'default',
         bordered: false,
-      }, {default: () => row.status ? computed(() => t('userTickets.ticketActive')).value : computed(() => t('userTickets.ticketInActive')).value});
+      }, {default: () => row.status !== 204 ? computed(() => t('userTickets.ticketActive')).value : computed(() => t('userTickets.ticketInActive')).value});
     }
   },
   {
@@ -286,17 +289,21 @@ const columns = ref([
       </div>
     </n-card>
 
-    <n-card :embedded="true" hoverable content-style="padding: 0;" :bordered="false">
-      <n-data-table
-          class="table"
-          :columns="columns"
-          :data="ticketList"
-          :pagination="false"
-          :bordered="true"
-          style=""
-          :scroll-x="800"
-      />
-    </n-card>
+    <transition name="slide-fade">
+      <n-card v-if="animated" :embedded="true" hoverable content-style="padding: 0;" :bordered="false">
+        <n-data-table
+            class="table"
+            :columns="columns"
+            :data="ticketList"
+            :pagination="false"
+            :bordered="true"
+            style=""
+            :scroll-x="800"
+        />
+      </n-card>
+    </transition>
+
+
 
 
     <n-modal v-model:show="showNewTicketModal">
