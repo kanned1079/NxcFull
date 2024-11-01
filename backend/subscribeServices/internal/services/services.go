@@ -252,6 +252,7 @@ func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *
 		}, nil
 	}
 	log.Println(planArr)
+
 	if planArrJson, err := json.Marshal(planArr); err != nil {
 		return &pb.GetAllPlanKeyNameResponse{
 			Code: http.StatusInternalServerError,
