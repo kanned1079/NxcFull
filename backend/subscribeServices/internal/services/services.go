@@ -251,7 +251,9 @@ func (s *SubscribeServices) GetAllPlanKeyName(context context.Context, request *
 			Msg:  "查找计划订阅键值错误",
 		}, nil
 	}
+
 	log.Println(planArr)
+
 	if planArrJson, err := json.Marshal(planArr); err != nil {
 		return &pb.GetAllPlanKeyNameResponse{
 			Code: http.StatusInternalServerError,
