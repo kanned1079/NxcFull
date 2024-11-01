@@ -6,7 +6,6 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {useDialog, useMessage} from 'naive-ui'
-import noticeUniversalBgDay from "@/assets/noticeUniversalBgDay.svg"
 
 import {
   ArrowBack,
@@ -14,9 +13,9 @@ import {
   BagHandleOutline as buyIcon,
   BookOutline as bookIcon,
   CartOutline as cartIcon,
+  ChevronForwardOutline as toRightIcon,
   HelpBuoyOutline as supportIcon,
   KeyOutline as keyIcon,
-  ChevronForwardOutline as toRightIcon,
 } from '@vicons/ionicons5'
 import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
@@ -201,7 +200,9 @@ export default {
           您有待处理的工单
           <n-button style="margin-left: 5px" text type="primary" @click="router.push({path: '/dashboard/tickets'})">
             去查看
-            <n-icon><toRightIcon/></n-icon>
+            <n-icon>
+              <toRightIcon/>
+            </n-icon>
           </n-button>
         </div>
       </n-alert>
@@ -212,22 +213,53 @@ export default {
               v-for="item in thisNotices"
               :key="item.id"
               class="item"
-              :style="!item.hasOwnProperty('bg_img')?{backgroundImage: `url(${noticeUniversalBgDay})`}:{backgroundImage: `url(${item.img_url})`}"
               @click="handleConfirm(item.title, item.content)"
               :bordered="false"
           >
+            <!--            :style="item.img_url===''?null:{backgroundImage: `url(${item.img_url})`}"-->
+
             <div class="content">
               <n-tag class="tag" type="warning">{{ item.tags }}</n-tag>
               <div class="inner">
-                <p class="title">{{ item.title }}</p>
-                <p class="date">{{ item.created_at }}</p>
+                <!--                <p-->
+                <!--                    :style="-->
+                <!--                      !themeStore.enableDarkMode?{-->
+                <!--                        textShadow: '0 0 5px rgba(255, 255, 255, 0.6)',-->
+                <!--                        ...(item.img_url !==''?{color: '#fff'}:null)-->
+                <!--                      }:{textShadow: '2px 2px 5px rgba(0, 0, 0, 0.6)'}"-->
+                <!--                    class="title">-->
+                <!--                  {{ item.title }}-->
+                <!--                </p>-->
+                <p
+                    :style="
+    themeStore.enableDarkMode
+      ? (item.img_url !== '' ? { color: '#fff' } : null)
+      : {
+          textShadow: '0 0 5px rgba(255, 255, 255, 0.6)',
+          ...(item.img_url !== '' ? { color: '#fff' } : null)
+        }"
+                    class="title"
+                >
+                  {{ item.title }}
+                </p>
+
+                <p
+                    :style="!themeStore.enableDarkMode?{textShadow: '0 0 5px rgba(255, 255, 255, 0.6)'}:{textShadow: '2px 2px 5px rgba(0, 0, 0, 0.6)'}"
+                    class="date">
+                  {{ item.created_at }}
+                </p>
               </div>
             </div>
-            <div class="content-bg">
-<!--              <div v-for="i in 1">-->
-<!--                <noticeUniversalBgDay/>-->
-<!--              </div>-->
-<!--              <div :style="{backgroundImageUrl: '@/assets/noticeUniversalBgDay.svg', height:100}"></div>-->
+            <div
+                :class="item.img_url===''?'content-bg':'content-bg-img'"
+                :style="item.img_url === '' ? null : {
+                  backgroundImage: `url(${item.img_url})`,
+                  ...(themeStore.enableDarkMode ? { filter: 'brightness(0.6) contrast(0.8)' } : {filter: 'brightness(1) contrast(0.6) grayscale(0.2)'})
+            }">
+              <!--              <div v-for="i in 1">-->
+              <!--                <noticeUniversalBgDay/>-->
+              <!--              </div>-->
+              <!--              <div :style="{backgroundImageUrl: '@/assets/noticeUniversalBgDay.svg', height:100}"></div>-->
             </div>
           </n-card>
           <template #arrow="{ prev, next }">
@@ -361,15 +393,20 @@ export default {
 }
 
 .item {
-  background-repeat: repeat;
+  background-repeat: no-repeat;
   background-position: center;
   position: relative;
   width: 100%;
+
+  background-size: cover;
+  background-attachment: fixed;
+  background-position-x: center;
 
   .content {
     position: relative;
     z-index: 1; /* 确保内容在背景图之上 */
     width: 100%;
+
     .tag {
       width: auto;
       padding: 0 5px 0 5px;
@@ -382,7 +419,7 @@ export default {
       .title {
         font-size: 1.5rem;
         font-weight: bold;
-        opacity: 0.8;
+        opacity: 0.9;
       }
 
       .date {
@@ -391,12 +428,35 @@ export default {
       }
     }
   }
+
   .content-bg {
     //grid-auto-rows: 300px;
     //display: grid;
     //grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* 根据每个组件的大小进行调整 */
     background-image: url("@/assets/noticeUniversalBgDay.svg");
     //display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* 设置在底层 */
+    //background: url('your-background-image-url') center center / cover no-repeat; /* 替换为实际背景图 */
+    opacity: 1; /* 背景透明度 */
+  }
+
+  .content-bg-img {
+    //grid-auto-rows: 300px;
+    //display: grid;
+    //grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* 根据每个组件的大小进行调整 */
+    //background-image: url("@/assets/noticeUniversalBgDay.svg");
+    //display: flex;
+    //filter: brightness(0.7) contrast(0.8);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position-x: center;
     position: absolute;
     top: 0;
     left: 0;
@@ -450,7 +510,7 @@ export default {
 }
 
 .custom-arrow button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .custom-arrow button:active {

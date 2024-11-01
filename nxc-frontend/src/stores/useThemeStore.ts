@@ -67,7 +67,9 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
             // 深色模式
             common: {
                 primaryColor: '#3b4e72',
+                primaryColorPressed: '#3b4e72',
                 bodyColor: '#2d2f2f',
+                // bodyColor: '#2c2c2c',
                 modalColor: '#2d2f2f',
                 tableColorStriped: 'rgba(40, 41, 41, 1)',
                 tableColor: 'rgba(40, 41, 41, 1)',
@@ -89,6 +91,9 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 textColorHoverError: '#ffe9e9',
                 textColorPressedError: '#ffe9e9',
                 textColorFocusError: '#ffe9e9',
+                textColorTextPrimary: '#fff',
+                textColorTextHoverPrimary: '#496097',
+
             },
             Input: {
                 borderHover: '1px solid #3b4e72',
@@ -107,6 +112,16 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
             },
             Notification: {
                 color: 'rgba(40, 41, 41, 1)',
+            },
+            Menu: {
+                itemTextColorActive: '#87a5d5',
+                itemTextColorActiveHover: '#698fd5',
+                itemIconColorActive: '#87a5d5',
+                itemIconColorActiveHover: '#698fd5',
+                itemTextColorChildActive: '#87a5d5',
+                itemTextColorChildActiveHover: '#698fd5',
+                arrowColorChildActive: '#87a5d5',
+                arrowColorChildActiveHover: '#698fd5'
             }
         } as GlobalThemeOverrides : {
             // 浅色模式

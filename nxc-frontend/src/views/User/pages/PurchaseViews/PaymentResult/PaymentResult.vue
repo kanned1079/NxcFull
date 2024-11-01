@@ -96,7 +96,7 @@ export default {
             :description="t('orderDetail.finishedAndSuccessDescription')">
           <template #footer>
             <div style="text-align: right">
-              <n-button type="primary" quaternary @click="router.push({path: '/dashboard/document'})">
+              <n-button type="default" quaternary @click="router.push({path: '/dashboard/document'})">
                 <n-icon style="margin-right: 5px" size="16">
                   <docIcon/>
                 </n-icon>
@@ -118,7 +118,7 @@ export default {
         >
           <template #footer>
             <div style="text-align: right">
-              <n-button type="primary" quaternary @click="toConfirmOrder">
+              <n-button type="default" quaternary @click="toConfirmOrder">
                 <n-icon style="margin-right: 5px" size="16">
                   <docIcon/>
                 </n-icon>
@@ -140,7 +140,7 @@ export default {
         >
           <template #footer>
             <div style="text-align: right">
-              <n-button type="primary" quaternary @click="router.push({path: '/dashboard/purchase'})">
+              <n-button type="default" quaternary @click="router.push({path: '/dashboard/purchase'})">
                 <!--              选择新的订阅计划-->
                 {{ t('orderDetail.chooseNewPlan') }}
                 <n-icon style="margin-left: 5px" size="16">
