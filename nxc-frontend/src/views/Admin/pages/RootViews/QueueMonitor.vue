@@ -2,10 +2,11 @@
 import {onMounted, onUnmounted, reactive, ref, onBeforeMount} from 'vue'
 import type {NumberAnimationInst} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
-import axios from '@/axios';
-import instance from "@/axios"; // 导入配置好的 axios 实例
+import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 const apiAddrStore = useApiAddrStore();
+
+let animated = ref<boolean>(false)
 
 // const titlePart1 = ['当前作业量', '近一小时处理量', '7日内报错数量']
 const themeStore = useThemeStore()
@@ -117,6 +118,8 @@ onMounted(() => {
   // intervalId.value = setInterval(() => {
   //   getSysInfo()
   // }, 3000)
+
+  animated.value = true
 })
 
 onBeforeMount(() => {
@@ -142,9 +145,9 @@ export default {
 </script>
 
 <template>
-
-    <div class="root">
-      <n-card hoverable :embedded="true" class="card1" title="总览">
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card hoverable :embedded="true" class="card1" title="队列监控">
         <n-flex class="inner-card" justify="center">
           <div class="part1">
             <p class="title">当前作业量</p>
@@ -232,6 +235,9 @@ export default {
       </n-card>
 
     </div>
+
+  </transition>
+
 
 
 

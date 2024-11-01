@@ -3,6 +3,7 @@ import {useI18n} from "vue-i18n";
 import {ref, reactive, onMounted, onBeforeMount} from "vue";
 // import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
+import {formatDate} from "@/utils/timeFormat";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
 import  {type DrawerPlacement, useMessage } from 'naive-ui'
 // import MarkdownIt from 'markdown-it';
@@ -136,7 +137,7 @@ export default {
             @click="activate(themeStore.menuCollapsed?'bottom':'right', doc.title, doc.body)"
         >
           <p class="doc-title">{{ doc.title }}</p>
-          <p class="doc-release">{{ doc.created_at }}</p>
+          <p class="doc-release">{{ doc.created_at?formatDate(doc.created_at):'' }}</p>
 
         </div>
       </n-card>

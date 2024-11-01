@@ -6,6 +6,7 @@ import (
 	"documentServices/internal/dao"
 	"documentServices/internal/etcd"
 	"documentServices/internal/handler"
+	"documentServices/internal/model"
 	"log"
 )
 
@@ -24,15 +25,20 @@ func init() {
 	if err = etcd.InitEtcdClient(); err != nil {
 		panic(err)
 	}
-	if err := remote.MyDbConfig.Get(); err != nil {
+	if err = remote.MyDbConfig.Get(); err != nil {
 		panic(err)
 	}
 
-	if err := remote.MyRedisConfig.Get(); err != nil {
+	if err = remote.MyRedisConfig.Get(); err != nil {
 		panic(err)
 	}
 
 	dao.InitMysqlServer() // 初始化主数据库
+	dao.InitRedisServer() // 初始化redis
+
+	if err = dao.Db.Model(&model.Document{}).AutoMigrate(&model.Document{}); err != nil {
+		panic(err)
+	}
 
 }
 

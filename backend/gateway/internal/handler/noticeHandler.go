@@ -47,7 +47,7 @@ func HandleGetAllNotices(context *gin.Context) {
 
 	// 反序列化 notices
 	var notices []map[string]interface{}
-	log.Println(string(resp.Notices))
+	//log.Println(string(resp.Notices))
 	err = json.Unmarshal(resp.Notices, &notices)
 	if err != nil {
 		log.Println("反序列化通知列表失败:", err)

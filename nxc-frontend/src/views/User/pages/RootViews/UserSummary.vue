@@ -6,7 +6,7 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {useDialog, useMessage} from 'naive-ui'
-import noticeUniversalBgDay from "@/assert/noticeUniversalBgDay.svg"
+import noticeUniversalBgDay from "@/assets/noticeUniversalBgDay.svg"
 
 import {
   ArrowBack,
@@ -16,6 +16,7 @@ import {
   CartOutline as cartIcon,
   HelpBuoyOutline as supportIcon,
   KeyOutline as keyIcon,
+  ChevronForwardOutline as toRightIcon,
 } from '@vicons/ionicons5'
 import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
@@ -150,7 +151,7 @@ let haveActive = ref<boolean>(false)
 
 let getActivePlanList = async () => {
   try {
-    let {data} = await instance.get('http://localhost:8081/api/user/v1/plan/info/fetch', {
+    let {data} = await instance.get('/api/user/v1/plan/info/fetch', {
       params: {
         user_id: userInfoStore.thisUser.id,
         // user_id: 3,
@@ -192,9 +193,19 @@ export default {
 </script>
 
 <template>
-
   <transition name="slide-fade">
     <div class="root" v-if="animated">
+      <n-alert :bordered="false" style="margin-bottom: 20px" title="" type="warning">
+
+        <div style="display: flex; flex-direction: row; align-items: center">
+          您有待处理的工单
+          <n-button style="margin-left: 5px" text type="primary" @click="router.push({path: '/dashboard/tickets'})">
+            去查看
+            <n-icon><toRightIcon/></n-icon>
+          </n-button>
+        </div>
+      </n-alert>
+
       <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
         <n-carousel show-arrow autoplay style="border-radius: 3px">
           <n-card
@@ -212,8 +223,13 @@ export default {
                 <p class="date">{{ item.created_at }}</p>
               </div>
             </div>
+            <div class="content-bg">
+<!--              <div v-for="i in 1">-->
+<!--                <noticeUniversalBgDay/>-->
+<!--              </div>-->
+<!--              <div :style="{backgroundImageUrl: '@/assets/noticeUniversalBgDay.svg', height:100}"></div>-->
+            </div>
           </n-card>
-
           <template #arrow="{ prev, next }">
             <div class="custom-arrow">
               <button type="button" class="custom-arrow--left" @click="prev">
@@ -239,7 +255,6 @@ export default {
             </ul>
           </template>
         </n-carousel>
-
       </n-card>
 
 
@@ -251,10 +266,6 @@ export default {
           content-style="padding: 0"
           :bordered="false"
       >
-
-        <!--      <h1 v-for="i in 3" :key="i">{{i}}</h1>-->
-        <!--      {{userInfoStore.thisUser}}-->
-
         <n-card
             v-if="!haveActive"
             class="no-license"
@@ -352,8 +363,13 @@ export default {
 .item {
   background-repeat: repeat;
   background-position: center;
+  position: relative;
+  width: 100%;
 
   .content {
+    position: relative;
+    z-index: 1; /* 确保内容在背景图之上 */
+    width: 100%;
     .tag {
       width: auto;
       padding: 0 5px 0 5px;
@@ -375,6 +391,21 @@ export default {
       }
     }
   }
+  .content-bg {
+    //grid-auto-rows: 300px;
+    //display: grid;
+    //grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* 根据每个组件的大小进行调整 */
+    background-image: url("@/assets/noticeUniversalBgDay.svg");
+    //display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* 设置在底层 */
+    //background: url('your-background-image-url') center center / cover no-repeat; /* 替换为实际背景图 */
+    opacity: 1; /* 背景透明度 */
+  }
 }
 
 .item::before {
@@ -387,18 +418,8 @@ export default {
   background-repeat: repeat;
   background-position: center;
   opacity: 0.3;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(129, 129, 129, 0.2);
 }
-
-
-//.item::before {
-//  content: "";
-//  height: 440px;
-//
-//  background-color: rgba(130,130,130,0.5);
-//
-//}
-
 
 .carousel-img {
   width: 100%;

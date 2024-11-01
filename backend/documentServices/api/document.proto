@@ -4,37 +4,48 @@ package document;
 
 option go_package = "./proto";
 
-// 定义键值对结构，模拟 map[string]string
-message KeyValuePair {
-  string key = 1;
-  string value = 2;
+// 定义 Document 服务
+service DocumentService {
+  rpc GetDocuments (GetDocumentsRequest) returns (GetDocumentsResponse);
+  rpc AddDocument (AddDocumentRequest) returns (AddDocumentResponse);
+  rpc UpdateDocument (UpdateDocumentRequest) returns (UpdateDocumentResponse);
+  rpc UpdateDocumentShow (UpdateDocumentShowRequest) returns (UpdateDocumentShowResponse);
 }
 
+
+// 定义键值对结构，模拟 map[string]string
+//message KeyValuePair {
+//  string key = 1;
+//  string value = 2;
+//}
+
 // 定义用于模拟 map 的结构
-message mapEntry {
-  string category = 1;
-  repeated KeyValuePair data = 2; // category 对应多个键值对
-}
+//message mapEntry {
+//  string category = 1;
+//  repeated KeyValuePair data = 2; // category 对应多个键值对
+//}
 
 // 每个类别包含对应的文档列表
 message CategoryDocuments {
   string category = 1; // 类别名
-  repeated Document documents = 2; // 对应的文档列表
+//  repeated Document documents = 2; // 对应的文档列表
+  bytes documents = 2;
 }
 
+
 // 定义文档结构
-message Document {
-  int64 id = 1;
-  string language = 2;
-  string category = 3;
-  string title = 4;
-  string body = 5;
-  int64 sort = 6;
-  bool show = 7;
-  string created_at = 8;
-  string updated_at = 9;
-  string deleted_at = 10;
-}
+//message Document {
+//  int64 id = 1;
+//  string language = 2;
+//  string category = 3;
+//  string title = 4;
+//  string body = 5;
+//  int64 sort = 6;
+//  bool show = 7;
+//  string created_at = 8;
+//  string updated_at = 9;
+//  string deleted_at = 10;
+//}
 
 // 请求文档列表的请求结构
 message GetDocumentsRequest {
@@ -48,7 +59,8 @@ message GetDocumentsResponse {
   string msg = 2;
 //  repeated Document documents = 3;
 //  repeated mapEntry documents = 3; // 使用 mapEntry 来模拟 map[string]interface{}
-  repeated CategoryDocuments documents = 3; // 修改为 CategoryDocuments 类型
+//  repeated CategoryDocuments documents = 3; // 修改为 CategoryDocuments 类型
+  bytes documents = 3;
 }
 
 // 添加新文档的请求结构
@@ -86,9 +98,13 @@ message UpdateDocumentResponse {
   string message = 4;
 }
 
-// 定义 Document 服务
-service DocumentService {
-  rpc GetDocuments (GetDocumentsRequest) returns (GetDocumentsResponse);
-  rpc AddDocument (AddDocumentRequest) returns (AddDocumentResponse);
-  rpc UpdateDocument (UpdateDocumentRequest) returns (UpdateDocumentResponse);
+message UpdateDocumentShowRequest {
+  int64 doc_id = 1;
 }
+
+message UpdateDocumentShowResponse {
+  int32 code = 1;
+  bool success = 2;
+  string msg = 3;
+}
+

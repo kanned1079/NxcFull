@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import Settings from '@/views/Admin/pages/RootViews/dashboard/Settings.vue'
 import useThemeStore from "@/stores/useThemeStore";
 import Income from '@/views/Admin/pages/RootViews/dashboard/Income.vue'
@@ -7,9 +7,13 @@ import IncomeChart from "@/views/Admin/pages/RootViews/dashboard/IncomeChart.vue
 
 const themeStore = useThemeStore();
 
+let animated = ref<boolean>(false)
+
 onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/summary'
   themeStore.menuSelected = 'dashboard'
+
+  animated.value = true
 })
 
 </script>
@@ -21,17 +25,20 @@ export default {
 </script>
 
 <template>
-  <div class="root">
-    <div class="setting-panel">
-      <Settings></Settings>
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <div class="setting-panel">
+        <Settings></Settings>
+      </div>
+      <div class="income-panel">
+        <Income></Income>
+      </div>
+      <div class="income-chart">
+        <IncomeChart></IncomeChart>
+      </div>
     </div>
-    <div class="income-panel">
-      <Income></Income>
-    </div>
-    <div class="income-chart">
-      <IncomeChart></IncomeChart>
-    </div>
-  </div>
+  </transition>
+
 </template>
 
 <style lang="less" scoped>

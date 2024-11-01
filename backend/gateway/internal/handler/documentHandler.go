@@ -2,9 +2,9 @@ package handler
 
 import (
 	sysContext "context"
+	"encoding/json"
 	pb "gateway/internal/grpc/api/document/proto"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -16,26 +16,41 @@ func HandleGetAllDocuments(context *gin.Context) {
 		Language: lang,
 		Find:     find,
 	})
-	if err != nil {
-		log.Println(err)
+	//if err != nil {
+	//	log.Println(err)
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
+	//if resp == nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "rpc方法没有返回值",
+	//	})
+	//	return
+	//}
+	if err := failOnRpcError(err, lang); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
-		return
 	}
-	if resp == nil {
+
+	var docMap []map[string]interface{}
+
+	if err := json.Unmarshal(resp.Documents, &docMap); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "rpc方法没有返回值",
+			"msg":  "Unmarshal failure" + err.Error(),
 		})
-		return
 	}
 
 	context.JSON(http.StatusOK, gin.H{
 		"code":     resp.Code,
 		"msg":      resp.Msg,
-		"doc_list": resp.Documents,
+		"doc_list": docMap,
 	})
 }
 
@@ -66,19 +81,6 @@ func HandleAddNewDocument(context *gin.Context) {
 		})
 		return
 	}
-	////log.Println(postData)
-	//newDoc := {
-	//	Title:    postData.Title,
-	//	Category: postData.Category,
-	//	Language: postData.Language,
-	//	Body:     postData.MdText,
-	//}
-	//if err := dao.Db.Model(&Document{}).Create(&newDoc).Error; err != nil {
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"code": http.StatusInternalServerError,
-	//		"msg":  "插入数据库失败",
-	//	})
-	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,

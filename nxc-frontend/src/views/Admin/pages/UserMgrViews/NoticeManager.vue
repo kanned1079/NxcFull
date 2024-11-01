@@ -12,6 +12,8 @@ const themeStore = useThemeStore()
 // const noticesStore = useNoticesStore()
 const message = useMessage()
 
+let animated = ref<boolean>(false)
+
 
 let editType = ref<'add' | 'edit'>('add')
 
@@ -188,7 +190,6 @@ let pagination = {
 
 // 获取所有的通知
 let getAllNotices = async () => {
-  noticesArr.value = []
   try {
     let {data} = await instance.get('/api/admin/v1/notice', {
       params: {
@@ -198,6 +199,8 @@ let getAllNotices = async () => {
       }
     })
     if (data.code === 200) {
+      noticesArr.value = []
+
       // console.log(data.Document)
       // noticesStore.noticesArr = data.notices
       data.notices.forEach((notice: Notice) => noticesArr.value.push(notice))
@@ -263,15 +266,15 @@ let editNotice = async () => {
 }
 
 
-onMounted(() => {
-  console.log('NoticeManager挂载')
-  getAllNotices()
-  // console.log(noticesStore.noticesArr)
-  // noticesStore.aa()
-
+onMounted(async () => {
   // 保存历史记录
   themeStore.menuSelected = 'notice-manager'
   themeStore.contentPath = '/admin/dashboard/noticemanager'
+  console.log('NoticeManager挂载')
+  await getAllNotices()
+  // console.log(noticesStore.noticesArr)
+  // noticesStore.aa()
+  animated.value = true
 })
 
 
@@ -288,50 +291,47 @@ export default {
 </script>
 
 <template>
-  <div class="root">
+  <div style="padding: 20px 20px 0 20px">
     <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">
       <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>
       <n-button type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试</n-button>
-      <!--      <n-data-table-->
-      <!--          style="margin-top: 20px"-->
-      <!--          :bordered="false"-->
-      <!--          :columns="columns"-->
-      <!--          :data="noticesStore.noticesArr"-->
-      <!--          :pagination="pagination"-->
-      <!--      />-->
-
-
     </n-card>
-
-    <n-card :embedded="true" hoverable :bordered="false" content-style="padding: 0px" style="margin-top: 20px">
-      <n-data-table
-          class="table"
-          :columns="columns"
-          :data="noticesArr"
-          :pagination="false"
-          :bordered="true"
-          style=""
-          :scroll-x="800"
-      />
-    </n-card>
-
-    <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-      <n-pagination
-          size="medium"
-          v-model:page.number="dataSize.page"
-          :page-count="pageCount"
-          @update:page="getAllNotices() "
-      />
-      <n-select
-          style="width: 160px; margin-left: 20px"
-          v-model:value.number="dataSize.pageSize"
-          size="small"
-          :options="dataCountOptions"
-          :remote="true"
-          @update:value="dataSize.page = 1; getAllNotices()"
-      />
-    </div>
   </div>
+
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card :embedded="true" hoverable :bordered="false" content-style="padding: 0px" style="margin-top: 20px">
+        <n-data-table
+            class="table"
+            :columns="columns"
+            :data="noticesArr"
+            :pagination="false"
+            :bordered="true"
+            style=""
+            :scroll-x="800"
+        />
+      </n-card>
+
+      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSize.page"
+            :page-count="pageCount"
+            @update:page="getAllNotices() "
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSize.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="dataSize.page = 1; getAllNotices()"
+        />
+      </div>
+    </div>
+  </transition>
+
+
 
   <n-modal
       title="新建通知"
@@ -372,16 +372,18 @@ export default {
 </template>
 
 <style lang="less" scoped>
-.root {
-  padding: 20px;
 
-  .card {
-    border: 0;
+.card {
+  border: 0;
 
-    .add-btn {
-      margin-top: 10px;
-    }
+  .add-btn {
+    margin-top: 10px;
   }
+}
+.root {
+  padding: 0 20px 20px 20px;
+
+
 }
 
 .form-root {

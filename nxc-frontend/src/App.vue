@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
 }
 
 .slide-fade-leave-active {
-  transition: all 350ms ease;
+  transition: all 250ms ease;
 }
 
 .slide-fade-enter-from,

@@ -13,9 +13,9 @@ type Document struct {
 	Body      string         `json:"body" gorm:"type:TEXT"`
 	Sort      int            `json:"sort"`
 	Show      bool           `json:"show"`
-	CreatedAt time.Time      `json:"create_at"`
-	UpdatedAt time.Time      `json:"update_at"`
-	DeletedAt gorm.DeletedAt `json:"delete_at"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
 
 func (Document) TableName() string {
