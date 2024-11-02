@@ -252,19 +252,19 @@ export default {
             <n-input
                 @keyup.enter="handleSendMsgBtnClicked"
                 :disabled="paramsData.status===204"
-                size="large" class="text-input"
+                size="medium" class="text-input"
                 :placeholder="paramsData.status===204?'工单已经结束':'輸入要發送的消息'"
                 v-model:value="msgInput"
             ></n-input>
             <n-button
                 :disabled="paramsData.status===204"
                 :bordered="false"
-                size="large"
+                size="medium"
                 type="primary"
                 class="send-btn"
                 @click="handleSendMsgBtnClicked"
             >
-              發送
+              Send
             </n-button>
           </div>
 
