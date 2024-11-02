@@ -19,21 +19,32 @@ func GetActivePlanListByUserId(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "user_id is required"})
 		return
 	}
-	resp, err := grpcClient.SubscriptionServiceClient.GetActivePlanListByUserId(sysContext.Background(), &pb.GetActivePlanListByUserIdRequest{
-		UserId: userID,
-	})
+	userIdNum, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	resp, err := grpcClient.SubscriptionServiceClient.GetActivePlanListByUserId(sysContext.Background(), &pb.GetActivePlanListByUserIdRequest{
+		UserId: userIdNum,
+	})
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//}
+	//if resp == nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "调用rpc服务器失败无返回值",
+	//	})
+	//	return
+	//}
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
-		})
-		return
 	}
 	var myPlansMap []map[string]any
 	if err := json.Unmarshal(resp.MyPlans, &myPlansMap); err != nil {

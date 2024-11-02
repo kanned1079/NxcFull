@@ -3,6 +3,9 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/redis/go-redis/v9"
 	"log"
 	"net/http"
 	"strconv"
@@ -20,73 +23,158 @@ func NewOrderServices() *SubscribeServices {
 	return &SubscribeServices{}
 }
 
+// v1.1
+//func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, request *pb.GetActivePlanListByUserIdRequest) (*pb.GetActivePlanListByUserIdResponse, error) {
+//	var activeOrders []model.ActiveOrders
+//	// Query the ActiveOrders table for the user_id and where IsActive is true
+//	if err := dao.Db.Model(&model.ActiveOrders{}).Where("user_id = ? AND is_active = ?", request.UserId, true).Find(&activeOrders).Error; err != nil {
+//		return &pb.GetActivePlanListByUserIdResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "获取有效的订单失败",
+//		}, nil
+//	}
+//
+//	//if len(activeOrders) == 0 {
+//	//	return &pb.GetActivePlanListByUserIdResponse{
+//	//		Code: http.StatusInternalServerError,
+//	//		Msg:  "获取有效的订单失败",
+//	//	}, nil
+//	//}
+//
+//	// Create a result array to hold plan_name and expiration_date
+//	var result []map[string]interface{}
+//	//var myPlanResult []*pb.PlanInfo
+//	var myPlanResult []struct {
+//		//string plan_name = 1;         // 订阅计划名称
+//		//string expiration_date = 2;   // 到期日期
+//		PlanName       string `json:"plan_name"`
+//		ExpirationDate string `json:"expiration_date"`
+//	}
+//
+//	// Iterate through the active orders and fetch plan details
+//	for _, order := range activeOrders {
+//		var plan model.Plan
+//		// Fetch the plan details using the PlanId
+//		if err := dao.Db.Where("id = ?", order.PlanId).First(&plan).Error; err != nil {
+//			//context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch plan details"})
+//			//return
+//			return &pb.GetActivePlanListByUserIdResponse{
+//				Code: http.StatusInternalServerError,
+//				Msg:  "获取订阅的细节失败",
+//			}, nil
+//		}
+//
+//		// Add the plan_name and expiration_date to the result
+//		result = append(result, map[string]interface{}{
+//			"plan_name":       plan.Name,
+//			"expiration_date": order.ExpirationDate,
+//		})
+//		myPlanResult = append(myPlanResult, struct {
+//			PlanName       string `json:"plan_name"`
+//			ExpirationDate string `json:"expiration_date"`
+//		}{
+//			PlanName:       plan.Name,
+//			ExpirationDate: order.ExpirationDate.Format("2006-01-02 15:04:05"),
+//		})
+//	}
+//	//log.Println(myPlanResult)
+//	if myPlanResultJson, err := json.Marshal(myPlanResult); err != nil {
+//		return &pb.GetActivePlanListByUserIdResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "转换格式失败",
+//		}, nil
+//	} else {
+//		return &pb.GetActivePlanListByUserIdResponse{
+//			Code:    http.StatusOK,
+//			MyPlans: myPlanResultJson,
+//			Msg:     "获取成功",
+//		}, nil
+//	}
+//
+//}
+
 func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, request *pb.GetActivePlanListByUserIdRequest) (*pb.GetActivePlanListByUserIdResponse, error) {
-	var activeOrders []model.ActiveOrders
-	// Query the ActiveOrders table for the user_id and where IsActive is true
-	if err := dao.Db.Model(&model.ActiveOrders{}).Where("user_id = ? AND is_active = ?", request.UserId, true).Find(&activeOrders).Error; err != nil {
+	// Redis key for caching the active orders
+	redisKey := fmt.Sprintf("user_property:active_order_summary:%d", request.UserId)
+
+	// Check if the result is already cached in Redis
+	cachedData, err := dao.Rdb.Get(ctx, redisKey).Result()
+	if err == nil {
+		// If cached data is found, unmarshal and return it
+		log.Println("User's active orders summary in redis, skip query db.")
+		var cachedResult []map[string]interface{}
+		if err := json.Unmarshal([]byte(cachedData), &cachedResult); err == nil {
+			return &pb.GetActivePlanListByUserIdResponse{
+				Code:    http.StatusOK,
+				Msg:     "获取成功 (from cache)",
+				MyPlans: []byte(cachedData),
+			}, nil
+		}
+	} else if !errors.Is(err, redis.Nil) {
+		// Handle Redis errors (other than key not found)
 		return &pb.GetActivePlanListByUserIdResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "获取有效的订单失败",
+			Msg:  "Failed to fetch data from Redis: " + err.Error(),
 		}, nil
 	}
 
-	//if len(activeOrders) == 0 {
-	//	return &pb.GetActivePlanListByUserIdResponse{
-	//		Code: http.StatusInternalServerError,
-	//		Msg:  "获取有效的订单失败",
-	//	}, nil
-	//}
-
-	// Create a result array to hold plan_name and expiration_date
-	var result []map[string]interface{}
-	//var myPlanResult []*pb.PlanInfo
-	var myPlanResult []struct {
-		//string plan_name = 1;         // 订阅计划名称
-		//string expiration_date = 2;   // 到期日期
-		PlanName       string `json:"plan_name"`
-		ExpirationDate string `json:"expiration_date"`
+	// If Redis query fails or no data is found, continue with database query
+	var activeOrders []model.ActiveOrders
+	if err := dao.Db.Where("user_id = ? AND is_active = ?", request.UserId, true).Find(&activeOrders).Error; err != nil {
+		return &pb.GetActivePlanListByUserIdResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "Failed to fetch active orders: " + err.Error(),
+		}, nil
 	}
 
-	// Iterate through the active orders and fetch plan details
+	if len(activeOrders) == 0 {
+		return &pb.GetActivePlanListByUserIdResponse{
+			Code: http.StatusNotFound,
+			Msg:  "No active plans found for the user",
+		}, nil
+	}
+
+	// Prepare the result array with plan details
+	var result []map[string]interface{}
 	for _, order := range activeOrders {
 		var plan model.Plan
-		// Fetch the plan details using the PlanId
 		if err := dao.Db.Where("id = ?", order.PlanId).First(&plan).Error; err != nil {
-			//context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch plan details"})
-			//return
 			return &pb.GetActivePlanListByUserIdResponse{
-				Code: http.StatusInternalServerError,
-				Msg:  "获取订阅的细节失败",
+				Code: http.StatusNotFound,
+				Msg:  "Failed to fetch plan details: " + err.Error(),
 			}, nil
 		}
 
-		// Add the plan_name and expiration_date to the result
 		result = append(result, map[string]interface{}{
+			"id":              order.ID,
 			"plan_name":       plan.Name,
 			"expiration_date": order.ExpirationDate,
 		})
-		myPlanResult = append(myPlanResult, struct {
-			PlanName       string `json:"plan_name"`
-			ExpirationDate string `json:"expiration_date"`
-		}{
-			PlanName:       plan.Name,
-			ExpirationDate: order.ExpirationDate.Format("2006-01-02 15:04:05"),
-		})
 	}
-	//log.Println(myPlanResult)
-	if myPlanResultJson, err := json.Marshal(myPlanResult); err != nil {
+
+	// Marshal the result to JSON format for caching
+	resultJson, err := json.Marshal(result)
+	if err != nil {
 		return &pb.GetActivePlanListByUserIdResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "转换格式失败",
-		}, nil
-	} else {
-		return &pb.GetActivePlanListByUserIdResponse{
-			Code:    http.StatusOK,
-			MyPlans: myPlanResultJson,
-			Msg:     "获取成功",
+			Msg:  "Failed to marshal result: " + err.Error(),
 		}, nil
 	}
 
+	// Cache the result in Redis with an expiration time
+	if err := dao.Rdb.Set(ctx, redisKey, resultJson, time.Hour).Err(); err != nil {
+		return &pb.GetActivePlanListByUserIdResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "Failed to cache result in Redis: " + err.Error(),
+		}, nil
+	}
+
+	// Return the result
+	return &pb.GetActivePlanListByUserIdResponse{
+		Code:    http.StatusOK,
+		Msg:     "获取成功",
+		MyPlans: resultJson,
+	}, nil
 }
 
 // CommitNewOrder 提交新订单

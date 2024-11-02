@@ -121,7 +121,7 @@ func StartApiGateways() {
 		userAuthorized.DELETE("/auth/2fa/setup/cancel", handler.HandleCancelSetup2FA) // 取消2fa在redis中的暂存
 		userAuthorized.DELETE("auth/2fa/disable", handler.HandleDisable2FA)
 
-		userAuthorized.GET("/plan/info/fetch", handler.GetActivePlanListByUserId)
+		userAuthorized.GET("/plan/summary/fetch", handler.GetActivePlanListByUserId)
 
 		// 这里将生成订单号后推送至消息队列 交由第二个进程进行处理
 		userAuthorized.GET("/orders", handler.HandleGetAllMyOrders)

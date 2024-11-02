@@ -128,7 +128,7 @@ let haveActive = ref<boolean>(false)
 
 let getActivePlanList = async () => {
   try {
-    let {data} = await instance.get('/api/user/v1/plan/info/fetch', {
+    let {data} = await instance.get('/api/user/v1/plan/summary/fetch', {
       params: {
         user_id: userInfoStore.thisUser.id,
         // user_id: 3,

@@ -6,9 +6,7 @@ import useApiAddrStore from "@/stores/useApiAddrStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
-// import VueMarkdown from 'vue-markdown';
 import {MdPreview} from 'md-editor-v3';
-// import instance from "@/axios";
 import usePaymentStore from "@/stores/usePaymentStore";
 import 'md-editor-v3/lib/preview.css';
 
@@ -17,12 +15,6 @@ const id = 'preview-only';
 const text = ref('# Hello Editor');
 
 let animated = ref<boolean>(false)
-
-// let isMounted = ref<boolean>(false)
-
-// let transparentDeg = ref<number>(0.0)
-// const scrollElement = document.documentElement;
-
 const paymentStore = usePaymentStore();
 const message = useMessage()
 const apiAddrStore = useApiAddrStore();
@@ -71,8 +63,6 @@ let toPurchase = (plan_id: number) => {
 onMounted(() => {
   themeStore.menuSelected = 'user-buy-plan'
   themeStore.userPath = '/dashboard/purchase'
-  // paymentStore.getAllPlans()
-  // setTimeout(() => isMounted.value = true, 0)
   animated.value = true
 })
 
@@ -106,6 +96,7 @@ export default {
           class="plan-item"
           content-style="padding: 0;"
           :bordered="false"
+          @click="toPurchase(index)"
       >
         <n-card
             class="plan-detail"
@@ -130,7 +121,7 @@ export default {
               :modelValue="item.describe || ''"
           />
           <n-button
-              @click="toPurchase(index)"
+              @click=""
               type="primary"
               class="purchase"
               :bordered="false"

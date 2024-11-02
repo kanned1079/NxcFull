@@ -21,30 +21,31 @@ const message = useMessage()
 let editType = ref<'add' | 'update'>('add') // 这里可以选择的是add和update
 
 interface Plan {
-  id: number
-  group_id?: number
+  id: number | null
+  group_id?: number | null
   is_renew?: boolean
   is_sale?: boolean
   name: string
-  capacity_limit: number
-  residue: number
+  capacity_limit: number | null
+  residue: number | null
   describe?: string
-  month_price?: number
-  quarter_price?: number
-  half_year_price?: number
-  year_price?: number
-  created_at: string
-  updated_at?: number
+  month_price?: number | null
+  quarter_price?: number | null
+  half_year_price?: number | null
+  year_price?: number | null
+  created_at?: string
+  updated_at?: number | null
   deleted_at?: string
 }
 
 let formValue = ref({
   plan: {
+    id: null,
+    group_id: null,
     name: '',
     describe: '',
     is_sale: false,
     is_renew: false,
-    group_id: null,
     capacity_limit: null,
     residue: null,
     month_price: null,
@@ -188,6 +189,8 @@ let getAllGroups = async () => {
         label: group.name,
         value: group.id,
       }))
+    } else {
+      message.error(data.msg || 'Error fetch.')
     }
   } catch (error) {
     console.log(error)
@@ -262,28 +265,28 @@ const columns = [
     title: '月付价格',
     key: 'month_price',
     render(row: Plan): any {
-      return row.hasOwnProperty('month_price') ? row.month_price.toFixed(2) : 'null'
+      return row.hasOwnProperty('month_price') ? row.month_price?.toFixed(2) : 'null'
     }
   },
   {
     title: '季付价格',
     key: 'quarter_price',
     render(row: Plan): any {
-      return row.hasOwnProperty('quarter_price') ? row.quarter_price.toFixed(2) : 'null'
+      return row.hasOwnProperty('quarter_price') ? row.quarter_price?.toFixed(2) : 'null'
     }
   },
   {
     title: '半年付价格',
     key: 'halfYear_price',
     render(row: Plan): any {
-      return row.hasOwnProperty('half_year_price') ? row.half_year_price.toFixed(2) : 'null'
+      return row.hasOwnProperty('half_year_price') ? row.half_year_price?.toFixed(2) : 'null'
     }
   },
   {
     title: '年付价格',
     key: 'year_price',
     render(row: Plan): any {
-      return row.hasOwnProperty('year_price') ? row.year_price.toFixed(2) : 'null'
+      return row.hasOwnProperty('year_price') ? row.year_price?.toFixed(2) : 'null'
     }
   },
   {
@@ -310,7 +313,7 @@ const columns = [
   }
 ];
 
-let updatePlan = async (row: Plan) => {
+let updatePlan = async (row?: Plan) => {
   console.log('updatePlan')
   // console.log(...row)
   try {
@@ -390,7 +393,7 @@ let updateRowRenew = async (id: number, val: boolean) => {
       notify('error', '更新失败')
 
     }
-  } catch (error: Error) {
+  } catch (error: any) {
     console.log(error)
   }
 }

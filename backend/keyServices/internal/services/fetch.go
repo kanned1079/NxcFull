@@ -312,7 +312,7 @@ func (s *KeyServices) GetAllMyKeysByUserIdAsc(ctx context.Context, request *pb.G
 	offset := (page - 1) * size
 
 	// Redis 缓存的键值
-	cacheKey := fmt.Sprintf("user_keys:%d:page:%d:size:%d", request.UserId, page, size)
+	cacheKey := fmt.Sprintf("user_property:user_keys:%d:page:%d:size:%d", request.UserId, page, size)
 
 	// 尝试从 Redis 缓存中获取数据
 	cacheData, err := dao.Rdb.HGetAll(ctx, cacheKey).Result()

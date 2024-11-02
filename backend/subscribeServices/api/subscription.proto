@@ -47,7 +47,7 @@ message GetAllPlanKeyNameResponse {
 }
 
 message GetActivePlanListByUserIdRequest {
-  string user_id = 1;  // 用户 ID
+  int64 user_id = 1;  // 用户 ID
 }
 
 message PlanInfo {

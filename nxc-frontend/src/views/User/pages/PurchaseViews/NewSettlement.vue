@@ -4,13 +4,13 @@ import {onBeforeMount, onMounted, ref, computed, onBeforeUnmount} from "vue"
 import type {MenuOption, NotificationType} from 'naive-ui'
 import {NIcon, useNotification, useMessage} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
-import useApiAddrStore from "@/stores/useApiAddrStore"
+// import useApiAddrStore from "@/stores/useApiAddrStore"
 import usePaymentStore from "@/stores/usePaymentStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useRouter} from "vue-router";
 import {MdPreview} from 'md-editor-v3';
 import 'md-editor-v3/lib/preview.css';
-import {CheckmarkCircleOutline as settlementIcon, TicketOutline as ticketIcon} from "@vicons/ionicons5"
+import {CheckmarkCircleOutline as settlementIcon, TicketOutline as ticketIcon, ChevronBackOutline as backIcon} from "@vicons/ionicons5"
 import instance from "@/axios";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 
@@ -20,7 +20,7 @@ const message = useMessage()
 const userInfoStore = useUserInfoStore();
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
-const apiAddrStore = useApiAddrStore();
+// const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
 const router = useRouter();
 
@@ -113,9 +113,9 @@ let appendCycleOptions = () => {
   console.log(menuOptions)
 }
 
-let handleUpdateExpandedKeys = (keys: string) => {
-  console.log(keys)
-}
+// let handleUpdateExpandedKeys = (keys: string) => {
+//   console.log(keys)
+// }
 
 // 优惠券信息
 interface Coupon {
@@ -172,9 +172,7 @@ let verifyTicket = async () => {
 }
 
 // 抵折金额
-let discountPrice = computed(()  => couponInfo.value.verified ? ((couponInfo.value.percent_off / 100) * resultPrice.value) : 0)
-
-
+let discountPrice = computed(()  => couponInfo.value.verified ? ((couponInfo.value.percent_off / 100) * resultPrice.value) : 0).value
 
 let saveOrder = async () => {
   console.log('提交订单准备支付')
@@ -232,8 +230,6 @@ onBeforeMount(() => {
   }
 })
 
-// let showAni = computed(() => paymentStore.plan_id_selected != -1).value as boolean
-
 onBeforeUnmount(() => {
   animate.value = false
 })
@@ -248,6 +244,13 @@ export default {
 </script>
 
 <template>
+  <div style="margin: 20px 20px 0 20px; font-size: 1rem">
+    <n-button type="primary" text @click="router.back()">
+      <n-icon style="margin: 0 5px 0 2px;"><backIcon/></n-icon>
+      重新選取
+    </n-button>
+  </div>
+
   <transition name="slide-fade">
     <div class="root" v-if="paymentStore.plan_id_selected != -1 && animate">
       <div class="root-layout">
@@ -299,7 +302,6 @@ export default {
               </n-button>
             </div>
 
-            <!--          </n-input-group>-->
           </n-card>
           <n-card style="color: white" class="r-part-btn" :embedded="true" hoverable>
             <p class="r-title">{{ t('newSettlement.orderTotalTitle') }}</p>
@@ -340,21 +342,6 @@ export default {
 </template>
 
 <style scoped lang="less">
-
-//.slide-fade-enter-active {
-//  transition: all 300ms ease;
-//}
-//
-//.slide-fade-leave-active {
-//  transition: all 300ms ease;
-//}
-//
-//.slide-fade-enter-from,
-//.slide-fade-leave-to {
-//  transform: translateY(10px);
-//  opacity: 0;
-//}
-
 .root {
   width: auto;
   margin: 20px;
