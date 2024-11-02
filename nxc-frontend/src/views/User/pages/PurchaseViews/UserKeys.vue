@@ -271,11 +271,12 @@ export default {
 <style scoped lang="less">
 
 .root {
-  padding: 20px;
+  //padding: 20px;
+  padding: 0 20px 20px 20px;
 
-  .title {
-
-  }
+  //.title {
+  //
+  //}
 
   .key-card {
     margin-top: 20px;

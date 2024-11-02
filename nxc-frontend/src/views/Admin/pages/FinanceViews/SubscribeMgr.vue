@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onBeforeMount, onMounted, ref, h} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import usePaymentStore from "@/stores/usePaymentStore";
@@ -8,6 +8,8 @@ import type {DrawerPlacement, FormInst, NotificationType} from 'naive-ui'
 import {NButton, NSwitch, NTag, useMessage, useNotification} from 'naive-ui'
 import instance from "@/axios";
 // import {MdEditor} from "md-editor-v3";
+
+let animated = ref<boolean>(false)
 
 const notification = useNotification()
 const apiAddrStore = useApiAddrStore();
@@ -394,20 +396,22 @@ let updateRowRenew = async (id: number, val: boolean) => {
 }
 
 
-onMounted(() => {
+onMounted(async  () => {
   console.log('SubscribeMgr挂载')
   // getAllSubscribeItems()
 
   themeStore.menuSelected = 'subscription-manager'
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
+  await getAllGroups()
+  await paymentStore.getAllPlans()
 
+  animated.value = true
 
   // themeStore.
 })
 
 onBeforeMount(async () => {
-  await getAllGroups()
-  await paymentStore.getAllPlans()
+
 
 })
 
@@ -420,82 +424,86 @@ export default {
 </script>
 
 <template>
-  <div class="root">
-    <n-card class="card" hoverable :embedded="true" title="订阅管理" :bordered="false">
-      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>
-    </n-card>
 
-    <n-card :embedded="true" :bordered="false" hoverable content-style="padding: 0;" style="margin-top: 20px">
-      <!--      在此处放置表格-->
-      <!--      表格的列名为 #ID， 启用销售（数据为bool，显示为一个n-switch），允许续费（数据为bool，显示为一个n-switch）,排序（数据为数值，显示为一个n-tag），权限组（数值为string，显示为一个n-tag），名称，数量，余量，月付价格，季付价格，半年付价格，年付价格，操作（显示为两个按钮，使用h函数，将按钮放置为一个div中，使用flex布局横向排列）-->
-      <n-data-table
-          size="medium"
-          :columns="columns"
-          :data="paymentStore.plan_list"
-          scroll-x="1000"
-      />
-    </n-card>
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card class="card" hoverable :embedded="true" title="订阅管理" :bordered="false">
+        <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>
+      </n-card>
 
-    <n-drawer v-model:show="active" width="60%" :placement="placement">
-      <n-drawer-content title="添加订阅">
-        <n-form
-            ref="formRef"
-            :model="formValue"
-            :rules="rules"
-            :scroll-x="800"
-        >
-          <n-form-item label="订阅名称" path="plan.name">
-            <n-input v-model:value="formValue.plan.name" placeholder="输入文档标题"/>
-          </n-form-item>
-          <n-form-item label="订阅描述" path="plan.describe">
-            <n-input type="textarea" :rows="8" v-model:value="formValue.plan.describe" placeholder="输入订阅描述"/>
-          </n-form-item>
-          <n-form-item label="启用销售" path="plan.is_sale">
-            <n-switch v-model:value="formValue.plan.is_sale"/>
-          </n-form-item>
-          <n-form-item label="允许续费" path="plan.is_renew">
-            <n-switch v-model:value="formValue.plan.is_renew"/>
-          </n-form-item>
-          <n-form-item label="群组ID" path="plan.group_id">
-            <n-select :options="groupOptions" v-model:value.number="formValue.plan.group_id"
-                      placeholder="选择所属群组"/>
-          </n-form-item>
-          <n-form-item label="最大允许用户数目" path="plan.capacity_limit">
-            <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.capacity_limit"
-                            placeholder="输入最大承载的用户数"/>
-          </n-form-item>
-          <n-form-item label="排序" path="plan.sort">
-            <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.sort"
-                            placeholder="用于前端排序"/>
-          </n-form-item>
-          <n-form-item label="月付价格" path="plan.month_price">
-            <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.month_price"
-                            placeholder="输入月付价格"/>
-          </n-form-item>
-          <n-form-item label="季付价格" path="plan.quarter_price">
-            <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.quarter_price"
-                            placeholder="输入季付价格"/>
-          </n-form-item>
-          <n-form-item label="半年付价格" path="plan.half_year_price">
-            <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.half_year_price"
-                            placeholder="输入半年付价格"/>
-          </n-form-item>
-          <n-form-item label="年付价格" path="plan.year_price">
-            <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.year_price"
-                            placeholder="输入年付价格"/>
-          </n-form-item>
-        </n-form>
-        <div style="display: flex; flex-direction: row; justify-content: right; margin-top: 20px">
-          <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">取消</n-button>
-          <n-button style="width: 80px" type="primary" @click="submitPlan">{{
-              editType === 'add' ? '添加' : '修改'
-            }}
-          </n-button>
-        </div>
-      </n-drawer-content>
-    </n-drawer>
+      <n-card :embedded="true" :bordered="false" hoverable content-style="padding: 0;" style="margin-top: 20px">
+        <!--      在此处放置表格-->
+        <!--      表格的列名为 #ID， 启用销售（数据为bool，显示为一个n-switch），允许续费（数据为bool，显示为一个n-switch）,排序（数据为数值，显示为一个n-tag），权限组（数值为string，显示为一个n-tag），名称，数量，余量，月付价格，季付价格，半年付价格，年付价格，操作（显示为两个按钮，使用h函数，将按钮放置为一个div中，使用flex布局横向排列）-->
+        <n-data-table
+            size="medium"
+            :columns="columns"
+            :data="paymentStore.plan_list"
+            scroll-x="1000"
+        />
+      </n-card>
 
-  </div>
+      <n-drawer v-model:show="active" width="60%" :placement="placement">
+        <n-drawer-content title="添加订阅">
+          <n-form
+              ref="formRef"
+              :model="formValue"
+              :rules="rules"
+              :scroll-x="800"
+          >
+            <n-form-item label="订阅名称" path="plan.name">
+              <n-input v-model:value="formValue.plan.name" placeholder="输入文档标题"/>
+            </n-form-item>
+            <n-form-item label="订阅描述" path="plan.describe">
+              <n-input type="textarea" :rows="8" v-model:value="formValue.plan.describe" placeholder="输入订阅描述"/>
+            </n-form-item>
+            <n-form-item label="启用销售" path="plan.is_sale">
+              <n-switch v-model:value="formValue.plan.is_sale"/>
+            </n-form-item>
+            <n-form-item label="允许续费" path="plan.is_renew">
+              <n-switch v-model:value="formValue.plan.is_renew"/>
+            </n-form-item>
+            <n-form-item label="群组ID" path="plan.group_id">
+              <n-select :options="groupOptions" v-model:value.number="formValue.plan.group_id"
+                        placeholder="选择所属群组"/>
+            </n-form-item>
+            <n-form-item label="最大允许用户数目" path="plan.capacity_limit">
+              <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.capacity_limit"
+                              placeholder="输入最大承载的用户数"/>
+            </n-form-item>
+            <n-form-item label="排序" path="plan.sort">
+              <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.sort"
+                              placeholder="用于前端排序"/>
+            </n-form-item>
+            <n-form-item label="月付价格" path="plan.month_price">
+              <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.month_price"
+                              placeholder="输入月付价格"/>
+            </n-form-item>
+            <n-form-item label="季付价格" path="plan.quarter_price">
+              <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.quarter_price"
+                              placeholder="输入季付价格"/>
+            </n-form-item>
+            <n-form-item label="半年付价格" path="plan.half_year_price">
+              <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.half_year_price"
+                              placeholder="输入半年付价格"/>
+            </n-form-item>
+            <n-form-item label="年付价格" path="plan.year_price">
+              <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.year_price"
+                              placeholder="输入年付价格"/>
+            </n-form-item>
+          </n-form>
+          <div style="display: flex; flex-direction: row; justify-content: right; margin-top: 20px">
+            <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">取消</n-button>
+            <n-button style="width: 80px" type="primary" @click="submitPlan">{{
+                editType === 'add' ? '添加' : '修改'
+              }}
+            </n-button>
+          </div>
+        </n-drawer-content>
+      </n-drawer>
+
+    </div>
+  </transition>
+
 </template>
 
 <style scoped lang="less">

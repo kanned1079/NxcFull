@@ -7,12 +7,14 @@ import SendMail from "@/views/Admin/pages/SettingViews/SystemConfig/SendMail.vue
 import WeApp from "@/views/Admin/pages/SettingViews/SystemConfig/WeApp.vue"
 import Notice from "@/views/Admin/pages/SettingViews/SystemConfig/Notice.vue"
 import BackendConfig from "@/views/Admin/pages/SettingViews/SystemConfig/BackendConfig.vue"
-
+import {ref} from "vue"
 import useThemeStore from "@/stores/useThemeStore";
 import Subscribe from "@/views/Admin/pages/SettingViews/SystemConfig/Subscribe.vue";
 import useSettingStore from "@/stores/useSettingStore";
 import {onBeforeMount, onMounted} from "vue";
 import instance from "@/axios";
+
+let animated = ref<boolean>(false)
 
 const settingStore = useSettingStore()
 
@@ -32,6 +34,7 @@ onMounted(() => {
   console.log('menuSelected:', themeStore.menuSelected)
   themeStore.contentPath = '/admin/dashboard/systemconfig'
   themeStore.menuSelected = 'system-config'
+  animated.value = true
 })
 
 </script>
@@ -43,39 +46,41 @@ export default {
 </script>
 
 <template>
+  <transition name="slide-fade">
+    <div class="root" v-if="animated" style="margin: 20px">
+      <n-card hoverable style="padding: 0" :bordered="false" :embedded="true">
+        <n-tabs type="segment" animated>
+          <n-tab-pane name="chap1" tab="站点">
+            <Site></Site>
+          </n-tab-pane>
+          <n-tab-pane name="chap2" tab="安全">
+            <Security></Security>
+          </n-tab-pane>
+          <n-tab-pane name="chap3" tab="个性化">
+            <Personalization></Personalization>
+          </n-tab-pane>
+          <n-tab-pane name="chap4" tab="订阅">
+            <Subscribe></Subscribe>
+          </n-tab-pane>
+          <n-tab-pane name="chap5" tab="后端设置">
+            <BackendConfig></BackendConfig>
+          </n-tab-pane>
+          <n-tab-pane name="chap6" tab="邮件">
+            <n-message-provider>
+              <SendMail></SendMail>
+            </n-message-provider>
+          </n-tab-pane>
+          <n-tab-pane name="chap7" tab="通知">
+            <Notice></Notice>
+          </n-tab-pane>
+          <n-tab-pane name="chap8" tab="APP">
+            <WeApp></WeApp>
+          </n-tab-pane>
+        </n-tabs>
+      </n-card>
+    </div>
+  </transition>
 
-  <div class="root" style="margin: 20px">
-    <n-card hoverable style="padding: 0" :bordered="false" :embedded="true">
-      <n-tabs type="segment" animated>
-        <n-tab-pane name="chap1" tab="站点">
-          <Site></Site>
-        </n-tab-pane>
-        <n-tab-pane name="chap2" tab="安全">
-          <Security></Security>
-        </n-tab-pane>
-        <n-tab-pane name="chap3" tab="个性化">
-          <Personalization></Personalization>
-        </n-tab-pane>
-        <n-tab-pane name="chap4" tab="订阅">
-          <Subscribe></Subscribe>
-        </n-tab-pane>
-        <n-tab-pane name="chap5" tab="后端设置">
-          <BackendConfig></BackendConfig>
-        </n-tab-pane>
-        <n-tab-pane name="chap6" tab="邮件">
-          <n-message-provider>
-            <SendMail></SendMail>
-          </n-message-provider>
-        </n-tab-pane>
-        <n-tab-pane name="chap7" tab="通知">
-          <Notice></Notice>
-        </n-tab-pane>
-        <n-tab-pane name="chap8" tab="APP">
-          <WeApp></WeApp>
-        </n-tab-pane>
-      </n-tabs>
-    </n-card>
-  </div>
 
 
   <!--  <div style="display: flex; flex-direction: column; max-height: 100vh; overflow-y: auto;">-->

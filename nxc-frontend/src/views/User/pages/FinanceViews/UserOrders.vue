@@ -98,7 +98,7 @@ const columns = [
   {title: '#', key: 'order_id'},
   {title: '订阅名', key: 'plan_name'},
   {
-    title: '周期', key: 'period', render(row) {
+    title: '周期', key: 'period', render(row: OrderList) {
       const periodLabel = computed(() => {
         switch (row.period) {
           case 'month':
@@ -127,9 +127,8 @@ const columns = [
   {
     title: '订单状态', key: 'is_success', render(row: OrderList) {
       return h(NTag, {
-
         // type: row.is_success ? 'success' : 'error',
-        type: orderStatusTagColor(row.is_finished, row.is_success),
+        type: orderStatusTagColor(row.is_finished, row.is_success) as string,
         bordered: false,
       }, {default: () => orderStatusText(row.is_finished, row.is_success)});
     }
@@ -309,7 +308,8 @@ export default {
 
 <style scoped lang="less">
 .root {
-  padding: 20px;
+  //padding: 20px;
+  padding: 0 20px 20px 20px;
 
   .order-table {
     margin-top: 20px;

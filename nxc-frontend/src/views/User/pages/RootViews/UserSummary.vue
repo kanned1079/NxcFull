@@ -6,6 +6,7 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {useDialog, useMessage} from 'naive-ui'
+import {formatDate} from "@/utils/timeFormat"
 
 import {
   ArrowBack,
@@ -18,14 +19,14 @@ import {
   KeyOutline as keyIcon,
 } from '@vicons/ionicons5'
 import instance from "@/axios";
-import useApiAddrStore from "@/stores/useApiAddrStore";
+// import useApiAddrStore from "@/stores/useApiAddrStore";
 
 let animated = ref<boolean>(false)
 
-const message = useMessage()
+// const message = useMessage()
 const dialog = useDialog()
 const {t, locale} = useI18n()
-const apiAddrStore = useApiAddrStore();
+// const apiAddrStore = useApiAddrStore();
 const appInfoStore = useAppInfosStore();
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
@@ -42,52 +43,29 @@ interface Notice {
 
 let thisNotices = ref<Notice[]>([])
 
-// let noticeBg = computed(() => ({
-//   backgroundSize: 'cover',
-//   backgroundImage: `url(https://ikanned.com:24444/d/Upload/NXC/IMG_1152.png)`,
-//   backgroundPosition: 'center'
-// }))
-//
-// let setNoticeBg = (imgUrl: string) => imgUrl === '' ? ({
-//   backgroundImage: `url('https://ikanned.com:24444/d/Upload/NXC/noticeUniversalBgDay.svg')`,
-//   // backgroundImage: `url('./noticeUniversalBgDay.svg')`,
-// }) : ({
-//   backgroundImage: `url(${imgUrl})`,
-// })
-
-// if (imgUrl === '') {
-//   console.log('无默认背景')
-//   return ({
-//   })
-// } else {
-//   return ({
-//   })
-// }
-
-
 let helpData = [
   {
     id: 0,
-    title: computed(() => t('userSummary.tutorial.title')),
-    content: computed(() => t('userSummary.tutorial.content', {name: appInfoStore.appCommonConfig.app_name})),
+    title: computed(() => t('userSummary.tutorial.title')).value,
+    content: computed(() => t('userSummary.tutorial.content', {name: appInfoStore.appCommonConfig.app_name})).value,
     icon_id: 1,
   },
   {
     id: 1,
-    title: computed(() => t('userSummary.checkKey.title')),
-    content: computed(() => t('userSummary.checkKey.content')),
+    title: computed(() => t('userSummary.checkKey.title')).value,
+    content: computed(() => t('userSummary.checkKey.content')).value,
     icon_id: 2,
   },
   {
     id: 2,
-    title: computed(() => t('userSummary.renewPlan.title')),
-    content: computed(() => t('userSummary.renewPlan.content')),
+    title: computed(() => t('userSummary.renewPlan.title')).value,
+    content: computed(() => t('userSummary.renewPlan.content')).value,
     icon_id: 3,
   },
   {
     id: 3,
-    title: computed(() => t('userSummary.support.title')),
-    content: computed(() => t('userSummary.support.content')),
+    title: computed(() => t('userSummary.support.title')).value,
+    content: computed(() => t('userSummary.support.content')).value,
     icon_id: 4,
   }
 ]
@@ -99,7 +77,7 @@ let pathById = [
   },
   {
     id: 1,
-    path: '/dashboard/purchase',
+    path: '/dashboard/keys',
   },
   {
     id: 2,
@@ -107,13 +85,13 @@ let pathById = [
   },
   {
     id: 3,
-    path: '/dashboard/support',
+    path: '/dashboard/tickets',
   },
 ]
 
-let showDetail = () => {
-  console.log('显示通知详情')
-}
+// let showDetail = () => {
+//   console.log('显示通知详情')
+// }
 
 let getAllNotices = async () => {
   console.log('获取所有有效通知')
@@ -167,10 +145,10 @@ let getActivePlanList = async () => {
   }
 }
 
-let goCartPage = () => {
-  console.log('to cart page')
-
-}
+// let goCartPage = () => {
+//   console.log('to cart page')
+//
+// }
 
 onMounted(async () => {
   console.log('用户summary挂载')
@@ -195,7 +173,6 @@ export default {
   <transition name="slide-fade">
     <div class="root" v-if="animated">
       <n-alert :bordered="false" style="margin-bottom: 20px" title="" type="warning">
-
         <div style="display: flex; flex-direction: row; align-items: center">
           您有待处理的工单
           <n-button style="margin-left: 5px" text type="primary" @click="router.push({path: '/dashboard/tickets'})">
@@ -206,7 +183,6 @@ export default {
           </n-button>
         </div>
       </n-alert>
-
       <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
         <n-carousel show-arrow autoplay style="border-radius: 3px">
           <n-card
@@ -216,48 +192,28 @@ export default {
               @click="handleConfirm(item.title, item.content)"
               :bordered="false"
           >
-            <!--            :style="item.img_url===''?null:{backgroundImage: `url(${item.img_url})`}"-->
-
             <div class="content">
-              <n-tag class="tag" type="warning">{{ item.tags }}</n-tag>
+              <n-tag
+                  class="tag"
+                  type="warning"
+              >
+                {{ item.tags }}
+              </n-tag>
               <div class="inner">
-                <!--                <p-->
-                <!--                    :style="-->
-                <!--                      !themeStore.enableDarkMode?{-->
-                <!--                        textShadow: '0 0 5px rgba(255, 255, 255, 0.6)',-->
-                <!--                        ...(item.img_url !==''?{color: '#fff'}:null)-->
-                <!--                      }:{textShadow: '2px 2px 5px rgba(0, 0, 0, 0.6)'}"-->
-                <!--                    class="title">-->
-                <!--                  {{ item.title }}-->
-                <!--                </p>-->
-                <p
-                    :style="
-    item.img_url !== ''
-      ? { color: '#fff' }
-      : null
-  "
-                    class="title"
-                >
+                <p :style="item.img_url !== ''? { color: '#fff' }: null" class="title">
                   {{ item.title }}
                 </p>
-
-                <p
-                    :style="!themeStore.enableDarkMode?{textShadow: '0 0 5px rgba(255, 255, 255, 0.6)'}:{textShadow: '2px 2px 5px rgba(0, 0, 0, 0.6)'}"
-                    class="date">
-                  {{ item.created_at }}
+                <p :style="item.img_url !== ''? { color: '#fff' }: null" class="date">
+                  {{ formatDate(item.created_at) }}
                 </p>
               </div>
             </div>
             <div
                 :class="item.img_url===''?'content-bg':'content-bg-img'"
-                :style="item.img_url === '' ? null : {
+                :style="item.img_url === '' ? { filter: 'brightness(0.9) contrast(0.5)' } : {
                   backgroundImage: `url(${item.img_url})`,
-                  ...(themeStore.enableDarkMode ? { filter: 'brightness(0.6) contrast(0.8)' } : {filter: 'brightness(1) contrast(0.6) grayscale(0.2)'})
-            }">
-              <!--              <div v-for="i in 1">-->
-              <!--                <noticeUniversalBgDay/>-->
-              <!--              </div>-->
-              <!--              <div :style="{backgroundImageUrl: '@/assets/noticeUniversalBgDay.svg', height:100}"></div>-->
+                  ...(themeStore.enableDarkMode ? { filter: 'brightness(0.6) contrast(0.8)' } : {filter: 'brightness(1) contrast(0.6) grayscale(0.2)'})}"
+            >
             </div>
           </n-card>
           <template #arrow="{ prev, next }">
@@ -314,9 +270,27 @@ export default {
           </div>
         </n-card>
 
+<!--        <n-card-->
+<!--            v-else-if="haveActive"-->
+<!--            v-for="(plan, index) in myActivePlans"-->
+<!--            :key="index"-->
+<!--            class="license-active"-->
+<!--            content-style="padding: 0;"-->
+<!--            style="padding: 0 25px 0 25px; background-color: rgba(0,0,0,0.0)"-->
+<!--            :bordered="false"-->
+<!--        >-->
+<!--          <div class="plan-item">-->
+<!--            <p style="font-size: 1.1rem; font-weight: bold;opacity: 0.9;">{{ plan.plan_name }}</p>-->
+<!--            <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">-->
+<!--              {{ t('userSummary.timeLeft', {msg: plan.expiration_date,}) }}</p>-->
+<!--          </div>-->
+
+<!--          <n-hr v-if="!(index === (myActivePlans.length - 1))"></n-hr>-->
+<!--        </n-card>-->
+
         <n-card
             v-else-if="haveActive"
-            v-for="(plan, index) in myActivePlans"
+            v-for="(plan, index) in myActivePlans.slice(0, 5)"
             :key="index"
             class="license-active"
             content-style="padding: 0;"
@@ -324,13 +298,26 @@ export default {
             :bordered="false"
         >
           <div class="plan-item">
-            <p style="font-size: 1.1rem; font-weight: bold;opacity: 0.9;">{{ plan.plan_name }}</p>
-            <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">
-              {{ t('userSummary.timeLeft', {msg: plan.expiration_date,}) }}</p>
+            <p style="font-size: 1.1rem; font-weight: bold; opacity: 0.9;">{{ plan.plan_name }}</p>
+            <p style="font-size: 12px; opacity: 0.6; margin-top: 3px">
+              {{ t('userSummary.timeLeft', { msg: plan.expiration_date }) }}
+            </p>
           </div>
 
-          <n-hr v-if="!(index === (myActivePlans.length - 1))"></n-hr>
+          <n-hr v-if="index < myActivePlans.slice(0, 5).length - 1"></n-hr>
         </n-card>
+
+        <div
+            v-if="myActivePlans.length > 5"
+            style="margin: 10px 20px 0 20px;"
+        >
+          <div style="display: flex; flex-direction: row; align-items: center; justify-content: end;">
+            <n-button type="primary" text @click="router.push({path: '/dashboard/keys'})">
+              查看所有密鑰
+            <n-icon style="margin-left: 5px"><toRightIcon/></n-icon>
+            </n-button>
+          </div>
+        </div>
 
 
       </n-card>

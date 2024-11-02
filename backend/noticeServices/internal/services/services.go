@@ -133,7 +133,7 @@ func (s *NoticeServices) GetAllNotices(ctx context.Context, request *pb.GetAllNo
 			Model(&model.PublicNotices{}).
 			Where("`show` = ?", true). // 用反引号包裹 show 以避免 SQL 语法冲突
 			Order("created_at DESC").
-			Select("id, title, content, img_url, tags").
+			Select("id, title, content, img_url, tags, created_at").
 			Find(&notices)
 
 		// 检查查询是否有错误

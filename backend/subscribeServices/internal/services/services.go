@@ -23,19 +23,19 @@ func NewOrderServices() *SubscribeServices {
 func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, request *pb.GetActivePlanListByUserIdRequest) (*pb.GetActivePlanListByUserIdResponse, error) {
 	var activeOrders []model.ActiveOrders
 	// Query the ActiveOrders table for the user_id and where IsActive is true
-	if err := dao.Db.Where("user_id = ? AND is_active = ?", request.UserId, true).Find(&activeOrders).Error; err != nil {
+	if err := dao.Db.Model(&model.ActiveOrders{}).Where("user_id = ? AND is_active = ?", request.UserId, true).Find(&activeOrders).Error; err != nil {
 		return &pb.GetActivePlanListByUserIdResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "获取有效的订单失败",
 		}, nil
 	}
 
-	if len(activeOrders) == 0 {
-		return &pb.GetActivePlanListByUserIdResponse{
-			Code: http.StatusInternalServerError,
-			Msg:  "获取有效的订单失败",
-		}, nil
-	}
+	//if len(activeOrders) == 0 {
+	//	return &pb.GetActivePlanListByUserIdResponse{
+	//		Code: http.StatusInternalServerError,
+	//		Msg:  "获取有效的订单失败",
+	//	}, nil
+	//}
 
 	// Create a result array to hold plan_name and expiration_date
 	var result []map[string]interface{}
@@ -65,10 +65,6 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 			"plan_name":       plan.Name,
 			"expiration_date": order.ExpirationDate,
 		})
-		//myPlanResult = append(myPlanResult, &pb.PlanInfo{
-		//	PlanName:       plan.Name,
-		//	ExpirationDate: order.ExpirationDate.Format("2006-01-02 15:04:05"),
-		//})
 		myPlanResult = append(myPlanResult, struct {
 			PlanName       string `json:"plan_name"`
 			ExpirationDate string `json:"expiration_date"`
@@ -77,6 +73,7 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 			ExpirationDate: order.ExpirationDate.Format("2006-01-02 15:04:05"),
 		})
 	}
+	//log.Println(myPlanResult)
 	if myPlanResultJson, err := json.Marshal(myPlanResult); err != nil {
 		return &pb.GetActivePlanListByUserIdResponse{
 			Code: http.StatusInternalServerError,
