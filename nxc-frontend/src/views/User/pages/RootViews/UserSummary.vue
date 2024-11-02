@@ -232,12 +232,10 @@ export default {
                 <!--                </p>-->
                 <p
                     :style="
-    themeStore.enableDarkMode
-      ? (item.img_url !== '' ? { color: '#fff' } : null)
-      : {
-          textShadow: '0 0 5px rgba(255, 255, 255, 0.6)',
-          ...(item.img_url !== '' ? { color: '#fff' } : null)
-        }"
+    item.img_url !== ''
+      ? { color: '#fff' }
+      : null
+  "
                     class="title"
                 >
                   {{ item.title }}
