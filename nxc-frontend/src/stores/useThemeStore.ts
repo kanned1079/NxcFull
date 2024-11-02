@@ -76,6 +76,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 tableHeaderColor: 'rgba(40, 41, 41, 1)',
                 tableColorHover: 'rgba(40, 41, 41, 0.5)',
 
+
             },
             Button: {
                 color: '#3b4e72',
@@ -93,6 +94,8 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 textColorFocusError: '#ffe9e9',
                 textColorTextPrimary: '#fff',
                 textColorTextHoverPrimary: '#496097',
+
+                // textColorTextDisabledError: '#fff',
 
             },
             Input: {
@@ -145,7 +148,10 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
 
                 colorTextPrimary: '#385894',
                 colorTextHoverPrimary: '#2f508e',
-                textColorTextHoverPrimary: '#2f508e'
+                textColorTextHoverPrimary: '#2f508e',
+
+                // textColorTextDisabledError: 'rgb(255, 255, 255)',
+                textColorPrimaryDisabled: '#fff',
             },
             Input: {
                 borderHover: '1px solid #385894',

@@ -4,10 +4,12 @@ import {computed, h, onMounted, ref} from "vue"
 import {type FormInst, NButton, NTag, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import instance from "@/axios/index"
 import {formatDate} from "@/utils/timeFormat";
 
 const {t} = useI18n();
+const appInfoStore = useAppInfosStore();
 const userInfoStore = useUserInfoStore();
 const themeStore = useThemeStore();
 const message = useMessage();
@@ -19,7 +21,7 @@ let selectValidationStatus = computed(() => {
   return createStatus(newTicket.value.urgency)
 })
 
-let createStatus = (value: string) => {
+let createStatus = (value: any) => {
   switch (value) {
     case 1:
       return undefined
@@ -121,7 +123,7 @@ let commitNewTicket = async () => {
       // message.error(error.toString)
     }
   } else {
-    message.error(computed(() => t('userTickets.form.ticketNotFinished')))
+    message.error(computed(() => t('userTickets.form.ticketNotFinished')).value)
   }
 }
 
@@ -184,18 +186,17 @@ let ticketList = ref<TicketItem[]>([])
 
 // 点击打开工单后 单独打开一个聊天窗口
 let openTicket = (ticket: TicketItem) => {
-  message.info(`查看工单：${ticket.title}`);
+  message.info(`查看工单：${ticket.subject}`);
   const chatDialogWindow = window.open(
-      `http://localhost:5173/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=1`,
-      '111111',
+      `${appInfoStore.appCommonConfig.app_url}/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=1`,
+      'Chat',
       'width=480,height=640,resizable=yes,scrollbars=yes',
   );
-  chatDialogWindow.addEventListener('onload', () => {
+  chatDialogWindow ? chatDialogWindow.addEventListener('onload', () => {
     chatDialogWindow.postMessage({greeting: 'Hello from the parent window!'}, '*'); // * 表示接受来自任何来源的消息
-  });
+  }) : message.error("Cannot open Dialog.")
 
 }
-
 
 onMounted(async () => {
   themeStore.menuSelected = ''
@@ -302,8 +303,6 @@ const columns = ref([
         />
       </n-card>
     </transition>
-
-
 
 
     <n-modal v-model:show="showNewTicketModal">
