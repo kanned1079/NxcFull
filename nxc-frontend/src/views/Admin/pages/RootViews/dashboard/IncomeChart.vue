@@ -148,6 +148,7 @@ let getOperatingSystem = (): string => {
   }
 }
 
+
 let reloadCharts = () => {
   if (visitedChartDOM.value && incomeChartDOM.value) {
     // 初始化第一个图表
