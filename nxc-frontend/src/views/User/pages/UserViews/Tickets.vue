@@ -198,13 +198,6 @@ let openTicket = (ticket: TicketItem) => {
 
 }
 
-onMounted(async () => {
-  themeStore.menuSelected = ''
-  themeStore.userPath = '/dashboard/tickets'
-
-  await getAllMyTickets()
-  animated.value = true
-})
 
 // 定义表格的列
 const columns = ref([
@@ -275,6 +268,14 @@ const columns = ref([
   }
 ])
 
+
+onMounted(async () => {
+  themeStore.menuSelected = ''
+  themeStore.userPath = '/dashboard/tickets'
+
+  await getAllMyTickets()
+  animated.value = true
+})
 
 </script>
 

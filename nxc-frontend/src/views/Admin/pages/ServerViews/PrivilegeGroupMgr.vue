@@ -16,6 +16,8 @@ let pageCount = ref(10)
 
 let showLoading = ref<boolean>(false)
 
+let animated = ref<boolean>(false)
+
 let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
@@ -231,11 +233,12 @@ let dataCountOptions = [
   },
 ]
 
-onMounted(() => {
+onMounted(async () => {
   console.log('挂载权限组管理')
   themeStore.contentPath = '/admin/dashboard/group'
   themeStore.menuSelected = 'privilege-group-mgr'
-  getAllGroups()
+  await getAllGroups()
+  animated.value = true
 })
 
 </script>
@@ -247,44 +250,44 @@ export default {
 </script>
 
 <template>
-  <div class="root">
+  <div style="padding: 20px 20px 0 20px">
     <n-card hoverable :embedded="true" title="权限组管理" :bordered="false">
       <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddGroup">添加权限组</n-button>
     </n-card>
-
-    <n-card style="margin-top: 20px" :embedded="true" hoverable :bordered="false" content-style="padding: 0;">
-      <!--      在這裏放置表格-->
-      <!--      表格有五列 列名分別是 權限組ID， 組名稱， 用戶數量（前面使用n-icon放置一個用戶圖標）， 計畫數量（前面使用n-icon放置一個圖標， 操作（內部為兩個按鈕 水平排列分別為編輯和刪除）-->
-      <n-spin :show="showLoading">
-        <n-data-table
-            :columns="columns"
-            :data="groupList"
-            :scroll-x="900"
-            :remote="true"
-        />
-      </n-spin>
-
-
-    </n-card>
-
-    <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-      <n-pagination
-          size="medium"
-          v-model:page.number="dataSize.page"
-          :page-count="pageCount"
-          @update:page="getAllGroups() "
-      />
-      <n-select
-          style="width: 160px; margin-left: 20px"
-          v-model:value.number="dataSize.pageSize"
-          size="small"
-          :options="dataCountOptions"
-          :remote="true"
-          @update:value="dataSize.page = 1; getAllGroups()"
-      />
-    </div>
-
   </div>
+
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card style="margin-top: 20px" :embedded="true" hoverable :bordered="false" content-style="padding: 0;">
+        <!--      在這裏放置表格-->
+        <!--      表格有五列 列名分別是 權限組ID， 組名稱， 用戶數量（前面使用n-icon放置一個用戶圖標）， 計畫數量（前面使用n-icon放置一個圖標， 操作（內部為兩個按鈕 水平排列分別為編輯和刪除）-->
+        <n-spin :show="showLoading">
+          <n-data-table
+              :columns="columns"
+              :data="groupList"
+              :scroll-x="900"
+              :remote="true"
+          />
+        </n-spin>
+      </n-card>
+      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSize.page"
+            :page-count="pageCount"
+            @update:page="getAllGroups() "
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSize.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="dataSize.page = 1; getAllGroups()"
+        />
+      </div>
+    </div>
+  </transition>
 
   <n-modal
       :title="modifyFunc==='add'?'新建权限组':'修改名称'"
@@ -310,9 +313,9 @@ export default {
       </n-form-item>
     </n-form>
 
-    <template #footer>
-      尾部
-    </template>
+<!--    <template #footer>-->
+<!--      尾部-->
+<!--    </template>-->
 
 
   </n-modal>
@@ -320,7 +323,8 @@ export default {
 
 <style lang="less" scoped>
 .root {
-  padding: 20px;
+  //padding: 20px;
+  padding: 0 20px 20px 20px;
 
   .add-btn {
     margin-top: 10px;

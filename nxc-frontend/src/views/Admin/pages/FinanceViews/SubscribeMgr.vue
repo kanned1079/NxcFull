@@ -20,6 +20,8 @@ const message = useMessage()
 
 let editType = ref<'add' | 'update'>('add') // 这里可以选择的是add和update
 
+
+
 interface Plan {
   id: number | null
   group_id?: number | null

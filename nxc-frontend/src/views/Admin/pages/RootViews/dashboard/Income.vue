@@ -1,54 +1,60 @@
-<script setup lang="ts" name="Income">
-import {
-  Pricetags as incomeIcon,
-} from '@vicons/ionicons5'
+<script setup lang="ts">
+import {ref} from "vue"
+import {useI18n} from "vue-i18n";
+import useAppInfosStore from "@/stores/useAppInfosStore";
+import {Podium as incomeIcon} from '@vicons/ionicons5'
+
+let income = ref<{
+  yesterday: number
+  month: number
+}>({
+  yesterday: 138.09,
+  month: 2494.17,
+})
+
+const {t} = useI18n()
+const appInfoStore = useAppInfosStore();
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Income'
+}
 </script>
 
 <template>
-  <n-card hoverable class="root" content-style="padding: 0" :embedded="true" :bordered="false">
-    <div class="layer-up">
-      <p class="txt">今日收入</p>
-      <n-icon size="40" style="opacity: 10%; margin: 10px 10px 0 0 ">
-        <incomeIcon/>
-      </n-icon>
-    </div>
-    <div class="layer-bottom">
-
-      <p class="fund">634563.23</p>
-      <p class="sign">¥</p>
-    </div>
+  <n-card class="root" hoverable :embedded="true" :bordered="false" content-style="padding: 0;">
+    <n-flex style="justify-content: space-between;">
+      <div style="padding: 20px">
+              <n-statistic :label="t('adminViews.summary.incomeText')" tabular-nums>
+                <n-number-animation ref="numberAnimationInstRef" :precision="2" :from="0" :to="income.yesterday"/>
+                /
+                <n-number-animation ref="numberAnimationInstRef" :precision="2" :from="0" :to="income.month"/>
+                <template #suffix>
+                  {{ appInfoStore.appCommonConfig.currency }}
+                </template>
+              </n-statistic>
+      </div>
+      <div style="opacity: 0.05; padding: 5px 20px 0 0">
+       <n-icon size="50"><incomeIcon/></n-icon>
+      </div>
+    </n-flex>
   </n-card>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 .root {
-  padding: 0;
-  margin: 0 20px 20px 20px;
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  .layer-up {
-    display: flex;
-    justify-content: space-between;
-
-    .txt {
-      font-size: 16px;
-      margin-left: 30px;
-      margin-top: 10px;
-    }
+  flex-direction: row;
+  margin: 0 20px;
+  .l-content {
+    flex: 3;
+    background-color: #3a4754;
   }
-
-  .layer-bottom {
-    display: flex;
-    margin: 10px 10px 10px 10px;
-    position: relative;
-    .fund {
-      margin-left: 20px;
-      font-size: 45px;
-    }
-    .sign {
-      font-size: 24px;
-      text-align: start;
-    }
+  .r-content {
+    flex: 1;
+    background-color: #0e1b42;
   }
 }
 </style>

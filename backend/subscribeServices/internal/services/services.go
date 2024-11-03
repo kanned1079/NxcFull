@@ -120,7 +120,7 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 
 	// If Redis query fails or no data is found, continue with database query
 	var activeOrders []model.ActiveOrders
-	if err := dao.Db.Where("user_id = ? AND is_active = ?", request.UserId, true).Find(&activeOrders).Error; err != nil {
+	if err := dao.Db.Where("user_id = ? AND is_active = ?", request.UserId, true).Order(fmt.Sprintf("created_at DESC")).Find(&activeOrders).Error; err != nil {
 		return &pb.GetActivePlanListByUserIdResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "Failed to fetch active orders: " + err.Error(),
@@ -152,7 +152,6 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 		})
 	}
 
-	// Marshal the result to JSON format for caching
 	resultJson, err := json.Marshal(result)
 	if err != nil {
 		return &pb.GetActivePlanListByUserIdResponse{
@@ -161,7 +160,6 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 		}, nil
 	}
 
-	// Cache the result in Redis with an expiration time
 	if err := dao.Rdb.Set(ctx, redisKey, resultJson, time.Hour).Err(); err != nil {
 		return &pb.GetActivePlanListByUserIdResponse{
 			Code: http.StatusInternalServerError,

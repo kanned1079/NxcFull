@@ -22,6 +22,17 @@ export default {
             activateLog: '激活紀錄'
         }
     },
+    adminViews: {
+        summary: {
+            systemConfig: '系統設置',
+            paymentConfig: '支付設置',
+            planMgr: '訂閱管理',
+            userMgr: '用戶管理',
+            orderMgr: '訂單管理',
+            keyMgr: '密鑰管理',
+            incomeText: '昨日收入 / 當月收入',
+        }
+    },
     userLogin: {
         loginToContinue: '登入以繼續',
         email: '郵件地址',
@@ -292,7 +303,6 @@ export default {
         noTickets: '您還沒有提交過工單',
         ticketCloseSuccess: '工單關閉成功',
         ticketCloseFailure: '工單關閉失敗'
-
     },
     welcome: {
         A: {

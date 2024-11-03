@@ -1,73 +1,147 @@
-<script setup lang="ts" name="Setting">
+<script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {useRouter} from 'vue-router';
-import useThemeStore from "@/stores/useThemeStore";
 import {
   BagHandleSharp as SubIcon,
   PeopleSharp as UserIcon,
   ReorderFourSharp as OrderIcon,
   SettingsSharp as settingIcon,
+  Card as payIcon,
+  Key as keyIcon,
 } from '@vicons/ionicons5'
 
+const {t} = useI18n()
 const router = useRouter();
-const themeStore = useThemeStore();
 
-// 方法
-let enterSetting = () => {
-  console.log('settings')
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Settings',
 }
 </script>
 
 <template>
-
-  <n-card hoverable @click="router.push({
-    path: '/admin/dashboard/systemconfig',
-  })" :embedded="true" :bordered="false">
-    <div>
-      <n-icon size="25">
-        <settingIcon/>
-      </n-icon>
-      <p style="margin-top: 8px; font-size: 15px">系统设置</p>
+    <div class="root">
+      <n-grid
+          cols="2 s:2 m:3 l:6"
+          responsive="screen"
+          :x-gap="15"
+          :y-gap="15"
+      >
+        <n-grid-item>
+          <n-card
+              hoverable
+              @click="router.push({ path: '/admin/dashboard/systemconfig',})"
+              :embedded="true"
+              :bordered="false"
+              class="shortcut-item"
+          >
+            <div>
+              <n-icon size="25">
+                <settingIcon/>
+              </n-icon>
+              <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.systemConfig') }}</p>
+            </div>
+          </n-card>
+        </n-grid-item>
+        <n-grid-item>
+          <n-card
+              hoverable style="margin-right: 20px"
+              :embedded="true"
+              :bordered="false"
+              class="shortcut-item"
+          >
+            <div>
+              <n-icon size="25">
+                <payIcon/>
+              </n-icon>
+              <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.paymentConfig') }}</p>
+            </div>
+          </n-card>
+        </n-grid-item>
+        <n-grid-item>
+          <n-card
+              hoverable
+              :embedded="true"
+              :bordered="false"
+              class="shortcut-item"
+          >
+            <div>
+              <n-icon size="25">
+                <OrderIcon/>
+              </n-icon>
+              <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.planMgr') }}</p>
+            </div>
+          </n-card>
+        </n-grid-item>
+        <n-grid-item>
+          <n-card
+              hoverable
+              style="margin-right: 20px"
+              :embedded="true"
+              :bordered="false"
+              class="shortcut-item"
+          >
+            <div>
+              <n-icon size="25">
+                <UserIcon/>
+              </n-icon>
+              <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.userMgr') }}</p>
+            </div>
+          </n-card>
+        </n-grid-item>
+        <n-grid-item>
+          <n-card
+              hoverable
+              :embedded="true"
+              :bordered="false"
+              class="shortcut-item"
+          >
+            <div>
+              <n-icon size="25">
+                <SubIcon/>
+              </n-icon>
+              <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.orderMgr') }}</p>
+            </div>
+          </n-card>
+        </n-grid-item>
+        <n-grid-item>
+          <n-card
+              hoverable style="margin-right: 20px"
+              :embedded="true"
+              :bordered="false"
+              class="shortcut-item"
+          >
+            <div>
+              <n-icon size="25">
+                <keyIcon/>
+              </n-icon>
+              <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.keyMgr') }}</p>
+            </div>
+          </n-card>
+        </n-grid-item>
+      </n-grid>
     </div>
-  </n-card>
-
-  <n-card hoverable :embedded="true" :bordered="false">
-    <div>
-      <n-icon size="25">
-        <SubIcon/>
-      </n-icon>
-      <p style="margin-top: 8px; font-size: 15px">订单管理</p>
-    </div>
-  </n-card>
-
-  <n-card hoverable :embedded="true" :bordered="false">
-    <div>
-      <n-icon size="25">
-        <OrderIcon/>
-      </n-icon>
-      <p style="margin-top: 8px; font-size: 15px">订阅管理</p>
-    </div>
-  </n-card>
-
-  <n-card hoverable style="margin-right: 20px" :embedded="true" :bordered="false">
-    <div>
-      <n-icon size="25">
-        <UserIcon/>
-      </n-icon>
-      <p style="margin-top: 8px; font-size: 15px">用户管理</p>
-    </div>
-  </n-card>
 
 </template>
 
 <style lang="less" scoped>
-.n-card {
-  max-width: 25%;
-  margin: 20px 0 20px 20px;
-  //background-color: #4cae4c;
-  height: 100px;
+.root {
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+
 }
-//.n-card {
-//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-//  border: 0;
-//}
+.shortcut-item {
+  display: flex;
+  transition: ease 200ms;
+}
+
+.shortcut-item:hover {
+  transform: translateX(0px) translateY(-3px);
+  filter: brightness(0.98);
+}
+
 </style>

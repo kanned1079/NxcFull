@@ -38,16 +38,12 @@ export default {
       </div>
     </div>
   </transition>
-
+  <div style="height: 3rem"></div>
 </template>
 
 <style lang="less" scoped>
 .root {
   width: 100%;
-  border-radius: 3px;
-  min-width: 800px;
-  height: 140px;
-  text-align: center;
 
   .setting-panel {
     display: flex;
@@ -58,10 +54,6 @@ export default {
 
   .income-panel {
     display: flex;
-    align-items: center;
-    padding: 0;
-    line-height: 160px;
-    justify-content: center;
   }
 
   .income-chart {

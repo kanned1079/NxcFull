@@ -17,10 +17,10 @@ const themeStore = useThemeStore()
 const noticesStore = useNoticesStore()
 const message = useMessage()
 
+let animated = ref<boolean>(false)
+
 const formRef = ref<FormInst | null>(null)
-
 let pageCount = ref(10)
-
 let dataSize = ref<{pageSize: number, page: number}>({
   pageSize: 10,
   page: 1,
@@ -52,8 +52,8 @@ interface Coupon {
   enabled: boolean // 优惠券是否启用
   code: string  // 优惠券码
   percent_off: number   // 抵折百分比
-  start_time: string  // 优惠券启用时间
-  end_time: string  // 优惠券过期时间
+  start_time: number  // 优惠券启用时间
+  end_time: number  // 优惠券过期时间
   per_user_limit: number  // 每个用户限制的使用次数
   capacity: number  // 总共优惠券数量
   residue: number // 剩余数量
@@ -317,12 +317,14 @@ let closeModal = () => {
   showModal.value = false
 }
 
-onMounted(() => {
+onMounted(async () => {
   console.log('couponMgr挂载')
-  getAllCoupons()
+  await getAllCoupons()
 
   themeStore.contentPath = '/admin/dashboard/coupon';
   themeStore.menuSelected = 'coupon-mgr'
+
+  animated.value = true
 
 })
 
@@ -335,47 +337,53 @@ export default {
 </script>
 
 <template>
-  <div class="root">
+  <div style="padding: 20px 20px 0 20px">
     <n-card title="优惠券管理" hoverable :embedded="true" class="card-root" :bordered="false">
       <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddCoupon">添加优惠券</n-button>
     </n-card>
-
-    <n-card :embedded="false" hoverable :bordered="false" content-style="padding: 0;" style="margin-top: 20px">
-      <!--      这里是表格的位置-->
-      <!--      <n-data-table :columns="columns" :data="couponList" />-->
-      <n-spin :show="showLoading">
-        <n-data-table
-            class="table"
-            :columns="columns"
-            :data="couponList"
-            :pagination="false"
-            :bordered="true"
-            style=""
-            :scroll-x="800"
-        />
-      </n-spin>
-
-    </n-card>
-
-    <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-      <n-pagination
-          size="medium"
-          v-model:page.number="dataSize.page"
-          :page-count="pageCount"
-          @update:page="getAllCoupons"
-      />
-      <n-select
-          style="width: 160px; margin-left: 20px"
-          v-model:value.number="dataSize.pageSize"
-          size="small"
-          :options="dataCountOptions"
-          :remote="true"
-          @update:value="dataSize.page = 1; getAllCoupons()"
-      />
-    </div>
-
-
   </div>
+
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card :embedded="false" hoverable :bordered="false" content-style="padding: 0;" style="margin-top: 20px">
+        <!--      这里是表格的位置-->
+        <!--      <n-data-table :columns="columns" :data="couponList" />-->
+        <n-spin :show="showLoading">
+          <n-data-table
+              class="table"
+              :columns="columns"
+              :data="couponList"
+              :pagination="false"
+              :bordered="true"
+              style=""
+              :scroll-x="800"
+          />
+        </n-spin>
+
+      </n-card>
+
+      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSize.page"
+            :page-count="pageCount"
+            @update:page="getAllCoupons"
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSize.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="dataSize.page = 1; getAllCoupons()"
+        />
+      </div>
+
+
+    </div>
+  </transition>
+
+
 
   <n-modal
       title="新建优惠券"
@@ -445,7 +453,7 @@ export default {
 
 <style lang="less" scoped>
 .root {
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 
   .card-root {
     .add-btn {

@@ -45,7 +45,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         app_name: 'Nxc Cloud International',
         app_sub_name: '全球站点',
         app_description: '穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。',
-        app_url: '',
+        app_url: 'http://localhost:5173',
         logo: 'https://ikanned.com:24444/d/Upload/NXC/links3.svg',
         user_bg: '',
         admin_bg: '',

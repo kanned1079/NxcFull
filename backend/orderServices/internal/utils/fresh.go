@@ -1,9 +1,9 @@
-package services
+package utils
 
 import (
 	"context"
 	"fmt"
-	"keyServices/internal/dao"
+	"orderServices/internal/dao"
 	"time"
 )
 

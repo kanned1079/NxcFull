@@ -180,6 +180,7 @@ onBeforeMount(() => {
 
   if (user_id <= 0 || ticket_id <= 0) {
     message.warning("非法訪問");
+    setTimeout(() => window.close(), 2000)
   }
   paramsData.value.userId = user_id;
   paramsData.value.ticketId = ticket_id;
@@ -245,7 +246,6 @@ export default {
     </n-layout-content>
 
     <n-layout-footer>
-
       <n-card content-style="padding: 0" class="send-box">
         <n-card class="send-box-btn" content-style="padding: 0">
           <div class="send-box-btn-body">
@@ -267,10 +267,8 @@ export default {
               Send
             </n-button>
           </div>
-
         </n-card>
       </n-card>
-
     </n-layout-footer>
   </n-layout>
 
