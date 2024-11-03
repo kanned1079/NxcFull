@@ -7,7 +7,7 @@ import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {useDialog, useMessage} from 'naive-ui'
 import {formatDate} from "@/utils/timeFormat"
-
+import LoadingBefore from "@/views/utils/LoadingBefore.vue";
 import {
   ArrowBack,
   ArrowForward,
@@ -185,7 +185,7 @@ export default {
 
 <!--    </div>-->
 <!--  </transition>-->
-
+  <LoadingBefore v-if="!animated"></LoadingBefore>
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
