@@ -88,9 +88,12 @@ onBeforeUnmount(() => {
   transition: all 250ms ease;
 }
 
-.slide-fade-enter-from,
-.slide-fade-leave-to {
+.slide-fade-enter-from {
   transform: translateY(10px);
+  opacity: 0;
+}
+.slide-fade-leave-to {
+  //transform: translateY(10px);
   opacity: 0;
 }
 

@@ -66,9 +66,10 @@ func HandleGetAllMyKeys(context *gin.Context) {
 	//	log.Println(k, v)
 	//}
 	context.JSON(http.StatusOK, gin.H{
-		"code":    resp.Code,
-		"msg":     resp.Msg,
-		"my_keys": keyMap,
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"my_keys":    keyMap,
+		"page_count": resp.PageCount,
 	})
 
 }

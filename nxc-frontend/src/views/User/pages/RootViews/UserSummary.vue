@@ -138,6 +138,8 @@ let getActivePlanList = async () => {
       haveActive.value = true
       myActivePlans.value = data.my_plans
       console.log(myActivePlans.value)
+      // animated.value = true
+
     }
   } catch (error) {
     haveActive.value = false
@@ -160,6 +162,8 @@ onMounted(async () => {
 
   animated.value = true
 
+  // setTimeout(() => animated.value = true, 200)
+
 })
 </script>
 
@@ -170,6 +174,19 @@ export default {
 </script>
 
 <template>
+<!--  <transition name="slide-fade">-->
+<!--    <div v-if="!animated" style="padding: 20px; position: absolute; z-index: 10; width: calc(100% - 40px);">-->
+
+<!--        <n-skeleton height="200px" width="100%" style="border-radius: 3px" />-->
+<!--&lt;!&ndash;        <n-skeleton text :repeat="2" />&ndash;&gt;-->
+<!--&lt;!&ndash;        <n-skeleton text style="width: 60%" />&ndash;&gt;-->
+<!--        <n-skeleton height="300px" width="100%" style="border-radius: 3px; margin-top: 20px" />-->
+
+
+<!--    </div>-->
+<!--  </transition>-->
+
+
   <transition name="slide-fade">
     <div class="root" v-if="animated">
       <n-alert :bordered="false" style="margin-bottom: 20px" title="" type="warning">
@@ -300,7 +317,7 @@ export default {
           <div class="plan-item">
             <p style="font-size: 1.1rem; font-weight: bold; opacity: 0.9;">{{ plan.plan_name }}</p>
             <p style="font-size: 12px; opacity: 0.6; margin-top: 3px">
-              {{ t('userSummary.timeLeft', { msg: plan.expiration_date }) }}
+              {{ t('userSummary.timeLeft', { msg: formatDate(plan.expiration_date) }) }}
             </p>
           </div>
 

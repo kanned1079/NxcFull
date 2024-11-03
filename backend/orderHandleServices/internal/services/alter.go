@@ -14,6 +14,7 @@ import (
 	pb "orderHandleServices/api/proto"
 	"orderHandleServices/internal/dao"
 	"orderHandleServices/internal/model"
+	"orderHandleServices/internal/utils"
 	"time"
 )
 
@@ -302,10 +303,13 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 	}
 
 	// 删除redis的key
-	redisCtx, cancel := context.WithTimeout(sysContext.Background(), 3*time.Second)
-	defer cancel()
-	if err := ClearUserKeysCache(redisCtx, user.Id); err != nil {
-		return nil, fmt.Errorf("failed to update keys info in redis: %v", err)
+	//redisCtx, cancel := context.WithTimeout(sysContext.Background(), 3*time.Second)
+	//defer cancel()
+	//if err := ClearUserKeysCache(redisCtx, user.Id); err != nil {
+	//	return nil, fmt.Errorf("failed to update keys info in redis: %v", err)
+	//}
+	if err = utils.FreshUserPropertyInfoInRedis(request.UserId); err != nil {
+		log.Println("Failed to update user property info in redis:", err)
 	}
 
 	// 提交事务

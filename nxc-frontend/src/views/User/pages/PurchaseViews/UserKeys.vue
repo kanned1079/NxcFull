@@ -27,6 +27,32 @@ let showSkeleton = ref<boolean>(false)
 
 let animated = ref<boolean>(false)
 
+let pageCount = ref(10)
+
+let dataSize = ref<{ pageSize: number, page: number }>({
+  pageSize: 10,
+  page: 1,
+})
+
+let dataCountOptions = [
+  {
+    label: '10条数据/页',
+    value: 10,
+  },
+  {
+    label: '20条数据/页',
+    value: 20,
+  },
+  {
+    label: '50条数据/页',
+    value: 50,
+  },
+  {
+    label: '100条数据/页',
+    value: 100,
+  },
+]
+
 interface Key {
   order_id: number;
   key_id: number;
@@ -47,12 +73,13 @@ let myKeys = ref<Key[]>([])
 // getAllMyKeys 获取所有用户的密钥
 let getAllMyKeys = async () => {
   showSkeleton.value = true
+  animated.value = false
   try {
     let {data} = await instance.get('/api/user/v1/keys', {
       params: {
         user_id: userInfoStore.thisUser.id,
-        page: 1,
-        size: 300,
+        page: dataSize.value.page,
+        size: dataSize.value.pageSize,
       }
     })
     if (data.code === 200) {
@@ -60,9 +87,11 @@ let getAllMyKeys = async () => {
       myKeys.value = []
       showSkeleton.value = false
       data.my_keys.forEach((key: Key) => myKeys.value.push(key))
+      pageCount.value = data.page_count
       if (myKeys.value.length === 0) {
         message.info(t('userKeys.noKeys'))
       }
+      animated.value = true
       //
     }
   } catch (error) {
@@ -120,12 +149,6 @@ export default {
   </div>
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-<!--      <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">-->
-<!--      </n-card>-->
-
-      <!--    <n-skeleton v-if="showSkeleton" style="margin-top: 20px" text :repeat="10" />-->
-      <!--    <n-skeleton text style="width: 60%" />-->
-
       <n-card style="margin-top: 20px" v-if="myKeys.length === 0">
         <n-result status="404" title="无结果" description="找不到可用的密钥，请先购买订阅。">
 
@@ -190,6 +213,7 @@ export default {
             </div>
           </div>
           <div class="r-part">
+            <p style="opacity: 0.5; font-size: 1.2rem"># {{ item.key_id }}</p>
             <div style="display: flex; flex-direction: row; align-items: center">
               <n-icon size="16" style="margin-right: 5px"><keyIcon/></n-icon>
               <p style="margin-right: 5px">{{ t('userKeys.authorizationFor') }}</p>
@@ -204,6 +228,23 @@ export default {
 
 
       </n-card>
+
+      <div v-if="myKeys.length >= 10" style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSize.page"
+            :page-count="pageCount"
+            @update:page="getAllMyKeys() "
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSize.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="dataSize.page = 1; getAllMyKeys()"
+        />
+      </div>
     </div>
   </transition>
 
@@ -311,8 +352,9 @@ export default {
       .r-part {
         flex: 2;
         display: flex;
+        flex-direction: column;
         align-items: end;
-        justify-content: right;
+        justify-content: space-between;
         opacity: 0.8;
       }
     }
