@@ -53,18 +53,18 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         currency_symbol: '$',
     };
 
-    const subscribeList = ref([
-        {
-            label: 'Everybody\'s Got Something to Hide Except Me and My Monkey',
-            value: 'song0',
-            disabled: true,
-        },
-    ]);
+    // const subscribeList = ref([
+    //     {
+    //         label: 'Everybody\'s Got Something to Hide Except Me and My Monkey',
+    //         value: 'song0',
+    //         disabled: true,
+    //     },
+    // ]);
 
     return {
         registerPageConfig,
         appCommonConfig,
-        subscribeList,
+        // subscribeList,
     };
 }, {
     persist: true,

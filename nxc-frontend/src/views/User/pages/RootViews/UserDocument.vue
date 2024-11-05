@@ -62,7 +62,7 @@ let doc_list = ref<CategoryDocuments[]>([])
 
 let getAllDocuments = async () => {
   console.log('拉取所有文档列表')
-  doc_list.value = []
+  animated.value = false
   try {
     let {data} = await instance.get('http://localhost:8081/api/user/v1/document', {
       params: {
@@ -71,6 +71,7 @@ let getAllDocuments = async () => {
       }
     })
     if (data.code === 200) {
+      doc_list.value = []
       console.log(data)
       // Object.assign(doc_list, data.doc_list)
       if (!data.doc_list) {
@@ -80,8 +81,8 @@ let getAllDocuments = async () => {
         isEmpty.value = false
       }
       data.doc_list.forEach((category: CategoryDocuments) => doc_list.value.push(category))
-      console.log("doc_list", doc_list.value)
-
+      // console.log("doc_list", doc_list.value)
+    animated.value = true
     } else {
       message.error(data.msg)
     }

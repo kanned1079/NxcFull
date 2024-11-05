@@ -16,7 +16,7 @@ func StartApiGateways() {
 	// 中间件 过OPTIONS预检
 	router.Use(func(context *gin.Context) {
 		context.Header("Access-Control-Allow-Origin", "*")
-		context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, PATCH")
 		context.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		if context.Request.Method == "OPTIONS" {
 			context.AbortWithStatus(http.StatusOK)
@@ -85,7 +85,11 @@ func StartApiGateways() {
 		adminAuthorized.PUT("plan/sale", handler.HandleUpdatePlanSale)   // 更新是否启用销售
 		adminAuthorized.PUT("plan/renew", handler.HandleUpdatePlanRenew) // 更新是否允许续费
 
-		adminAuthorized.POST("/document/add", handler.HandleAddNewDocument) // 添加一条说明文档
+		adminAuthorized.GET("/document", handler.HandleGetAllDocumentsAdmin)
+		adminAuthorized.PUT("/document", handler.HandleUpdateDocument)
+		adminAuthorized.PATCH("/document", handler.HandleUpdateDocumentShow)
+		adminAuthorized.DELETE("/document", handler.HandleDeleteDocumentById)
+		adminAuthorized.POST("/document", handler.HandleAddNewDocument) // 添加一条说明文档
 		//
 		adminAuthorized.POST("/groups", handler.HandleAddNewGroup) // 添加权限组
 		adminAuthorized.GET("/groups", handler.HandleGetAllGroups) // 获取所有权限组列表

@@ -200,13 +200,8 @@ let getAllNotices = async () => {
     })
     if (data.code === 200) {
       noticesArr.value = []
-
-      // console.log(data.Document)
-      // noticesStore.noticesArr = data.notices
       data.notices.forEach((notice: Notice) => noticesArr.value.push(notice))
       pageCount.value = data.page_count
-      // console.log('axios获取的数据', noticesStore.noticesArr)
-      // createData()
     } else {
       message.error('获取失败')
     }

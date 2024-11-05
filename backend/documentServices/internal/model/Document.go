@@ -11,7 +11,7 @@ type Document struct {
 	Category  string         `json:"category"`
 	Title     string         `json:"title"`
 	Body      string         `json:"body" gorm:"type:TEXT"`
-	Sort      int            `json:"sort"`
+	Sort      int64          `json:"sort"`
 	Show      bool           `json:"show"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`

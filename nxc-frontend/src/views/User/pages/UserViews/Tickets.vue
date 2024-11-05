@@ -161,6 +161,7 @@ interface TicketItem {
 
 let getAllMyTickets = async () => {
   try {
+    animated.value = false
     let {data} = await instance.get('/api/user/v1/ticket', {
       params: {
         user_id: userInfoStore.thisUser.id
@@ -169,8 +170,8 @@ let getAllMyTickets = async () => {
     if (data.code === 200) {
       ticketList.value = []
       message.success('获取成功')
-      data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket)
-      )
+      data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
+      animated.value = true
     } else if (data.code === 404) {
       message.info(computed(() => t('userTickets.noTickets')).value)
     } else {

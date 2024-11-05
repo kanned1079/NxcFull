@@ -6,10 +6,18 @@ option go_package = "./proto";
 
 // 定义 Document 服务
 service DocumentService {
+  // GetDocuments GET请求 对提供的语言选择来获取文档列表 按照类别分类 用户的请求
   rpc GetDocuments (GetDocumentsRequest) returns (GetDocumentsResponse);
+
+  rpc GetDocumentsAdmin (GetDocumentsAdminRequest) returns (GetDocumentsAdminResponse);
+  // AddDocument 添加新的文档 管理员的请求
   rpc AddDocument (AddDocumentRequest) returns (AddDocumentResponse);
+  // UpdateDocument 对提供id的文档进行修改
   rpc UpdateDocument (UpdateDocumentRequest) returns (UpdateDocumentResponse);
+  // UpdateDocumentShow PATCH请求来修改文档是否被展示给用户
   rpc UpdateDocumentShow (UpdateDocumentShowRequest) returns (UpdateDocumentShowResponse);
+  // DeleteDocument 对提供id的文档进行软删除
+  rpc DeleteDocument (DeleteDocumentRequest) returns (DeleteDocumentResponse);
 }
 
 
@@ -65,12 +73,12 @@ message GetDocumentsResponse {
 
 // 添加新文档的请求结构
 message AddDocumentRequest {
-  string language = 1;
-  string category = 2;
-  string title = 3;
-  string body = 4;
-  int32 sort = 5;
-  bool show = 6;
+  string language = 1; //
+  string category = 2; //
+  string title = 3; //
+  string body = 4; //
+  int64 sort = 5; //
+//  bool show = 6;  // 修改为默认false 后续通过patch更新
 }
 
 // 添加新文档的响应结构
@@ -84,10 +92,11 @@ message AddDocumentResponse {
 // 更新文档的请求结构
 message UpdateDocumentRequest {
   int64 id = 1;
-  string language = 2;
-  string category = 3;
-  string title = 4;
-  string body = 5;
+  string language = 2; //
+  string category = 3; //
+  string title = 4; //
+  string body = 5; //
+  int64 sort = 6; //
 }
 
 // 更新文档的响应结构
@@ -99,7 +108,8 @@ message UpdateDocumentResponse {
 }
 
 message UpdateDocumentShowRequest {
-  int64 doc_id = 1;
+  int64 id = 1;
+  bool show = 2;
 }
 
 message UpdateDocumentShowResponse {
@@ -108,3 +118,24 @@ message UpdateDocumentShowResponse {
   string msg = 3;
 }
 
+message GetDocumentsAdminRequest {
+  int64 page = 1;
+  int64 size = 2;
+}
+
+message GetDocumentsAdminResponse {
+  int32 code = 1;
+  bytes documents = 2;
+  int64 page_count = 3;
+  string msg = 4;
+}
+
+message DeleteDocumentRequest {
+  int64 id = 1;
+}
+
+message DeleteDocumentResponse {
+  int32 code = 1;
+  bool deleted = 2;
+  string msg = 3;
+}

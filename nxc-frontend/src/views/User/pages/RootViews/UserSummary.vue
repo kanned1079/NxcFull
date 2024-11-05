@@ -19,7 +19,6 @@ import {
   KeyOutline as keyIcon,
 } from '@vicons/ionicons5'
 import instance from "@/axios";
-// import useApiAddrStore from "@/stores/useApiAddrStore";
 
 let animated = ref<boolean>(false)
 
@@ -89,10 +88,6 @@ let pathById = [
   },
 ]
 
-// let showDetail = () => {
-//   console.log('显示通知详情')
-// }
-
 let getAllNotices = async () => {
   console.log('获取所有有效通知')
   try {
@@ -131,7 +126,6 @@ let getActivePlanList = async () => {
     let {data} = await instance.get('/api/user/v1/plan/summary/fetch', {
       params: {
         user_id: userInfoStore.thisUser.id,
-        // user_id: 3,
       }
     })
     if (data.code === 200) {
@@ -146,11 +140,6 @@ let getActivePlanList = async () => {
     console.log(error)
   }
 }
-
-// let goCartPage = () => {
-//   console.log('to cart page')
-//
-// }
 
 onMounted(async () => {
   console.log('用户summary挂载')
@@ -174,17 +163,6 @@ export default {
 </script>
 
 <template>
-<!--  <transition name="slide-fade">-->
-<!--    <div v-if="!animated" style="padding: 20px; position: absolute; z-index: 10; width: calc(100% - 40px);">-->
-
-<!--        <n-skeleton height="200px" width="100%" style="border-radius: 3px" />-->
-<!--&lt;!&ndash;        <n-skeleton text :repeat="2" />&ndash;&gt;-->
-<!--&lt;!&ndash;        <n-skeleton text style="width: 60%" />&ndash;&gt;-->
-<!--        <n-skeleton height="300px" width="100%" style="border-radius: 3px; margin-top: 20px" />-->
-
-
-<!--    </div>-->
-<!--  </transition>-->
   <LoadingBefore v-if="!animated"></LoadingBefore>
 
   <transition name="slide-fade">
@@ -286,24 +264,6 @@ export default {
               {{ t('userSummary.toPurchase') }}</p>
           </div>
         </n-card>
-
-<!--        <n-card-->
-<!--            v-else-if="haveActive"-->
-<!--            v-for="(plan, index) in myActivePlans"-->
-<!--            :key="index"-->
-<!--            class="license-active"-->
-<!--            content-style="padding: 0;"-->
-<!--            style="padding: 0 25px 0 25px; background-color: rgba(0,0,0,0.0)"-->
-<!--            :bordered="false"-->
-<!--        >-->
-<!--          <div class="plan-item">-->
-<!--            <p style="font-size: 1.1rem; font-weight: bold;opacity: 0.9;">{{ plan.plan_name }}</p>-->
-<!--            <p style="font-size: 12px; opacity: 0.6;margin-top: 3px">-->
-<!--              {{ t('userSummary.timeLeft', {msg: plan.expiration_date,}) }}</p>-->
-<!--          </div>-->
-
-<!--          <n-hr v-if="!(index === (myActivePlans.length - 1))"></n-hr>-->
-<!--        </n-card>-->
 
         <n-card
             v-else-if="haveActive"
@@ -494,6 +454,7 @@ export default {
   position: absolute;
   bottom: 25px;
   right: 10px;
+  transition: ease 200ms;
 }
 
 .custom-arrow button {

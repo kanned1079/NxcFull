@@ -296,7 +296,7 @@ export default {
           </n-icon>
         </div>
         <div class="wallet-content">
-          <p class="balance">{{ userInfoStore.thisUser.balance }}</p>
+          <p class="balance">{{ userInfoStore.thisUser.balance.toFixed(2)}}</p>
           <p class="unit">{{ appInfosStore.appCommonConfig.currency }}</p>
         </div>
         <div class="wallet-bottom">

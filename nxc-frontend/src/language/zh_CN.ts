@@ -31,8 +31,21 @@ export default {
             orderMgr: '訂單管理',
             keyMgr: '密鑰管理',
             incomeText: '昨日收入 / 當月收入',
-        }
-    },
+        },
+        docMgr: {
+            docId: '#',
+            isShow: '是否顯示',
+            sortAs: '排序',
+            lang: '語言',
+            category: '分類',
+            title: '標題',
+            createdAt: '創建時間',
+            updatedAt: '更新時間',
+            operate: '操作',
+            edit: '編輯',
+            delete: '刪除',
+
+        }    },
     userLogin: {
         loginToContinue: '登入以繼續',
         email: '郵件地址',

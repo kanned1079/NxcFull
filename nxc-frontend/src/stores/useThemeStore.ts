@@ -1,4 +1,4 @@
-import {computed, reactive, ref, type Ref, type ComputedRef} from 'vue'
+import {computed, type ComputedRef, type Ref, ref} from 'vue'
 import {defineStore} from "pinia";
 import {darkTheme, type GlobalThemeOverrides} from 'naive-ui';
 import useSettingStore from "@/stores/useSettingStore"
@@ -39,7 +39,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
     // 是否启用深色模式
     const enableDarkMode = ref<boolean>(false)
     // 主題名選擇
-    const selectedTheme = ref<string>('')
+    const selectedTheme = ref<string>('bambooGreen')
 
     // 如在个性化中修改了主题 或者app挂载时候需要调用来应用设置
     let setThemeFromSetting = () => selectedTheme.value = useSettingStore().settings.frontend.frontend_theme
@@ -194,20 +194,19 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
             // 深色模式
             common: {
                 primaryColor: '#2a6f6a',
+                primaryColorPressed: '#2a6f6a',
                 bodyColor: '#2d2f2f',
                 modalColor: '#2d2f2f',
                 tableColorStriped: 'rgba(40, 41, 41, 1)',
                 tableColor: 'rgba(40, 41, 41, 1)',
                 tableHeaderColor: 'rgba(40, 41, 41, 1)',
                 tableColorHover: 'rgba(40, 41, 41, 0.5)',
-
             },
             Button: {
                 color: '#2a6f6a',
                 colorFocusPrimary: '#2a6f6a',
                 colorHoverPrimary: '#358c85',
                 colorPressedPrimary: '#358c85',
-
                 textColorPrimary: '#fff',
                 textColorHoverPrimary: '#fff',
                 textColorPressedPrimary: '#fff',
@@ -216,10 +215,12 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 textColorHoverError: '#ffe9e9',
                 textColorPressedError: '#ffe9e9',
                 textColorFocusError: '#ffe9e9',
+                textColorTextPrimary: '#fff',
+                textColorTextHoverPrimary: '#358c85',
             },
             Input: {
-                borderHover: '1px solid #3b4e72',
-                borderFocus: '1px solid #3b4e72',
+                borderHover: '1px solid #2a6f6a',
+                borderFocus: '1px solid #2a6f6a',
             },
             Card: {
                 colorEmbedded: 'rgba(40, 41, 41, 1)',
@@ -234,29 +235,43 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
             },
             Notification: {
                 color: 'rgba(40, 41, 41, 1)',
+            },
+            Menu: {
+                itemTextColorActive: '#6fc7c0',
+                itemTextColorActiveHover: '#4dbab5',
+                itemIconColorActive: '#6fc7c0',
+                itemIconColorActiveHover: '#4dbab5',
+                itemTextColorChildActive: '#6fc7c0',
+                itemTextColorChildActiveHover: '#4dbab5',
+                arrowColorChildActive: '#6fc7c0',
+                arrowColorChildActiveHover: '#4dbab5'
             }
         } as GlobalThemeOverrides : {
             // 浅色模式
             common: {
                 primaryColor: '#008784',
+                primaryColorPressed: '#008784',
                 bodyColor: '#eff2f7',
                 modalColor: '#eff2f7',
+                tableColor: '#eff2f7',
             },
             Button: {
-                // 主体颜色
                 color: '#008784',
                 colorFocusPrimary: '#008784',
                 colorHoverPrimary: '#0e807c',
                 colorPressedPrimary: '#0e807c',
-                // 颜色主题
                 textColorPrimary: '#fff',
                 textColorHoverPrimary: '#fff',
                 textColorPressedPrimary: '#fff',
                 textColorFocusPrimary: '#fff',
+                colorTextPrimary: '#008784',
+                colorTextHoverPrimary: '#0e807c',
+                textColorTextHoverPrimary: '#0e807c',
+                textColorPrimaryDisabled: '#fff',
             },
             Input: {
-                borderHover: '1px solid #385894',
-                borderFocus: '1px solid #385894',
+                borderHover: '1px solid #008784',
+                borderFocus: '1px solid #008784',
             },
             Card: {
                 colorEmbedded: '#fff',
@@ -269,7 +284,10 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
             },
             Notification: {
                 color: 'rgba(255, 255, 255, 1)',
-                bordered: '1px solid #385894',
+                bordered: '1px solid #008784',
+            },
+            Dropdown: {
+                color: 'rgba(40, 41, 41, 1)'
             }
         } as GlobalThemeOverrides)
     })
@@ -376,20 +394,19 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
             // 深色模式
             common: {
                 primaryColor: '#4d855b',
+                primaryColorPressed: '#4d855b',
                 bodyColor: '#2d2f2f',
                 modalColor: '#2d2f2f',
                 tableColorStriped: 'rgba(40, 41, 41, 1)',
                 tableColor: 'rgba(40, 41, 41, 1)',
                 tableHeaderColor: 'rgba(40, 41, 41, 1)',
                 tableColorHover: 'rgba(40, 41, 41, 0.5)',
-
             },
             Button: {
                 color: '#4d855b',
                 colorFocusPrimary: '#62a572',
                 colorHoverPrimary: '#62a572',
                 colorPressedPrimary: '#62a572',
-
                 textColorPrimary: '#fff',
                 textColorHoverPrimary: '#fff',
                 textColorPressedPrimary: '#fff',
@@ -398,10 +415,12 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 textColorHoverError: '#ffe9e9',
                 textColorPressedError: '#ffe9e9',
                 textColorFocusError: '#ffe9e9',
+                textColorTextPrimary: '#fff',
+                textColorTextHoverPrimary: '#62a572',
             },
             Input: {
-                borderHover: '1px solid #3b4e72',
-                borderFocus: '1px solid #3b4e72',
+                borderHover: '1px solid #4d855b',
+                borderFocus: '1px solid #4d855b',
             },
             Card: {
                 colorEmbedded: 'rgba(40, 41, 41, 1)',
@@ -416,43 +435,59 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
             },
             Notification: {
                 color: 'rgba(40, 41, 41, 1)',
+            },
+            Menu: {
+                itemTextColorActive: '#87c09c',
+                itemTextColorActiveHover: '#6da88e',
+                itemIconColorActive: '#87c09c',
+                itemIconColorActiveHover: '#6da88e',
+                itemTextColorChildActive: '#87c09c',
+                itemTextColorChildActiveHover: '#6da88e',
+                arrowColorChildActive: '#87c09c',
+                arrowColorChildActiveHover: '#6da88e'
             }
         } as GlobalThemeOverrides : {
             // 浅色模式
             common: {
                 primaryColor: '#5dac81',
+                primaryColorPressed: '#5dac81',
                 bodyColor: '#eff2f7',
                 modalColor: '#eff2f7',
+                tableColor: '#eff2f7',
             },
             Button: {
-                // 主体颜色
                 color: '#5dac81',
                 colorFocusPrimary: '#4ca879',
                 colorHoverPrimary: '#4ca879',
                 colorPressedPrimary: '#4ca879',
-                // 颜色主题
                 textColorPrimary: '#fff',
                 textColorHoverPrimary: '#fff',
                 textColorPressedPrimary: '#fff',
                 textColorFocusPrimary: '#fff',
+                colorTextPrimary: '#5dac81',
+                colorTextHoverPrimary: '#4ca879',
+                textColorTextHoverPrimary: '#4ca879',
+                textColorPrimaryDisabled: '#fff',
             },
             Input: {
-                borderHover: '1px solid #385894',
-                borderFocus: '1px solid #385894',
+                borderHover: '1px solid #5dac81',
+                borderFocus: '1px solid #5dac81',
             },
             Card: {
                 colorEmbedded: '#fff',
-                borderRadius: '3px'
             },
             Switch: {
-                railColorActive: '#5dac81s'
+                railColorActive: '#5dac81'
             },
             DataTable: {
                 borderRadius: '3px',
             },
             Notification: {
                 color: 'rgba(255, 255, 255, 1)',
-                bordered: '1px solid #385894',
+                bordered: '1px solid #5dac81',
+            },
+            Dropdown: {
+                color: 'rgba(40, 41, 41, 1)'
             }
         } as GlobalThemeOverrides)
     })
@@ -495,7 +530,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 return darkBlueDay.value;
             }
         }
-    })
+    }).value
 
     // 菜单折叠
     let menuCollapsed = ref<boolean>(false)

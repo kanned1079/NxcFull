@@ -236,17 +236,16 @@ export default {
           <n-table
             :bordered="false"
             :bottom-bordered="false"
-            style="background-color: rgba(0,0,0,0.0); padding: 0 15px 10px 15px"
+            style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
           >
             <n-tr style=" margin-left: 200px" v-for="(item, index) in generalInfo" :key="index">
               <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.name }}</n-td>
               <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.data }}</n-td>
             </n-tr>
           </n-table>
-
         </n-card>
 
-        <n-card style="margin-top: 20px" class="r-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0" title="一般">
+        <n-card style="margin-top: 10px" class="r-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0" title="一般">
         <n-table
             :bordered="false"
             :bottom-bordered="false"

@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, ref, onMounted} from "vue"
+import {computed, onBeforeMount, onMounted, ref} from "vue"
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {useMessage} from "naive-ui";
-import {encodeToBase64} from "@/utils/encryptor";
 import instance from "@/axios";
 import {
+  CheckmarkOutline as copiedIcon,
   CloseOutline as closeIcon,
   CopyOutline as copyIcon,
-  CheckmarkOutline as copiedIcon,
   Key as keyIcon
 } from "@vicons/ionicons5"
 
@@ -120,6 +119,56 @@ const copyText = async (key: string, event: MouseEvent) => {
   }
 };
 
+// let modalData = ref<{
+//   name: any
+//   data: any
+// }[]>([
+//   {
+//     name: computed(() => t('userKeys.keyId')).value,
+//     data: myKeys.value[keyIndex].key_id as number,
+//   },
+//   {
+//     name: computed(() => t('userKeys.orderId')).value,
+//     data: myKeys.value[keyIndex].order_id
+//   },
+//   {
+//     name: computed(() => t('userKeys.releaseData')).value,
+//     data: myKeys.value[keyIndex].created_at
+//   },
+//   {
+//     name: computed(() => t('userKeys.expirationData')).value,
+//     data: myKeys.value[keyIndex].expiration_date
+//   },
+//   {
+//     name: computed(() => t('userKeys.clientId.value')).value,
+//     data: myKeys.value[keyIndex].client_id ? myKeys.value[keyIndex].client_id : computed(() => t('userKeys.none')).value as string,
+//   },
+// ])
+
+/*
+*
+* div class="key-item-detail">
+        <p class="key-item-title">{{ t('userKeys.orderId') }}</p>
+        <p class="key-item-content">{{ myKeys[keyIndex].order_id }}</p>
+      </div>
+
+      <div class="key-item-detail">
+        <p class="key-item-title">{{ t('userKeys.releaseData') }}</p>
+        <p class="key-item-content">{{ myKeys[keyIndex].created_at }}</p>
+      </div>
+
+      <div class="key-item-detail">
+        <p class="key-item-title">{{ t('userKeys.expirationData') }}</p>
+        <p class="key-item-content">{{ myKeys[keyIndex].expiration_date }}</p>
+      </div>
+
+      <div class="key-item-detail">
+        <p class="key-item-title">{{ t('userKeys.clientId') }}</p>
+        <p class="key-item-content">{{
+            myKeys[keyIndex].client_id ? myKeys[keyIndex].client_id : t('userKeys.none')
+          }}</p>
+      </div>*/
+
 onBeforeMount(() => {
 
 
@@ -131,7 +180,6 @@ onMounted(async () => {
   await getAllMyKeys()
   animated.value = true
 })
-
 
 
 </script>
@@ -198,13 +246,14 @@ export default {
 
                 </n-button>
               </template>
-              <span>{{ copySuccess?t('userKeys.hoverCopiedSuccessMention'):t('userKeys.hoverClickMention') }}</span>
+              <span>{{ copySuccess ? t('userKeys.hoverCopiedSuccessMention') : t('userKeys.hoverClickMention') }}</span>
             </n-popover>
             <div style="display: flex; flex-direction: row">
               <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_active?'success':'error'">
                 {{ item.is_active ? t('userKeys.active') : t('userKeys.inActive') }}
               </n-tag>
-              <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_valid?'success':'warning'">
+              <n-tag :bordered="false" size="small" style="margin-right: 10px"
+                     :type="item.is_valid?'success':'warning'">
                 {{ item.is_valid ? t('userKeys.valid') : t('userKeys.invalid') }}
               </n-tag>
               <n-tag :bordered="false" size="small" :type="item.is_used?'info':'success'">
@@ -215,7 +264,9 @@ export default {
           <div class="r-part">
             <p style="opacity: 0.5; font-size: 1.2rem"># {{ item.key_id }}</p>
             <div style="display: flex; flex-direction: row; align-items: center">
-              <n-icon size="16" style="margin-right: 5px"><keyIcon/></n-icon>
+              <n-icon size="16" style="margin-right: 5px">
+                <keyIcon/>
+              </n-icon>
               <p style="margin-right: 5px">{{ t('userKeys.authorizationFor') }}</p>
               <p style="opacity: 0.8">{{ userInfoStore.thisUser.email }}</p>
             </div>
@@ -226,10 +277,10 @@ export default {
         <!--      </n-watermark>-->
 
 
-
       </n-card>
 
-      <div v-if="myKeys.length >= 10" style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+      <div v-if="myKeys.length >= 10 || dataSize.page !== 1"
+           style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
         <n-pagination
             size="medium"
             v-model:page.number="dataSize.page"
@@ -249,7 +300,6 @@ export default {
   </transition>
 
 
-
   <n-modal v-model:show="showModal">
     <n-card
         class="details-card"
@@ -267,15 +317,15 @@ export default {
         </n-button>
       </template>
 
+<!--      <div v-for="(v, k) in modalData" :key="k" class="key-item-detail">-->
+<!--        <p class="key-item-title">{{ v.name }}</p>-->
+<!--        <p class="key-item-content">{{ v.data }}</p>-->
+<!--      </div>-->
+
       <div class="key-item-detail">
         <p class="key-item-title">{{ t('userKeys.keyId') }}</p>
         <p class="key-item-content">{{ myKeys[keyIndex].key_id }}</p>
       </div>
-
-<!--      <div class="key-item-detail">-->
-<!--        <p class="key-item-title">{{ `密钥KEY 「授权给${userInfoStore.thisUser.email}」` }}</p>-->
-<!--        <p class="key-item-content">{{ myKeys[keyIndex].key }}</p>-->
-<!--      </div>-->
 
       <div class="key-item-detail">
         <p class="key-item-title">{{ t('userKeys.orderId') }}</p>

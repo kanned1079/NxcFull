@@ -20,9 +20,11 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	DocumentService_GetDocuments_FullMethodName       = "/document.DocumentService/GetDocuments"
+	DocumentService_GetDocumentsAdmin_FullMethodName  = "/document.DocumentService/GetDocumentsAdmin"
 	DocumentService_AddDocument_FullMethodName        = "/document.DocumentService/AddDocument"
 	DocumentService_UpdateDocument_FullMethodName     = "/document.DocumentService/UpdateDocument"
 	DocumentService_UpdateDocumentShow_FullMethodName = "/document.DocumentService/UpdateDocumentShow"
+	DocumentService_DeleteDocument_FullMethodName     = "/document.DocumentService/DeleteDocument"
 )
 
 // DocumentServiceClient is the client API for DocumentService service.
@@ -31,10 +33,17 @@ const (
 //
 // 定义 Document 服务
 type DocumentServiceClient interface {
+	// GetDocuments GET请求 对提供的语言选择来获取文档列表 按照类别分类 用户的请求
 	GetDocuments(ctx context.Context, in *GetDocumentsRequest, opts ...grpc.CallOption) (*GetDocumentsResponse, error)
+	GetDocumentsAdmin(ctx context.Context, in *GetDocumentsAdminRequest, opts ...grpc.CallOption) (*GetDocumentsAdminResponse, error)
+	// AddDocument 添加新的文档 管理员的请求
 	AddDocument(ctx context.Context, in *AddDocumentRequest, opts ...grpc.CallOption) (*AddDocumentResponse, error)
+	// UpdateDocument 对提供id的文档进行修改
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
+	// UpdateDocumentShow PATCH请求来修改文档是否被展示给用户
 	UpdateDocumentShow(ctx context.Context, in *UpdateDocumentShowRequest, opts ...grpc.CallOption) (*UpdateDocumentShowResponse, error)
+	// DeleteDocument 对提供id的文档进行软删除
+	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
 }
 
 type documentServiceClient struct {
@@ -49,6 +58,16 @@ func (c *documentServiceClient) GetDocuments(ctx context.Context, in *GetDocumen
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetDocumentsResponse)
 	err := c.cc.Invoke(ctx, DocumentService_GetDocuments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentServiceClient) GetDocumentsAdmin(ctx context.Context, in *GetDocumentsAdminRequest, opts ...grpc.CallOption) (*GetDocumentsAdminResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDocumentsAdminResponse)
+	err := c.cc.Invoke(ctx, DocumentService_GetDocumentsAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -85,16 +104,33 @@ func (c *documentServiceClient) UpdateDocumentShow(ctx context.Context, in *Upda
 	return out, nil
 }
 
+func (c *documentServiceClient) DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteDocumentResponse)
+	err := c.cc.Invoke(ctx, DocumentService_DeleteDocument_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DocumentServiceServer is the server API for DocumentService service.
 // All implementations must embed UnimplementedDocumentServiceServer
 // for forward compatibility.
 //
 // 定义 Document 服务
 type DocumentServiceServer interface {
+	// GetDocuments GET请求 对提供的语言选择来获取文档列表 按照类别分类 用户的请求
 	GetDocuments(context.Context, *GetDocumentsRequest) (*GetDocumentsResponse, error)
+	GetDocumentsAdmin(context.Context, *GetDocumentsAdminRequest) (*GetDocumentsAdminResponse, error)
+	// AddDocument 添加新的文档 管理员的请求
 	AddDocument(context.Context, *AddDocumentRequest) (*AddDocumentResponse, error)
+	// UpdateDocument 对提供id的文档进行修改
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
+	// UpdateDocumentShow PATCH请求来修改文档是否被展示给用户
 	UpdateDocumentShow(context.Context, *UpdateDocumentShowRequest) (*UpdateDocumentShowResponse, error)
+	// DeleteDocument 对提供id的文档进行软删除
+	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
 	mustEmbedUnimplementedDocumentServiceServer()
 }
 
@@ -108,6 +144,9 @@ type UnimplementedDocumentServiceServer struct{}
 func (UnimplementedDocumentServiceServer) GetDocuments(context.Context, *GetDocumentsRequest) (*GetDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocuments not implemented")
 }
+func (UnimplementedDocumentServiceServer) GetDocumentsAdmin(context.Context, *GetDocumentsAdminRequest) (*GetDocumentsAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentsAdmin not implemented")
+}
 func (UnimplementedDocumentServiceServer) AddDocument(context.Context, *AddDocumentRequest) (*AddDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddDocument not implemented")
 }
@@ -116,6 +155,9 @@ func (UnimplementedDocumentServiceServer) UpdateDocument(context.Context, *Updat
 }
 func (UnimplementedDocumentServiceServer) UpdateDocumentShow(context.Context, *UpdateDocumentShowRequest) (*UpdateDocumentShowResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocumentShow not implemented")
+}
+func (UnimplementedDocumentServiceServer) DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocument not implemented")
 }
 func (UnimplementedDocumentServiceServer) mustEmbedUnimplementedDocumentServiceServer() {}
 func (UnimplementedDocumentServiceServer) testEmbeddedByValue()                         {}
@@ -152,6 +194,24 @@ func _DocumentService_GetDocuments_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DocumentServiceServer).GetDocuments(ctx, req.(*GetDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocumentService_GetDocumentsAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDocumentsAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServiceServer).GetDocumentsAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DocumentService_GetDocumentsAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServiceServer).GetDocumentsAdmin(ctx, req.(*GetDocumentsAdminRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -210,6 +270,24 @@ func _DocumentService_UpdateDocumentShow_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocumentService_DeleteDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServiceServer).DeleteDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DocumentService_DeleteDocument_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServiceServer).DeleteDocument(ctx, req.(*DeleteDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DocumentService_ServiceDesc is the grpc.ServiceDesc for DocumentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -222,6 +300,10 @@ var DocumentService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocumentService_GetDocuments_Handler,
 		},
 		{
+			MethodName: "GetDocumentsAdmin",
+			Handler:    _DocumentService_GetDocumentsAdmin_Handler,
+		},
+		{
 			MethodName: "AddDocument",
 			Handler:    _DocumentService_AddDocument_Handler,
 		},
@@ -232,6 +314,10 @@ var DocumentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateDocumentShow",
 			Handler:    _DocumentService_UpdateDocumentShow_Handler,
+		},
+		{
+			MethodName: "DeleteDocument",
+			Handler:    _DocumentService_DeleteDocument_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

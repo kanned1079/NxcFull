@@ -183,6 +183,7 @@ const pendingColumns = ref([
 
 let getAllTicket = async () => {
   try {
+    animated.value = false
     let {data} = await instance.get('/api/admin/v1/ticket', {
       params: {
         page: 1,
@@ -194,6 +195,7 @@ let getAllTicket = async () => {
       pendingTicketList.value = []
       data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
       data.pending_tickets.forEach((ticket: TicketItem) => pendingTicketList.value.push(ticket))
+      animated.value = true
     }
   } catch (error: any) {
     console.log(error)
