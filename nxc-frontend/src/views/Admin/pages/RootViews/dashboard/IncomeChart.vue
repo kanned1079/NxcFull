@@ -45,6 +45,20 @@ let incomeChartOptions: EChartsOption = {
   title: {
     text: '历史收入'
   },
+  color: {
+    type: 'linear',
+    x: 0,
+    y: 0,
+    x2: 0,
+    y2: 1,
+    colorStops: [{
+      // offset: 0, color: 'red' // 0% 处的颜色
+      offset: 0, color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value
+    }, {
+      offset: 1, color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value
+    }],
+    global: false // 缺省为 false
+  },
   tooltip: {
     trigger: 'axis',
     axisPointer: {

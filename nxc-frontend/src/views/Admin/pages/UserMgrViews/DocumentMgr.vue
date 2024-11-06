@@ -390,7 +390,7 @@ export default {
           <n-input v-model:value="formValue.doc.title" placeholder="输入文档标题"/>
         </n-form-item>
         <n-form-item label="排序" path="doc.sort">
-          <n-input v-model.number="formValue.doc.sort" placeholder="输入文档的排序级别"/>
+          <n-input-number style="width: 100%" v-model:value.number="formValue.doc.sort" placeholder="输入文档的排序级别"/>
         </n-form-item>
         <n-form-item label="分类" path="doc.category">
           <n-input v-model:value="formValue.doc.category" placeholder="输入文档分类"/>
