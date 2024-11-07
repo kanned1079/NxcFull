@@ -290,6 +290,7 @@ export default {
     margin-top: 20px;
     width: 90%;
   }
+
 }
 
 .layer-down {
