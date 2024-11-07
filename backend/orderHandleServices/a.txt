@@ -1,0 +1,46 @@
+.
+├── a.txt
+├── api
+│   ├── order_handle.proto
+│   └── proto
+│       ├── order_handle.pb.go
+│       └── order_handle_grpc.pb.go
+├── build
+├── command
+│   └── server
+│       └── main.go
+├── config
+│   └── config.xml
+├── go.mod
+├── go.sum
+└── internal
+    ├── config
+    │   ├── local
+    │   │   ├── local.go
+    │   │   └── localLoad.go
+    │   └── remote
+    │       ├── config.go
+    │       └── configLoad.go
+    ├── dao
+    │   ├── dao.go
+    │   ├── mq.go
+    │   └── redis.go
+    ├── etcd
+    │   ├── env.go
+    │   ├── initEtcd.go
+    │   └── reg.go
+    ├── handler
+    │   └── handler.go
+    ├── model
+    │   ├── ActiveOrder.go
+    │   ├── Coupon.go
+    │   ├── CouponUseage.go
+    │   ├── Order.go
+    │   ├── Plan.go
+    │   └── User.go
+    ├── services
+    │   ├── query.go
+    │   └── services.go
+    └── utils
+
+17 directories, 27 files
