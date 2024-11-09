@@ -417,6 +417,8 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 textColorFocusError: '#ffe9e9',
                 textColorTextPrimary: '#fff',
                 textColorTextHoverPrimary: '#62a572',
+
+
             },
             Input: {
                 borderHover: '1px solid #4d855b',

@@ -31,6 +31,10 @@ const (
 	UserService_UpdateUserInfo_FullMethodName        = "/proto.UserService/UpdateUserInfo"
 	UserService_CreateNewTicket_FullMethodName       = "/proto.UserService/CreateNewTicket"
 	UserService_SendChatMessage_FullMethodName       = "/proto.UserService/SendChatMessage"
+	UserService_GetAllUsers_FullMethodName           = "/proto.UserService/GetAllUsers"
+	UserService_AddUserManually_FullMethodName       = "/proto.UserService/AddUserManually"
+	UserService_UpdateUserInfoAdmin_FullMethodName   = "/proto.UserService/UpdateUserInfoAdmin"
+	UserService_Block2UnblockUserById_FullMethodName = "/proto.UserService/Block2UnblockUserById"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -53,6 +57,10 @@ type UserServiceClient interface {
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoResponse, error)
 	CreateNewTicket(ctx context.Context, in *CreateNewTicketRequest, opts ...grpc.CallOption) (*CreateNewTicketResponse, error)
 	SendChatMessage(ctx context.Context, in *SendChatMessageRequest, opts ...grpc.CallOption) (*SendChatMessageResponse, error)
+	GetAllUsers(ctx context.Context, in *GetAllUsersRequest, opts ...grpc.CallOption) (*GetAllUsersResponse, error)
+	AddUserManually(ctx context.Context, in *AddUserManuallyRequest, opts ...grpc.CallOption) (*AddUserManuallyResponse, error)
+	UpdateUserInfoAdmin(ctx context.Context, in *UpdateUserInfoAdminRequest, opts ...grpc.CallOption) (*UpdateUserInfoAdminResponse, error)
+	Block2UnblockUserById(ctx context.Context, in *Block2UnblockUserByIdRequest, opts ...grpc.CallOption) (*Block2UnblockUserByIdResponse, error)
 }
 
 type userServiceClient struct {
@@ -183,6 +191,46 @@ func (c *userServiceClient) SendChatMessage(ctx context.Context, in *SendChatMes
 	return out, nil
 }
 
+func (c *userServiceClient) GetAllUsers(ctx context.Context, in *GetAllUsersRequest, opts ...grpc.CallOption) (*GetAllUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllUsersResponse)
+	err := c.cc.Invoke(ctx, UserService_GetAllUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddUserManually(ctx context.Context, in *AddUserManuallyRequest, opts ...grpc.CallOption) (*AddUserManuallyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddUserManuallyResponse)
+	err := c.cc.Invoke(ctx, UserService_AddUserManually_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserInfoAdmin(ctx context.Context, in *UpdateUserInfoAdminRequest, opts ...grpc.CallOption) (*UpdateUserInfoAdminResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserInfoAdminResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdateUserInfoAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) Block2UnblockUserById(ctx context.Context, in *Block2UnblockUserByIdRequest, opts ...grpc.CallOption) (*Block2UnblockUserByIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Block2UnblockUserByIdResponse)
+	err := c.cc.Invoke(ctx, UserService_Block2UnblockUserById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -203,6 +251,10 @@ type UserServiceServer interface {
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error)
 	CreateNewTicket(context.Context, *CreateNewTicketRequest) (*CreateNewTicketResponse, error)
 	SendChatMessage(context.Context, *SendChatMessageRequest) (*SendChatMessageResponse, error)
+	GetAllUsers(context.Context, *GetAllUsersRequest) (*GetAllUsersResponse, error)
+	AddUserManually(context.Context, *AddUserManuallyRequest) (*AddUserManuallyResponse, error)
+	UpdateUserInfoAdmin(context.Context, *UpdateUserInfoAdminRequest) (*UpdateUserInfoAdminResponse, error)
+	Block2UnblockUserById(context.Context, *Block2UnblockUserByIdRequest) (*Block2UnblockUserByIdResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -248,6 +300,18 @@ func (UnimplementedUserServiceServer) CreateNewTicket(context.Context, *CreateNe
 }
 func (UnimplementedUserServiceServer) SendChatMessage(context.Context, *SendChatMessageRequest) (*SendChatMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendChatMessage not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *GetAllUsersRequest) (*GetAllUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
+}
+func (UnimplementedUserServiceServer) AddUserManually(context.Context, *AddUserManuallyRequest) (*AddUserManuallyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserManually not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserInfoAdmin(context.Context, *UpdateUserInfoAdminRequest) (*UpdateUserInfoAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfoAdmin not implemented")
+}
+func (UnimplementedUserServiceServer) Block2UnblockUserById(context.Context, *Block2UnblockUserByIdRequest) (*Block2UnblockUserByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Block2UnblockUserById not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -486,6 +550,78 @@ func _UserService_SendChatMessage_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetAllUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUsers(ctx, req.(*GetAllUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddUserManually_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserManuallyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddUserManually(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_AddUserManually_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddUserManually(ctx, req.(*AddUserManuallyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserInfoAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserInfoAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserInfoAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateUserInfoAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserInfoAdmin(ctx, req.(*UpdateUserInfoAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_Block2UnblockUserById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Block2UnblockUserByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Block2UnblockUserById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_Block2UnblockUserById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Block2UnblockUserById(ctx, req.(*Block2UnblockUserByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -540,6 +676,22 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendChatMessage",
 			Handler:    _UserService_SendChatMessage_Handler,
+		},
+		{
+			MethodName: "GetAllUsers",
+			Handler:    _UserService_GetAllUsers_Handler,
+		},
+		{
+			MethodName: "AddUserManually",
+			Handler:    _UserService_AddUserManually_Handler,
+		},
+		{
+			MethodName: "UpdateUserInfoAdmin",
+			Handler:    _UserService_UpdateUserInfoAdmin_Handler,
+		},
+		{
+			MethodName: "Block2UnblockUserById",
+			Handler:    _UserService_Block2UnblockUserById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

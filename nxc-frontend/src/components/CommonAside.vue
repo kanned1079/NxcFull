@@ -157,57 +157,57 @@ let update = (key: string) => {
   switch (key) {
     case 'dashboard': {
       router.push({path: '/admin/dashboard/summary'})
-      themeStore.menuSelected = 'dashboard'
+      // themeStore.menuSelected = 'dashboard'
       // themeStore.contentPath = '/admin/dashboard/summary'
       break
     }
     case 'queue-monitor': {
-      themeStore.menuSelected = 'queue-monitor'
+      // themeStore.menuSelected = 'queue-monitor'
       router.push({path: '/admin/dashboard/monitor'})
       // themeStore.contentPath = '/admin/dashboard/monitor'
       break
     }
     case 'system-config': {
-      themeStore.menuSelected = 'system-config'
+      // themeStore.menuSelected = 'system-config'
       router.push({path: '/admin/dashboard/systemconfig'})
       break
     }
     case 'payment-config': {
-      themeStore.menuSelected = 'payment-config'
+      // themeStore.menuSelected = 'payment-config'
       router.push({path: '/admin/dashboard/payment'})
       break
     }
     case 'theme-config': {
-      themeStore.menuSelected = 'theme-config'
+      // themeStore.menuSelected = 'theme-config'
       router.push({path: '/admin/dashboard/theme'})
       break
     }
 
       // part2
     case 'router-config' : {
-      themeStore.menuSelected = 'router-mgr'
+      // themeStore.menuSelected = 'router-mgr'
       router.push({path: '/admin/dashboard/routermgr'})
       break
     }
 
       // part4
     case 'user-manager': {
-      themeStore.menuSelected = 'user-manager'
+      // themeStore.menuSelected = 'user-manager'
       router.push({path: '/admin/dashboard/usermanager'})
       break
     }
     case 'notice-manager': {
-      themeStore.menuSelected = 'notice-manager'
+      // themeStore.menuSelected = 'notice-manager'
       router.push({path: '/admin/dashboard/noticemanager'})
       break
     }
     case 'subscription-manager': {
-      themeStore.menuSelected = 'subscription-manager'
+      // themeStore.menuSelected = 'subscription-manager'
       router.push({path: '/admin/dashboard/subscribemanager'})
       break
     }
     case 'doc-manager': {
-      themeStore.menuSelected = 'doc-manager'
+      // themeStore.menuSelected = 'doc-manager'
       router.push({path: '/admin/dashboard/document'})
       break
     }
@@ -217,7 +217,7 @@ let update = (key: string) => {
       break
     }
     case 'privilege-group-mgr': {
-      themeStore.menuSelected = 'privilege-group-mgr'
+      // themeStore.menuSelected = 'privilege-group-mgr'
       router.push({path: '/admin/dashboard/group'})
       break
     }
@@ -360,16 +360,6 @@ export default {
   <div class="root">
     <CommonLogo class="logo"></CommonLogo>
 
-<!--    <n-layout-sider-->
-<!--        bordered-->
-<!--        collapse-mode="width"-->
-<!--        :collapsed-width="64"-->
-<!--        :width="240"-->
-<!--        :collapsed="collapsed"-->
-<!--        show-trigger-->
-<!--        @collapse="collapsed = true"-->
-<!--        @expand="collapsed = false"-->
-<!--    >-->
 
     <n-scrollbar style="max-height: calc(100vh - 52px)" :size="0">
       <n-menu
@@ -380,7 +370,7 @@ export default {
           :options="MenuOption"
           @update:value="update"
           :value="themeStore.menuSelected"
-
+          v-model:value="themeStore.menuSelected"
       />
       <n-menu
           v-else
@@ -389,6 +379,7 @@ export default {
           :options="UserMenuOption"
           @update:value="userUpdate"
           :value="themeStore.menuSelected"
+          v-model:value="themeStore.menuSelected"
           :root-indent="36"
           :indent="0"
 

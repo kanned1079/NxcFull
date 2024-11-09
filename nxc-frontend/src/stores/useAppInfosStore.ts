@@ -1,6 +1,5 @@
-import { reactive, ref } from 'vue';
-import { defineStore } from 'pinia';
-import instance from '@/axios';
+import {reactive, ref} from 'vue';
+import {defineStore} from 'pinia';
 
 export interface RegisterPageConfig {
     app_name: string;
@@ -41,7 +40,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         tos_url: 'https://ikanned.com:24444/',
     });
 
-    const appCommonConfig: AppCommonConfig = {
+    const appCommonConfig = ref<AppCommonConfig>({
         app_name: 'Nxc Cloud International',
         app_sub_name: '全球站点',
         app_description: '穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。',
@@ -49,9 +48,9 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         logo: 'https://ikanned.com:24444/d/Upload/NXC/links3.svg',
         user_bg: '',
         admin_bg: '',
-        currency: 'pt',
+        currency: 'HKD',
         currency_symbol: '$',
-    };
+    })
 
     // const subscribeList = ref([
     //     {

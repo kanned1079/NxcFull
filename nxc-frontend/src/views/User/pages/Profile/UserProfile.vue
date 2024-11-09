@@ -327,7 +327,7 @@ export default {
                        :placeholder="t('userProfile.newPwdAgainSub')"/>
             </n-form-item>
           </n-form>
-          <n-button class="alert-btn" type="primary" @click="saveNewPassword" :bordered="false">
+          <n-button class="alert-btn" type="primary" secondary @click="saveNewPassword" :bordered="false">
             {{ t('userProfile.saveBtn') }}
           </n-button>
         </div>
@@ -371,11 +371,11 @@ export default {
             <n-tag v-else type="default"> 未启用</n-tag>
           </div>
           <n-button :disabled="twoFAEnabled" @click="handleSetup2FA" :bordered="false" style="margin-bottom: 20px"
-                    type="primary">
+                    type="primary" secondary>
             设置两步验证
           </n-button>
           <n-button :disabled="!twoFAEnabled" @click="handleDisable2FA" :bordered="false"
-                    style="margin-bottom: 20px; margin-left: 10px" type="primary" secondary>
+                    style="margin-bottom: 20px; margin-left: 10px" type="warning" secondary>
             关闭两步验证
           </n-button>
 
@@ -395,7 +395,7 @@ export default {
           <n-alert type="warning" :bordered="false">
             {{ t('userProfile.deleteAccountSub') }}
           </n-alert>
-          <n-button strong style="margin-top: 20px;" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
+          <n-button strong style="margin-top: 20px;" type="error" secondary>{{ t('userProfile.deleteBtn') }}</n-button>
         </div>
       </n-card>
     </div>
@@ -537,7 +537,7 @@ export default {
     }
 
     .alert-btn {
-      width: 80px;
+      width: 100px;
     }
 
     //@media screen and (min-width: 769px) {

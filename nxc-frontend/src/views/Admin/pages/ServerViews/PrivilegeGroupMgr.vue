@@ -69,8 +69,18 @@ const columns = ref(
         fixed: 'right',
         render(row: GroupItem) {
           return h('div', {style: 'display: flex; gap: 8px'}, [
-            h(NButton, {size: 'small', type: 'primary', onClick: () => editGroup(row)}, {default: () => '編輯'}),
-            h(NButton, {size: 'small', type: 'error', onClick: () => deleteGroup(row.id)}, {default: () => '刪除'})
+            h(NButton, {
+              size: 'small',
+              type: 'primary',
+              secondary: true,
+              onClick: () => editGroup(row)
+            }, {default: () => '編輯'}),
+            h(NButton, {
+              size: 'small',
+              type: 'error',
+              secondary: true,
+              onClick: () => deleteGroup(row.id)
+            }, {default: () => '刪除'})
           ])
         }
       }
@@ -89,6 +99,7 @@ const editGroup = (row: GroupItem) => {
 
 // 刪除組操作
 const deleteGroup = async (id: number) => {
+  animated.value = false
   message.warning(`刪除權限組：${id}`)
   let {data} = await instance.delete('http://localhost:8081/api/admin/v1/groups', {
     data: {
@@ -186,6 +197,7 @@ let getAllGroups = async () => {
       data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
       pageCount.value = data.page_count
       // groupList.value = data.group_list
+      animated.value = true
     }
   } catch (error) {
     console.log(error)
@@ -275,7 +287,7 @@ export default {
             size="medium"
             v-model:page.number="dataSize.page"
             :page-count="pageCount"
-            @update:page="getAllGroups() "
+            @update:page="animated=false; getAllGroups() "
         />
         <n-select
             style="width: 160px; margin-left: 20px"
@@ -283,7 +295,7 @@ export default {
             size="small"
             :options="dataCountOptions"
             :remote="true"
-            @update:value="dataSize.page = 1; getAllGroups()"
+            @update:value="animated=false; dataSize.page = 1; getAllGroups()"
         />
       </div>
     </div>
@@ -313,9 +325,9 @@ export default {
       </n-form-item>
     </n-form>
 
-<!--    <template #footer>-->
-<!--      尾部-->
-<!--    </template>-->
+    <!--    <template #footer>-->
+    <!--      尾部-->
+    <!--    </template>-->
 
 
   </n-modal>

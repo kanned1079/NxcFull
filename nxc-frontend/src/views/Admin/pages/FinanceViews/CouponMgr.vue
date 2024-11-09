@@ -272,6 +272,7 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'primary',
+          secondary: true,
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => updateACoupon(row)
@@ -279,6 +280,7 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'error',
+          secondary: true,
           disabled: false,
           style: {marginLeft: '10px'},
           onClick: () => deleteACoupon(row.id)

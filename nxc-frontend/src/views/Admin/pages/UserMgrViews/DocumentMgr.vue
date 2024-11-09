@@ -217,6 +217,7 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'primary',
+          secondary: true,
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => handleUpdateDocClick(row),
@@ -224,6 +225,7 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'error',
+          secondary: true,
           style: {marginLeft: '10px'},
           onClick: () => handleDeleteDoc(row)
         }, {default: () => computed(() => t('adminViews.docMgr.delete')).value,})

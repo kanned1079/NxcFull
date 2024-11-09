@@ -24,10 +24,10 @@ onMounted(() => {
   //   })
   // }
   setTimeout(() => {
-    router.push({
-      // path: '/admin/dashboard/summary',
-      path: themeStore.contentPath,
-    })
+    // router.push({
+    //   // path: '/admin/dashboard/summary',
+    //   path: themeStore.contentPath,
+    // })
   }, 50)
 })
 </script>

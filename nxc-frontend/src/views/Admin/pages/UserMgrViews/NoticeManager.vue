@@ -169,6 +169,7 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'primary',
+          secondary: true,
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => handleEditNotice(row)
@@ -176,6 +177,7 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'error',
+          secondary: true,
           style: {marginLeft: '10px'},
           onClick: () => deleteItem(row.id)
         }, {default: () => '删除'})

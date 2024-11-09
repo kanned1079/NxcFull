@@ -40,6 +40,16 @@ service UserService {
 
   rpc SendChatMessage(SendChatMessageRequest) returns (SendChatMessageResponse);
 
+//    adminAuthorized.GET("users", handler.HandleGetAllUsers)
+//      adminAuthorized.POST("users", handler.HandleAddUserManuallyFromAdmin)
+//      adminAuthorized.PUT("users", handler.HandleUpdateUserInfoByIdFromAdmin)
+//      adminAuthorized.PATCH("users", handler.HandleBlock2UnblockUserByIdFromAdmin)
+
+  rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
+  rpc AddUserManually(AddUserManuallyRequest) returns (AddUserManuallyResponse);
+  rpc UpdateUserInfoAdmin(UpdateUserInfoAdminRequest) returns (UpdateUserInfoAdminResponse);
+  rpc Block2UnblockUserById(Block2UnblockUserByIdRequest) returns (Block2UnblockUserByIdResponse);
+
 }
 
 // 定义用户登录请求消息
@@ -221,4 +231,54 @@ message SendChatMessageResponse {
   int32 code = 1;
   string msg = 2;
   bool sent = 3;
+}
+
+//
+
+message GetAllUsersRequest {
+  int64 page = 1;
+  int64 size = 2;
+  string search_email = 3;
+}
+
+message GetAllUsersResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes users = 3;
+  int64 page_count = 4;
+}
+
+//
+
+message AddUserManuallyRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message AddUserManuallyResponse {
+  int32 code = 1;
+  bool created = 2;
+  string msg = 3;
+}
+
+//
+
+message UpdateUserInfoAdminRequest {
+
+}
+
+message UpdateUserInfoAdminResponse {
+
+}
+
+//
+
+message Block2UnblockUserByIdRequest {
+  int64 user_id = 1;
+  bool status = 2;
+}
+
+message Block2UnblockUserByIdResponse {
+  int32 code = 1;
+  string msg = 2;
 }

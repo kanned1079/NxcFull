@@ -146,12 +146,14 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'primary',
+          secondary: true,
           bordered: false,
           onClick: () => showOrderDetails(row)
         }, {default: () => '订单详情'}),
         h(NButton, {
           size: 'small',
           type: 'error',
+          secondary: true,
           disabled: !(!row.is_success && !row.is_finished),
           style: {marginLeft: '10px'},
           onClick: () => cancelOrder(row)

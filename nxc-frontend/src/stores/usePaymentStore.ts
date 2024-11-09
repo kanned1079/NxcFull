@@ -51,7 +51,7 @@ const usePaymentStore = defineStore('paymentStore', () => {
     const userInfoStore = useUserInfoStore()
     let plan_list = ref<Plan[]>([])
 
-    let getAllPlans = async () => {
+    let getAllPlans = async (): Promise<boolean> => {
         // let apiAddrStore = useApiAddrStore()
         try {
             let {data} = await instance.get('/api/user/v1/plan', {
@@ -64,13 +64,15 @@ const usePaymentStore = defineStore('paymentStore', () => {
                 plan_list.value = []
                 data.plans.forEach((item: Plan) => plan_list.value.push(item))
                 // plan_list.value = data.plans
-                console.log(plan_list.value)
+                // console.log(plan_list.value)
+                return true
             } else {
                 console.log('获取订阅数据失败')
             }
         } catch (error) {
             console.log(error)
         }
+        return false
     }
 
     let plan_id_selected = ref<number>(-1)

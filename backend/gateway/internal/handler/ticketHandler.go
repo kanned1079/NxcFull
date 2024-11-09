@@ -211,9 +211,3 @@ func HandleGetAllTickets(context *gin.Context) {
 		"page_count":      resp.PageCount,
 	})
 }
-
-func getPage2Size(context *gin.Context) (err error, page int64, size int64) {
-	page, err = strconv.ParseInt(context.Query("page"), 10, 64)
-	size, err = strconv.ParseInt(context.Query("size"), 10, 64)
-	return
-}

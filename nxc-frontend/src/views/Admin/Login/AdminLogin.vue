@@ -127,9 +127,6 @@ let handleLogin = async () => {
       email: username.value,
 
       password: encodeToBase64(password.value.trim()),
-      // password: encodeToBase64(password.value),
-      // password: hashPassword(password.value),
-      // password: hashedPwd,
       role: 'admin', // 限制权限
     })
     console.log(data)

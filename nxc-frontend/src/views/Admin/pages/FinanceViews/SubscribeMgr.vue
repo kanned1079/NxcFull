@@ -300,6 +300,7 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'primary',
+          secondary: true,
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => handleUpdate(row)
@@ -307,6 +308,7 @@ const columns = [
         h(NButton, {
           size: 'small',
           type: 'error',
+          secondary: true,
           style: {marginLeft: '10px'},
           onClick: () => handleDelete(row.id)
         }, {default: () => 'Delete'})
@@ -344,6 +346,7 @@ let handleUpdate = (row: Plan) => {
 let handleDelete = async (planId: number) => {
   console.log(planId)
   try {
+    animated.value = false
     let {data} = await instance.delete('/api/admin/v1/plan', {
       // ...formValue.value.plan,
       // ...row
@@ -353,7 +356,7 @@ let handleDelete = async (planId: number) => {
     })
     if (data.code === 200) {
       notify('success', '成功', '删除成功')
-      await paymentStore.getAllPlans()
+      await paymentStore.getAllPlans()?animated.value = true:setTimeout(() => animated.value = true, 3000)
     } else {
       notify('error', '删除失败', data.error)
     }

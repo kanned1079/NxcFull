@@ -401,20 +401,6 @@ func HandleUpdateUserInfo(context *gin.Context) {
 		})
 		return
 	}
-	//if err != nil {
-	//	context.JSON(http.StatusInternalServerError, gin.H{
-	//		"code": http.StatusInternalServerError,
-	//		"msg":  "rpc调用错误" + err.Error(),
-	//	})
-	//	return
-	//}
-	//if resp == nil {
-	//	context.JSON(http.StatusOK, gin.H{
-	//		"code": http.StatusInternalServerError,
-	//		"msg":  "rpc调用错误无返回值",
-	//	})
-	//	return
-	//}
 	var userMap map[string]interface{}
 	err = json.Unmarshal(resp.UserInfo, &userMap)
 	if err != nil {
@@ -430,3 +416,83 @@ func HandleUpdateUserInfo(context *gin.Context) {
 		"user_info": userMap,
 	})
 }
+
+func HandleGetAllUsers(context *gin.Context) {
+	var page, size int64
+	var err error
+	if err, page, size = getPage2Size(context); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var searchEmail = context.Query("email")
+	log.Println(page, size)
+	resp, err := grpcClient.UserServiceClient.GetAllUsers(sysContext.Background(), &pb.GetAllUsersRequest{
+		Page:        page,
+		Size:        size,
+		SearchEmail: searchEmail,
+	})
+	if err = failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var userMap []map[string]interface{}
+	err = json.Unmarshal(resp.Users, &userMap)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":  resp.Code,
+		"msg":   resp.Msg,
+		"users": userMap,
+	})
+
+}
+
+func HandleAddUserManuallyFromAdmin(context *gin.Context) {
+
+}
+
+func HandleUpdateUserInfoByIdFromAdmin(context *gin.Context) {
+
+}
+
+func HandleBlock2UnblockUserByIdFromAdmin(context *gin.Context) {
+	postData := &struct {
+		UserId int64 `json:"user_id"`
+	}{}
+	if err := context.ShouldBind(&postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.UserServiceClient.Block2UnblockUserById(sysContext.Background(), &pb.Block2UnblockUserByIdRequest{
+		UserId: postData.UserId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}
+
+//func HandleUnblockUserByIdFromAdmin(context *gin.Context) {
+//
+//}

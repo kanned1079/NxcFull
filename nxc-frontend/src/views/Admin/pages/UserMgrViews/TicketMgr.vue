@@ -90,6 +90,7 @@ const columns = ref([
         h(NButton, {
           size: 'small',
           type: 'primary',
+          secondary: true,
           bordered: false,
           disabled: false,
           style: {marginLeft: '10px'},
@@ -100,6 +101,7 @@ const columns = ref([
         h(NButton, {
           size: 'small',
           type: 'error',
+          secondary: true,
           disabled: row.status === 204,
           style: {marginLeft: '10px'},
           onClick: () => closeTicket(row.id)
@@ -159,6 +161,7 @@ const pendingColumns = ref([
         h(NButton, {
           size: 'small',
           type: 'primary',
+          secondary: true,
           bordered: false,
           disabled: false,
           style: {marginLeft: '10px'},
@@ -169,6 +172,7 @@ const pendingColumns = ref([
         h(NButton, {
           size: 'small',
           type: 'error',
+          secondary: true,
           disabled: row.status === 204,
           style: {marginLeft: '10px'},
           onClick: () => closeTicket(row.id)

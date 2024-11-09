@@ -54,10 +54,6 @@ func StartApiGateways() {
 	protectedRoutes := router.Group("/api")
 	protectedRoutes.Use(middleware.AuthMiddleware()) // 验证Token中间价
 	protectedRoutes.Use(middleware.RoleMiddleware()) // 鉴权中间件
-	//protectedRoutesWs := router.Group("/ws")
-	//protectedRoutesWs.Use(middleware.AuthMiddleware())
-	//protectedRoutesWs.Use(middleware.RoleMiddleware())
-
 	adminAuthorized := protectedRoutes.Group("/admin/v1", middleware.RoleMiddleware())
 	{
 		//// 管理员特定的路由
@@ -85,24 +81,30 @@ func StartApiGateways() {
 		adminAuthorized.PUT("plan/sale", handler.HandleUpdatePlanSale)   // 更新是否启用销售
 		adminAuthorized.PUT("plan/renew", handler.HandleUpdatePlanRenew) // 更新是否允许续费
 
-		adminAuthorized.GET("/document", handler.HandleGetAllDocumentsAdmin)
-		adminAuthorized.PUT("/document", handler.HandleUpdateDocument)
-		adminAuthorized.PATCH("/document", handler.HandleUpdateDocumentShow)
-		adminAuthorized.DELETE("/document", handler.HandleDeleteDocumentById)
-		adminAuthorized.POST("/document", handler.HandleAddNewDocument) // 添加一条说明文档
+		adminAuthorized.GET("/document", handler.HandleGetAllDocumentsAdmin)  // 获取文档列表
+		adminAuthorized.PUT("/document", handler.HandleUpdateDocument)        // 更新指定id的文档
+		adminAuthorized.PATCH("/document", handler.HandleUpdateDocumentShow)  // 更新是否展示指定id的文档给用户
+		adminAuthorized.DELETE("/document", handler.HandleDeleteDocumentById) // 按照id删除文档
+		adminAuthorized.POST("/document", handler.HandleAddNewDocument)       // 添加一条说明文档
 		//
-		adminAuthorized.POST("/groups", handler.HandleAddNewGroup) // 添加权限组
-		adminAuthorized.GET("/groups", handler.HandleGetAllGroups) // 获取所有权限组列表
-		adminAuthorized.GET("groups/kv", handler.HandleGetAllGroupsKv)
-		adminAuthorized.PUT("/groups", handler.HandleUpdateGroup)
-		adminAuthorized.DELETE("/groups", handler.HandleDeleteGroup)
+		adminAuthorized.POST("/groups", handler.HandleAddNewGroup)     // 添加权限组
+		adminAuthorized.GET("/groups", handler.HandleGetAllGroups)     // 获取所有权限组列表
+		adminAuthorized.GET("groups/kv", handler.HandleGetAllGroupsKv) // 快速查询 权限组的键值
+		adminAuthorized.PUT("/groups", handler.HandleUpdateGroup)      // 更新权限组名称
+		adminAuthorized.DELETE("/groups", handler.HandleDeleteGroup)   // 删除指定id的权限组
 		//
 		adminAuthorized.POST("/coupon", handler.HandleAddNewCoupon)       // 新建优惠券	POST
 		adminAuthorized.GET("/coupon", handler.HandleGetAllCoupons)       // 获取优惠券列表 GET
-		adminAuthorized.PUT("/coupon/status", handler.HandleActiveCoupon) // PUT
-		adminAuthorized.DELETE("/coupon", handler.HandleDeleteCoupon)
+		adminAuthorized.PUT("/coupon/status", handler.HandleActiveCoupon) // 按照id开启或关闭优惠券
+		adminAuthorized.DELETE("/coupon", handler.HandleDeleteCoupon)     // 删除指定id的优惠券
 
-		adminAuthorized.GET("/ticket", handler.HandleGetAllTickets)
+		adminAuthorized.GET("/ticket", handler.HandleGetAllTickets) // 获取所有的工单列表 分组为活跃和历史
+		// 工单的信息发送和接收更新由wsRoutes路由组进行传输 握手后升级为ws传输协议
+
+		adminAuthorized.GET("users", handler.HandleGetAllUsers)                      // 获取所有用户列表 有搜索邮箱选项
+		adminAuthorized.POST("users", handler.HandleAddUserManuallyFromAdmin)        // 管理员手动添加一个新用户
+		adminAuthorized.PUT("users", handler.HandleUpdateUserInfoByIdFromAdmin)      // 修改指定id的用户的信息
+		adminAuthorized.PATCH("users", handler.HandleBlock2UnblockUserByIdFromAdmin) // 封禁和解封用户
 
 	}
 
@@ -150,11 +152,6 @@ func StartApiGateways() {
 	// 为 WebSocket 配置单独的用户路由
 	userWsRoutes := wsRoutes.Group("/user/v1")
 	userWsRoutes.GET("/chat", handler.HandleChatWs)
-
-	//userAuthorizedWs := protectedRoutes.Group("/user/v1", middleware.RoleMiddleware())
-	//{
-	//	userAuthorizedWs.GET("/chat", handler.HandleChatWs)
-	//}
 
 	if err := router.Run(fmt.Sprintf("%s:%s", config.MyServerConfig.ListenAddr, strconv.Itoa(int(config.MyServerConfig.ListenPort)))); err != nil {
 		log.Println("启动服务器失败", err)

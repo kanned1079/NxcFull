@@ -2,8 +2,10 @@ package handler
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"strconv"
 )
 
 func failOnRpcError(err error, response interface{}) error {
@@ -22,4 +24,22 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true // 允许跨域，实际生产环境需要配置更严格的跨域检查
 	},
+}
+
+func getPage2Size(context *gin.Context) (err error, page int64, size int64) {
+	page, err = strconv.ParseInt(context.Query("page"), 10, 64)
+	size, err = strconv.ParseInt(context.Query("size"), 10, 64)
+	return
+}
+
+func GetPage2SizeFromQuery(context *gin.Context) (err error, page int64, size int64) {
+	page, err = strconv.ParseInt(context.Query("page"), 10, 64)
+	if err != nil {
+		return
+	}
+	size, err = strconv.ParseInt(context.Query("size"), 10, 64)
+	if err != nil {
+		return
+	}
+	return nil, page, size
 }

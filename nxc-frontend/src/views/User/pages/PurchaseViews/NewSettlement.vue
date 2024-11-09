@@ -172,7 +172,7 @@ let verifyTicket = async () => {
 }
 
 // 抵折金额
-let discountPrice = computed(()  => couponInfo.value.verified ? ((couponInfo.value.percent_off / 100) * resultPrice.value) : 0).value
+let discountPrice = computed(()  => couponInfo.value.verified ? ((couponInfo.value.percent_off / 100) * resultPrice.value) : 0)
 
 let saveOrder = async () => {
   console.log('提交订单准备支付')
@@ -307,7 +307,7 @@ export default {
             <p class="r-title">{{ t('newSettlement.orderTotalTitle') }}</p>
             <div class="price-small">
               <p class="summary">{{ plan.name }} x {{ showCycleName }}</p>
-              <p class="price-small">{{ resultPrice }} {{ appInfosStore.appCommonConfig.currency }}</p>
+              <p class="price-small">{{ resultPrice.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
             </div>
             <n-hr></n-hr>
             <div class="price-discount" v-if="couponInfo.verified">
