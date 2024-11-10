@@ -72,6 +72,78 @@ func (s *TicketHandleServices) GetChatContent(context context.Context, request *
 	}, nil
 }
 
+//func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.GetChatContentRequest) (*pb.GetChatContentResponse, error) {
+//	log.Printf("查询聊天记录 用户%v 工单%v", request.UserId, request.TicketId)
+//
+//	// Redis List Key 生成
+//	redisKey := "ticket:messages:" + strconv.FormatInt(request.TicketId, 10)
+//
+//	// 1. 从 Redis 中获取聊天记录的 list
+//	chatHistoryJsonList, err := dao.Rdb.LRange(ctx, redisKey, 0, -1).Result()
+//	if err == nil && len(chatHistoryJsonList) > 0 {
+//		log.Println("从 Redis 缓存中获取聊天记录")
+//
+//		// 将 Redis 中的 list 内容转为 JSON 格式
+//		combinedChatHistoryJson, err := json.Marshal(chatHistoryJsonList)
+//		if err != nil {
+//			return &pb.GetChatContentResponse{
+//				Code: http.StatusInternalServerError,
+//				Msg:  "转换失败",
+//			}, nil
+//		}
+//
+//		return &pb.GetChatContentResponse{
+//			Code:    http.StatusOK,
+//			Msg:     "获取成功",
+//			Content: combinedChatHistoryJson,
+//		}, nil
+//	}
+//
+//	// 2. 如果 Redis 中没有记录，则查询数据库
+//	var chatHistory []model.Chat
+//	if result := dao.Db.Model(&model.Chat{}).Where("ticket_id = ?", request.TicketId).Find(&chatHistory); result.Error != nil {
+//		log.Println(result.Error)
+//		return &pb.GetChatContentResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "获取失败",
+//		}, nil
+//	}
+//	if len(chatHistory) == 0 {
+//		log.Println("no chat history")
+//		return &pb.GetChatContentResponse{
+//			Code: http.StatusNotFound,
+//			Msg:  "还没有聊天内容",
+//		}, nil
+//	}
+//
+//	// 3. 将数据库查询结果存入 Redis list
+//	for _, chat := range chatHistory {
+//		chatJson, err := json.Marshal(chat)
+//		if err != nil {
+//			log.Println("转换单条聊天记录失败:", err)
+//			continue
+//		}
+//		if err := dao.Rdb.RPush(ctx, redisKey, chatJson).Err(); err != nil {
+//			log.Println("Redis 缓存写入失败:", err)
+//		}
+//	}
+//
+//	// 将聊天记录转为 JSON 返回给客户端
+//	chatHistoryJson, err := json.Marshal(chatHistory)
+//	if err != nil {
+//		return &pb.GetChatContentResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "转换失败",
+//		}, nil
+//	}
+//
+//	return &pb.GetChatContentResponse{
+//		Code:    http.StatusOK,
+//		Msg:     "获取成功",
+//		Content: chatHistoryJson,
+//	}, nil
+//}
+
 func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb.GetAllTicketRequest) (*pb.GetAllTicketResponse, error) {
 	// 初始化变量
 	var err error

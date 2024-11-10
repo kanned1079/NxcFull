@@ -72,6 +72,8 @@ func init() {
 }
 
 func main() {
+	//rootCtx, cancel := context.WithCancel(context.Background())
+	//defer cancel()
 
 	// 使用 WaitGroup 来等待所有 goroutine
 	var wg sync.WaitGroup
@@ -87,6 +89,12 @@ func main() {
 		//go etcd.RegisterService2Etcd(86400)
 		go consumer.StartConsumeOrders()
 	}()
+
+	//wg.Add(1)
+	//go func() {
+	//	defer wg.Done()
+	//	go consumer.MonitorAndWriteToDatabase(rootCtx)
+	//}()
 
 	wg.Add(1)
 	go func() {

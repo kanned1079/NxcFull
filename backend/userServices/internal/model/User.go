@@ -8,6 +8,7 @@ import (
 type User struct {
 	Id           int64          `json:"id" gorm:"primary_key;AUTO_INCREMENT"` // 用户id
 	InviteUserID string         `json:"invite_user_id"`                       // 邀请人id
+	InviteCode   string         `json:"invite_code"`                          // 邀请码
 	GroupId      int64          `json:"group_id"`                             // 用戶組id
 	Name         string         `json:"name" `                                // 用户名
 	Email        string         `json:"email" gorm:"unique;not null"`         // 登录邮箱

@@ -149,7 +149,9 @@ onMounted(async () => {
   await getAllNotices()
   await getActivePlanList()
 
-  animated.value = true
+  // animated.value = true
+
+  setTimeout(() => animated.value = true, 300)
 
   // setTimeout(() => animated.value = true, 200)
 
