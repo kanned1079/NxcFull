@@ -24,7 +24,10 @@ func HandleUserLogin(context *gin.Context) {
 		Role      string `json:"role"`
 	}{}
 	if err := context.ShouldBind(&req); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusBadRequest,
+			"error": err.Error(),
+		})
 		return
 	}
 	//log.Println(req)
@@ -60,14 +63,6 @@ func HandleUserLogin(context *gin.Context) {
 		"token":     resp.Token,
 		"user_data": resp.UserData,
 	})
-	//context.JSON(http.StatusOK, gin.H{
-	//	"code":      http.StatusOK,
-	//	"isAuthed":  true,
-	//	"msg":       resp.Msg,
-	//	"token":     resp.Token,
-	//	"user_data": resp.UserData,
-	//})
-
 }
 
 func HandleUserRegister(context *gin.Context) {
@@ -459,10 +454,32 @@ func HandleGetAllUsers(context *gin.Context) {
 }
 
 func HandleAddUserManuallyFromAdmin(context *gin.Context) {
-
+	postData := &struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}{}
+	if err := context.ShouldBindJSON(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	log.Println(postData)
 }
 
 func HandleUpdateUserInfoByIdFromAdmin(context *gin.Context) {
+	postData := &struct {
+		Id int64 `json:"id"`
+	}{}
+	if err := context.ShouldBindJSON(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	log.Println(postData)
 
 }
 

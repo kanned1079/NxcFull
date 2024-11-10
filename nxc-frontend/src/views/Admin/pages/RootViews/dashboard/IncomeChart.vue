@@ -24,6 +24,20 @@ let visitedChartOption: EChartsOption = {
   title: {
     text: '访问人数趋势图'
   },
+  color: {
+    type: 'linear',
+    x: 0,
+    y: 0,
+    x2: 0,
+    y2: 1,
+    colorStops: [{
+      // offset: 0, color: 'red' // 0% 处的颜色
+      offset: 0, color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value
+    }, {
+      offset: 1, color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value
+    }],
+    global: false // 缺省为 false
+  },
   xAxis: {
     type: 'category',
     data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -35,7 +49,7 @@ let visitedChartOption: EChartsOption = {
     {
       data: [120, 932, 345, 934, 1290, 140, 543],
       type: 'line',
-      smooth: true
+        smooth: true
     }
   ],
   backgroundColor: 'rgba(255, 255, 255, 0.0)'

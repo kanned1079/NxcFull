@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {type FormInst, NButton, NTag, useMessage} from 'naive-ui'
-import {h, onMounted, ref, computed} from 'vue'
+import {computed, h, onMounted, ref} from 'vue'
 import {PersonAddOutline as addUserIcon, RefreshOutline as refreshIcon, Search as searchIcon} from '@vicons/ionicons5'
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -351,6 +351,7 @@ let handleAddNewUser = async () => {
 let handleEditUserInfo = async () => {
   try {
     animated.value = false
+    editUser.value.password = editUser.value.password ? hashPassword(editUser.value.password) : '';
     let {data} = await instance.put('/api/admin/v1/users', {
       ...editUser.value
     })

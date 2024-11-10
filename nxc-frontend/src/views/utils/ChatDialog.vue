@@ -118,23 +118,44 @@ interface ChatBobbleTheme {
   receiverBgShallow: string;
 }
 
+// let chatBobbleColorTheme = computed(
+//     () =>
+//         !themeStore.enableDarkMode
+//             ? {
+//               senderBgColor: "#5d8fc2",
+//               senderTextColor: "#fff",
+//               receiverBgColor: "#dadada",
+//               receiverTextColor: "#000",
+//               senderBgShallow: "rgba(93,143,193,0.5)",
+//               receiverBgShallow: "rgba(218,218,218,0.5)",
+//             }
+//             : {
+//               senderBgColor: "#486993",
+//               senderTextColor: "#fff",
+//               receiverBgColor: "#696969",
+//               receiverTextColor: "#fff",
+//               senderBgShallow: "rgba(30,45,58,0.5)",
+//               receiverBgShallow: "rgba(71,71,71,0.5)",
+//             }
+// ).value as ChatBobbleTheme;
+
 let chatBobbleColorTheme = computed(
     () =>
         !themeStore.enableDarkMode
             ? {
-              senderBgColor: "#5d8fc2",
+              senderBgColor: themeStore.getTheme.topHeaderBgColor,
               senderTextColor: "#fff",
               receiverBgColor: "#dadada",
               receiverTextColor: "#000",
-              senderBgShallow: "rgba(93,143,193,0.5)",
+              senderBgShallow: "rgba(25,25,25,0.2)",
               receiverBgShallow: "rgba(218,218,218,0.5)",
             }
             : {
-              senderBgColor: "#486993",
+              senderBgColor: themeStore.getTheme.topHeaderBgColor,
               senderTextColor: "#fff",
               receiverBgColor: "#696969",
               receiverTextColor: "#fff",
-              senderBgShallow: "rgba(30,45,58,0.5)",
+              senderBgShallow: "rgba(25,25,25,0.2)",
               receiverBgShallow: "rgba(71,71,71,0.5)",
             }
 ).value as ChatBobbleTheme;
@@ -340,8 +361,9 @@ export default {
       }
 
       .left-date {
+        opacity: 0.5;
         font-size: 0.7rem;
-        color: #3a4754;
+        color: v-bind('chatBobbleColorTheme.receiverTextColor');
         margin-top: 5px;
         align-self: flex-start;
       }
@@ -372,8 +394,9 @@ export default {
       }
 
       .right-date {
+        opacity: 0.5;
         font-size: 0.7rem;
-        color: #3a4754;
+        color: v-bind('chatBobbleColorTheme.receiverTextColor');
         margin-top: 5px;
         align-self: flex-end;
       }
