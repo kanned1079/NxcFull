@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"log"
 	"subscribeServices/internal/dao"
 )
 
@@ -78,16 +79,44 @@ import (
 //}
 
 // ClearPlansRedisCache 用于清除缓存
-func ClearPlansRedisCache(ctx context.Context) (err error) {
-	// 清空用户计划缓存
-	if err = dao.Rdb.Del(ctx, "plans:user:all").Err(); err != nil {
-		//log.Println("Failed to delete user plans from Redis:", err)
-		return errors.New("Failed to delete user plans from Redis")
+//func ClearPlansRedisCache(ctx context.Context) (err error) {
+//	// 清空用户计划缓存
+//	if err = dao.Rdb.Del(ctx, "plans:user:all").Err(); err != nil {
+//		//log.Println("Failed to delete user plans from Redis:", err)
+//		return errors.New("Failed to delete user plans from Redis")
+//	}
+//	// 清空管理员计划缓存
+//	if err = dao.Rdb.Del(ctx, "plans:admin:all").Err(); err != nil {
+//		//log.Println("Failed to delete admin plans from Redis:", err)
+//		return errors.New("Failed to delete admin plans from Redis")
+//	}
+//	return
+//}
+
+func ClearPlansRedisCache(ctx context.Context) error {
+	var cursor uint64
+	//var err error
+
+	for {
+		// 使用 SCAN 查找带有 "plans:" 前缀的所有键
+		keys, nextCursor, scanErr := dao.Rdb.Scan(ctx, cursor, "plans:*", 100).Result()
+		if scanErr != nil {
+			return errors.New("Failed to scan Redis for plan keys")
+		}
+
+		// 删除找到的键
+		if len(keys) > 0 {
+			if delErr := dao.Rdb.Del(ctx, keys...).Err(); delErr != nil {
+				return errors.New("Failed to delete plan keys from Redis")
+			}
+		}
+
+		// 更新游标，如果游标为 0 表示扫描完毕
+		cursor = nextCursor
+		if cursor == 0 {
+			break
+		}
 	}
-	// 清空管理员计划缓存
-	if err = dao.Rdb.Del(ctx, "plans:admin:all").Err(); err != nil {
-		//log.Println("Failed to delete admin plans from Redis:", err)
-		return errors.New("Failed to delete admin plans from Redis")
-	}
-	return
+	log.Println("清除plans缓存成功")
+	return nil
 }

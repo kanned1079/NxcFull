@@ -231,7 +231,8 @@ const columns = [
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.actions')).value, key: 'actions', render(row: User) {
+    title: computed(() => t('adminViews.userMgr.actions')).value,
+    key: 'actions', render(row: User) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -415,6 +416,7 @@ export default {
             :bordered="false"
             :columns="columns"
             :data="users"
+            scroll-x="1000"
         />
       </n-card>
 
@@ -512,6 +514,7 @@ export default {
           :rules="editRules"
           label-placement="top"
           label-width="120px"
+          scroll-x="1000"
       >
         <!-- 邮箱 必填 -->
         <n-form-item :label="t('adminViews.userMgr.email')" path="email">

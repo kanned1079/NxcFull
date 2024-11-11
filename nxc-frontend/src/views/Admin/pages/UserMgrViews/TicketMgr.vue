@@ -44,10 +44,18 @@ let openTicket = (ticket: TicketItem) => {
 
 // 定义表格的列
 const columns = ref([
-  {title: computed(() => t('userTickets.ticketId')).value, key: 'id'},
-  {title: computed(() => t('userTickets.ticketSubject')).value, key: 'subject'},
   {
-    title: computed(() => t('userTickets.ticketUrgency')).value, key: 'urgency', render(row: TicketItem) {
+    title: computed(() => t('userTickets.ticketId')).value,
+    key: 'id'
+  },
+  {
+    title: computed(() => t('userTickets.ticketSubject')).value,
+    key: 'subject'
+  },
+  {
+    title: computed(() => t('userTickets.ticketUrgency')).value,
+    key: 'urgency',
+    render(row: TicketItem) {
       let level = '';
       switch (row.urgency) {
         case 1:
@@ -67,7 +75,9 @@ const columns = ref([
     }
   },
   {
-    title: computed(() => t('userTickets.ticketStatus')).value, key: 'status', render(row: TicketItem) {
+    title: computed(() => t('userTickets.ticketStatus')).value,
+    key: 'status',
+    render(row: TicketItem) {
       return h(NTag, {
         type: row.status !== 204 ? 'info' : 'default',
         bordered: false,
@@ -75,17 +85,23 @@ const columns = ref([
     }
   },
   {
-    title: computed(() => t('userTickets.ticketCreatedAt')), key: 'created_at', render(row: TicketItem) {
+    title: computed(() => t('userTickets.ticketCreatedAt')),
+    key: 'created_at',
+    render(row: TicketItem) {
       return formatDate(row.created_at)
     }
   },
   {
-    title: computed(() => t('userTickets.lastResponse')), key: 'last_response', render(row: TicketItem) {
+    title: computed(() => t('userTickets.lastResponse')),
+    key: 'last_response',
+    render(row: TicketItem) {
       return row.last_reply ? formatDate(row.last_reply) : computed(() => t('userTickets.noReply')).value
     }
   },
   {
-    title: computed(() => t('userTickets.operate')).value, key: 'actions', fixed: 'right', render(row: TicketItem) {
+    title: computed(() => t('userTickets.operate')).value,
+    key: 'actions', fixed: 'right',
+    render(row: TicketItem) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -115,10 +131,18 @@ const columns = ref([
 
 // 定义表格的列
 const pendingColumns = ref([
-  {title: computed(() => t('userTickets.ticketId')).value, key: 'id'},
-  {title: computed(() => t('userTickets.ticketSubject')).value, key: 'subject'},
   {
-    title: computed(() => t('userTickets.ticketUrgency')).value, key: 'urgency', render(row: TicketItem) {
+    title: computed(() => t('userTickets.ticketId')).value,
+    key: 'id'
+  },
+  {
+    title: computed(() => t('userTickets.ticketSubject')).value,
+    key: 'subject'
+  },
+  {
+    title: computed(() => t('userTickets.ticketUrgency')).value,
+    key: 'urgency',
+    render(row: TicketItem) {
       let level = '';
       switch (row.urgency) {
         case 1:
@@ -138,7 +162,9 @@ const pendingColumns = ref([
     }
   },
   {
-    title: computed(() => t('userTickets.ticketStatus')).value, key: 'status', render(row: TicketItem) {
+    title: computed(() => t('userTickets.ticketStatus')).value,
+    key: 'status',
+    render(row: TicketItem) {
       return h(NTag, {
         type: row.status ? 'info' : 'default',
         bordered: false,
@@ -146,17 +172,24 @@ const pendingColumns = ref([
     }
   },
   {
-    title: computed(() => t('userTickets.ticketCreatedAt')), key: 'created_at', render(row: TicketItem) {
+    title: computed(() => t('userTickets.ticketCreatedAt')),
+    key: 'created_at',
+    render(row: TicketItem) {
       return formatDate(row.created_at)
     }
   },
   {
-    title: computed(() => t('userTickets.lastResponse')), key: 'last_response', render(row: TicketItem) {
+    title: computed(() => t('userTickets.lastResponse')),
+    key: 'last_response',
+    render(row: TicketItem) {
       return row.last_reply ? formatDate(row.last_reply) : computed(() => t('userTickets.noReply')).value
     }
   },
   {
-    title: computed(() => t('userTickets.operate')).value, key: 'actions', fixed: 'right', render(row: TicketItem) {
+    title: computed(() => t('userTickets.operate')).value,
+    key: 'actions',
+    fixed: 'right',
+    render(row: TicketItem) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -251,7 +284,6 @@ export default {
   </div>
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-
 
 
       <n-card style="margin-top: 20px" :embedded="true" hoverable content-style="padding: 0;" :bordered="false"

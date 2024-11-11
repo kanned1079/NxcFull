@@ -58,6 +58,8 @@ func StartApiGateways() {
 	{
 		//// 管理员特定的路由
 		adminAuthorized.GET("/os/status/get") // 获取当前系统的负载
+		adminAuthorized.GET("/server/status")
+		adminAuthorized.GET("/infrastructure/status", handler.GetSystemInfrastructureInfo)
 		//// adminAuthorized.POST("admin/save-settings", handleUpdateSystemSettings)
 		//
 		adminAuthorized.PUT("/setting", handler.HandleUpdateSingleOptions) // 修改单个配置项目

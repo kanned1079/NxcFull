@@ -297,6 +297,7 @@ onMounted(async () => {
     <transition name="slide-fade">
       <n-card v-if="animated" :embedded="true" hoverable content-style="padding: 0;" :bordered="false">
         <n-data-table
+            striped
             class="table"
             :columns="columns"
             :data="ticketList"

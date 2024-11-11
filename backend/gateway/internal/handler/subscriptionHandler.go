@@ -1,14 +1,13 @@
 package handler
 
 import (
+	sysContext "context"
 	"encoding/json"
 	pb "gateway/internal/grpc/api/subscription/proto"
-	"strconv"
-
-	sysContext "context"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // GetActivePlanListByUserId 获取用户的有效订阅
@@ -98,14 +97,25 @@ func HandleGetAllPlans(context *gin.Context) {
 	if isUserQ, err = strconv.ParseBool(context.Query("is_user")); err != nil && !isUserQ {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "转换格式错误" + err.Error(),
+			"msg":  "请求参数错误" + err.Error(),
 		})
 		return
 	}
-	resp, err := grpcClient.SubscriptionServiceClient.GetAllPlans(sysContext.Background(), &pb.GetAllPlansRequest{
-		//User: isUser, // true用户 false管理员
-		IsUser: isUserQ,
-	})
+	var resp *pb.GetAllPlansResponse
+	if !isUserQ {
+		var page, size int64
+		err, page, size = getPage2Size(context)
+		resp, err = grpcClient.SubscriptionServiceClient.GetAllPlans(sysContext.Background(), &pb.GetAllPlansRequest{
+			IsUser: isUserQ,
+			Page:   page,
+			Size:   size,
+		})
+	} else {
+		resp, err = grpcClient.SubscriptionServiceClient.GetAllPlans(sysContext.Background(), &pb.GetAllPlansRequest{
+			//User: isUser, // true用户 false管理员
+			IsUser: isUserQ,
+		})
+	}
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
@@ -129,10 +139,12 @@ func HandleGetAllPlans(context *gin.Context) {
 		})
 		return
 	}
+	log.Println("页面计数", resp.PageCount)
 	context.JSON(http.StatusOK, gin.H{
-		"code":  resp.Code,
-		"plans": plansMap,
-		"msg":   resp.Msg,
+		"code":       resp.Code,
+		"plans":      plansMap,
+		"msg":        resp.Msg,
+		"page_count": resp.PageCount,
 	})
 }
 

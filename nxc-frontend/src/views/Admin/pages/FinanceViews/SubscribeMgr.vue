@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onBeforeMount, onMounted, ref, h} from "vue";
+import {h, onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import usePaymentStore from "@/stores/usePaymentStore";
@@ -20,7 +20,30 @@ const message = useMessage()
 
 let editType = ref<'add' | 'update'>('add') // 这里可以选择的是add和update
 
+let pageCount = ref(10)
+let dataSize = ref<{ pageSize: number, page: number }>({
+  pageSize: 10,
+  page: 1,
+})
 
+let dataCountOptions = [
+  {
+    label: '10条数据/页',
+    value: 10,
+  },
+  {
+    label: '20条数据/页',
+    value: 20,
+  },
+  {
+    label: '50条数据/页',
+    value: 50,
+  },
+  {
+    label: '100条数据/页',
+    value: 100,
+  },
+]
 
 interface Plan {
   id: number | null
@@ -147,7 +170,8 @@ let submitNewPlan = async () => {
     })
     if (data.code === 200) {
       notify('success', '成功', '成功添加新的订阅')
-      await paymentStore.getAllPlans()
+      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      pageCount.value = page_count as number
     } else {
       notify('error', '添加出错', data.error)
     }
@@ -182,7 +206,7 @@ interface GroupItemFromServer {
 
 let getAllGroups = async () => {
   try {
-    let {data} = await instance.get('/api/admin/v1/groups/kv', )
+    let {data} = await instance.get('/api/admin/v1/groups/kv',)
     if (data.code === 200) {
       console.log('获取到的权限组列表', data)
       groupOptions.value = []
@@ -327,7 +351,9 @@ let updatePlan = async (row?: Plan) => {
     })
     if (data.code === 200) {
       notify('success', '成功', '修改订阅成功')
-      await paymentStore.getAllPlans()
+      // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      pageCount.value = page_count as number
     } else {
       notify('error', '修改出错', data.error)
     }
@@ -356,7 +382,9 @@ let handleDelete = async (planId: number) => {
     })
     if (data.code === 200) {
       notify('success', '成功', '删除成功')
-      await paymentStore.getAllPlans()?animated.value = true:setTimeout(() => animated.value = true, 3000)
+      // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize) ? animated.value = true : setTimeout(() => animated.value = true, 3000)
+      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      pageCount.value = page_count as number
     } else {
       notify('error', '删除失败', data.error)
     }
@@ -374,7 +402,9 @@ let updateRowIsSale = async (id: number, val: boolean) => {
     })
     if (data.code === 200) {
       notify('success', '更新成功')
-      await paymentStore.getAllPlans()
+      // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      pageCount.value = page_count as number
     } else {
       notify('error', '更新失败')
 
@@ -393,7 +423,9 @@ let updateRowRenew = async (id: number, val: boolean) => {
     })
     if (data.code === 200) {
       notify('success', '更新成功')
-      await paymentStore.getAllPlans()
+      // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      pageCount.value = page_count as number
     } else {
       notify('error', '更新失败')
 
@@ -403,15 +435,25 @@ let updateRowRenew = async (id: number, val: boolean) => {
   }
 }
 
+let reloadPlanList = async () => {
+  // let data = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+  // data?animated.value = true:message.error('Fetch failure.');
+  let {page_count, success} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+  pageCount.value = page_count as number
+  success?animated.value = true:setTimeout(() => animated.value = true, 2000)
+}
 
-onMounted(async  () => {
+
+onMounted(async () => {
   console.log('SubscribeMgr挂载')
   // getAllSubscribeItems()
 
   themeStore.menuSelected = 'subscription-manager'
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
   await getAllGroups()
-  await paymentStore.getAllPlans()
+  // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+  let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+  pageCount.value = page_count as number
 
   animated.value = true
 
@@ -443,12 +485,30 @@ export default {
         <!--      在此处放置表格-->
         <!--      表格的列名为 #ID， 启用销售（数据为bool，显示为一个n-switch），允许续费（数据为bool，显示为一个n-switch）,排序（数据为数值，显示为一个n-tag），权限组（数值为string，显示为一个n-tag），名称，数量，余量，月付价格，季付价格，半年付价格，年付价格，操作（显示为两个按钮，使用h函数，将按钮放置为一个div中，使用flex布局横向排列）-->
         <n-data-table
+            striped
             size="medium"
             :columns="columns"
             :data="paymentStore.plan_list"
             scroll-x="1000"
         />
       </n-card>
+
+      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSize.page"
+            :page-count="pageCount"
+            @update:page="animated=false; reloadPlanList()"
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSize.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="animated=false; dataSize.page = 1; reloadPlanList()"
+        />
+      </div>
 
       <n-drawer v-model:show="active" width="60%" :placement="placement">
         <n-drawer-content title="添加订阅">
@@ -500,7 +560,8 @@ export default {
             </n-form-item>
           </n-form>
           <div style="display: flex; flex-direction: row; justify-content: right; margin-top: 20px">
-            <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">取消</n-button>
+            <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">取消
+            </n-button>
             <n-button style="width: 80px" type="primary" @click="submitPlan">{{
                 editType === 'add' ? '添加' : '修改'
               }}

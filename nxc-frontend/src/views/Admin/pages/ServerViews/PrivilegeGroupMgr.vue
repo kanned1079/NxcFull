@@ -65,7 +65,6 @@ const columns = ref(
       {
         title: '操作',
         key: 'actions',
-        width: 200,
         fixed: 'right',
         render(row: GroupItem) {
           return h('div', {style: 'display: flex; gap: 8px'}, [
@@ -275,6 +274,7 @@ export default {
         <!--      表格有五列 列名分別是 權限組ID， 組名稱， 用戶數量（前面使用n-icon放置一個用戶圖標）， 計畫數量（前面使用n-icon放置一個圖標， 操作（內部為兩個按鈕 水平排列分別為編輯和刪除）-->
         <n-spin :show="showLoading">
           <n-data-table
+              striped
               :columns="columns"
               :data="groupList"
               :scroll-x="900"

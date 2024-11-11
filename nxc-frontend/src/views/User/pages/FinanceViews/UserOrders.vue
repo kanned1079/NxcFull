@@ -276,6 +276,7 @@ export default {
 
       <n-card class="order-table" :bordered="false" :embedded="true" hoverable content-style="padding: 0;">
         <n-data-table
+            striped
             class="table"
             :columns="columns"
             :data="orderList"

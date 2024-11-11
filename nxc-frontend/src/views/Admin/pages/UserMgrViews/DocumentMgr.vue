@@ -230,7 +230,8 @@ const columns = [
           onClick: () => handleDeleteDoc(row)
         }, {default: () => computed(() => t('adminViews.docMgr.delete')).value,})
       ]);
-    }
+    },
+    fixed: 'right',
   }
 ];
 
@@ -357,7 +358,7 @@ export default {
             :pagination="false"
             :bordered="true"
             style=""
-            :scroll-x="800"
+            :scroll-x="1000"
         />
       </n-card>
 

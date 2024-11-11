@@ -51,28 +51,35 @@ const usePaymentStore = defineStore('paymentStore', () => {
     const userInfoStore = useUserInfoStore()
     let plan_list = ref<Plan[]>([])
 
-    let getAllPlans = async (): Promise<boolean> => {
+    let getAllPlans = async (page: number, size: number): Promise<{success: boolean, page_count: number}> => {
         // let apiAddrStore = useApiAddrStore()
         try {
             let {data} = await instance.get('/api/user/v1/plan', {
                params: {
-                   is_user: !userInfoStore.thisUser.isAdmin
+                   is_user: !userInfoStore.thisUser.isAdmin,
                    // is_user: false
+                   page,
+                   size,
                }
             })
             if (data.code === 200) {
                 plan_list.value = []
                 data.plans.forEach((item: Plan) => plan_list.value.push(item))
-                // plan_list.value = data.plans
-                // console.log(plan_list.value)
-                return true
+                console.log('页面计数 ', data.page_count)
+                return {
+                    success: true,
+                    page_count: data.page_count as number,
+                }
             } else {
                 console.log('获取订阅数据失败')
             }
         } catch (error) {
             console.log(error)
         }
-        return false
+        return {
+            success: false,
+            page_count: 0,
+        }
     }
 
     let plan_id_selected = ref<number>(-1)

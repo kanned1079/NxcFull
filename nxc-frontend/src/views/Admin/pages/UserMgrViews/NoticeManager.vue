@@ -182,7 +182,8 @@ const columns = [
           onClick: () => deleteItem(row.id)
         }, {default: () => '删除'})
       ]);
-    }
+    },
+    fixed: 'right',
   }
 ];
 
@@ -340,6 +341,7 @@ export default {
       @positive-click="submitModal"
       @negative-click="closeModal"
       :show-icon="false"
+      :block-scroll="1000"
   >
     <!--          pass-->
     <div style="margin-top: 30px"></div>

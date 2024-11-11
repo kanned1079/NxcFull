@@ -20,6 +20,7 @@ const message = useMessage()
 let animated = ref<boolean>(false)
 
 const formRef = ref<FormInst | null>(null)
+
 let pageCount = ref(10)
 let dataSize = ref<{pageSize: number, page: number}>({
   pageSize: 10,
@@ -287,7 +288,7 @@ const columns = [
         }, {default: () => '删除'})
       ]);
     },
-
+    fixed: 'right',
   }
 ];
 
@@ -352,13 +353,13 @@ export default {
         <!--      <n-data-table :columns="columns" :data="couponList" />-->
         <n-spin :show="showLoading">
           <n-data-table
+              striped
               class="table"
               :columns="columns"
               :data="couponList"
               :pagination="false"
               :bordered="true"
-              style=""
-              :scroll-x="800"
+              :scroll-x="1000"
           />
         </n-spin>
 

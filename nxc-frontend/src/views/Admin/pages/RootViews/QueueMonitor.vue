@@ -90,7 +90,7 @@ let getSysInfo = async () => {
 
   // const token = sessionStorage.getItem('token');
 
-  let {data} = await instance.get(apiAddrStore.apiAddr.admin.getSystemStatus);
+  let {data} = await instance.get('/api/admin/v1/infrastructure/status');
   console.log(data)
   serverLoad.cpu = Number(data.osInfo.cpu_percent.toFixed(1))
   serverLoad.mem = Number(data.osInfo.mem_percent.toFixed(1))
