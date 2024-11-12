@@ -232,6 +232,7 @@ const columns = [
   },
   {
     title: computed(() => t('adminViews.userMgr.actions')).value,
+    fixed: 'right',
     key: 'actions', render(row: User) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
@@ -255,8 +256,6 @@ const columns = [
         }, {default: () => row.status ? computed(() => t('adminViews.userMgr.banUser')).value : computed(() => t('adminViews.userMgr.unbanUser')).value})
       ]);
     },
-    width: 200,
-    fixed: 'right'
   }
 ];
 
@@ -352,9 +351,14 @@ let handleAddNewUser = async () => {
 let handleEditUserInfo = async () => {
   try {
     animated.value = false
-    editUser.value.password = editUser.value.password ? hashPassword(editUser.value.password) : '';
+    editUser.value.password = editUser.value.password ? await hashPassword(editUser.value.password) : '';
     let {data} = await instance.put('/api/admin/v1/users', {
-      ...editUser.value
+      id: editUser.value.id,
+      password: editUser.value.password,
+      invite_code: editUser.value.invite_code,
+      is_admin: editUser.value.is_admin,
+      is_staff: editUser.value.is_staff,
+      balance: editUser.value.balance,
     })
     if (data.code === 200) {
       message.success(computed(() => t('adminViews.userMgr.updateSuccess')).value)
@@ -416,7 +420,6 @@ export default {
             :bordered="false"
             :columns="columns"
             :data="users"
-            scroll-x="1000"
         />
       </n-card>
 
@@ -518,7 +521,7 @@ export default {
       >
         <!-- 邮箱 必填 -->
         <n-form-item :label="t('adminViews.userMgr.email')" path="email">
-          <n-input v-model:value="editUser.email"></n-input>
+          <n-input :disabled="true" v-model:value="editUser.email"></n-input>
         </n-form-item>
 
         <!-- 密码 选填 -->

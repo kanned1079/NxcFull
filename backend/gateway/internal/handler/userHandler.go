@@ -470,17 +470,45 @@ func HandleAddUserManuallyFromAdmin(context *gin.Context) {
 
 func HandleUpdateUserInfoByIdFromAdmin(context *gin.Context) {
 	postData := &struct {
-		Id int64 `json:"id"`
+		Id         int64   `json:"id"`
+		Email      string  `json:"email"`
+		Balance    float32 `json:"balance"`
+		InviteCode string  `json:"invite_code"`
+		IsAdmin    bool    `json:"is_admin"`
+		IsStaff    bool    `json:"is_staff"`
+		Password   string  `json:"password"`
 	}{}
 	if err := context.ShouldBindJSON(postData); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusBadRequest,
-			"msg":  err.Error(),
+			"code":    http.StatusBadRequest,
+			"success": false,
+			"msg":     err.Error(),
 		})
 		return
 	}
 	log.Println(postData)
-
+	resp, err := grpcClient.UserServiceClient.UpdateUserInfoAdmin(sysContext.Background(), &pb.UpdateUserInfoAdminRequest{
+		Id:         postData.Id,
+		Email:      postData.Email,
+		Password:   postData.Password,
+		InviteCode: postData.InviteCode,
+		IsAdmin:    postData.IsAdmin,
+		IsStaff:    postData.IsStaff,
+		Balance:    postData.Balance,
+	})
+	if err = failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusInternalServerError,
+			"success": false,
+			"msg":     err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":    resp.Code,
+		"msg":     resp.Msg,
+		"success": resp.Success,
+	})
 }
 
 func HandleBlock2UnblockUserByIdFromAdmin(context *gin.Context) {

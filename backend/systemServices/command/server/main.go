@@ -8,6 +8,7 @@ import (
 	"systemServices/internal/etcd"
 	"systemServices/internal/handler"
 	"systemServices/internal/model"
+	"systemServices/internal/services"
 )
 
 var err error
@@ -35,6 +36,10 @@ func init() {
 	}
 
 	dao.InitMysqlServer() // 初始化主数据库
+	dao.InitRedisServer()
+	if err = services.MakeSettingsCache(); err != nil {
+		log.Panicln(err.Error())
+	}
 
 	if err = dao.Db.Model(model.SiteSetting{}).AutoMigrate(); err != nil {
 		panic(err)

@@ -15,13 +15,10 @@ import (
 )
 
 func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, request *pb.GetActivePlanListByUserIdRequest) (*pb.GetActivePlanListByUserIdResponse, error) {
-	// Redis key for caching the active orders
 	redisKey := fmt.Sprintf("user_property:active_order_summary:%d", request.UserId)
 
-	// Check if the result is already cached in Redis
 	cachedData, err := dao.Rdb.Get(ctx, redisKey).Result()
 	if err == nil {
-		// If cached data is found, unmarshal and return it
 		log.Println("User's active orders summary in redis, skip query db.")
 		var cachedResult []map[string]interface{}
 		if err := json.Unmarshal([]byte(cachedData), &cachedResult); err == nil {
@@ -32,14 +29,12 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 			}, nil
 		}
 	} else if !errors.Is(err, redis.Nil) {
-		// Handle Redis errors (other than key not found)
 		return &pb.GetActivePlanListByUserIdResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "Failed to fetch data from Redis: " + err.Error(),
 		}, nil
 	}
 
-	// If Redis query fails or no data is found, continue with database query
 	var activeOrders []model.ActiveOrders
 	if err := dao.Db.Where("user_id = ? AND is_active = ?", request.UserId, true).Order(fmt.Sprintf("created_at DESC")).Find(&activeOrders).Error; err != nil {
 		return &pb.GetActivePlanListByUserIdResponse{
@@ -55,7 +50,6 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 		}, nil
 	}
 
-	// Prepare the result array with plan details
 	var result []map[string]interface{}
 	for _, order := range activeOrders {
 		var plan model.Plan
@@ -88,7 +82,6 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 		}, nil
 	}
 
-	// Return the result
 	return &pb.GetActivePlanListByUserIdResponse{
 		Code:    http.StatusOK,
 		Msg:     "获取成功",
@@ -105,12 +98,6 @@ func (s *SubscribeServices) GetOrders(ctx context.Context, request *pb.GetOrders
 			Msg:  "查找用户订单错误",
 		}, nil
 	}
-	//if len(orders) == 0 {
-	//	return &pb.GetOrdersResponse{
-	//		Code: http.StatusNotFound,
-	//		Msg:  "用户还没有订单",
-	//	}, nil
-	//}
 	if ordersJson, err := json.Marshal(orders); err != nil {
 		return &pb.GetOrdersResponse{
 			Code: http.StatusInternalServerError,

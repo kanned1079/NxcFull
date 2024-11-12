@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"gorm.io/gorm"
+	"log"
 	"net/http"
 	pb "userServices/api/proto"
 	"userServices/internal/dao"
@@ -180,10 +181,127 @@ func (s *UserService) AddUserManually(context context.Context, request *pb.AddUs
 	}, nil
 }
 
+// 原始版本 无事务
 func (s *UserService) UpdateUserInfoAdmin(context context.Context, request *pb.UpdateUserInfoAdminRequest) (*pb.UpdateUserInfoAdminResponse, error) {
+	var user model.User
 
-	return &pb.UpdateUserInfoAdminResponse{}, nil
+	if result := dao.Db.Model(&model.User{}).Where("id = ?", request.Id).First(&user); result.RowsAffected == 0 {
+		return &pb.UpdateUserInfoAdminResponse{
+			Code:    http.StatusNotFound,
+			Success: false,
+			Msg:     "user not found" + result.Error.Error(),
+		}, nil
+	}
+	//user.Email = request.Email
+	log.Println("previous", user)
+	user.InviteCode = request.InviteCode
+	user.IsAdmin = request.IsAdmin
+	user.IsStaff = request.IsStaff
+	user.Balance = request.Balance
+
+	log.Println("--------previous", user)
+
+	if dao.Db.Model(&model.User{}).Where("id = ?", request.Id).Save(&user).Error != nil {
+		return &pb.UpdateUserInfoAdminResponse{
+			Code:    http.StatusInternalServerError,
+			Success: false,
+			Msg:     "Update user data failure",
+		}, nil
+	}
+
+	if request.Password != "" {
+		var userAuth model.Auth
+
+		if result := dao.Db.Model(&model.Auth{}).Where("id = ?", request.Id).First(&userAuth); result.RowsAffected == 0 {
+			return &pb.UpdateUserInfoAdminResponse{
+				Code:    http.StatusNotFound,
+				Success: false,
+				Msg:     "user not found" + result.Error.Error(),
+			}, nil
+		}
+
+		//userAuth.Email = request.Email
+		userAuth.Password = request.Password
+
+		if err := dao.Db.Model(&model.Auth{}).Where("id = ?", request.Id).Save(&userAuth).Error; err != nil {
+			return &pb.UpdateUserInfoAdminResponse{
+				Code:    http.StatusInternalServerError,
+				Success: false,
+				Msg:     "Update user auth data failure" + err.Error(),
+			}, nil
+		}
+	}
+
+	if utils.ClearUserCacheByEmail(user.Email) != nil {
+		return &pb.UpdateUserInfoAdminResponse{
+			Code:    http.StatusInternalServerError,
+			Success: false,
+			Msg:     "Flush user cache failure",
+		}, nil
+	}
+
+	return &pb.UpdateUserInfoAdminResponse{
+		Code:    http.StatusOK,
+		Success: true,
+		Msg:     "Updated user successfully",
+	}, nil
 }
+
+//func (s *UserService) UpdateUserInfoAdmin(context context.Context, request *pb.UpdateUserInfoAdminRequest) (*pb.UpdateUserInfoAdminResponse, error) {
+//	// 开启事务
+//	tx := dao.Db.Begin()
+//	defer func() {
+//		if r := recover(); r != nil {
+//			tx.Rollback()
+//		}
+//	}()
+//
+//	var user model.User
+//	if result := tx.Model(&model.User{}).Where("id = ?", request.Id).First(&user); result.RowsAffected == 0 {
+//		tx.Rollback()
+//		return &pb.UpdateUserInfoAdminResponse{
+//			Code:    http.StatusNotFound,
+//			Success: false,
+//			Msg:     "user not found: " + result.Error.Error(),
+//		}, nil
+//	}
+//
+//	// 更新 x_auth 表中的 email 字段
+//	if err := tx.Model(&model.Auth{}).Where("id = ?", request.Id).Update("email", request.Email).Error; err != nil {
+//		tx.Rollback()
+//		return &pb.UpdateUserInfoAdminResponse{
+//			Code:    http.StatusInternalServerError,
+//			Success: false,
+//			Msg:     "failed to update auth email: " + err.Error(),
+//		}, nil
+//	}
+//
+//	// 更新 x_users 表中的信息
+//	user.Email = request.Email
+//	if err := tx.Save(&user).Error; err != nil {
+//		tx.Rollback()
+//		return &pb.UpdateUserInfoAdminResponse{
+//			Code:    http.StatusInternalServerError,
+//			Success: false,
+//			Msg:     "failed to update user: " + err.Error(),
+//		}, nil
+//	}
+//
+//	// 提交事务
+//	if err := tx.Commit().Error; err != nil {
+//		return &pb.UpdateUserInfoAdminResponse{
+//			Code:    http.StatusInternalServerError,
+//			Success: false,
+//			Msg:     "failed to commit transaction: " + err.Error(),
+//		}, nil
+//	}
+//
+//	return &pb.UpdateUserInfoAdminResponse{
+//		Code:    http.StatusOK,
+//		Success: true,
+//		Msg:     "Updated user successfully",
+//	}, nil
+//}
 
 //func (s *UserService) Block2UnblockUserById(ctx context.Context, request *pb.Block2UnblockUserByIdRequest) (*pb.Block2UnblockUserByIdResponse, error) {
 //	var user model.User

@@ -264,11 +264,19 @@ message AddUserManuallyResponse {
 //
 
 message UpdateUserInfoAdminRequest {
-
+    int64 id = 1;
+    string email = 2;
+    string password = 3;
+    string invite_code = 4;
+    bool is_admin = 5;
+    bool is_staff = 6;
+    float balance = 7;
 }
 
 message UpdateUserInfoAdminResponse {
-
+  int32 code = 1;
+  bool success = 2;
+  string msg = 3;
 }
 
 //
