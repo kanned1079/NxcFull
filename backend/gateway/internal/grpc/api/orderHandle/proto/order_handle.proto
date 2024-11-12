@@ -13,6 +13,12 @@ service OrderHandleService {
   // 确认订单
   rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse);
 
+//  // 管理员的请求
+//  rpc GetAllOrdersAdmin(GetAllOrdersAdminRequest) returns (GetAllOrdersAdminResponse);
+
+  rpc ManualPassOrderPayment(ManualPassOrderPaymentRequest) returns (ManualPassOrderPaymentResponse);
+
+
 }
 
 // ------------------------
@@ -70,4 +76,33 @@ message PlaceOrderResponse {
   bool key_generated = 5; // 是否生成了密钥
   string expired_date = 6;
   float user_balance = 7; // 剩余的余额
+}
+
+//
+
+//message GetAllOrdersAdminRequest {
+//  int64 page = 1;
+//  int64 size = 2;
+//  string search_email = 3;
+//  string sort = 4;
+//}
+//
+//message GetAllOrdersAdminResponse {
+//  int32 code = 1;
+//  bytes orders = 2;
+//  int64 page_count =3;
+//  string msg = 4;
+//}
+
+//
+
+message ManualPassOrderPaymentRequest {
+  int64 user_id = 1;
+  string order_is = 2;
+}
+
+message ManualPassOrderPaymentResponse {
+  int32 code = 1;
+  bool passed = 2;
+  string msg = 3;
 }

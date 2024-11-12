@@ -147,7 +147,7 @@ func readSettingFromDB(category, key string) (json.RawMessage, error) {
 	return setting.Value, nil
 }
 
-// MakeSettingsCache 在init的时候将数据库x_site_settingsz中所有字段保存进redis
+// MakeSettingsCache 在init()的时候将数据库x_site_settings中所有字段保存进redis以提供缓存查询
 func MakeSettingsCache() error {
 	var items []settings.SiteSetting
 
@@ -164,11 +164,13 @@ func MakeSettingsCache() error {
 		valueStr := string(setting.Value)
 
 		// 使用哈希类型存储，字段名为设置项的 Key，值为 JSON 格式的 Value
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		//defer cancel()
 		if err := dao.Rdb.HSet(ctx, redisKey, setting.Key, valueStr).Err(); err != nil {
+			cancel() // 直接结束
 			return err
 		}
+		cancel() // 每次for循环结束后直接关闭ctx
 	}
 
 	log.Println("All settings cached successfully in Redis.")

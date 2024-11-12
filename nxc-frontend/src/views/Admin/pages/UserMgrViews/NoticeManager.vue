@@ -117,6 +117,7 @@ let submitModal = () => {
 
 let addNewNotice = async () => {
   try {
+    animated.value = false
     let {data} = await instance.post('/api/admin/v1/notice', {
       ...formData.value
     })
@@ -205,6 +206,7 @@ let getAllNotices = async () => {
       noticesArr.value = []
       data.notices.forEach((notice: Notice) => noticesArr.value.push(notice))
       pageCount.value = data.page_count
+      animated.value = true
     } else {
       message.error('获取失败')
     }
@@ -216,6 +218,7 @@ let getAllNotices = async () => {
 let updateNoticeEnabled = async (id: number, enabled: boolean) => {
   console.log("new: ", id, enabled)
   try {
+    // animated.value = false
     let {data} = await instance.put('/api/admin/v1/notice/status', {
       id,
       is_show: enabled,
@@ -233,6 +236,7 @@ let updateNoticeEnabled = async (id: number, enabled: boolean) => {
 let deleteNotice = async (id: number) => {
   const message = useMessage()
   try {
+    animated.value = false
     let {data} = await instance.delete('/api/admin/v1/notice',
         {
           params: {notice_id: id,},
@@ -251,6 +255,7 @@ let deleteNotice = async (id: number) => {
 
 let editNotice = async () => {
   try {
+    animated.value = false
     let {data} = await instance.put('/api/admin/v1/notice', {
       ...formData.value
     })
@@ -291,8 +296,8 @@ export default {
 <template>
   <div style="padding: 20px 20px 0 20px">
     <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">
-      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>
-      <n-button type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试</n-button>
+      <n-button secondary type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>
+      <n-button secondary type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试</n-button>
     </n-card>
   </div>
 

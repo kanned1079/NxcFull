@@ -361,3 +361,94 @@ func (s *OrderServices) GetActivePlanListByUserId(ctx context.Context, request *
 		MyPlans: resultJson,
 	}, nil
 }
+
+//func (s *OrderServices) GetAllOrdersAdmin(context context.Context, request *pb.GetAllOrdersAdminRequest) (*pb.GetAllOrdersAdminResponse, error) {
+//	//request.Page	// 分页参数
+//	//request.Sort	// 分页参数
+//
+//	//request.SearchEmail	// 模糊搜索 邮箱
+//	//request.Sort // 值是 "ASC" "DESC"
+//
+//	var orders []model.Orders
+//
+//
+//
+//	if result := dao.Db.Model(&model.Orders{})
+//
+//
+//	return &pb.GetAllOrdersAdminResponse{
+//		Code: http.StatusOK,
+//		//Orders: []byte(orders),// 这里要把订单的列表序列化后返回 bytes
+//		PageCount: //通过分页参数计算
+//	}, nil
+//}
+
+func (s *OrderServices) GetAllOrdersAdmin(context context.Context, request *pb.GetAllOrdersAdminRequest) (*pb.GetAllOrdersAdminResponse, error) {
+	var orders []model.Orders
+	log.Println("订单查询参数", request.Page, request.Size)
+
+	// 使用请求中的 pageSize，默认为 10
+	pageSize := request.Size
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+
+	// 使用请求中的 page，默认从第 1 页开始
+	page := request.Page
+	if page <= 0 {
+		page = 1
+	}
+	offset := (page - 1) * int64(pageSize)
+
+	// 设置基本查询
+	query := dao.Db.Model(&model.Orders{})
+
+	// 如果有邮箱条件，使用模糊查询
+	if request.SearchEmail != "" {
+		query = query.Where("email LIKE ?", "%"+request.SearchEmail+"%")
+	}
+
+	// 根据请求的排序设置
+	sortOrder := "DESC" // 默认排序
+	if request.Sort == "ASC" {
+		sortOrder = "ASC"
+	}
+	query = query.Order("created_at " + sortOrder)
+
+	// 获取总记录数用于计算总页数，不设置 Offset 和 Limit
+	var totalRecords int64
+	if err := query.Count(&totalRecords).Error; err != nil {
+		log.Println("Error counting orders:", err)
+		return &pb.GetAllOrdersAdminResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "统计错误",
+		}, err
+	}
+	pageCount := (totalRecords + int64(pageSize) - 1) / int64(pageSize) // 总页数
+
+	// 执行分页查询
+	if result := query.Offset(int(offset)).Limit(int(pageSize)).Find(&orders); result.Error != nil {
+		log.Println("Error querying orders:", result.Error)
+		return &pb.GetAllOrdersAdminResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查询错误",
+		}, result.Error
+	}
+
+	// 序列化 orders 列表
+	orderBytes, err := json.Marshal(orders)
+	if err != nil {
+		log.Println("Error serializing orders:", err)
+		return &pb.GetAllOrdersAdminResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "序列化错误",
+		}, err
+	}
+
+	return &pb.GetAllOrdersAdminResponse{
+		Code:      http.StatusOK,
+		Msg:       "查询成功",
+		Orders:    orderBytes,
+		PageCount: pageCount,
+	}, nil
+}

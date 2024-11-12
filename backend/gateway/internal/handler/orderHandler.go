@@ -229,6 +229,47 @@ func HandlePlaceOrder(context *gin.Context) {
 	}
 }
 
+func HandleGetAllOrderByAdmin(context *gin.Context) {
+	err, page, size := getPage2Size(context)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	searchEmail := context.Query("search_email")
+	sort := context.Query("sort")
+	resp, err := grpcClient.OrderServicesClient.GetAllOrdersAdmin(sysContext.Background(), &orderPb.GetAllOrdersAdminRequest{
+		Page:        page,
+		Size:        size,
+		SearchEmail: searchEmail,
+		Sort:        sort,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var orderMap []map[string]interface{}
+	if json.Unmarshal(resp.Orders, &orderMap) != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"orders":     orderMap,
+		"msg":        resp.Msg,
+		"page_count": resp.PageCount,
+	})
+
+}
+
 func getUserIdAndOrderIdFromContextViaGetMethod(context *gin.Context) (err error, userId int64, orderId string) {
 	orderId = context.Query("order_id")
 	userIdStr := context.Query("user_id")
@@ -256,3 +297,7 @@ func getUserIdAndOrderIdFromContextViaPostMethod(context *gin.Context) (err erro
 	orderId = postData.OrderId
 	return
 }
+
+//func HandleGetAllOrderByAdmin(context *gin.Context) {
+//
+//}

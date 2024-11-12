@@ -108,6 +108,8 @@ func StartApiGateways() {
 		adminAuthorized.PUT("users", handler.HandleUpdateUserInfoByIdFromAdmin)      // 修改指定id的用户的信息
 		adminAuthorized.PATCH("users", handler.HandleBlock2UnblockUserByIdFromAdmin) // 封禁和解封用户
 
+		adminAuthorized.GET("order", handler.HandleGetAllOrderByAdmin)
+
 	}
 
 	userAuthorized := protectedRoutes.Group("/user/v1", middleware.RoleMiddleware())

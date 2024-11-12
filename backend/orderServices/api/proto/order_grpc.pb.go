@@ -22,6 +22,7 @@ const (
 	OrderService_GetActivePlanListByUserId_FullMethodName = "/order.OrderService/GetActivePlanListByUserId"
 	OrderService_CommitNewOrder_FullMethodName            = "/order.OrderService/CommitNewOrder"
 	OrderService_GetAllMyOrders_FullMethodName            = "/order.OrderService/GetAllMyOrders"
+	OrderService_GetAllOrdersAdmin_FullMethodName         = "/order.OrderService/GetAllOrdersAdmin"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -36,6 +37,8 @@ type OrderServiceClient interface {
 	CommitNewOrder(ctx context.Context, in *CommitNewOrderRequest, opts ...grpc.CallOption) (*CommitNewOrderResponse, error)
 	// GetAllMyOrders 獲取該用戶所有的訂單 不管是有效還是無效
 	GetAllMyOrders(ctx context.Context, in *GetAllMyOrdersRequest, opts ...grpc.CallOption) (*GetAllMyOrdersResponse, error)
+	// 管理员的请求
+	GetAllOrdersAdmin(ctx context.Context, in *GetAllOrdersAdminRequest, opts ...grpc.CallOption) (*GetAllOrdersAdminResponse, error)
 }
 
 type orderServiceClient struct {
@@ -76,6 +79,16 @@ func (c *orderServiceClient) GetAllMyOrders(ctx context.Context, in *GetAllMyOrd
 	return out, nil
 }
 
+func (c *orderServiceClient) GetAllOrdersAdmin(ctx context.Context, in *GetAllOrdersAdminRequest, opts ...grpc.CallOption) (*GetAllOrdersAdminResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllOrdersAdminResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetAllOrdersAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
@@ -88,6 +101,8 @@ type OrderServiceServer interface {
 	CommitNewOrder(context.Context, *CommitNewOrderRequest) (*CommitNewOrderResponse, error)
 	// GetAllMyOrders 獲取該用戶所有的訂單 不管是有效還是無效
 	GetAllMyOrders(context.Context, *GetAllMyOrdersRequest) (*GetAllMyOrdersResponse, error)
+	// 管理员的请求
+	GetAllOrdersAdmin(context.Context, *GetAllOrdersAdminRequest) (*GetAllOrdersAdminResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -106,6 +121,9 @@ func (UnimplementedOrderServiceServer) CommitNewOrder(context.Context, *CommitNe
 }
 func (UnimplementedOrderServiceServer) GetAllMyOrders(context.Context, *GetAllMyOrdersRequest) (*GetAllMyOrdersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllMyOrders not implemented")
+}
+func (UnimplementedOrderServiceServer) GetAllOrdersAdmin(context.Context, *GetAllOrdersAdminRequest) (*GetAllOrdersAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllOrdersAdmin not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -182,6 +200,24 @@ func _OrderService_GetAllMyOrders_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_GetAllOrdersAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllOrdersAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetAllOrdersAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetAllOrdersAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetAllOrdersAdmin(ctx, req.(*GetAllOrdersAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -200,6 +236,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllMyOrders",
 			Handler:    _OrderService_GetAllMyOrders_Handler,
+		},
+		{
+			MethodName: "GetAllOrdersAdmin",
+			Handler:    _OrderService_GetAllOrdersAdmin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

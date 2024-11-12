@@ -13,6 +13,9 @@ service OrderService {
   // GetAllMyOrders 獲取該用戶所有的訂單 不管是有效還是無效
   rpc GetAllMyOrders(GetAllMyOrdersRequest) returns (GetAllMyOrdersResponse);
 
+  // 管理员的请求
+  rpc GetAllOrdersAdmin(GetAllOrdersAdminRequest) returns (GetAllOrdersAdminResponse);
+
 }
 
 // -------------------------
@@ -61,5 +64,21 @@ message GetAllMyOrdersResponse {
   string msg = 2;
   bytes order_list = 3;
   int64 page_count = 4;
+}
+
+// ---
+
+message GetAllOrdersAdminRequest {
+  int64 page = 1;
+  int64 size = 2;
+  string search_email = 3;
+  string sort = 4;
+}
+
+message GetAllOrdersAdminResponse {
+  int32 code = 1;
+  bytes orders = 2;
+  int64 page_count =3;
+  string msg = 4;
 }
 

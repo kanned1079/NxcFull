@@ -108,7 +108,7 @@ let MenuOption = [
       },
       {
         label: '订单管理',
-        key: 'subscription-manager',
+        key: 'order-manager',
         icon: renderIcon(orderIcon),
       },
       {
@@ -223,6 +223,10 @@ let update = (key: string) => {
     }
     case 'ticket-mgr': {
       router.push({path: '/admin/dashboard/ticket'})
+      break
+    }
+    case 'order-manager': {
+      router.push({path: '/admin/dashboard/order'})
       break
     }
   }
@@ -388,7 +392,7 @@ export default {
 
 
 
-<!--    </n-layout-sider>-->
+
 
 
   </div>
