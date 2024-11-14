@@ -205,7 +205,7 @@ const columns = [
   {
     title: '订单状态',
     key: 'is_success',
-    render(row: OrderList) {
+    render(row: Order) {
       return h('div', {
         style: {
           display: 'flex',
@@ -295,7 +295,7 @@ const columns = [
   {
     title: computed(() => t('adminViews.userMgr.actions')).value,
     fixed: 'right',
-    key: 'actions', render(row: User) {
+    key: 'actions', render(row: Order) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
               size: 'small',
@@ -304,8 +304,9 @@ const columns = [
               bordered: false,
               onClick: () => {
                 // 编辑用户
-                Object.assign(editUser.value, row)
-                showEditUserDrawer.value = true
+                // Object.assign(editUser.value, row)
+                // showEditUserDrawer.value = true
+                message.info('查看订单详情', row.id as number)
               },
             },
             {default: () => '查看详情'}),
@@ -372,7 +373,7 @@ export default {
         {{ t('adminViews.userMgr.query') }}
       </n-button>
       <n-button class="btn" tertiary type="primary" size="medium"
-                @click="searchEmail=''; animated=false; getAllOrders()">
+                @click="searchForm.email=''; animated=false; getAllOrders()">
         <n-icon size="14" style="padding-right: 8px">
           <refreshIcon/>
         </n-icon>
@@ -423,15 +424,15 @@ export default {
       :negative-text="t('adminViews.userMgr.cancel')"
       style="width: 480px"
       @positive-click="animated=false; getAllOrders()"
-      @negative-click="showSearchNModal=false;"
-      @before-leave="searchEmail=''"
+      @negative-click="showSearchModal=false;"
+      @before-leave="searchForm.email=''"
       :show-icon="false"
   >
     <div style="margin-top: 30px"></div>
     <n-form-item path="email" :label="t('adminViews.userMgr.userEmail')">
       <n-input
           autofocus
-          @keyup.enter="showSearchNModal=false;animated=false; getAllUsers()"
+          @keyup.enter="showSearchModal=false;animated=false; getAllOrders()"
           :placeholder="t('adminViews.userMgr.inputUserEmail')"
           v-model:value="searchForm.email"
       ></n-input>

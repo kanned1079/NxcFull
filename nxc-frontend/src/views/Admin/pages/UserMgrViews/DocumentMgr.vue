@@ -4,13 +4,13 @@ import {computed, h, onMounted, ref} from "vue";
 import {MdEditor} from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import useThemeStore from "@/stores/useThemeStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
+// import useApiAddrStore from "@/stores/useApiAddrStore";
 import {type DrawerPlacement, type FormInst, NButton, NSwitch, useMessage} from 'naive-ui'
 import instance from "@/axios/index";
 import {formatDate} from "@/utils/timeFormat";
 
 const {t} = useI18n()
-const apiAddrStore = useApiAddrStore();
+// const apiAddrStore = useApiAddrStore();
 const placement = ref<DrawerPlacement>('right')
 let editType = ref<'add' | 'edit'>('add')
 const active = ref(false)
@@ -19,7 +19,7 @@ const activate = (place: DrawerPlacement) => {
   placement.value = place
 }
 const themeStore = useThemeStore();
-const text = ref('# Hello Editor');
+// const text = ref('# Hello Editor');
 let animated = ref<boolean>(false)
 // 表单
 const formRef = ref<FormInst | null>(null)
@@ -115,12 +115,21 @@ let cancelAdd = () => {
 }
 
 let clearForm = () => {
-  Object.keys(formValue.value.doc).forEach(key => {
-    if (typeof formValue.value.doc[key] === 'string')
-      formValue.value.doc[key] = ''
-    if (typeof formValue.value.doc[key] === 'number')
-      formValue.value.doc[key] = 0
+//   Object.keys(formValue.value.doc).forEach(key => {
+//     if (typeof formValue.value.doc[key] === 'string')
+//       formValue.value.doc[key] = ''
+//     if (typeof formValue.value.doc[key] === 'number')
+//       formValue.value.doc[key] = 0
+//   })
+
+  Object.assign(formValue.value.doc, {
+    title: '',
+    category: '',
+    language: '',
+    md_text: '',
+    sort: 0
   })
+
 }
 
 let submitDoc = async () => {

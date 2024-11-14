@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue"
+import {computed, onMounted, ref, h} from "vue"
 import {useI18n} from "vue-i18n";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
@@ -28,14 +28,14 @@ let pendingTicketList = ref<TicketItem[]>([])
 
 // 点击打开工单后 单独打开一个聊天窗口
 let openTicket = (ticket: TicketItem) => {
-  message.info(`查看工单：${ticket.title}`);
+  message.info(`查看工单：${ticket.subject}`);
   const chatDialogWindow = window.open(
       `http://localhost:5173/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=0`,
       '111111',
       'width=480,height=640,resizable=yes,scrollbars=yes',
   );
-  chatDialogWindow.addEventListener('onload', () => {
-    chatDialogWindow.postMessage({greeting: 'Hello from the parent window!'}, '*'); // * 表示接受来自任何来源的消息
+  chatDialogWindow?.addEventListener('onload', () => {
+    chatDialogWindow?.postMessage({greeting: 'Hello from the parent window!'}, '*'); // * 表示接受来自任何来源的消息
   });
 
 }

@@ -19,13 +19,23 @@
 
 import bcrypt from 'bcryptjs';
 
+// import { hash, compare } from 'bcryptjs';
+
 // 加密密码函数，使用 bcryptjs
-let hashPassword = async (password: string): string => {
+// let hashPassword = async (password: string): string => {
+//     const saltRounds = 10; // bcrypt 的计算强度
+//     const hashedPassword = await bcrypt.hash(password, saltRounds); // 直接使用密码和轮数生成哈希值
+//     console.log(hashedPassword);
+//     return hashedPassword.toString();
+// }
+
+let hashPassword = async (password: string): Promise<string> => {
     const saltRounds = 10; // bcrypt 的计算强度
     const hashedPassword = await bcrypt.hash(password, saltRounds); // 直接使用密码和轮数生成哈希值
     console.log(hashedPassword);
     return hashedPassword.toString();
 }
+
 
 // 验证密码函数
 let comparePassword = async (password: string, hash: string): Promise<boolean> => {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {h, onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
+// import useApiAddrStore from "@/stores/useApiAddrStore";
 import usePaymentStore from "@/stores/usePaymentStore";
-import useUserInfoStore from "@/stores/useUserInfoStore";
+// import useUserInfoStore from "@/stores/useUserInfoStore";
 import type {DrawerPlacement, FormInst, NotificationType} from 'naive-ui'
 import {NButton, NSwitch, NTag, useMessage, useNotification} from 'naive-ui'
 import instance from "@/axios";
@@ -12,9 +12,9 @@ import instance from "@/axios";
 let animated = ref<boolean>(false)
 
 const notification = useNotification()
-const apiAddrStore = useApiAddrStore();
+// const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
-const userInfoStore = useUserInfoStore();
+// const userInfoStore = useUserInfoStore();
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 
@@ -51,6 +51,7 @@ interface Plan {
   is_renew?: boolean
   is_sale?: boolean
   name: string
+  sort: number | null
   capacity_limit: number | null
   residue: number | null
   describe?: string
@@ -132,15 +133,29 @@ const themeStore = useThemeStore();
 
 const active = ref(false)
 const placement = ref<DrawerPlacement>('right')
-const activate = (place: DrawerPlacement) => {
-  active.value = true
-  placement.value = place
-}
+// const activate = (place: DrawerPlacement) => {
+//   active.value = true
+//   placement.value = place
+// }
 
 let handleAddSubscribe = () => {
   console.log('处理添加一个订阅')
   editType.value = 'add'  // 添加操作
-  formValue.value.plan = {}
+  Object.assign(formValue.value.plan, {
+    id: null,
+    group_id: null,
+    name: '',
+    describe: '',
+    is_sale: false,
+    is_renew: false,
+    capacity_limit: null,
+    residue: null,
+    month_price: null,
+    quarter_price: null,
+    half_year_price: null,
+    year_price: null,
+    sort: null,
+  })
   getAllGroups()  // 拉取群组信息
   active.value = true // 打开模态框
 }
@@ -154,13 +169,13 @@ let cancelAdd = () => {
   active.value = false
 }
 
-interface RespData {
-  code: number
-  msg?: string
-  error?: string
-
-  [key: string]: any; // 允许其他字段，键是字符串，值可以是任意类型
-}
+// interface RespData {
+//   code: number
+//   msg?: string
+//   error?: string
+//
+//   [key: string]: any; // 允许其他字段，键是字符串，值可以是任意类型
+// }
 
 let submitNewPlan = async () => {
   console.log(formValue.value)
@@ -233,7 +248,6 @@ let notify = (type: NotificationType, title: string, meta?: string) => {
 }
 
 
-// let planlist = ref<Plan[]>([])
 
 const columns = [
   {
@@ -246,7 +260,7 @@ const columns = [
     render(row: Plan) {
       return h(NSwitch, {
         value: row.is_sale,
-        onUpdateValue: (value) => updateRowIsSale(row.id, value)
+        onUpdateValue: (value) => updateRowIsSale(row.id as number, value)
       });
     }
   },
@@ -256,7 +270,7 @@ const columns = [
     render(row: Plan) {
       return h(NSwitch, {
         value: row.is_renew,
-        onUpdateValue: (value) => updateRowRenew(row.id, value)
+        onUpdateValue: (value) => updateRowRenew(row.id as number, value)
       });
     }
   },
@@ -264,7 +278,7 @@ const columns = [
     title: '排序',
     key: 'sort',
     render(row: Plan) {
-      return h(NTag, {}, {default: () => row.hasOwnProperty('sort') ? row.sort.toString() : 'null'});
+      return h(NTag, {}, {default: () => row.hasOwnProperty('sort') ? row.sort?.toString() : 'null'});
     }
   },
   {
@@ -319,7 +333,7 @@ const columns = [
     title: '操作',
     key: 'actions',
     fixed: 'right',
-    render(row: RowData) {
+    render(row: Plan) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -334,14 +348,14 @@ const columns = [
           type: 'error',
           secondary: true,
           style: {marginLeft: '10px'},
-          onClick: () => handleDelete(row.id)
+          onClick: () => handleDelete(row.id as number)
         }, {default: () => 'Delete'})
       ]);
     }
   }
 ];
 
-let updatePlan = async (row?: Plan) => {
+let updatePlan = async () => {
   console.log('updatePlan')
   // console.log(...row)
   try {
@@ -352,10 +366,17 @@ let updatePlan = async (row?: Plan) => {
     if (data.code === 200) {
       notify('success', '成功', '修改订阅成功')
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      pageCount.value = page_count as number
+      let {page_count, success} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      // pageCount.value = page_count as number
+      if (success) {
+        pageCount.value = page_count as number
+        animated.value = false
+      } else {
+        message.error('更新失败')
+      }
     } else {
-      notify('error', '修改出错', data.error)
+      // notify('error', '修改出错', data.error)
+      message.error('修改出错' + data.msg || '')
     }
   } catch (error) {
     console.log(error)
@@ -383,8 +404,13 @@ let handleDelete = async (planId: number) => {
     if (data.code === 200) {
       notify('success', '成功', '删除成功')
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize) ? animated.value = true : setTimeout(() => animated.value = true, 3000)
-      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      pageCount.value = page_count as number
+      let {page_count, success} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      // pageCount.value = page_count as number
+      if (success) {
+        pageCount.value = page_count as number
+        animated.value = false
+      }
+
     } else {
       notify('error', '删除失败', data.error)
     }
@@ -409,7 +435,7 @@ let updateRowIsSale = async (id: number, val: boolean) => {
       notify('error', '更新失败')
 
     }
-  } catch (error: Error) {
+  } catch (error: any) {
     console.log(error)
   }
 }
@@ -524,10 +550,10 @@ export default {
             <n-form-item label="订阅描述" path="plan.describe">
               <n-input type="textarea" :rows="8" v-model:value="formValue.plan.describe" placeholder="输入订阅描述"/>
             </n-form-item>
-            <n-form-item label="启用销售" path="plan.is_sale">
+            <n-form-item v-if="editType==='add'" label="启用销售" path="plan.is_sale">
               <n-switch v-model:value="formValue.plan.is_sale"/>
             </n-form-item>
-            <n-form-item label="允许续费" path="plan.is_renew">
+            <n-form-item v-if="editType==='add'" label="允许续费" path="plan.is_renew">
               <n-switch v-model:value="formValue.plan.is_renew"/>
             </n-form-item>
             <n-form-item label="群组ID" path="plan.group_id">

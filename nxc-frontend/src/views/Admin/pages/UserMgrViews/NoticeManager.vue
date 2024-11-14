@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {h, onMounted, reactive, ref} from "vue";
+import {h, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore"
 import instance from "@/axios";
 import {NButton, NSwitch, useMessage} from 'naive-ui'
@@ -81,14 +81,26 @@ let noticesArr = ref<Notice[]>([])
 
 // 添加新的
 let handleAddNotice = () => {
-  formData.value = {}
+  // formData.value = {}
+  Object.assign(formData.value, {
+    title: '',
+    content: '',
+    tags: '',
+    img_url: '',
+  })
   console.log('处理添加一条通知')
   editType.value = 'add'
   showModal.value = true
 }
 
 let handleEditNotice = (row: Notice) => {
-  formData.value = {}
+  // formData.value = {}
+  Object.assign(formData.value, {
+    title: '',
+    content: '',
+    tags: '',
+    img_url: '',
+  })
   console.log('处理修改一条通知')
   editType.value = 'edit'
   Object.assign(formData.value, row)
@@ -180,7 +192,7 @@ const columns = [
           type: 'error',
           secondary: true,
           style: {marginLeft: '10px'},
-          onClick: () => deleteItem(row.id)
+          onClick: () => deleteNotice(row.id as number)
         }, {default: () => '删除'})
       ]);
     },
@@ -188,9 +200,9 @@ const columns = [
   }
 ];
 
-let pagination = {
-  pageSize: 10
-}
+// let pagination = {
+//   pageSize: 10
+// }
 
 // 获取所有的通知
 let getAllNotices = async () => {
@@ -369,9 +381,9 @@ export default {
 
 
     <!--          pass-->
-    <template #footer>
-      尾部
-    </template>
+<!--    <template #footer>-->
+<!--      尾部-->
+<!--    </template>-->
   </n-modal>
 </template>
 

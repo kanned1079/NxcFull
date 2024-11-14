@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import FormSuffix from "@/views/utils/FormSuffix.vue";
+// import FormSuffix from "@/views/utils/FormSuffix.vue";
 import {useI18n} from "vue-i18n";
 import {onMounted, ref, h} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
+// import useApiAddrStore from "@/stores/useApiAddrStore";
 import type {FormInst} from 'naive-ui'
-import {NButton, NButtonGroup, NSwitch, NTag, useMessage} from 'naive-ui'
-import useNoticesStore from "@/stores/useNoticesStore";
+import {NButton, NSwitch, NTag, useMessage} from 'naive-ui'
+// import useNoticesStore from "@/stores/useNoticesStore";
 import instance from "@/axios";
 import {formatTimestamp} from "@/utils/timeFormat"
 
 const {t} = useI18n();
-const apiAddrStore = useApiAddrStore();
+// const apiAddrStore = useApiAddrStore();
+
+
 
 const themeStore = useThemeStore()
-const noticesStore = useNoticesStore()
+// const noticesStore = useNoticesStore()
 const message = useMessage()
 
 let animated = ref<boolean>(false)
@@ -144,7 +146,7 @@ let getAllCoupons = async () => {
       couponList.value = []
 
       // couponList.value = data.coupons;
-      data.coupon_list.forEach((item: Coupon, index: number) => {
+      data.coupon_list.forEach((item: Coupon) => {
         couponList.value.push(item)
       })
       pageCount.value = data.page_count

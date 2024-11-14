@@ -2,33 +2,15 @@
 import {onMounted} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {RouterView, useRouter} from 'vue-router';
-import CommonLogo from "@/components/CommonLogo.vue";
 import CommonHeader from "@/components/CommonHeader.vue";
 import CommonAside from "@/components/CommonAside.vue";
-import useUserInfoStore from "@/stores/useUserInfoStore";
 
 const themeStore = useThemeStore();
-const userInfoStore = useUserInfoStore();
-
-const router = useRouter();
 
 onMounted(() => {
-  // themeStore.contentPath = '/admin/dashboard/summary'
-  // themeStore.menuSelected = 'dashboard'
   console.log('新的dashboard', themeStore.contentPath)
   console.log('dashboard挂载')
 
-  // if (!userInfoStore.isAuthed) {
-  //   router.push({
-  //     path: '/admin/login',
-  //   })
-  // }
-  setTimeout(() => {
-    // router.push({
-    //   // path: '/admin/dashboard/summary',
-    //   path: themeStore.contentPath,
-    // })
-  }, 50)
 })
 </script>
 

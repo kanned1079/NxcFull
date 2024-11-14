@@ -23,7 +23,8 @@ interface Theme {
     biliPink: Ref<CustomThemeConfig>;
     bambooGreen?: Ref<CustomThemeConfig>;
     allTheme?: Ref<Record<string, Ref<GlobalThemeOverrides>>>;
-    getTheme: ComputedRef<CustomThemeConfig>;
+    // getTheme: ComputedRef<CustomThemeConfig>;
+    getTheme: CustomThemeConfig;
     getMainTheme: ComputedRef<any | null>;
     readEnableDarkMode: () => void;
     saveEnableDarkMode: () => void;
@@ -730,7 +731,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
     const getMainTheme = computed((): any => (enableDarkMode.value ? darkTheme : null))
 
     // getTheme 这个是覆盖的主题
-    const getTheme = computed((): CustomThemeConfig => {
+    const getTheme = computed(() => {
         switch (selectedTheme.value) {
             case 'darkBlueDay': {
                 return darkBlueDay.value;
@@ -754,7 +755,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 return darkBlueDay.value;
             }
         }
-    }).value
+    }).value as CustomThemeConfig
 
     // 菜单折叠
     let menuCollapsed = ref<boolean>(false)
