@@ -185,8 +185,12 @@ let submitNewPlan = async () => {
     })
     if (data.code === 200) {
       notify('success', '成功', '成功添加新的订阅')
-      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      pageCount.value = page_count as number
+      let {page_count, success} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      if (success) {
+        pageCount.value = page_count as number
+      } else {
+        console.log('pull failure')
+      }
     } else {
       notify('error', '添加出错', data.error)
     }
