@@ -98,7 +98,7 @@ message PlaceOrderResponse {
 
 message ManualPassOrderPaymentRequest {
   int64 user_id = 1;
-  string order_is = 2;
+  string order_id = 2;
 }
 
 message ManualPassOrderPaymentResponse {

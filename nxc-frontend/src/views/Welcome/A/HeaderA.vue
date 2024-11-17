@@ -171,7 +171,6 @@ export default {
           :options="collapsedMenuOptions"
           @select="handleEnter"
           style="width: 200px;"
-          :content-style="{color: '#277aa8', width: 300}"
       >
         <n-button style="margin-right: 20px; color: #277aa8" quaternary class="btn" size="medium">
           <template #icon>

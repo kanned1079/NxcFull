@@ -12,6 +12,7 @@ import (
 	"orderServices/internal/dao"
 	"orderServices/internal/model"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -383,6 +384,76 @@ func (s *OrderServices) GetActivePlanListByUserId(ctx context.Context, request *
 //	}, nil
 //}
 
+//func (s *OrderServices) GetAllOrdersAdmin(context context.Context, request *pb.GetAllOrdersAdminRequest) (*pb.GetAllOrdersAdminResponse, error) {
+//	var orders []model.Orders
+//	log.Println("订单查询参数", request.Page, request.Size)
+//
+//	// 使用请求中的 pageSize，默认为 10
+//	pageSize := request.Size
+//	if pageSize <= 0 {
+//		pageSize = 10
+//	}
+//
+//	// 使用请求中的 page，默认从第 1 页开始
+//	page := request.Page
+//	if page <= 0 {
+//		page = 1
+//	}
+//	offset := (page - 1) * int64(pageSize)
+//
+//	// 设置基本查询
+//	query := dao.Db.Model(&model.Orders{})
+//
+//	// 如果有邮箱条件，使用模糊查询
+//	if request.SearchEmail != "" {
+//		query = query.Where("email LIKE ?", "%"+request.SearchEmail+"%")
+//	}
+//
+//	// 根据请求的排序设置
+//	sortOrder := "DESC" // 默认排序
+//	if request.Sort == "ASC" {
+//		sortOrder = "ASC"
+//	}
+//	query = query.Order("created_at " + sortOrder)
+//
+//	// 获取总记录数用于计算总页数，不设置 Offset 和 Limit
+//	var totalRecords int64
+//	if err := query.Count(&totalRecords).Error; err != nil {
+//		log.Println("Error counting orders:", err)
+//		return &pb.GetAllOrdersAdminResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "统计错误",
+//		}, err
+//	}
+//	pageCount := (totalRecords + int64(pageSize) - 1) / int64(pageSize) // 总页数
+//
+//	// 执行分页查询
+//	if result := query.Offset(int(offset)).Limit(int(pageSize)).Find(&orders); result.Error != nil {
+//		log.Println("Error querying orders:", result.Error)
+//		return &pb.GetAllOrdersAdminResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "查询错误",
+//		}, result.Error
+//	}
+//
+//	// 序列化 orders 列表
+//	orderBytes, err := json.Marshal(orders)
+//	if err != nil {
+//		log.Println("Error serializing orders:", err)
+//		return &pb.GetAllOrdersAdminResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "序列化错误",
+//		}, err
+//	}
+//
+//	return &pb.GetAllOrdersAdminResponse{
+//		Code:      http.StatusOK,
+//		Msg:       "查询成功",
+//		Orders:    orderBytes,
+//		PageCount: pageCount,
+//	}, nil
+//}
+
 func (s *OrderServices) GetAllOrdersAdmin(context context.Context, request *pb.GetAllOrdersAdminRequest) (*pb.GetAllOrdersAdminResponse, error) {
 	var orders []model.Orders
 	log.Println("订单查询参数", request.Page, request.Size)
@@ -415,6 +486,97 @@ func (s *OrderServices) GetAllOrdersAdmin(context context.Context, request *pb.G
 	}
 	query = query.Order("created_at " + sortOrder)
 
+	//// 获取 Redis 中的未完成订单
+	//log.Println("查询redis订单")
+	//pendingOrders := make([]model.Orders, 0)
+	//redisKeyPattern := "pending_orders:*"
+	//iter := dao.Rdb.Scan(context, 0, redisKeyPattern, 0).Iterator()
+	//for iter.Next(context) {
+	//	redisKey := iter.Val()
+	//
+	//	// 获取订单数据
+	//	orderData, err := dao.Rdb.Get(context, redisKey).Result()
+	//	if err != nil {
+	//		log.Println("获取 Redis 订单失败:", err, "键:", redisKey)
+	//		continue
+	//	}
+	//
+	//	// 反序列化订单数据
+	//	var order model.Orders
+	//	if err := json.Unmarshal([]byte(orderData), &order); err != nil {
+	//		log.Println("解析 Redis 订单失败:", err, "数据:", orderData)
+	//		continue
+	//	}
+	//
+	//	log.Println("插入到订单前部")
+	//	pendingOrders = append(pendingOrders, order)
+	//}
+	//// 检查 Redis 扫描是否有错误
+	//if err := iter.Err(); err != nil {
+	//	log.Println("Redis 扫描出错:", err)
+	//}
+
+	// 获取 Redis 中的未完成订单
+	log.Println("查询 Redis 中的未完成订单")
+	pendingOrders := make([]model.Orders, 0)
+
+	// 步骤 1: 扫描所有用户的键
+	redisKeyPattern := "pending_order:*"
+	userSet := make(map[string]struct{}) // 存储用户ID，避免重复
+	iter := dao.Rdb.Scan(context, 0, redisKeyPattern, 0).Iterator()
+	for iter.Next(context) {
+		redisKey := iter.Val()
+
+		// 提取用户 ID (格式: pending_orders:<用户id>:<订单号>)
+		parts := strings.Split(redisKey, ":")
+		if len(parts) < 3 {
+			log.Println("Redis 键格式不正确:", redisKey)
+			continue
+		}
+		userID := parts[1]
+
+		// 存储用户 ID
+		userSet[userID] = struct{}{}
+	}
+	log.Println(userSet)
+
+	// 检查迭代器是否有错误
+	if err := iter.Err(); err != nil {
+		log.Println("Redis 扫描用户 ID 出错:", err)
+	}
+
+	// 步骤 2: 针对每个用户扫描其订单
+	for userID := range userSet {
+		userKeyPattern := "pending_order:" + userID + ":*"
+		orderIter := dao.Rdb.Scan(context, 0, userKeyPattern, 0).Iterator()
+		for orderIter.Next(context) {
+			orderKey := orderIter.Val()
+
+			// 获取订单数据
+			orderData, err := dao.Rdb.Get(context, orderKey).Result()
+			if err != nil {
+				log.Println("获取 Redis 订单失败:", err, "键:", orderKey)
+				continue
+			}
+
+			// 反序列化订单数据
+			var order model.Orders
+			if err := json.Unmarshal([]byte(orderData), &order); err != nil {
+				log.Println("解析 Redis 订单失败:", err, "数据:", orderData)
+				continue
+			}
+
+			// 添加到未完成订单列表
+			log.Println("插入订单:", order.OrderId, "到未完成订单列表")
+			pendingOrders = append(pendingOrders, order)
+		}
+
+		// 检查订单扫描迭代器是否有错误
+		if err := orderIter.Err(); err != nil {
+			log.Println("Redis 扫描订单出错 (用户ID:", userID, "):", err)
+		}
+	}
+
 	// 获取总记录数用于计算总页数，不设置 Offset 和 Limit
 	var totalRecords int64
 	if err := query.Count(&totalRecords).Error; err != nil {
@@ -434,6 +596,9 @@ func (s *OrderServices) GetAllOrdersAdmin(context context.Context, request *pb.G
 			Msg:  "查询错误",
 		}, result.Error
 	}
+
+	// 合并 Redis 和数据库的订单，Redis 订单优先
+	orders = append(pendingOrders, orders...)
 
 	// 序列化 orders 列表
 	orderBytes, err := json.Marshal(orders)

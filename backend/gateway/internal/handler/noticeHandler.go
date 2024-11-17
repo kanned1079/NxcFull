@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-// v2
+// HandleGetAllNotices 处理通知
 func HandleGetAllNotices(context *gin.Context) {
 	queryData := &struct {
 		Page   int64 `form:"page" json:"page"`

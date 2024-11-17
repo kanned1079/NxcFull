@@ -664,6 +664,9 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 itemTextColorChildActiveHover: '#6794b2',
                 arrowColorChildActive: '#79a7ca',
                 arrowColorChildActiveHover: '#6794b2'
+            },
+            Dropdown: {
+                color: '#252525'
             }
         } as GlobalThemeOverrides : {
             // 浅色模式
@@ -706,7 +709,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 bordered: '1px solid #6390b9',
             },
             Dropdown: {
-                color: 'rgba(40, 45, 47, 1)'
+                color: '#fff'
             }
         } as GlobalThemeOverrides)
     })

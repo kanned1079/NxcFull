@@ -2,6 +2,7 @@
 import {computed, onMounted, ref, h} from "vue"
 import {useI18n} from "vue-i18n";
 import useUserInfoStore from "@/stores/useUserInfoStore";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {NButton, NTag, useMessage} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
@@ -10,6 +11,7 @@ import instance from "@/axios";
 const {t} = useI18n()
 const message = useMessage()
 const userInfoStore = useUserInfoStore()
+const appInfoStore = useAppInfosStore()
 const themeStore = useThemeStore()
 
 interface TicketItem {
@@ -30,7 +32,7 @@ let pendingTicketList = ref<TicketItem[]>([])
 let openTicket = (ticket: TicketItem) => {
   message.info(`查看工单：${ticket.subject}`);
   const chatDialogWindow = window.open(
-      `http://localhost:5173/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=0`,
+      `http://${appInfoStore.appCommonConfig.app_url}/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=0`,
       '111111',
       'width=480,height=640,resizable=yes,scrollbars=yes',
   );

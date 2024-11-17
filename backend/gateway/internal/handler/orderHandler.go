@@ -152,13 +152,15 @@ func HandleCheckOrderStatus(context *gin.Context) {
 		})
 		return
 	}
-	var orderInfoKvData map[string]any
-	if err := json.Unmarshal(resp.OrderInfo, &orderInfoKvData); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "格式化失败",
-		})
-		return
+	var orderInfoKvData map[string]interface{}
+	if resp.Code == 200 {
+		if err := json.Unmarshal(resp.OrderInfo, &orderInfoKvData); err != nil {
+			context.JSON(http.StatusOK, gin.H{
+				"code": http.StatusInternalServerError,
+				"msg":  "格式化失败",
+			})
+			return
+		}
 	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":           resp.Code,

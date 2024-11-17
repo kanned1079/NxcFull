@@ -361,6 +361,7 @@ export default {
     <div class="root" v-if="animated">
       <n-card hoverable :embedded="true" :bordered="false" content-style="padding: 0">
         <n-data-table
+            striped
             class="table"
             :columns="columns"
             :data="documentItemList"

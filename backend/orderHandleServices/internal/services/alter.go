@@ -224,10 +224,19 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 	}()
 
 	// 更新用户余额
+	//newBalance := user.Balance - float32(order.Amount)
+	//if err := tx.Model(&model.User{}).Where("id = ?", request.UserId).Update("balance", newBalance).Error; err != nil {
+	//	tx.Rollback()
+	//	return nil, fmt.Errorf("failed to update user balance: %v", err)
+	//}
+
+	// 通过 WHERE balance >= ? 限制，避免高并发下可能的余额不足问题。
 	newBalance := user.Balance - float32(order.Amount)
-	if err := tx.Model(&model.User{}).Where("id = ?", request.UserId).Update("balance", newBalance).Error; err != nil {
+	if err := tx.Model(&model.User{}).
+		Where("id = ? AND balance >= ?", request.UserId, order.Amount).
+		Update("balance", newBalance).Error; err != nil {
 		tx.Rollback()
-		return nil, fmt.Errorf("failed to update user balance: %v", err)
+		return nil, fmt.Errorf("failed to update user balance or insufficient funds: %v", err)
 	}
 
 	// 生成密钥
@@ -302,12 +311,6 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 		return nil, fmt.Errorf("failed to update user info in redis: %v", err)
 	}
 
-	// 删除redis的key
-	//redisCtx, cancel := context.WithTimeout(sysContext.Background(), 3*time.Second)
-	//defer cancel()
-	//if err := ClearUserKeysCache(redisCtx, user.Id); err != nil {
-	//	return nil, fmt.Errorf("failed to update keys info in redis: %v", err)
-	//}
 	if err = utils.FreshUserPropertyInfoInRedis(request.UserId); err != nil {
 		log.Println("Failed to update user property info in redis:", err)
 	}
@@ -326,7 +329,6 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 		UserBalance:  newBalance,
 		KeyGenerated: true,
 	}, nil
-
 }
 
 //func generateKeyCode(userId int64, period string) string {
@@ -343,6 +345,124 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 //	//}
 //	// 格式为 `<订阅时长代码一位 月付M 季付Q 半年付H 年付Y><当前的月份代码占两位 如04 11><当前的月份代码占两位 如09 18>-XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`
 //}
+
+func (s *OrderHandleServices) ManualPassOrderPayment(ctx context.Context, request *pb.ManualPassOrderPaymentRequest) (*pb.ManualPassOrderPaymentResponse, error) {
+	log.Println("ManualPassOrderPayment", request.UserId, request.OrderId)
+
+	// 从 Redis 中获取订单信息
+	redisKey := fmt.Sprintf("pending_order:%d:%s", request.UserId, request.OrderId)
+	orderJson, err := dao.Rdb.Get(ctx, redisKey).Result()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get order from redis: %v", err)
+	}
+
+	// 反序列化订单信息
+	var order model.Orders
+	if err := json.Unmarshal([]byte(orderJson), &order); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal order: %v", err)
+	}
+
+	// 删除 Redis 中的订单键
+	//if err := dao.Rdb.Del(ctx, redisKey).Err(); err != nil {
+	//	log.Println("Failed to delete order from Redis:", err)
+	//}
+
+	// 获取用户信息
+	var user model.User
+	if err := dao.Db.Model(&model.User{}).Where("id = ?", request.UserId).First(&user).Error; err != nil {
+		return nil, fmt.Errorf("failed to get user: %v", err)
+	}
+
+	// 开启事务
+	tx := dao.Db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// 生成密钥
+	newKey := model.Keys{
+		Key: generateKeyCode(order.Period),
+	}
+	log.Println("Key: ", newKey.Key)
+	if err := tx.Model(&model.Keys{}).Create(&newKey).Error; err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("failed to create key: %v", err)
+	}
+
+	// 设置订单到期时间
+	var expirationDate time.Time
+	switch order.Period {
+	case "month":
+		expirationDate = time.Now().AddDate(0, 1, 0)
+	case "quarter":
+		expirationDate = time.Now().AddDate(0, 3, 0)
+	case "half-year":
+		expirationDate = time.Now().AddDate(0, 6, 0)
+	case "year":
+		expirationDate = time.Now().AddDate(1, 0, 0)
+	}
+
+	// 创建激活订单
+	activeOrder := model.ActiveOrders{
+		OrderId:        order.OrderId,
+		UserId:         request.UserId,
+		PlanId:         order.PlanId,
+		Email:          user.Email,
+		GroupId:        order.GroupId,
+		IsActive:       true,
+		IsUsed:         false,
+		IsValid:        true,
+		KeyId:          newKey.Id,
+		ExpirationDate: &expirationDate,
+	}
+	if err := tx.Model(&model.ActiveOrders{}).Create(&activeOrder).Error; err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("failed to create active order: %v", err)
+	}
+
+	checkTime := time.Now()
+
+	// 更新订单状态
+	order.IsFinished = true
+	order.IsSuccess = true
+	order.PaidAt = &checkTime
+	if err := tx.Model(&model.Orders{}).Create(&order).Error; err != nil {
+		tx.Rollback()
+		log.Println("Failed to insert order into database:", err)
+		return nil, fmt.Errorf("failed to create order: %v", err)
+	}
+
+	// 更新 Redis 中的用户信息
+	userKey := fmt.Sprintf("user:%s", user.Email)
+	userJson, err := json.Marshal(user)
+	if err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("failed to marshal user data: %v", err)
+	}
+	if err := dao.Rdb.Set(ctx, userKey, userJson, 0).Err(); err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("failed to update user info in redis: %v", err)
+	}
+
+	if err = utils.FreshUserPropertyInfoInRedis(request.UserId); err != nil {
+		log.Println("Failed to update user property info in redis:", err)
+	}
+
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %v", err)
+	}
+
+	// 返回成功响应
+	log.Println("Order manually passed by admin successfully")
+	return &pb.ManualPassOrderPaymentResponse{
+		Code:   http.StatusOK,
+		Passed: true,
+		Msg:    "Order manually passed by admin",
+	}, nil
+}
 
 func generateKeyCode(period string) string {
 	// 根据不同订阅时长选择代码

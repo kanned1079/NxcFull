@@ -21,23 +21,23 @@ let animated = ref<boolean>(false)
 let goodInfoData = ref([
   {
     title: computed(() => t('orderPartUniversal.orderDataHex.goodInfo')),
-    content: computed(() => paymentStore.orderDetail.plan_name)
+    content: computed(() => paymentStore.orderDetail.plan_name).value
   },
   {
     title: computed(() => t('orderPartUniversal.orderDataHex.cycleOrType')),
-    content: computed((): string => { // pass
+    content: computed(() => { // pass
       switch (paymentStore.orderDetail.period) {
         case 'month': {
-          return computed(() => t('orderPartUniversal.period.monthPay'))
+          return computed(() => t('orderPartUniversal.period.monthPay')).value
         }
         case 'quarter': {
-          return computed(() => t('orderPartUniversal.period.quarterPay'))
+          return computed(() => t('orderPartUniversal.period.quarterPay')).value
         }
         case 'half-year': {
-          return computed(() => t('orderPartUniversal.period.halfYearPay'))
+          return computed(() => t('orderPartUniversal.period.halfYearPay')).value
         }
         case 'year': {
-          return computed(() => t('orderPartUniversal.period.yearPay'))
+          return computed(() => t('orderPartUniversal.period.yearPay')).value
         }
       }
     })
@@ -47,19 +47,19 @@ let goodInfoData = ref([
 let orderData = ref([
   {
     title: computed(() => t('orderPartUniversal.orderDataHex.orderNumber')),
-    content: computed(() => paymentStore.orderDetail.order_id)
+    content: computed(() => paymentStore.orderDetail.order_id).value
   },
   {
     title: computed(() => t('orderPartUniversal.orderDataHex.createdAt')),
-    content: computed(() => paymentStore.orderDetail.created_at ? formatDate(paymentStore.orderDetail.created_at) : '')
+    content: computed(() => paymentStore.orderDetail.created_at ? formatDate(paymentStore.orderDetail.created_at) : '').value
   },
   {
     title: computed(() => t('orderPartUniversal.orderDataHex.amount')),
-    content: computed(() => paymentStore.orderDetail.amount.toFixed(2) + ' ' + appInfoStore.appCommonConfig.currency)
+    content: computed(() => paymentStore.orderDetail.amount.toFixed(2) + ' ' + appInfoStore.appCommonConfig.currency).value
   },
   {
     title: computed(() => t('orderPartUniversal.orderDataHex.paidAt')),
-    content: computed(() => paymentStore.orderDetail.paid_at ? formatDate(paymentStore.orderDetail.paid_at) : '未完成支付')
+    content: computed(() => paymentStore.orderDetail.paid_at ? formatDate(paymentStore.orderDetail.paid_at) : '未完成支付').value
   },
 ])
 

@@ -276,7 +276,7 @@ export default {
         </div>
 
         <div class="r-part">
-          <n-card class="r-part-head" :embedded="true" hoverable>
+          <n-card class="r-part-head" :embedded="true" hoverable content-style="padding: 10px">
             <!--          <n-input-group>-->
             <div class="r-border" style="display: flex; flex-direction: row; border-radius: 5px; padding: 5px">
               <n-input

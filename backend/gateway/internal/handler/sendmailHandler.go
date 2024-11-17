@@ -85,6 +85,8 @@ func HandleSendRegisterVerifyEmail(context *gin.Context) {
 		"code": resp.Code,
 		"msg":  resp.Msg,
 	})
+
+	// 下面的是原先的不分离代码
 	//var vEmail VerifyEmail = VerifyEmail{
 	//	Email:      postForm.Email,
 	//	CreatedAt:  time.Now(), // 创建日期

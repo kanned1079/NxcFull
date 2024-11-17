@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ConfirmOrderBefore from "@/views/User/pages/PurchaseViews/ConfirmOrderBefore.vue";
 import GoodInfo from "@/views/User/pages/PurchaseViews/Parts/GoodInfo.vue";
 import OrderInfo from "@/views/User/pages/PurchaseViews/Parts/OrderInfo.vue";
 import {useI18n} from "vue-i18n";
@@ -28,6 +29,7 @@ const router = useRouter();
 
 // let showAnimation = ref<boolean>(false)
 let animated = ref<boolean>(false)
+let showLoading = ref<boolean>(true)
 
 interface ConfirmOrder {
   code: number | null,
@@ -129,27 +131,30 @@ let queryOrderInfoAndStatus = async () => {
       console.log('获取成功', data);
       Object.assign(confirmOrder.value, data.order_info)
       console.log('订单号：', data.order_info.order_id)
+      setTimeout(async () => {
+        showLoading.value = false
+        animated.value = true
+      }, 2000)
+      // showLoading.value = false
       // 如果订单状态已完成或达到某个条件，停止轮询
       if (data.order_info.is_finished && data.order_info.is_success) {  // 订单完成且成功
-        intervalId.value?clearInterval(intervalId.value):null
-        console.log('订单成功')
-        console.log('去往下一个页面')
+        intervalId.value ? clearInterval(intervalId.value) : null
+        message.info('订单成功')
+        message.info('去往下一个页面')
         // toOrderResult(data.code)
         toOrderResult(data.code)
       } else if (data.order_info.is_finished && !data.order_info.is_success) {
-        console.log('订单完成但未成功')
+        message.info('订单完成但未成功')
         // clearInterval(intervalId)
-        intervalId.value?clearInterval(intervalId.value):null
+        intervalId.value ? clearInterval(intervalId.value) : null
         toOrderResult(data.code)  // 去往下一个页面
-      } else {
-
       }
       console.log('订单未支付，进行下一次轮询查询')
     } else {
       console.log('订单已超时，停止轮询');
       message.error(t('userConfirmOrder.orderExpired'))
       // clearInterval(intervalId); // 清除轮询
-      intervalId.value?clearInterval(intervalId.value):null
+      intervalId.value ? clearInterval(intervalId.value) : null
       router.back()
 
     }
@@ -174,6 +179,8 @@ let toOrderResult = (code: number) => {
 }
 
 let placeOrder = async () => {
+  // 点击提交按钮立刻停止定时器
+  intervalId.value ? clearInterval(intervalId.value) : null
   try {
     let {data} = await instance.put('/api/user/v1/order', {
       user_id: userInfoStore.thisUser.id,
@@ -184,19 +191,24 @@ let placeOrder = async () => {
       if (data.placed && data.key_generated) {
         console.log("订单成功")
         // clearInterval(intervalId) // 停止定时器
-        intervalId.value?clearInterval(intervalId.value):null
+        // intervalId.value?clearInterval(intervalId.value):null
         message.success(t('userConfirmOrder.paySuccessfully'))
-        await router.push({
-          path: '/dashboard/keys'
-        })
+        setTimeout(async () => {
+          await router.push({
+            path: '/dashboard/keys'
+          })
+        }, 1000)
+      } else {
+        message.error('unknow err')
       }
     } else if (data.code == 402) {
       // 用户余额不足
       message.warning(t('userConfirmOrder.balanceNotEnough'))
+      await queryOrderInfoAndStatus()
     } else {
       message.error(t('userConfirmOrder.orderErrorOccur') + data.msg)
       // clearInterval(intervalId)
-      intervalId.value?clearInterval(intervalId.value):null
+      intervalId.value ? clearInterval(intervalId.value) : null
       router.back()
     }
   } catch (error: any) {
@@ -217,7 +229,7 @@ let cancelOrder = async () => {
       console.log(data)
       message.info(t('userConfirmOrder.orderCancelled'))
       // clearInterval(intervalId)
-      intervalId.value?clearInterval(intervalId.value):null
+      intervalId.value ? clearInterval(intervalId.value) : null
       router.back()
     }
   } catch (error: any) {
@@ -239,7 +251,7 @@ onMounted(() => {
   // 开始轮询
   // setTimeout(() => showAnimation.value = true, 0)
   // showAnimation.value = true
-  animated.value = true
+  // animated.value = true
 })
 
 onBeforeMount(async () => {
@@ -249,7 +261,7 @@ onBeforeMount(async () => {
 
 onBeforeUnmount(() => {
   // clearInterval(intervalId)
-  intervalId.value?clearInterval(intervalId.value):null
+  intervalId.value ? clearInterval(intervalId.value) : null
 })
 
 </script>
@@ -262,8 +274,11 @@ export default {
 
 <template>
   <!--  <div class="root" v-if="paymentStore.plan_id_selected != -1">-->
+
+  <ConfirmOrderBefore v-if="showLoading"></ConfirmOrderBefore>
+
   <transition name="slide-fade">
-    <div v-if="animated" class="root" >
+    <div v-if="animated" class="root">
       <div class="root-layout">
         <div class="l-part">
           <GoodInfo :goodInfoData="goodInfoData"></GoodInfo>
