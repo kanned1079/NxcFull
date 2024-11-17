@@ -55,19 +55,19 @@ let confirmOrder = ref<ConfirmOrder>({
   coupon_name: '',
 })
 
-let periodCode2Text = computed((): string => { // pass
+let periodCode2Text = computed(() => { // pass
   switch (confirmOrder.value?.period) {
     case 'month': {
-      return computed(() => t('userConfirmOrder.monthPay'))
+      return computed(() => t('userConfirmOrder.monthPay')).value
     }
     case 'quarter': {
-      return computed(() => t('userConfirmOrder.quarterPay'))
+      return computed(() => t('userConfirmOrder.quarterPay')).value
     }
     case 'half-year': {
-      return computed(() => t('userConfirmOrder.halfYearPay'))
+      return computed(() => t('userConfirmOrder.halfYearPay')).value
     }
     case 'year': {
-      return computed(() => t('userConfirmOrder.yearPay'))
+      return computed(() => t('userConfirmOrder.yearPay')).value
     }
   }
 })
@@ -80,19 +80,19 @@ let goodInfoData = ref([
   },
   {
     title: computed(() => t('userConfirmOrder.cycleOrType')),
-    content: computed((): string => { // pass
+    content: computed(() => { // pass
       switch (confirmOrder.value?.period) {
         case 'month': {
-          return computed(() => t('userConfirmOrder.monthPay'))
+          return computed(() => t('userConfirmOrder.monthPay')).value
         }
         case 'quarter': {
-          return computed(() => t('userConfirmOrder.quarterPay'))
+          return computed(() => t('userConfirmOrder.quarterPay')).value
         }
         case 'half-year': {
-          return computed(() => t('userConfirmOrder.halfYearPay'))
+          return computed(() => t('userConfirmOrder.halfYearPay')).value
         }
         case 'year': {
-          return computed(() => t('userConfirmOrder.yearPay'))
+          return computed(() => t('userConfirmOrder.yearPay')).value
         }
       }
     })
@@ -131,14 +131,15 @@ let queryOrderInfoAndStatus = async () => {
       console.log('订单号：', data.order_info.order_id)
       // 如果订单状态已完成或达到某个条件，停止轮询
       if (data.order_info.is_finished && data.order_info.is_success) {  // 订单完成且成功
-        clearInterval(intervalId)
+        intervalId.value?clearInterval(intervalId.value):null
         console.log('订单成功')
         console.log('去往下一个页面')
         // toOrderResult(data.code)
         toOrderResult(data.code)
       } else if (data.order_info.is_finished && !data.order_info.is_success) {
         console.log('订单完成但未成功')
-        clearInterval(intervalId)
+        // clearInterval(intervalId)
+        intervalId.value?clearInterval(intervalId.value):null
         toOrderResult(data.code)  // 去往下一个页面
       } else {
 
@@ -147,7 +148,8 @@ let queryOrderInfoAndStatus = async () => {
     } else {
       console.log('订单已超时，停止轮询');
       message.error(t('userConfirmOrder.orderExpired'))
-      clearInterval(intervalId); // 清除轮询
+      // clearInterval(intervalId); // 清除轮询
+      intervalId.value?clearInterval(intervalId.value):null
       router.back()
 
     }
@@ -159,7 +161,7 @@ let queryOrderInfoAndStatus = async () => {
 
 
 let queryOrderInterval = () => {
-  intervalId = setInterval(() => {
+  intervalId.value = setInterval(() => {
     queryOrderInfoAndStatus();
   }, 3000); // 每隔3秒查询一次
 }
@@ -181,7 +183,8 @@ let placeOrder = async () => {
       console.log(data)
       if (data.placed && data.key_generated) {
         console.log("订单成功")
-        clearInterval(intervalId) // 停止定时器
+        // clearInterval(intervalId) // 停止定时器
+        intervalId.value?clearInterval(intervalId.value):null
         message.success(t('userConfirmOrder.paySuccessfully'))
         await router.push({
           path: '/dashboard/keys'
@@ -192,7 +195,8 @@ let placeOrder = async () => {
       message.warning(t('userConfirmOrder.balanceNotEnough'))
     } else {
       message.error(t('userConfirmOrder.orderErrorOccur') + data.msg)
-      clearInterval(intervalId)
+      // clearInterval(intervalId)
+      intervalId.value?clearInterval(intervalId.value):null
       router.back()
     }
   } catch (error: any) {
@@ -212,7 +216,8 @@ let cancelOrder = async () => {
     if (data.code === 200) {
       console.log(data)
       message.info(t('userConfirmOrder.orderCancelled'))
-      clearInterval(intervalId)
+      // clearInterval(intervalId)
+      intervalId.value?clearInterval(intervalId.value):null
       router.back()
     }
   } catch (error: any) {
@@ -243,7 +248,8 @@ onBeforeMount(async () => {
 })
 
 onBeforeUnmount(() => {
-  clearInterval(intervalId)
+  // clearInterval(intervalId)
+  intervalId.value?clearInterval(intervalId.value):null
 })
 
 </script>
@@ -262,7 +268,7 @@ export default {
         <div class="l-part">
           <GoodInfo :goodInfoData="goodInfoData"></GoodInfo>
           <OrderInfo :orderData="orderData"></OrderInfo>
-          <n-card :hoverable :bordered="false" :embedded="true">
+          <n-card hoverable :bordered="false" :embedded="true">
             <n-button
                 class="change-plan-btn"
                 type="primary"
@@ -296,7 +302,7 @@ export default {
               <p class="coupon-title">{{ t('userConfirmOrder.couponOffset') }}</p>
               <div class="coupon-detail">
                 <p class="coupon-name">{{ confirmOrder.coupon_name }}</p>
-                <p class="discount">- {{ confirmOrder.discount_amount.toFixed(2) }}
+                <p class="discount">- {{ confirmOrder.discount_amount?.toFixed(2) }}
                   {{ appInfosStore.appCommonConfig.currency }}</p>
               </div>
               <n-hr v-if="confirmOrder.discount_amount != 0"></n-hr>

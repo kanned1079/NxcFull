@@ -256,7 +256,7 @@ let deleteNotice = async (id: number) => {
     )
     data.code === 200 ? message.success("删除成功") : message.error("出现错误")
   } catch (err) {
-    message.error("奇怪的错误" + err)
+    message.error("未知错误" + err)
   }
   // console.log(data)
 }

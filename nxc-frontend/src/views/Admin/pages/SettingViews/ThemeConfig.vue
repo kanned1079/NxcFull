@@ -1,8 +1,31 @@
 <script setup lang="ts">
 import useThemeStore from "@/stores/useThemeStore";
-import {computed, onMounted} from "vue";
+import {computed, onMounted, ref} from "vue";
+import {type FormInst, useMessage} from "naive-ui";
 
+const message = useMessage()
+let showModal = ref<boolean>(false)
 const themeStore = useThemeStore();
+const formRef = ref<FormInst | null>(null)
+
+interface ThemeConfig {
+  id: number
+  general_color_name: string
+  login_page_bg_url: string
+}
+
+let formValue = ref<ThemeConfig>({
+  id: 0,
+  general_color_name: '',
+  login_page_bg_url: '',
+  
+})
+
+let rules = [
+  {
+
+  }
+]
 
 interface ItemConfig {
   name: string,
@@ -31,19 +54,19 @@ let allThemes = {
   theme1: {
     name: 'Journey\'s terminus.',
     describe: '这是使用的默认主题',
-    backgroundImageUrl: 'https://ikanned.com:24444/d/Upload/NXC/ani24420.jpg',
+    backgroundImageUrl: 'https://ikanned.com:2444/d/Upload/NXC/ani24420.jpg',
     enabled: true,
   },
   theme2: {
     name: 'Naniwa',
     describe: '这是使用的默认主题',
-    backgroundImageUrl: 'https://ikanned.com:24444/d/Upload/NXC/IMG_1152.png',
+    backgroundImageUrl: 'https://ikanned.com:2444/d/Upload/NXC/IMG_1152.png',
     enabled: false,
   },
   theme3: {
     name: 'Sky',
     describe: '这是使用的默认主题',
-    backgroundImageUrl: 'https://ikanned.com:24444/d/Upload/NXC/101209570_p0.jpg',
+    backgroundImageUrl: 'https://ikanned.com:2444/d/Upload/NXC/101209570_p0.jpg',
     enabled: false,
   }
 }
@@ -87,14 +110,46 @@ export default {
           <p class="theme-desc">{{ item.describe }}</p>
         </div>
         <div class="r-content" :style="{backgroundImage: `url(${item.backgroundImageUrl})`, opacity: themeStore.enableDarkMode?0.5:1,}">
-          <n-button tertiary type="primary" class="btn" @click="handleSetTheme(item.name)">设置</n-button>
+          <div class="r-content-inner"></div>
+          <n-button tertiary type="primary" class="btn" @click="showModal=true">设为当前</n-button>
+<!--          <n-button tertiary type="primary" class="btn" @click="handleSetTheme(item.name)">配置</n-button>-->
         </div>
       </div>
     </n-card>
 
-
-
   </div>
+
+  <n-modal
+      title="编辑主题"
+      v-model:show="showModal"
+      preset="dialog"
+      positive-text="确认"
+      negative-text="取消"
+      style="width: 480px;"
+      @positive-click="message.info('positive')"
+      @negative-click="message.warning('negative')"
+      :show-icon="false"
+  >
+
+    <div style="margin-top: 30px"></div>
+    <n-form
+        ref="formRef"
+        :model="formValue"
+        :rules="rules"
+    >
+
+    <n-form-item
+      :label="'给主题起一个名字'"
+    >
+      <n-input>
+        
+      </n-input>
+      </n-form-item>
+
+    </n-form>
+
+  </n-modal>
+
 
 </template>
 
@@ -122,6 +177,8 @@ export default {
     display: flex;
     height: 120px;
     margin-bottom: 20px;
+    transition: ease 200ms;
+
     .content {
       display: flex;
       height: 120px;
@@ -157,6 +214,11 @@ export default {
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
+
+        .r-content-inner{
+          display: flex;
+          flex-direction: row;
+        }
 
         .btn {
           width: 100px;
