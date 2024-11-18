@@ -18,165 +18,88 @@ import (
 	"time"
 )
 
-//func (s *OrderHandleServices) CancelOrder(context *context.Context, request *pb.CancelOrderRequest) (*pb.CancelOrderResponse, error) {
-//	var err error
-//	log.Println("取消订单信息: ", request.UserId, request.OrderId)
-//	var pendingOrder model.Orders
-//	redisKey := fmt.Sprintf("pending_order:%d:%s", request.UserId, request.OrderId)
-//	// 从redis中取出数据 反序列化为pendingOrder
-//
-//	err = dao.Db.Transaction(func(tx *gorm.DB) error {
-//		// 这里可以插入到order表中
-//	})
-//	if err != nil {
-//		return &pb.CancelOrderResponse{
-//			Code:      http.StatusInternalServerError,
-//			Cancelled: false,
-//			Msg:       "取消订单可能没有成功",
-//		}, nil
-//	}
-//
-//	return &pb.CancelOrderResponse{
-//		Code:      http.StatusOK,
-//		Cancelled: true,
-//		Msg:       "订单已取消",
-//	}, nil
-//}
-
 func (s *OrderHandleServices) CancelOrder(context context.Context, request *pb.CancelOrderRequest) (*pb.CancelOrderResponse, error) {
-	var err error
-	log.Println("取消订单信息: ", request.UserId, request.OrderId)
-
-	var pendingOrder model.Orders
-	redisKey := fmt.Sprintf("pending_order:%d:%s", request.UserId, request.OrderId)
-
-	// 从 Redis 中取出数据并反序列化
-	redisCtx, cancel := sysContext.WithTimeout(sysContext.Background(), 5*time.Second)
-	defer cancel()
-	val, err := dao.Rdb.Get(redisCtx, redisKey).Result()
-	if errors.Is(err, redis.Nil) {
-		log.Println("订单不存在于 Redis 中")
-		return &pb.CancelOrderResponse{
-			Code:      http.StatusNotFound,
-			Cancelled: false,
-			Msg:       "订单未找到",
-		}, nil
-	} else if err != nil {
-		log.Println("从 Redis 获取订单失败:", err)
-		return &pb.CancelOrderResponse{
-			Code:      http.StatusInternalServerError,
-			Cancelled: false,
-			Msg:       "获取订单信息失败" + err.Error(),
-		}, nil
-	}
-
-	// 反序列化 Redis 中的订单数据
-	err = json.Unmarshal([]byte(val), &pendingOrder)
-	if err != nil {
-		log.Println("订单反序列化失败:", err)
-		return &pb.CancelOrderResponse{
-			Code:      http.StatusInternalServerError,
-			Cancelled: false,
-			Msg:       "订单反序列化失败",
-		}, nil
-	}
-
-	// 启动数据库事务
-	err = dao.Db.Transaction(func(tx *gorm.DB) error {
-		// 将 pendingOrder 插入订单表
-		pendingOrder.IsFinished = true       // 标记订单为已取消
-		pendingOrder.FailureReason = "订单已取消" // 取消原因
-
-		if err := tx.Create(&pendingOrder).Error; err != nil {
-			log.Println("订单插入数据库失败:", err)
-			return err
-		}
-
-		// 删除 Redis 中的订单
-		if err := dao.Rdb.Del(redisCtx, redisKey).Err(); err != nil {
-			log.Println("从 Redis 删除订单失败:", err)
-			return err
-		}
-
-		return nil
-	})
-
-	// 事务操作失败处理
-	if err != nil {
-		log.Println("取消订单失败:", err)
-		return &pb.CancelOrderResponse{
-			Code:      http.StatusInternalServerError,
-			Cancelled: false,
-			Msg:       "取消订单失败",
-		}, nil
-	}
-
-	// 事务成功，返回成功响应
+	//var err error
+	//log.Println("取消订单信息: ", request.UserId, request.OrderId)
+	//
+	//var pendingOrder model.Orders
+	//redisKey := fmt.Sprintf("pending_order:%d:%s", request.UserId, request.OrderId)
+	//
+	//// 从 Redis 中取出数据并反序列化
+	//redisCtx, cancel := sysContext.WithTimeout(sysContext.Background(), 5*time.Second)
+	//defer cancel()
+	//val, err := dao.Rdb.Get(redisCtx, redisKey).Result()
+	//if errors.Is(err, redis.Nil) {
+	//	log.Println("订单不存在于 Redis 中")
+	//	return &pb.CancelOrderResponse{
+	//		Code:      http.StatusNotFound,
+	//		Cancelled: false,
+	//		Msg:       "订单未找到",
+	//	}, nil
+	//} else if err != nil {
+	//	log.Println("从 Redis 获取订单失败:", err)
+	//	return &pb.CancelOrderResponse{
+	//		Code:      http.StatusInternalServerError,
+	//		Cancelled: false,
+	//		Msg:       "获取订单信息失败" + err.Error(),
+	//	}, nil
+	//}
+	//
+	//// 反序列化 Redis 中的订单数据
+	//err = json.Unmarshal([]byte(val), &pendingOrder)
+	//if err != nil {
+	//	log.Println("订单反序列化失败:", err)
+	//	return &pb.CancelOrderResponse{
+	//		Code:      http.StatusInternalServerError,
+	//		Cancelled: false,
+	//		Msg:       "订单反序列化失败",
+	//	}, nil
+	//}
+	//
+	//// 启动数据库事务
+	//err = dao.Db.Transaction(func(tx *gorm.DB) error {
+	//	// 将 pendingOrder 插入订单表
+	//	pendingOrder.IsFinished = true       // 标记订单为已取消
+	//	pendingOrder.FailureReason = "订单已取消" // 取消原因
+	//
+	//	if err := tx.Create(&pendingOrder).Error; err != nil {
+	//		log.Println("订单插入数据库失败:", err)
+	//		return err
+	//	}
+	//
+	//	// 删除 Redis 中的订单
+	//	if err := dao.Rdb.Del(redisCtx, redisKey).Err(); err != nil {
+	//		log.Println("从 Redis 删除订单失败:", err)
+	//		return err
+	//	}
+	//
+	//	return nil
+	//})
+	//
+	//// 事务操作失败处理
+	//if err != nil {
+	//	log.Println("取消订单失败:", err)
+	//	return &pb.CancelOrderResponse{
+	//		Code:      http.StatusInternalServerError,
+	//		Cancelled: false,
+	//		Msg:       "取消订单失败",
+	//	}, nil
+	//}
+	//
+	//// 事务成功，返回成功响应
+	//return &pb.CancelOrderResponse{
+	//	Code:      http.StatusOK,
+	//	Cancelled: true,
+	//	Msg:       "订单已取消",
+	//}, nil
+	code, cancelled, msg, err := CancelOrderUniversal(request.UserId, request.OrderId, "user")
 	return &pb.CancelOrderResponse{
-		Code:      http.StatusOK,
-		Cancelled: true,
-		Msg:       "订单已取消",
-	}, nil
-}
+		Code:      code,
+		Cancelled: cancelled,
+		Msg:       msg,
+	}, err
 
-//func (s *OrderHandleServices) PlaceOrder(context context.Context, request *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {
-//	log.Println("PlaceOrder", request.UserId, request.OrderId)
-//	redisKey := fmt.Sprintf("pending_order:%d:%s", request.UserId, request.OrderId)
-//	// 取到值后将其反序列化为model.Orders
-//	var order model.Orders
-//
-//	// 检查用户的余额
-//	var user model.User
-//	//user.Balance 字段为用户余额
-//	dao.Db.Model(&model.User{}).Where("id = ?", request.UserId).First(&user)
-//
-//	//if 用户的余额足够 {
-//	// 如果余额足够，扣除余额后更新到数据库
-//	// 再更新redis中用户的信息 键为 "user" + user.Email, 用户数据为json格式
-//	//dao.Rdb.Get()
-//
-//	var newKey = model.Keys{
-//		Id: 为自增
-//		Key: generateKeyCode(order.Period),
-//	}
-//	// 插入到key数据库
-//	dao.Db.Model(&model.Keys{}).Create(&newKey)
-//
-//
-//	var activeOrder = model.ActiveOrders{
-//		OrderId:  order.OrderId,
-//		UserId:   request.UserId,
-//		Email:    user.Email,
-//		GroupId:  order.GroupId,
-//		IsActive: true,
-//		IsUsed:   false,
-//		KeyId: 刚生成的密钥在数据库中的id,
-//	}
-//	//switch order.Period {
-//	//case "month":
-//	//	activeOrder.ExpirationDate = 当前时间 + 一个月
-//	//case "quarter":
-//	//	activeOrder.ExpirationDate = 当前时间 + 一个月
-//	//case "half-year":
-//	//	activeOrder.ExpirationDate = 当前时间 + 六个月
-//	//case "year":
-//	//	activeOrder.ExpirationDate = 当前时间 + 一年
-//	//}
-//	// 插入到数据库中
-//	dao.Db.Model(&model.ActiveOrders{}).Create(&activeOrder)
-//
-//	//} else {
-//	// 余额不足的响应
-//	// return &pb.PlaceOrderResponse{
-//	//		Code: http.StatusForbidden,
-//	//		Msg: "余额不足请充值后再次购买，该订单保留时间为5分钟。",
-//	//		Placed: false,
-//	//		UserBalance: user.Balance,
-//	//	}, nil
-//	// }
-//
-//	return &pb.PlaceOrderResponse{}, nil
-//}
+}
 
 func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {
 	log.Println("PlaceOrder", request.UserId, request.OrderId)
@@ -331,21 +254,6 @@ func (s *OrderHandleServices) PlaceOrder(ctx context.Context, request *pb.PlaceO
 	}, nil
 }
 
-//func generateKeyCode(userId int64, period string) string {
-//	// 从大写英文字母和所有数字中生成一个密钥
-//	//switch order.Period {
-//	//case "month":
-//	// 代码为M
-//	//case "quarter":
-//	// 代码为Q
-//	//case "half-year":
-//	// 代码为H
-//	//case "year":
-//	// 代码为Y
-//	//}
-//	// 格式为 `<订阅时长代码一位 月付M 季付Q 半年付H 年付Y><当前的月份代码占两位 如04 11><当前的月份代码占两位 如09 18>-XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`
-//}
-
 func (s *OrderHandleServices) ManualPassOrderPayment(ctx context.Context, request *pb.ManualPassOrderPaymentRequest) (*pb.ManualPassOrderPaymentResponse, error) {
 	log.Println("ManualPassOrderPayment", request.UserId, request.OrderId)
 
@@ -435,16 +343,16 @@ func (s *OrderHandleServices) ManualPassOrderPayment(ctx context.Context, reques
 	}
 
 	// 更新 Redis 中的用户信息
-	userKey := fmt.Sprintf("user:%s", user.Email)
-	userJson, err := json.Marshal(user)
-	if err != nil {
-		tx.Rollback()
-		return nil, fmt.Errorf("failed to marshal user data: %v", err)
-	}
-	if err := dao.Rdb.Set(ctx, userKey, userJson, 0).Err(); err != nil {
-		tx.Rollback()
-		return nil, fmt.Errorf("failed to update user info in redis: %v", err)
-	}
+	//userKey := fmt.Sprintf("user:%s", user.Email)
+	//userJson, err := json.Marshal(user)
+	//if err != nil {
+	//	tx.Rollback()
+	//	return nil, fmt.Errorf("failed to marshal user data: %v", err)
+	//}
+	//if err := dao.Rdb.Set(ctx, userKey, userJson, 0).Err(); err != nil {
+	//	tx.Rollback()
+	//	return nil, fmt.Errorf("failed to update user info in redis: %v", err)
+	//}
 
 	if err = utils.FreshUserPropertyInfoInRedis(request.UserId); err != nil {
 		log.Println("Failed to update user property info in redis:", err)
@@ -455,6 +363,11 @@ func (s *OrderHandleServices) ManualPassOrderPayment(ctx context.Context, reques
 		return nil, fmt.Errorf("failed to commit transaction: %v", err)
 	}
 
+	// 删除redis订单信息应该在最后进行删除 防止刷新不及时返回错误
+	if err := dao.Rdb.Del(ctx, redisKey).Err(); err != nil {
+		log.Println("Failed to delete order from Redis:", err)
+	}
+
 	// 返回成功响应
 	log.Println("Order manually passed by admin successfully")
 	return &pb.ManualPassOrderPaymentResponse{
@@ -462,6 +375,15 @@ func (s *OrderHandleServices) ManualPassOrderPayment(ctx context.Context, reques
 		Passed: true,
 		Msg:    "Order manually passed by admin",
 	}, nil
+}
+
+func (s *OrderHandleServices) ManualCancelOrderPayment(ctx context.Context, request *pb.ManualCancelOrderPaymentRequest) (*pb.ManualCancelOrderPaymentResponse, error) {
+	code, cancelled, msg, err := CancelOrderUniversal(request.UserId, request.OrderId, "admin")
+	return &pb.ManualCancelOrderPaymentResponse{
+		Code:      code,
+		Cancelled: cancelled,
+		Msg:       msg,
+	}, err
 }
 
 func generateKeyCode(period string) string {
@@ -507,4 +429,77 @@ func generateKeyCode(period string) string {
 	)
 
 	return key
+}
+
+func CancelOrderUniversal(userId int64, orderId string, role string) (code int32, cancelled bool, msg string, err error) {
+	log.Println("取消订单信息: ", userId, userId)
+
+	var pendingOrder model.Orders
+	redisKey := fmt.Sprintf("pending_order:%d:%s", userId, orderId)
+
+	// 从 Redis 中取出数据并反序列化
+	redisCtx, cancel := sysContext.WithTimeout(sysContext.Background(), 5*time.Second)
+	defer cancel()
+	val, err := dao.Rdb.Get(redisCtx, redisKey).Result()
+	if errors.Is(err, redis.Nil) {
+		log.Println("订单不存在于 Redis 中")
+		return http.StatusNotFound, false, "订单未找到", nil
+	} else if err != nil {
+		log.Println("从 Redis 获取订单失败:", err)
+		return http.StatusInternalServerError, false, "获取订单信息失败" + err.Error(), nil
+	}
+
+	// 反序列化 Redis 中的订单数据
+	err = json.Unmarshal([]byte(val), &pendingOrder)
+	if err != nil {
+		log.Println("订单反序列化失败:", err)
+		return http.StatusInternalServerError, false, "订单反序列化失败", nil
+	}
+
+	// 启动数据库事务
+	err = dao.Db.Transaction(func(tx *gorm.DB) error {
+		// 将 pendingOrder 插入订单表
+		pendingOrder.IsFinished = true // 标记订单为已取消
+		if role == "admin" {
+			pendingOrder.FailureReason = "The order has been cancelled by the administrator" // 由管理员取消
+		} else if role == "user" {
+			pendingOrder.FailureReason = "The order has been cancelled by the user"
+		} else {
+			pendingOrder.FailureReason = "The order has been cancelled"
+		}
+
+		if err := tx.Create(&pendingOrder).Error; err != nil {
+			log.Println("订单插入数据库失败:", err)
+			return err
+		}
+
+		// 处理优惠券恢复
+		if pendingOrder.CouponId != 0 {
+			// 将 model.Coupon{}.Residue + 1
+			err := tx.Model(&model.Coupon{}).
+				Where("id = ?", pendingOrder.CouponId).
+				Update("residue", gorm.Expr("residue + ?", 1)).
+				Error
+			if err != nil {
+				return err
+			}
+		}
+
+		// 删除 Redis 中的订单
+		if err := dao.Rdb.Del(redisCtx, redisKey).Err(); err != nil {
+			log.Println("从 Redis 删除订单失败:", err)
+			return err
+		}
+
+		return nil
+	})
+
+	// 事务操作失败处理
+	if err != nil {
+		log.Println("取消订单失败:", err)
+		return http.StatusInternalServerError, false, "取消订单失败", nil
+	}
+
+	// 事务成功，返回成功响应
+	return http.StatusOK, true, "订单已取消", nil
 }

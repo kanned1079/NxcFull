@@ -3,7 +3,6 @@ package handler
 import (
 	sysContext "context"
 	"encoding/json"
-	"errors"
 	orderPb "gateway/internal/grpc/api/order/proto"
 	orderHandlePb "gateway/internal/grpc/api/orderHandle/proto"
 	"github.com/gin-gonic/gin"
@@ -269,37 +268,69 @@ func HandleGetAllOrderByAdmin(context *gin.Context) {
 		"msg":        resp.Msg,
 		"page_count": resp.PageCount,
 	})
-
 }
 
-func getUserIdAndOrderIdFromContextViaGetMethod(context *gin.Context) (err error, userId int64, orderId string) {
-	orderId = context.Query("order_id")
-	userIdStr := context.Query("user_id")
-	userId, err = strconv.ParseInt(userIdStr, 10, 64)
-	if orderId == "" || userIdStr == "" || err != nil {
+// HandleManualCancelUserOrder DELETE请求
+func HandleManualCancelUserOrder(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusBadRequest,
-			"msg":  "提供的信息不正确",
+			"code":      http.StatusBadRequest,
+			"cancelled": false,
+			"msg":       "Bad request",
 		})
+		return
 	}
-	log.Println(userId, orderId, err)
-	return
+	orderId := context.Query("order_id")
+	log.Println(userId, orderId)
+	resp, err := grpcClient.OrderHandleServicesClient.ManualCancelOrderPayment(sysContext.Background(), &orderHandlePb.ManualCancelOrderPaymentRequest{
+		OrderId: orderId,
+		UserId:  userId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":      http.StatusInternalServerError,
+			"cancelled": false,
+			"msg":       err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":      resp.Code,
+		"cancelled": resp.Cancelled,
+		"msg":       resp.Msg,
+	})
 }
 
-func getUserIdAndOrderIdFromContextViaPostMethod(context *gin.Context) (err error, userId int64, orderId string) {
+// HandleManualPassUserOrder PUT请求
+func HandleManualPassUserOrder(context *gin.Context) {
 	postData := &struct {
 		UserId  int64  `json:"user_id"`
 		OrderId string `json:"order_id"`
 	}{}
-	if err = context.BindJSON(postData); err != nil {
-		err = errors.New("提供的信息不正确" + err.Error())
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":      http.StatusBadRequest,
+			"cancelled": false,
+			"msg":       "Bad request",
+		})
 		return
 	}
-	userId = postData.UserId
-	orderId = postData.OrderId
-	return
+	resp, err := grpcClient.OrderHandleServicesClient.ManualPassOrderPayment(sysContext.Background(), &orderHandlePb.ManualPassOrderPaymentRequest{
+		OrderId: postData.OrderId,
+		UserId:  postData.UserId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":      http.StatusInternalServerError,
+			"cancelled": false,
+			"msg":       err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":   resp.Code,
+		"passed": resp.Passed,
+		"msg":    resp.Msg,
+	})
 }
-
-//func HandleGetAllOrderByAdmin(context *gin.Context) {
-//
-//}

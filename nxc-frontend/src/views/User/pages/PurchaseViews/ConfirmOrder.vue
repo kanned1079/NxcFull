@@ -176,6 +176,9 @@ let toOrderResult = (code: number) => {
   // router.push({
   //   path: '',
   // })
+  router.push({
+    path: '/dashboard/orders'
+  })
 }
 
 let placeOrder = async () => {
@@ -238,6 +241,11 @@ let cancelOrder = async () => {
   }
 }
 
+let reChoosePlan = async () => {
+  await cancelOrder()
+  router.back() // 此处只需要返回一次即可 因为cancelOrder中也有一次back
+}
+
 onMounted(() => {
   console.log('settlement挂载', paymentStore.plan_id_selected)
   // appendCycleOptions()
@@ -283,8 +291,9 @@ export default {
         <div class="l-part">
           <GoodInfo :goodInfoData="goodInfoData"></GoodInfo>
           <OrderInfo :orderData="orderData"></OrderInfo>
-          <n-card hoverable :bordered="false" :embedded="true">
+          <n-card hoverable :bordered="false" :embedded="true" content-style="padding: 10px">
             <n-button
+                @click="reChoosePlan"
                 class="change-plan-btn"
                 type="primary"
                 tertiary

@@ -61,12 +61,12 @@ func StartApiGateways() {
 		adminAuthorized.GET("/server/status")
 		adminAuthorized.GET("/infrastructure/status", handler.GetSystemInfrastructureInfo)
 		//// adminAuthorized.POST("admin/save-settings", handleUpdateSystemSettings)
-		//
+
 		adminAuthorized.PUT("/setting", handler.HandleUpdateSingleOptions) // 修改单个配置项目
 		adminAuthorized.GET("/setting", handler.HandleGetSystemSetting)    // 获取所有的系统设置
-		//
+
 		//adminAuthorized.GET("/users", handleGetUserList) // 获取所有用户的列表
-		//
+
 		adminAuthorized.GET("/notice", handler.HandleGetAllNotices)             // 获取所有通知列表
 		adminAuthorized.POST("/notice", handler.HandleAddNotice)                // 添加一条新的通知
 		adminAuthorized.PUT("notice", handler.HandleUpdateNotice)               // 修改通知信息
@@ -88,13 +88,13 @@ func StartApiGateways() {
 		adminAuthorized.PATCH("/document", handler.HandleUpdateDocumentShow)  // 更新是否展示指定id的文档给用户
 		adminAuthorized.DELETE("/document", handler.HandleDeleteDocumentById) // 按照id删除文档
 		adminAuthorized.POST("/document", handler.HandleAddNewDocument)       // 添加一条说明文档
-		//
+
 		adminAuthorized.POST("/groups", handler.HandleAddNewGroup)     // 添加权限组
 		adminAuthorized.GET("/groups", handler.HandleGetAllGroups)     // 获取所有权限组列表
 		adminAuthorized.GET("groups/kv", handler.HandleGetAllGroupsKv) // 快速查询 权限组的键值
 		adminAuthorized.PUT("/groups", handler.HandleUpdateGroup)      // 更新权限组名称
 		adminAuthorized.DELETE("/groups", handler.HandleDeleteGroup)   // 删除指定id的权限组
-		//
+
 		adminAuthorized.POST("/coupon", handler.HandleAddNewCoupon)       // 新建优惠券	POST
 		adminAuthorized.GET("/coupon", handler.HandleGetAllCoupons)       // 获取优惠券列表 GET
 		adminAuthorized.PUT("/coupon/status", handler.HandleActiveCoupon) // 按照id开启或关闭优惠券
@@ -108,7 +108,9 @@ func StartApiGateways() {
 		adminAuthorized.PUT("users", handler.HandleUpdateUserInfoByIdFromAdmin)      // 修改指定id的用户的信息
 		adminAuthorized.PATCH("users", handler.HandleBlock2UnblockUserByIdFromAdmin) // 封禁和解封用户
 
-		adminAuthorized.GET("order", handler.HandleGetAllOrderByAdmin)
+		adminAuthorized.GET("order", handler.HandleGetAllOrderByAdmin)       // 管理员获获取所有用户的订单 包括redis缓存的
+		adminAuthorized.DELETE("order", handler.HandleManualCancelUserOrder) // 管理员手动取消用户的订单
+		adminAuthorized.PUT("order", handler.HandleManualPassUserOrder)      // 管理员手动通过用户的订单
 
 	}
 
@@ -129,7 +131,7 @@ func StartApiGateways() {
 		userAuthorized.POST("/auth/2fa/setup", handler.HandleSetup2FA)                // 新建2fa请求
 		userAuthorized.POST("/auth/2fa/setup/test", handler.HandleTest2FA)            // 测试2FA是否可用
 		userAuthorized.DELETE("/auth/2fa/setup/cancel", handler.HandleCancelSetup2FA) // 取消2fa在redis中的暂存
-		userAuthorized.DELETE("auth/2fa/disable", handler.HandleDisable2FA)
+		userAuthorized.DELETE("auth/2fa/disable", handler.HandleDisable2FA)           // 用户关闭2fa
 
 		userAuthorized.GET("/plan/summary/fetch", handler.GetActivePlanListByUserId)
 

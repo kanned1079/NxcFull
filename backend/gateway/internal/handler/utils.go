@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -29,6 +30,34 @@ var upgrader = websocket.Upgrader{
 func getPage2Size(context *gin.Context) (err error, page int64, size int64) {
 	page, err = strconv.ParseInt(context.Query("page"), 10, 64)
 	size, err = strconv.ParseInt(context.Query("size"), 10, 64)
+	return
+}
+
+func getUserIdAndOrderIdFromContextViaGetMethod(context *gin.Context) (err error, userId int64, orderId string) {
+	orderId = context.Query("order_id")
+	userIdStr := context.Query("user_id")
+	userId, err = strconv.ParseInt(userIdStr, 10, 64)
+	if orderId == "" || userIdStr == "" || err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "提供的信息不正确",
+		})
+	}
+	log.Println(userId, orderId, err)
+	return
+}
+
+func getUserIdAndOrderIdFromContextViaPostMethod(context *gin.Context) (err error, userId int64, orderId string) {
+	postData := &struct {
+		UserId  int64  `json:"user_id"`
+		OrderId string `json:"order_id"`
+	}{}
+	if err = context.BindJSON(postData); err != nil {
+		err = errors.New("提供的信息不正确" + err.Error())
+		return
+	}
+	userId = postData.UserId
+	orderId = postData.OrderId
 	return
 }
 
