@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, computed} from "vue";
+import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import type {FormInst, FormRules, NotificationType} from 'naive-ui'
-import {NIcon, useMessage, useNotification} from 'naive-ui'
-import {Wallet as walletIcon} from "@vicons/ionicons5"
+import {NIcon, useMessage, useNotification, useDialog} from 'naive-ui'
+import {Wallet as walletIcon, ChevronForwardOutline as toRightIcon} from "@vicons/ionicons5"
 import {encodeToBase64, hashPassword} from "@/utils/encryptor";
 import instance from "@/axios";
 
@@ -18,10 +19,12 @@ interface ModelType {
 }
 
 const message = useMessage()
+const dialog = useDialog()
 
 let animated = ref<boolean>(false)
 
 const {t} = useI18n()
+const router = useRouter()
 const formRef = ref<FormInst | null>(null)
 // const message = useMessage()
 const modelRef = ref<ModelType>({
@@ -216,19 +219,19 @@ let handleGet2FAStatus = async () => {
 
 let leftTime = ref<number>(0)
 
-let intervalId // 定时器ID
+let intervalId = ref<number | null>(null) // 定时器ID
 
 let handleCalTime = () => {
   leftTime.value = 60
-  if (intervalId) {
-    clearInterval(intervalId) // 清除之前的定时器，防止多次调用重复计时
+  if (intervalId.value) {
+    intervalId.value ? clearInterval(intervalId.value) : null // 清除之前的定时器，防止多次调用重复计时
   }
 
-  intervalId = setInterval(() => {
+  intervalId.value = setInterval(() => {
     if (leftTime.value <= 1) {
       showModal.value = false // 关闭二维码modal
       setTimeout(() => {
-        clearInterval(intervalId) // 计时结束时清除定时器
+        intervalId.value ? clearInterval(intervalId.value) : null // 计时结束时清除定时器
         return
       }, 1)
     }
@@ -254,6 +257,43 @@ let handleDisable2FA = async () => {
     console.log(error)
     message.info('错误' + error)
   }
+}
+
+let handleClickToTopUp = () => {
+  message.info('To top up page')
+  router.push({
+    path: '/dashboard/topup'
+  })
+}
+
+let handleClickDeleteMyAccount = async () => {
+  dialog.warning({
+    title: computed(() => t('userProfile.deleteMyTitle')).value,
+    content: computed(() => t('userProfile.deleteMyContent')).value,
+    positiveText: computed(() => t('userProfile.deleteMyPositiveText')).value,
+    negativeText: computed(() => t('userProfile.deleteMyNegativeText')).value,
+    onPositiveClick: async () => {
+      try {
+        let {data} = await instance.delete('/api/user/v1/user/delete', {
+          params: {
+            user_id: userInfoStore.thisUser.id,
+            confirmed: true,
+          },
+        })
+        if (data.code === 200 && data.deleted) {
+          message.success(computed(() => t('userProfile.deletedSuccessMsg')).value)
+          setTimeout(() => {
+            userInfoStore.logout()
+          }, 1200)
+        } else {
+          message.error(computed(() => t('userProfile.deleteErrOccur')).value + ' ' + data.msg || '')
+        }
+      } catch (err: any) {
+        console.log(err + '')
+      }
+    },
+    // onNegativeClick: () => {}
+  })
 }
 
 onMounted(async () => {
@@ -296,11 +336,17 @@ export default {
           </n-icon>
         </div>
         <div class="wallet-content">
-          <p class="balance">{{ userInfoStore.thisUser.balance.toFixed(2)}}</p>
+          <p class="balance">{{ userInfoStore.thisUser.balance.toFixed(2) }}</p>
           <p class="unit">{{ appInfosStore.appCommonConfig.currency }}</p>
         </div>
         <div class="wallet-bottom">
           <p class="sub">{{ t('userProfile.walletSub') }}</p>
+          <n-button type="primary" quaternary @click="handleClickToTopUp">
+            {{ t('userProfile.toTopUp') }}
+            <n-icon size="18" style="margin-left: 6px">
+              <toRightIcon/>
+            </n-icon>
+          </n-button>
         </div>
       </n-card>
 
@@ -360,8 +406,7 @@ export default {
       >
         <n-p class="title">两步验证2FA</n-p>
         <n-alert :bordered="false" style="margin: 20px" type="info">
-          雙重驗證（縮寫為
-          2FA）是一個驗證過程，要求透過兩個不同的驗證因素來確立身分。簡而言之，這意味著使用者必須先以兩種不同的方式證明其身分，然後才會被授予存取權限。2FA
+          雙重驗證是一個驗證過程，要求透過兩個不同的驗證因素來確立身分。簡而言之，這意味著使用者必須先以兩種不同的方式證明其身分，然後才會被授予存取權限。2FA
           是多重要素驗證的一種形式。
         </n-alert>
         <div class="form">
@@ -370,12 +415,23 @@ export default {
             <n-tag v-if="twoFAEnabled" type="success"> 已启用</n-tag>
             <n-tag v-else type="default"> 未启用</n-tag>
           </div>
-          <n-button :disabled="twoFAEnabled" @click="handleSetup2FA" :bordered="false" style="margin-bottom: 20px"
-                    type="primary" secondary>
+          <n-button
+              secondary
+              type="primary"
+              :disabled="twoFAEnabled"
+              @click="handleSetup2FA"
+              :bordered="false"
+              style="margin-bottom: 20px"
+          >
             设置两步验证
           </n-button>
-          <n-button :disabled="!twoFAEnabled" @click="handleDisable2FA" :bordered="false"
-                    style="margin-bottom: 20px; margin-left: 10px" type="warning" secondary>
+          <n-button
+              secondary
+              :disabled="!twoFAEnabled"
+              @click="handleDisable2FA"
+              :bordered="false"
+              style="margin-bottom: 20px; margin-left: 10px" type="warning"
+          >
             关闭两步验证
           </n-button>
 
@@ -395,7 +451,15 @@ export default {
           <n-alert type="warning" :bordered="false">
             {{ t('userProfile.deleteAccountSub') }}
           </n-alert>
-          <n-button strong style="margin-top: 20px;" type="error" secondary>{{ t('userProfile.deleteBtn') }}</n-button>
+          <n-button
+              strong
+              secondary
+              type="error"
+              style="margin-top: 20px;"
+              @click="handleClickDeleteMyAccount"
+          >
+            {{ t('userProfile.deleteBtn') }}
+          </n-button>
         </div>
       </n-card>
     </div>
@@ -514,6 +578,10 @@ export default {
 
     .wallet-bottom {
       margin: 0 20px 20px 20px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
 
       .sub {
         opacity: 0.6;

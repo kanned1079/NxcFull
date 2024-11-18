@@ -40,17 +40,23 @@ service UserService {
 
   rpc SendChatMessage(SendChatMessageRequest) returns (SendChatMessageResponse);
 
+  rpc DeleteMyAccount(DeleteMyAccountRequest) returns (DeleteMyAccountResponse);
+
 //    adminAuthorized.GET("users", handler.HandleGetAllUsers)
 //      adminAuthorized.POST("users", handler.HandleAddUserManuallyFromAdmin)
 //      adminAuthorized.PUT("users", handler.HandleUpdateUserInfoByIdFromAdmin)
 //      adminAuthorized.PATCH("users", handler.HandleBlock2UnblockUserByIdFromAdmin)
 
   rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
+
   rpc AddUserManually(AddUserManuallyRequest) returns (AddUserManuallyResponse);
+
   rpc UpdateUserInfoAdmin(UpdateUserInfoAdminRequest) returns (UpdateUserInfoAdminResponse);
+
   rpc Block2UnblockUserById(Block2UnblockUserByIdRequest) returns (Block2UnblockUserByIdResponse);
 
 }
+
 
 // 定义用户登录请求消息
 message UserLoginRequest {
@@ -290,3 +296,16 @@ message Block2UnblockUserByIdResponse {
   int32 code = 1;
   string msg = 2;
 }
+
+//
+message DeleteMyAccountRequest {
+  int64 user_id = 1;
+}
+
+message DeleteMyAccountResponse {
+  int32 code = 1;
+  bool deleted = 2;
+  string msg = 3;
+}
+
+

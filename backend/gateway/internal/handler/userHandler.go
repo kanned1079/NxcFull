@@ -412,6 +412,38 @@ func HandleUpdateUserInfo(context *gin.Context) {
 	})
 }
 
+func HandleDeleteUserAccount(context *gin.Context) {
+	var err error
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	confirmed, err := strconv.ParseBool(context.Query("confirmed"))
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusBadRequest,
+			"deleted": false,
+			"msg":     "Bad request",
+		})
+		return
+	}
+	log.Println(userId, confirmed)
+	//
+	resp, err := grpcClient.UserServiceClient.DeleteMyAccount(sysContext.Background(), &pb.DeleteMyAccountRequest{
+		UserId: userId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusInternalServerError,
+			"deleted": false,
+			"msg":     err.Error(),
+		})
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":    resp.Code,
+		"deleted": resp.Deleted,
+		"msg":     resp.Msg,
+	})
+
+}
+
 func HandleGetAllUsers(context *gin.Context) {
 	var page, size int64
 	var err error

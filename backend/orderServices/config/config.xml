@@ -2,7 +2,7 @@
   <rpc_config>
     <rpc_name>orderServices</rpc_name>
     <listen_addr>localhost</listen_addr>
-    <listen_port>50010</listen_port>
+    <listen_port>50011</listen_port>
   </rpc_config>
   <etcd_config>
     <host>api.ikanned.com</host>

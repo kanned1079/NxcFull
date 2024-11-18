@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import {computed, h, onMounted, ref} from "vue"
 import {useI18n} from "vue-i18n";
+import {
+  ChevronDownOutline as downIcon,
+  PauseOutline as closeOrderIcon,
+  CheckmarkDoneOutline as passOrderIcon,
+} from "@vicons/ionicons5"
 import {RefreshOutline as refreshIcon, Search as searchIcon} from '@vicons/ionicons5'
-import {NButton, NTag, useMessage} from "naive-ui";
+import {NButton, NDropdown, NTag, NIcon, useMessage} from "naive-ui";
 import instance from "@/axios";
 import {formatDate} from "@/utils/timeFormat";
+import renderIcon from "@/utils/iconFormator";
 
 interface Order {
   id: number
@@ -100,13 +106,14 @@ const columns = [
     key: 'id'
   },
   {
-    title: '用户邮箱',
-    key: 'email'
-  },
-  {
     title: '订单号',
     key: 'order_id'
   },
+  {
+    title: '用户邮箱',
+    key: 'email'
+  },
+
   {
     title: '类型',
     key: 'status',
@@ -132,7 +139,7 @@ const columns = [
       return h(NTag, {
         size: 'small',
         bordered: false,
-        type: 'default',
+        type: 'primary',
       }, {default: () => row.plan_name})
     }
   },
@@ -202,6 +209,34 @@ const columns = [
   //     }, {default: () => orderStatusText(row.is_finished, row.is_success)});
   //   }
   // },
+  // {
+  //   title: '订单状态',
+  //   key: 'is_success',
+  //   render(row: Order) {
+  //     return h('div', {
+  //       style: {
+  //         display: 'flex',
+  //         alignItems: 'center'
+  //       }
+  //     }, [
+  //       h('div', {
+  //         style: {
+  //           width: '8px',
+  //           height: '8px',
+  //           borderRadius: '50%',
+  //           marginRight: '8px',
+  //           backgroundColor: getStatusColor(row.is_finished, row.is_success)
+  //         }
+  //       }),
+  //       h(NButton, {
+  //         type: 'default',
+  //         size: 'small',
+  //         text: true,
+  //       }, getStatusText(row.is_finished, row.is_success))
+  //     ]);
+  //   }
+  // },
+
   {
     title: '订单状态',
     key: 'is_success',
@@ -209,7 +244,8 @@ const columns = [
       return h('div', {
         style: {
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
+          flexDirection: 'row'
         }
       }, [
         h('div', {
@@ -221,10 +257,59 @@ const columns = [
             backgroundColor: getStatusColor(row.is_finished, row.is_success)
           }
         }),
-        h('span', {}, getStatusText(row.is_finished, row.is_success))
+        // 始终显示的状态文本
+        h('p', {
+          style: {
+            margin: 0,
+            fontSize: '14px',
+            color: '#666'
+          }
+        }, getStatusText(row.is_finished, row.is_success)),
+
+        // 判断订单状态，决定是否显示操作按钮
+        !row.is_finished && !row.is_success
+            ? h(NDropdown, {
+              options: [
+                {label: '取消订单', key: 'cancel', icon: renderIcon(closeOrderIcon)},
+                {label: '通过订单', key: 'approve', icon: renderIcon(passOrderIcon)},
+              ],
+              onSelect: (key) => {
+                if (key === 'cancel') {
+                  console.log('取消订单', row.user_id, row.order_id);
+                  handleManualCancelOrder(row.order_id, row.user_id);
+                } else if (key === 'approve') {
+                  console.log('通过订单', row.user_id, row.order_id );
+                  handleManualPassOrder(row.order_id, row.user_id);
+                }
+              },
+              type: 'primary',
+              style: {
+                width: '140px',
+              },
+            }, {
+              default: () => h(NButton, {
+                size: 'small',
+                type: 'default',
+                text: true,
+                style: {
+                  display: 'flex',
+                  alignItems: 'center',
+                }
+              }, [
+                h(NIcon, {
+                  size: 14,
+                  style: {marginLeft: '4px'}
+                }, {
+                  default: () => h(downIcon) // 替换为实际的下拉图标组件
+                })
+              ])
+            })
+            : null
       ]);
     }
   },
+
+
   {
     title: '创建时间',
     width: 160,
@@ -306,7 +391,7 @@ const columns = [
                 // 编辑用户
                 // Object.assign(editUser.value, row)
                 // showEditUserDrawer.value = true
-                message.info('查看订单详情', row.id as number)
+                message.info('查看订单详情' + row.id)
               },
             },
             {default: () => '查看详情'}),
@@ -344,6 +429,54 @@ let getAllOrders = async () => {
     }
   } catch (err: any) {
     message.error(err + '')
+  }
+}
+
+let handleManualCancelOrder = async (orderId: string, userId: number) => {
+  try {
+    animated.value = false
+    let {data} = await instance.delete('/api/admin/v1/order', {
+      params: {
+        user_id: userId,
+        order_id: orderId
+      }
+    })
+    if (data.code === 200) {
+      if (data.cancelled) {
+        message.success('order cancelled successfully')
+        await getAllOrders()
+        animated.value = true
+      } else {
+        message.warning('order cancelled failure.')
+      }
+    } else {
+      console.log('request failure', data.msg)
+    }
+  } catch (err: any) {
+    console.log(err + '')
+  }
+}
+
+let handleManualPassOrder = async (orderId: string, userId: number) => {
+  try {
+    animated.value = false
+    let {data} = await instance.put('/api/admin/v1/order', {
+      user_id: userId,
+      order_id: orderId
+    })
+    if (data.code === 200) {
+      if (data.passed) {
+        message.success('order passed successfully')
+        await getAllOrders()
+        animated.value = true
+      } else {
+        message.warning('order passed failure.')
+      }
+    } else {
+      console.log('request failure', data.msg)
+    }
+  } catch (err: any) {
+    console.log(err + '')
   }
 }
 
@@ -446,6 +579,10 @@ export default {
       >
       </n-select>
     </n-form-item>
+
+    <!--    <n-icon size="14" style="margin-left: 6px">-->
+    <!--      <downIcon/>-->
+    <!--    </n-icon>-->
 
 
   </n-modal>

@@ -18,6 +18,8 @@ service OrderHandleService {
 
   rpc ManualPassOrderPayment(ManualPassOrderPaymentRequest) returns (ManualPassOrderPaymentResponse);
 
+  rpc ManualCancelOrderPayment(ManualCancelOrderPaymentRequest) returns (ManualCancelOrderPaymentResponse);
+
 
 }
 
@@ -104,5 +106,16 @@ message ManualPassOrderPaymentRequest {
 message ManualPassOrderPaymentResponse {
   int32 code = 1;
   bool passed = 2;
+  string msg = 3;
+}
+
+message ManualCancelOrderPaymentRequest {
+  int64 user_id = 1;
+  string order_id = 2;
+}
+
+message ManualCancelOrderPaymentResponse {
+  int32 code = 1;
+  bool cancelled = 2;
   string msg = 3;
 }

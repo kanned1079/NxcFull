@@ -3,6 +3,9 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"time"
@@ -80,5 +83,52 @@ func (s *UserService) ApplyNewPassword(cxt context.Context, req *pb.ApplyNewPass
 		Code:    http.StatusOK,
 		Updated: true,
 		Msg:     "更新密码成功",
+	}, nil
+}
+
+func (s *UserService) DeleteMyAccount(ctx context.Context, request *pb.DeleteMyAccountRequest) (*pb.DeleteMyAccountResponse, error) {
+	tx := dao.Db.Begin() // 开启事务
+	if tx.Error != nil {
+		log.Printf("Failed to start transaction: %v", tx.Error)
+		return nil, fmt.Errorf("failed to start transaction")
+	}
+
+	// 查找用户
+	var user model.User
+	if err := tx.Model(&model.User{}).Where("id = ?", request.UserId).First(&user).Error; err != nil {
+		tx.Rollback() // 事务回滚
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Printf("User not found for ID: %d", request.UserId)
+			return nil, fmt.Errorf("user not found")
+		}
+		log.Printf("Error querying user: %v", err)
+		return nil, fmt.Errorf("failed to query user")
+	}
+
+	// 删除用户认证信息
+	if err := tx.Model(&model.Auth{}).Where("email = ?", user.Email).Delete(&model.Auth{}).Error; err != nil {
+		tx.Rollback() // 事务回滚
+		log.Printf("Error deleting auth info for email %s: %v", user.Email, err)
+		return nil, fmt.Errorf("failed to delete auth info")
+	}
+
+	// 删除用户信息
+	if err := tx.Model(&model.User{}).Where("id = ?", request.UserId).Delete(&model.User{}).Error; err != nil {
+		tx.Rollback() // 事务回滚
+		log.Printf("Error deleting user with ID %d: %v", request.UserId, err)
+		return nil, fmt.Errorf("failed to delete user")
+	}
+
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("Failed to commit transaction: %v", err)
+		return nil, fmt.Errorf("failed to commit transaction")
+	}
+
+	// 返回成功响应
+	return &pb.DeleteMyAccountResponse{
+		Code:    http.StatusOK,
+		Deleted: true,
+		Msg:     "Deleted successfully",
 	}, nil
 }

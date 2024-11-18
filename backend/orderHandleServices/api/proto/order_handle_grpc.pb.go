@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrderHandleService_GetOrderStatus_FullMethodName         = "/orderHandle.OrderHandleService/GetOrderStatus"
-	OrderHandleService_CancelOrder_FullMethodName            = "/orderHandle.OrderHandleService/CancelOrder"
-	OrderHandleService_PlaceOrder_FullMethodName             = "/orderHandle.OrderHandleService/PlaceOrder"
-	OrderHandleService_ManualPassOrderPayment_FullMethodName = "/orderHandle.OrderHandleService/ManualPassOrderPayment"
+	OrderHandleService_GetOrderStatus_FullMethodName           = "/orderHandle.OrderHandleService/GetOrderStatus"
+	OrderHandleService_CancelOrder_FullMethodName              = "/orderHandle.OrderHandleService/CancelOrder"
+	OrderHandleService_PlaceOrder_FullMethodName               = "/orderHandle.OrderHandleService/PlaceOrder"
+	OrderHandleService_ManualPassOrderPayment_FullMethodName   = "/orderHandle.OrderHandleService/ManualPassOrderPayment"
+	OrderHandleService_ManualCancelOrderPayment_FullMethodName = "/orderHandle.OrderHandleService/ManualCancelOrderPayment"
 )
 
 // OrderHandleServiceClient is the client API for OrderHandleService service.
@@ -38,6 +39,7 @@ type OrderHandleServiceClient interface {
 	// 确认订单
 	PlaceOrder(ctx context.Context, in *PlaceOrderRequest, opts ...grpc.CallOption) (*PlaceOrderResponse, error)
 	ManualPassOrderPayment(ctx context.Context, in *ManualPassOrderPaymentRequest, opts ...grpc.CallOption) (*ManualPassOrderPaymentResponse, error)
+	ManualCancelOrderPayment(ctx context.Context, in *ManualCancelOrderPaymentRequest, opts ...grpc.CallOption) (*ManualCancelOrderPaymentResponse, error)
 }
 
 type orderHandleServiceClient struct {
@@ -88,6 +90,16 @@ func (c *orderHandleServiceClient) ManualPassOrderPayment(ctx context.Context, i
 	return out, nil
 }
 
+func (c *orderHandleServiceClient) ManualCancelOrderPayment(ctx context.Context, in *ManualCancelOrderPaymentRequest, opts ...grpc.CallOption) (*ManualCancelOrderPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ManualCancelOrderPaymentResponse)
+	err := c.cc.Invoke(ctx, OrderHandleService_ManualCancelOrderPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderHandleServiceServer is the server API for OrderHandleService service.
 // All implementations must embed UnimplementedOrderHandleServiceServer
 // for forward compatibility.
@@ -101,6 +113,7 @@ type OrderHandleServiceServer interface {
 	// 确认订单
 	PlaceOrder(context.Context, *PlaceOrderRequest) (*PlaceOrderResponse, error)
 	ManualPassOrderPayment(context.Context, *ManualPassOrderPaymentRequest) (*ManualPassOrderPaymentResponse, error)
+	ManualCancelOrderPayment(context.Context, *ManualCancelOrderPaymentRequest) (*ManualCancelOrderPaymentResponse, error)
 	mustEmbedUnimplementedOrderHandleServiceServer()
 }
 
@@ -122,6 +135,9 @@ func (UnimplementedOrderHandleServiceServer) PlaceOrder(context.Context, *PlaceO
 }
 func (UnimplementedOrderHandleServiceServer) ManualPassOrderPayment(context.Context, *ManualPassOrderPaymentRequest) (*ManualPassOrderPaymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ManualPassOrderPayment not implemented")
+}
+func (UnimplementedOrderHandleServiceServer) ManualCancelOrderPayment(context.Context, *ManualCancelOrderPaymentRequest) (*ManualCancelOrderPaymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ManualCancelOrderPayment not implemented")
 }
 func (UnimplementedOrderHandleServiceServer) mustEmbedUnimplementedOrderHandleServiceServer() {}
 func (UnimplementedOrderHandleServiceServer) testEmbeddedByValue()                            {}
@@ -216,6 +232,24 @@ func _OrderHandleService_ManualPassOrderPayment_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderHandleService_ManualCancelOrderPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManualCancelOrderPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderHandleServiceServer).ManualCancelOrderPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderHandleService_ManualCancelOrderPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderHandleServiceServer).ManualCancelOrderPayment(ctx, req.(*ManualCancelOrderPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderHandleService_ServiceDesc is the grpc.ServiceDesc for OrderHandleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -238,6 +272,10 @@ var OrderHandleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ManualPassOrderPayment",
 			Handler:    _OrderHandleService_ManualPassOrderPayment_Handler,
+		},
+		{
+			MethodName: "ManualCancelOrderPayment",
+			Handler:    _OrderHandleService_ManualCancelOrderPayment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
