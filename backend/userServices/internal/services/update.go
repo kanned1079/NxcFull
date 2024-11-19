@@ -99,9 +99,11 @@ func (s *UserService) DeleteMyAccount(ctx context.Context, request *pb.DeleteMyA
 		tx.Rollback() // 事务回滚
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			log.Printf("User not found for ID: %d", request.UserId)
+
 			return nil, fmt.Errorf("user not found")
 		}
 		log.Printf("Error querying user: %v", err)
+
 		return nil, fmt.Errorf("failed to query user")
 	}
 
