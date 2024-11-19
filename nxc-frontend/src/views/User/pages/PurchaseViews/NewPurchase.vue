@@ -71,6 +71,7 @@ const cardClasses = (index: number) =>
 onMounted(() => {
   themeStore.menuSelected = 'user-buy-plan'
   themeStore.userPath = '/dashboard/purchase'
+
   animated.value = true
 })
 
