@@ -475,6 +475,7 @@ func CancelOrderUniversal(userId int64, orderId string, role string) (code int32
 
 		// 处理优惠券恢复
 		if pendingOrder.CouponId != 0 {
+
 			// 将 model.Coupon{}.Residue + 1
 			err := tx.Model(&model.Coupon{}).
 				Where("id = ?", pendingOrder.CouponId).
