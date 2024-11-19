@@ -62,6 +62,7 @@ export default {
             noRecord: "無記錄",
             normal: "正常",
             banned: "封禁",
+            deleted: '注销',
             nullContent: "NULL",
             balance: "餘額",
             orderCount: "訂單數量",

@@ -200,46 +200,10 @@ const columns = [
       })
     }
   },
-  // {
-  //   title: '订单状态', key: 'is_success', render(row: OrderList) {
-  //     return h(NTag, {
-  //       // type: row.is_success ? 'success' : 'error',
-  //       type: orderStatusTagColor(row.is_finished, row.is_success) as string,
-  //       bordered: false,
-  //     }, {default: () => orderStatusText(row.is_finished, row.is_success)});
-  //   }
-  // },
-  // {
-  //   title: '订单状态',
-  //   key: 'is_success',
-  //   render(row: Order) {
-  //     return h('div', {
-  //       style: {
-  //         display: 'flex',
-  //         alignItems: 'center'
-  //       }
-  //     }, [
-  //       h('div', {
-  //         style: {
-  //           width: '8px',
-  //           height: '8px',
-  //           borderRadius: '50%',
-  //           marginRight: '8px',
-  //           backgroundColor: getStatusColor(row.is_finished, row.is_success)
-  //         }
-  //       }),
-  //       h(NButton, {
-  //         type: 'default',
-  //         size: 'small',
-  //         text: true,
-  //       }, getStatusText(row.is_finished, row.is_success))
-  //     ]);
-  //   }
-  // },
-
   {
     title: '订单状态',
     key: 'is_success',
+    width: 100,
     render(row: Order) {
       return h('div', {
         style: {
@@ -308,8 +272,6 @@ const columns = [
       ]);
     }
   },
-
-
   {
     title: '创建时间',
     width: 160,
@@ -320,63 +282,6 @@ const columns = [
       })
     }
   },
-
-
-  //
-  // {
-  //   title: computed(() => t('adminViews.userMgr.accountStatus')).value,
-  //   key: 'status',
-  //   render(row: User) {
-  //     return h(NTag, {
-  //       size: 'small',
-  //       bordered: false,
-  //       type: row.status ? 'success' : 'warning',
-  //     }, {default: () => row.status ? computed(() => t('adminViews.userMgr.normal')).value : computed(() => t('adminViews.userMgr.banned')).value});
-  //   }
-  // },
-  // {
-  //   title: computed(() => t('adminViews.userMgr.inviteCode')).value,
-  //   key: 'invite_code',
-  //   render(row: User) {
-  //     return h(NTag, {
-  //       size: 'small',
-  //       bordered: false,
-  //       type: row.invite_code ? 'primary' : 'default',
-  //     }, {default: () => row.invite_code ? row.invite_code : computed(() => t('adminViews.userMgr.nullContent')).value});
-  //   }
-  // },
-  // {
-  //   title: computed(() => t('adminViews.userMgr.balance')).value,
-  //   key: 'balance',
-  //   render(row: User) {
-  //     return h(
-  //         'p',
-  //         {
-  //           style: {
-  //             color: row.balance < 0.00 ? '#d16666' : null,
-  //             textDecoration: row.balance < 0.00 ? 'underline' : null  // 如果余额小于0，添加下划线
-  //           }
-  //         },
-  //         {
-  //           default: () => appInfoStore.appCommonConfig.currency_symbol + ' ' + row.balance?.toFixed(2).toString()
-  //         }
-  //     );
-  //   }
-  // },
-  // {
-  //   title: computed(() => t('adminViews.userMgr.orderCount')).value,
-  //   key: 'order_count',
-  //   render(row: User) {
-  //     return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.order_count});
-  //   }
-  // },
-  // {
-  //   title: computed(() => t('adminViews.userMgr.planCount')).value,
-  //   key: 'plan_count',
-  //   render(row: User) {
-  //     return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.plan_count});
-  //   }
-  // },
   {
     title: computed(() => t('adminViews.userMgr.actions')).value,
     fixed: 'right',
@@ -526,7 +431,7 @@ export default {
             :pagination="false"
             :bordered="true"
             style=""
-            :scroll-x="1000"
+            :scroll-x="1100"
         />
       </n-card>
       <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">

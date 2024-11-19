@@ -86,6 +86,29 @@ func (s *UserService) ApplyNewPassword(cxt context.Context, req *pb.ApplyNewPass
 	}, nil
 }
 
+func (s *UserService) UpdateUserInfo(context context.Context, request *pb.UpdateUserInfoRequest) (*pb.UpdateUserInfoResponse, error) {
+	var user model.User
+	if result := dao.Db.Model(&model.User{}).Where("id = ?", request.UserId).First(&user); result.RowsAffected == 0 {
+		log.Println("无该记录 id：", request.UserId)
+		return &pb.UpdateUserInfoResponse{
+			Code: http.StatusNotFound,
+			Msg:  fmt.Sprintf("User not found. id: %d", request.UserId),
+		}, nil
+	}
+	if userJson, err := json.Marshal(user); err != nil {
+		return &pb.UpdateUserInfoResponse{
+			Code: http.StatusNotFound,
+			Msg:  fmt.Sprintf("User marshal fail. id: %d", request.UserId),
+		}, nil
+	} else {
+		return &pb.UpdateUserInfoResponse{
+			Code:     http.StatusOK,
+			Msg:      "Query ok",
+			UserInfo: userJson,
+		}, nil
+	}
+}
+
 func (s *UserService) DeleteMyAccount(ctx context.Context, request *pb.DeleteMyAccountRequest) (*pb.DeleteMyAccountResponse, error) {
 	tx := dao.Db.Begin() // 开启事务
 	if tx.Error != nil {
@@ -125,6 +148,12 @@ func (s *UserService) DeleteMyAccount(ctx context.Context, request *pb.DeleteMyA
 	if err := tx.Commit().Error; err != nil {
 		log.Printf("Failed to commit transaction: %v", err)
 		return nil, fmt.Errorf("failed to commit transaction")
+	}
+
+	// 清空redis该用户缓存
+	if err := utils.ClearUserCacheByEmail(user.Email); err != nil {
+		log.Printf("Failed to clear user cache: %v", err)
+		return nil, fmt.Errorf("failed to clear user cache")
 	}
 
 	// 返回成功响应

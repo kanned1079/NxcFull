@@ -117,33 +117,38 @@ func (s *UserService) GetAllUsers(ctx context.Context, request *pb.GetAllUsersRe
 		OrderCount int64 `json:"order_count"`
 	}
 
-	// 查询用户基础信息，支持分页和模糊搜索邮箱
-	query := dao.Db.Model(&model.User{})
+	// 构建查询，确保 Unscoped() 始终生效
+	query := dao.Db.Unscoped().Model(&model.User{})
 	if searchEmail != "" {
 		query = query.Where("email LIKE ?", "%"+searchEmail+"%")
 	}
 
+	// 获取总记录数
 	var total int64
 	if err := query.Count(&total).Error; err != nil {
 		return nil, err
 	}
 
-	// 分页查询用户数据
+	// 分页查询用户基础信息
 	var users []model.User
 	if err := query.Offset((page - 1) * size).Limit(size).Find(&users).Error; err != nil {
 		return nil, err
 	}
 
-	// 为每个用户查询 plan_count 和 order_count
+	// 为每个用户查询扩展信息（plan_count 和 order_count）
 	for _, user := range users {
 		var planCount int64
 		var orderCount int64
 
 		// 计算 plan_count
-		dao.Db.Model(&model.ActiveOrders{}).Where("user_id = ?", user.Id).Count(&planCount)
+		if err := dao.Db.Model(&model.ActiveOrders{}).Where("user_id = ?", user.Id).Count(&planCount).Error; err != nil {
+			return nil, err
+		}
 
 		// 计算 order_count
-		dao.Db.Model(&model.Orders{}).Where("user_id = ?", user.Id).Count(&orderCount)
+		if err := dao.Db.Model(&model.Orders{}).Where("user_id = ?", user.Id).Count(&orderCount).Error; err != nil {
+			return nil, err
+		}
 
 		// 将用户信息和附加信息添加到结果中
 		usersWithCounts = append(usersWithCounts, struct {
@@ -157,7 +162,7 @@ func (s *UserService) GetAllUsers(ctx context.Context, request *pb.GetAllUsersRe
 		})
 	}
 
-	// 将带有扩展信息的用户列表序列化为 []byte
+	// 序列化用户列表数据
 	userBytes, err := json.Marshal(usersWithCounts)
 	if err != nil {
 		return nil, err

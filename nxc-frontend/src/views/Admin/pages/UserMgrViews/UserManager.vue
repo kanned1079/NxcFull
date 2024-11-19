@@ -28,6 +28,8 @@ interface User {
   plan_count?: number
   balance?: number
   created_at?: string
+  updated_at?: string
+  deleted_at?: string
 }
 
 let showSearchNModal = ref<boolean>(false)
@@ -143,14 +145,24 @@ const columns = [
   },
   {
     title: computed(() => t('adminViews.userMgr.email')).value,
-    key: 'email'
+    key: 'email',
+    render(row: User) {
+      return h('p', {
+        style: row.deleted_at?{
+          // textDecoration: 'line-through', // 如果 deleted_at 不为空，添加删除线
+          // textDecorationThickness: 1,
+          opacity: 1,
+          color: '#787d7b',
+        }:null
+      }, row.email); // 直接渲染邮箱地址
+    }
   },
   {
     title: computed(() => t('adminViews.userMgr.registerDate')).value,
     key: 'created_at',
     render(row: User) {
       return h('p', {}, {
-        default: () => formatDate(row.created_at)
+        default: () => formatDate(row.created_at as string),
       })
     }
   },
@@ -183,8 +195,16 @@ const columns = [
       return h(NTag, {
         size: 'small',
         bordered: false,
-        type: row.status ? 'success' : 'warning',
-      }, {default: () => row.status ? computed(() => t('adminViews.userMgr.normal')).value : computed(() => t('adminViews.userMgr.banned')).value});
+        type: row.deleted_at
+            ? 'error'
+            : (row.status ? 'success' : 'warning'),
+      }, {
+        default: () => row.deleted_at
+            ? computed(() => t('adminViews.userMgr.deleted')).value
+            : (row.status
+                ? computed(() => t('adminViews.userMgr.normal')).value
+                : computed(() => t('adminViews.userMgr.banned')).value)
+      });
     }
   },
   {
@@ -206,9 +226,9 @@ const columns = [
           'p',
           {
             style: {
-              color: row.balance < 0.00 ? '#d16666' : null,
-              textDecoration: row.balance < 0.00 ? 'underline' : null  // 如果余额小于0，添加下划线
-            }
+              color: row.balance !== undefined && row.balance < 0.00 ? '#d16666' : null,
+              textDecoration: row.balance !== undefined && row.balance < 0.00 ? 'underline' : null // 如果余额小于0，添加下划线
+            },
           },
           {
             default: () => appInfoStore.appCommonConfig.currency_symbol + ' ' + row.balance?.toFixed(2).toString()
@@ -239,6 +259,7 @@ const columns = [
           size: 'small',
           type: 'primary',
           secondary: true,
+          disabled: !!row.deleted_at,
           bordered: false,
           onClick: () => {
             // 编辑用户
@@ -250,7 +271,7 @@ const columns = [
           size: 'small',
           type: row.status ? 'error' : 'warning',
           secondary: true,
-          disabled: false,
+          disabled: !!row.deleted_at,
           style: {marginLeft: '10px'},
           onClick: () => handleBlock2UnblockUserById(row)
         }, {default: () => row.status ? computed(() => t('adminViews.userMgr.banUser')).value : computed(() => t('adminViews.userMgr.unbanUser')).value})

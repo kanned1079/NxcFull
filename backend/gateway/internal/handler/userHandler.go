@@ -435,6 +435,7 @@ func HandleDeleteUserAccount(context *gin.Context) {
 			"deleted": false,
 			"msg":     err.Error(),
 		})
+		return
 	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":    resp.Code,

@@ -41,24 +41,16 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
     });
 
     const appCommonConfig = ref<AppCommonConfig>({
-        app_name: 'Nxc Cloud International',
+        app_name: 'Nxc Cloud',
         app_sub_name: '全球站点',
         app_description: '穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。',
         app_url: 'http://localhost:5173',
         logo: 'https://ikanned.com:24444/d/Upload/NXC/links3.svg',
         user_bg: '',
         admin_bg: '',
-        currency: 'HKD',
-        currency_symbol: '$',
+        currency: 'JPY',
+        currency_symbol: 'Ұ',
     })
-
-    // const subscribeList = ref([
-    //     {
-    //         label: 'Everybody\'s Got Something to Hide Except Me and My Monkey',
-    //         value: 'song0',
-    //         disabled: true,
-    //     },
-    // ]);
 
     return {
         registerPageConfig,

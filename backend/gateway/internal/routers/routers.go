@@ -108,7 +108,9 @@ func StartApiGateways() {
 		adminAuthorized.PUT("users", handler.HandleUpdateUserInfoByIdFromAdmin)      // 修改指定id的用户的信息
 		adminAuthorized.PATCH("users", handler.HandleBlock2UnblockUserByIdFromAdmin) // 封禁和解封用户
 
-		adminAuthorized.GET("order", handler.HandleGetAllOrderByAdmin)
+		adminAuthorized.GET("order", handler.HandleGetAllOrderByAdmin)       // 管理员获获取所有用户的订单 包括redis缓存的
+		adminAuthorized.DELETE("order", handler.HandleManualCancelUserOrder) // 管理员手动取消用户的订单
+		adminAuthorized.PUT("order", handler.HandleManualPassUserOrder)      // 管理员手动通过用户的订单
 
 	}
 
@@ -117,6 +119,7 @@ func StartApiGateways() {
 		//// 用户特定的路由
 		userAuthorized.GET("/profile")
 		userAuthorized.GET("/user", handler.HandleUpdateUserInfo)
+		userAuthorized.DELETE("/user/delete", handler.HandleDeleteUserAccount)
 
 		userAuthorized.GET("/notice", handler.HandleGetAllNotices)        // 获取所有的通知列表
 		userAuthorized.GET("/document", handler.HandleGetAllDocuments)    // 按照分类获取所有的文档列表	// rpc实现
