@@ -48,8 +48,8 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         logo: 'https://ikanned.com:24444/d/Upload/NXC/links3.svg',
         user_bg: '',
         admin_bg: '',
-        currency: 'JPY',
-        currency_symbol: 'Ұ',
+        currency: 'USDT',
+        currency_symbol: '$',
     })
 
     return {

@@ -48,14 +48,17 @@ message GetChatContentResponse {
 }
 
 message GetAllTicketRequest {
-  int64 page = 1;
-  int64 size = 2;
+  int64 pending_page = 1;
+  int64 pending_size = 2;
+  int64 finished_page = 3;
+  int64 finished_size = 4;
 }
 
 message GetAllTicketResponse {
   int32 code = 1;
   string msg = 2;
-  int64 page_count = 3;
-  bytes tickets = 4;
-  bytes pending_tickets = 5;
+  bytes tickets = 3;
+  bytes pending_tickets = 4;
+  int64 pending_page_count = 5;
+  int64 finished_page_count = 6;
 }

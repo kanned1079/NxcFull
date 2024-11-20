@@ -23,6 +23,38 @@ interface TicketItem {
   last_reply: string // 最后一次回复
 }
 
+let pageCountPending = ref<number>(10)
+let pageCountAll = ref<number>(10)
+
+let dataSizePending = ref<{ pageSize: number, page: number }>({
+  pageSize: 10,
+  page: 1,
+})
+
+let dataSizeAll = ref<{ pageSize: number, page: number }>({
+  pageSize: 10,
+  page: 1,
+})
+
+let dataCountOptions = [
+  {
+    label: '10条数据/页',
+    value: 10,
+  },
+  {
+    label: '20条数据/页',
+    value: 20,
+  },
+  {
+    label: '50条数据/页',
+    value: 50,
+  },
+  {
+    label: '100条数据/页',
+    value: 100,
+  },
+]
+
 let animated = ref<boolean>(false)
 
 let ticketList = ref<TicketItem[]>([])
@@ -32,7 +64,7 @@ let pendingTicketList = ref<TicketItem[]>([])
 let openTicket = (ticket: TicketItem) => {
   message.info(`查看工单：${ticket.subject}`);
   const chatDialogWindow = window.open(
-      `http://${appInfoStore.appCommonConfig.app_url}/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=0`,
+      `${appInfoStore.appCommonConfig.app_url}/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=0`,
       '111111',
       'width=480,height=640,resizable=yes,scrollbars=yes',
   );
@@ -225,15 +257,19 @@ let getAllTicket = async () => {
     animated.value = false
     let {data} = await instance.get('/api/admin/v1/ticket', {
       params: {
-        page: 1,
-        size: 10,
+        pending_page: dataSizePending.value.page,
+        pending_size: dataSizePending.value.pageSize,
+        finished_page: dataSizeAll.value.page,
+        finished_size: dataSizeAll.value.pageSize,
       }
     })
     if (data.code === 200) {
       ticketList.value = []
       pendingTicketList.value = []
       data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
+      pageCountAll.value = data.finished_page_count?data.finished_page_count:1
       data.pending_tickets.forEach((ticket: TicketItem) => pendingTicketList.value.push(ticket))
+      pageCountPending.value = data.pending_page_count?data.pending_page_count:1
       animated.value = true
     }
   } catch (error: any) {
@@ -301,6 +337,23 @@ export default {
         />
       </n-card>
 
+      <div style="margin: 20px 0 40px 0; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSizePending.page"
+            :page-count="pageCountPending"
+            @update:page="animated=false; getAllTicket()"
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSizePending.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="animated=false; dataSizePending.page = 1; getAllTicket()"
+        />
+      </div>
+
       <n-card
           style="margin-top: 20px"
           :embedded="true"
@@ -319,6 +372,23 @@ export default {
             :scroll-x="800"
         />
       </n-card>
+
+      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSizeAll.page"
+            :page-count="pageCountAll"
+            @update:page="animated=false; getAllTicket()"
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSizeAll.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="animated=false; dataSizeAll.page = 1; getAllTicket()"
+        />
+      </div>
 
     </div>
   </transition>

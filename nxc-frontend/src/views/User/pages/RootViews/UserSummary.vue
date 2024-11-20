@@ -88,8 +88,25 @@ let pathById = [
   },
 ]
 
+let haveOpenTickets = ref<boolean>(false)
+
+let checkIsUserHaveOpenTickets = async () => {
+  try {
+    let {data} = await instance.get('/api/user/v1/ticket/check', {
+      params: {
+        is_user: true,
+      }
+    })
+    if (data.code === 200) {
+      thisNotices.value = data.notices
+      data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 let getAllNotices = async () => {
-  console.log('获取所有有效通知')
   try {
     let {data} = await instance.get('/api/user/v1/notice', {
       params: {
@@ -147,7 +164,9 @@ onMounted(async () => {
   themeStore.menuSelected = 'user-dashboard'
 
   await getAllNotices()
+  await checkIsUserHaveOpenTickets()
   await getActivePlanList()
+
 
   // animated.value = true
 

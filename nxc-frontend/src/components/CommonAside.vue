@@ -19,6 +19,7 @@ import {
   HelpBuoyOutline as helpIcon,
   HelpBuoyOutline as supportIcon,
   KeyOutline as activeIcon,
+  KeyOutline as keyIcon,
   LayersOutline as nodeIcon,
   LibraryOutline as knowledgeIcon,
   ListOutline as orderIcon,
@@ -28,6 +29,7 @@ import {
   PersonOutline as profileIcon,
   PodiumOutline as queueIcon,
   ShuffleOutline as routerIcon,
+  TimeOutline as historyIcon,
   SpeedometerOutline as dashboardIcon,
 } from '@vicons/ionicons5'
 
@@ -259,7 +261,7 @@ let UserMenuOption = ref([
       {
         label: computed(() => t('commonAside.user.surplus')),
         key: 'user-keys',
-        icon: renderIcon(paymentIcon),
+        icon: renderIcon(keyIcon),
       },
     ]
   },
@@ -269,6 +271,11 @@ let UserMenuOption = ref([
     // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
+      {
+        label: '加值',
+        key: 'user-top-up',
+        icon: renderIcon(paymentIcon),
+      },
       {
         label: computed(() => t('commonAside.user.myOrder')),
         key: 'user-orders',
@@ -300,7 +307,7 @@ let UserMenuOption = ref([
       {
         label: computed(() => t('commonAside.user.activateLog')),
         key: 'user-active-record',
-        icon: renderIcon(activeIcon),
+        icon: renderIcon(historyIcon),
       },
     ]
   },
@@ -336,6 +343,10 @@ let userUpdate = (key: string) => {
       break
     }
 
+    case 'user-top-up': {
+      router.push({path: '/dashboard/topup'})
+      break
+    }
 
     case 'user-tickets': {
       router.push({path: '/dashboard/tickets'})

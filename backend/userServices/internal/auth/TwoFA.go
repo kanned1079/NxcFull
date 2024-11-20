@@ -32,7 +32,6 @@ func GetSecretAndVerify2FACode(email, code string) (bool, error) {
 	if code == "" {
 		return false, errors.New("请提供2FA代码")
 	}
-	// 从 Redis 中获取 2FA 信息
 	key := "2fa:" + email
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -41,12 +40,9 @@ func GetSecretAndVerify2FACode(email, code string) (bool, error) {
 		return false, err
 	}
 
-	// 如果 Redis 中有数据
 	if len(result) > 0 && result[1] != nil {
 		secret := result[1].(string)
-		// 验证 2FA code
 		if Verify2FACode(secret, code) {
-			// 重新设置有效期为一天
 			ctx, cancel = context.WithTimeout(context.Background(), 3*time.Second)
 			defer cancel()
 			err = dao.Rdb.Expire(ctx, key, 24*time.Hour).Err()
