@@ -88,15 +88,15 @@ func StartApiGateways() {
 		adminAuthorized.PATCH("/document", handler.HandleUpdateDocumentShow)  // 更新是否展示指定id的文档给用户
 		adminAuthorized.DELETE("/document", handler.HandleDeleteDocumentById) // 按照id删除文档
 		adminAuthorized.POST("/document", handler.HandleAddNewDocument)       // 添加一条说明文档
-		//
+
 		adminAuthorized.POST("/groups", handler.HandleAddNewGroup)     // 添加权限组
 		adminAuthorized.GET("/groups", handler.HandleGetAllGroups)     // 获取所有权限组列表
 		adminAuthorized.GET("groups/kv", handler.HandleGetAllGroupsKv) // 快速查询 权限组的键值
 		adminAuthorized.PUT("/groups", handler.HandleUpdateGroup)      // 更新权限组名称
 		adminAuthorized.DELETE("/groups", handler.HandleDeleteGroup)   // 删除指定id的权限组
-		//
-		adminAuthorized.POST("/coupon", handler.HandleAddNewCoupon)       // 新建优惠券	POST
-		adminAuthorized.GET("/coupon", handler.HandleGetAllCoupons)       // 获取优惠券列表 GET
+
+		adminAuthorized.POST("/coupon", handler.HandleAddNewCoupon)       // 新建优惠券
+		adminAuthorized.GET("/coupon", handler.HandleGetAllCoupons)       // 获取优惠券列表
 		adminAuthorized.PUT("/coupon/status", handler.HandleActiveCoupon) // 按照id开启或关闭优惠券
 		adminAuthorized.DELETE("/coupon", handler.HandleDeleteCoupon)     // 删除指定id的优惠券
 

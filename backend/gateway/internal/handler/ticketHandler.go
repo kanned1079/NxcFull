@@ -166,17 +166,22 @@ func HandleCloseTicket(context *gin.Context) {
 //}
 
 func HandleGetAllTickets(context *gin.Context) {
-	err, page, size := getPage2Size(context)
+	pendingPage, err := strconv.ParseInt(context.Query("pending_page"), 10, 64)
+	pendingSize, err := strconv.ParseInt(context.Query("pending_size"), 10, 64)
+	finishedPage, err := strconv.ParseInt(context.Query("finished_page"), 10, 64)
+	finishedSize, err := strconv.ParseInt(context.Query("finished_size"), 10, 64)
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
+			"code": http.StatusBadRequest,
 			"msg":  err.Error(),
 		})
 		return
 	}
 	resp, err := grpcClient.TicketHandleClient.GetAllTicket(sysContext.Background(), &ticketPb.GetAllTicketRequest{
-		Size: size,
-		Page: page,
+		PendingPage:  pendingPage,
+		PendingSize:  pendingSize,
+		FinishedPage: finishedPage,
+		FinishedSize: finishedSize,
 	})
 	if err = failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
@@ -204,10 +209,11 @@ func HandleGetAllTickets(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{
-		"code":            resp.Code,
-		"msg":             resp.Msg,
-		"tickets":         ticketsMap,
-		"pending_tickets": activeTicketMap,
-		"page_count":      resp.PageCount,
+		"code":                resp.Code,
+		"msg":                 resp.Msg,
+		"tickets":             ticketsMap,
+		"pending_tickets":     activeTicketMap,
+		"pending_page_count":  resp.PendingPageCount,
+		"finished_page_count": resp.FinishedPageCount,
 	})
 }

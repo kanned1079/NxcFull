@@ -529,6 +529,7 @@ export default {
 
         <n-button
             type="error"
+            secondary
             style="margin-top: 10px; width: 100%"
             :disabled="!isEmailCurrent"
             @click="confirmedDelete"
