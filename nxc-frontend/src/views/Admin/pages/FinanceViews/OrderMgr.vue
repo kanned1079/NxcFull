@@ -34,6 +34,11 @@ interface Order {
   failure_reason: string
 }
 
+interface PrivilegeGroup {
+  id: number
+  name: string
+}
+
 const message = useMessage()
 
 let animated = ref<boolean>(false)
@@ -41,6 +46,7 @@ let animated = ref<boolean>(false)
 let showSearchModal = ref<boolean>(false)
 
 let orderList = ref<Order[]>([])
+let privilegeGroupList = ref<PrivilegeGroup[]>([])
 
 let searchForm = ref<{
   email: string
@@ -171,14 +177,15 @@ const columns = [
     title: '权限组',
     key: 'group_id',
     render(row: Order) {
+      // 根据 group_id 找到对应的 name
+      const groupName = privilegeGroupList.value.find((group: PrivilegeGroup) => group.id === row.group_id)?.name || '-';
+
       return h(NTag, {
         size: 'small',
         bordered: false,
         type: 'default',
       }, {
-        default: () => {
-          return row.group_id.toString() + ' pass'
-        }
+        default: () => groupName, // 显示对应的权限组名称
       });
     }
   },
@@ -385,9 +392,24 @@ let handleManualPassOrder = async (orderId: string, userId: number) => {
   }
 }
 
+let getAllGroups = async () => {
+  try {
+    let {data} = await instance.get('/api/admin/v1/groups/kv',)
+    if (data.code === 200) {
+      console.log('获取到的权限组列表', data)
+      privilegeGroupList.value = []
+      // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
+      data.group_list.forEach((group: PrivilegeGroup)=> privilegeGroupList.value.push(group))
+    } else {
+      message.error(data.msg || 'Error fetch.')
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 onMounted(async () => {
-
+  await getAllGroups()
   await getAllOrders()
   animated.value = true
 })

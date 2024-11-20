@@ -4,11 +4,14 @@ import {onMounted, ref, computed} from "vue";
 import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import type {FormInst, FormRules, NotificationType} from 'naive-ui'
-import {NIcon, useMessage, useNotification, useDialog} from 'naive-ui'
-import {Wallet as walletIcon, ChevronForwardOutline as toRightIcon} from "@vicons/ionicons5"
+import {NIcon, useMessage, useNotification} from 'naive-ui'
+import {
+  Wallet as walletIcon,
+  ChevronForwardOutline as toRightIcon,
+  InformationCircle as infoIcon,
+} from "@vicons/ionicons5"
 import {encodeToBase64, hashPassword} from "@/utils/encryptor";
 import instance from "@/axios";
 
@@ -18,10 +21,14 @@ interface ModelType {
   new_password_again: string
 }
 
+let confirmDeleteAccountEmailInput = ref<string>('')
+let loadingDeleteSpin = ref<boolean>(false)
+
 const message = useMessage()
-const dialog = useDialog()
 
 let animated = ref<boolean>(false)
+
+let showDeleteMyModal = ref<boolean>(false)
 
 const {t} = useI18n()
 const router = useRouter()
@@ -50,7 +57,6 @@ const rules: FormRules = {
 
 
 const notification = useNotification()
-const apiAddrStore = useApiAddrStore()
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
 const appInfosStore = useAppInfosStore();
@@ -212,11 +218,6 @@ let handleGet2FAStatus = async () => {
   }
 }
 
-// let handleClose = () => {
-//   // handleCancelSetup2FA()
-//   showModal.value = false
-// }
-
 let leftTime = ref<number>(0)
 
 let intervalId = ref<number | null>(null) // 定时器ID
@@ -266,34 +267,37 @@ let handleClickToTopUp = () => {
   })
 }
 
-let handleClickDeleteMyAccount = async () => {
-  dialog.warning({
-    title: computed(() => t('userProfile.deleteMyTitle')).value,
-    content: computed(() => t('userProfile.deleteMyContent')).value,
-    positiveText: computed(() => t('userProfile.deleteMyPositiveText')).value,
-    negativeText: computed(() => t('userProfile.deleteMyNegativeText')).value,
-    onPositiveClick: async () => {
-      try {
-        let {data} = await instance.delete('/api/user/v1/user/delete', {
-          params: {
-            user_id: userInfoStore.thisUser.id,
-            confirmed: true,
-          },
-        })
-        if (data.code === 200 && data.deleted) {
-          message.success(computed(() => t('userProfile.deletedSuccessMsg')).value)
-          setTimeout(() => {
-            userInfoStore.logout()
-          }, 1200)
-        } else {
-          message.error(computed(() => t('userProfile.deleteErrOccur')).value + ' ' + data.msg || '')
-        }
-      } catch (err: any) {
-        console.log(err + '')
-      }
-    },
-    // onNegativeClick: () => {}
-  })
+let handleDeleteMyAccount = async () => {
+  try {
+    let {data} = await instance.delete('/api/user/v1/user/delete', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        confirmed: true,
+      },
+    })
+    if (data.code === 200 && data.deleted) {
+      message.success(computed(() => t('userProfile.deletedSuccessMsg')).value)
+      setTimeout(() => {
+        userInfoStore.logout()
+      }, 1200)
+    } else {
+      message.error(computed(() => t('userProfile.deleteErrOccur')).value + ' ' + data.msg || '')
+    }
+  } catch (err: any) {
+    console.log(err + '')
+  }
+}
+
+let isEmailCurrent = computed(() => confirmDeleteAccountEmailInput.value === userInfoStore.thisUser.email)
+
+let confirmedDelete = () => {
+  console.log('确认删除')
+  loadingDeleteSpin.value = true
+  setTimeout(() => {
+    loadingDeleteSpin.value = false
+    showDeleteMyModal.value = false
+    handleDeleteMyAccount()
+  }, 1500)
 }
 
 onMounted(async () => {
@@ -456,7 +460,7 @@ export default {
               secondary
               type="error"
               style="margin-top: 20px;"
-              @click="handleClickDeleteMyAccount"
+              @click="showDeleteMyModal=true"
           >
             {{ t('userProfile.deleteBtn') }}
           </n-button>
@@ -464,6 +468,81 @@ export default {
       </n-card>
     </div>
   </transition>
+
+  <n-modal
+      v-model:show="showDeleteMyModal"
+      class="delete-my-modal-card"
+      style="width: 450px"
+      preset="card"
+      type="warning"
+      :bordered="false"
+      content-style="padding: 0"
+  >
+    <template #header>
+      <div style="display: flex; flex-direction: row; align-items: center;">
+        <n-icon style="margin-right: 5px" size="23">
+          <infoIcon/>
+        </n-icon>
+        注销账号
+      </div>
+    </template>
+
+    <div class="delete-my-modal-header">
+      <div class="delete-my-modal-header-inner">
+        <n-ul>
+          <n-li>
+            账号注销是一个不可逆的操作。一旦您确认删除，您将永久性地失去该账号的访问权限，这意味着您将无法再登录，且与此账号相关的所有数据，包括但不限于您的个人信息、历史记录、收藏内容、购买记录等都将全部无法访问。
+          </n-li>
+          <n-li>
+            如果您在我们的平台上有正在进行的业务，如未完成的订单、正在参与的活动、订阅服务等，这些都将随着账号删除而终止或取消，可能会给您带来相应的损失。同时，您与其他用户之间通过本平台建立的联系、互动信息等也都将不复存在。
+          </n-li>
+          <n-li>
+            请再次确认您的决定，如果您还有任何疑虑或问题，欢迎联系我们的客服，我们将竭诚为您解答。若您仍然希望删除账号，请点击
+            “确认删除” 按钮。
+          </n-li>
+        </n-ul>
+      </div>
+    </div>
+    <div class="delete-my-modal-hr"></div>
+    <n-spin :show="loadingDeleteSpin" size="small">
+      <div class="delete-my-modal-body">
+        <div class="delete-my-modal-body-title">
+          <p style="font-size: 1rem; font-weight: 600; margin-right: 4px">*</p>
+          <p class="delete-my-modal-body-title-hex1">{{ '输入 "' }}</p>
+          <p class="delete-my-modal-body-title-hex">{{ userInfoStore.thisUser.email }}</p>
+          <p class="delete-my-modal-body-title-hex2">{{ '" 以继续。' }}</p>
+        </div>
+
+        <n-input
+
+            v-model:value="confirmDeleteAccountEmailInput"
+            :placeholder="''"
+            size="medium"
+        >
+
+          <!--        oncut="return false"-->
+          <!--        oncopy="return false"-->
+          <!--        onpaste="return false"-->
+
+        </n-input>
+
+
+        <n-button
+            type="error"
+            style="margin-top: 10px; width: 100%"
+            :disabled="!isEmailCurrent"
+            @click="confirmedDelete"
+        >
+          确认删除
+        </n-button>
+
+
+      </div>
+    </n-spin>
+    <template #footer>
+
+    </template>
+  </n-modal>
 
 
   <n-modal
@@ -484,7 +563,7 @@ export default {
       <div class="qr-modal-body">
         <div class="l-part">
           <n-qr-code
-              size="180"
+              :size="180"
               :value="url"
               type="svg"
           />
@@ -795,6 +874,58 @@ export default {
     .cancel-btn {
       flex: auto;
       margin-top: 10px;
+    }
+  }
+}
+
+
+.delete-my-modal-card {
+
+  .delete-my-modal-header {
+    padding: 0 20px;
+    display: flex; // 确保整体居中
+    align-items: center;
+
+    .delete-my-modal-header-inner {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.9rem;
+      padding-right: 5px;
+    }
+
+  }
+
+  .delete-my-modal-hr {
+    background-color: #252525;
+    height: 1px;
+    opacity: 0.1;
+    margin: 20px;
+  }
+
+  .delete-my-modal-body {
+    padding: 0 20px 30px 20px;
+
+    .delete-my-modal-body-title {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      align-content: center;
+      line-height: 1;
+      font-size: 0.9rem;
+      margin: 20px 0 10px 0;
+
+      .delete-my-modal-body-title-hex1 {
+        margin-right: 1px;
+      }
+
+      .delete-my-modal-body-title-hex {
+        opacity: 0.8;
+        font-style: italic;
+      }
+
+      .delete-my-modal-body-title-hex2 {
+        margin-left: 1px;
+      }
     }
   }
 }
