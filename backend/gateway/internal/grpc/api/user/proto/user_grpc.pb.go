@@ -19,23 +19,26 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_Login_FullMethodName                 = "/proto.UserService/Login"
-	UserService_Register_FullMethodName              = "/proto.UserService/Register"
-	UserService_CheckPreviousPassword_FullMethodName = "/proto.UserService/CheckPreviousPassword"
-	UserService_ApplyNewPassword_FullMethodName      = "/proto.UserService/ApplyNewPassword"
-	UserService_Setup2FA_FullMethodName              = "/proto.UserService/Setup2FA"
-	UserService_Test2FA_FullMethodName               = "/proto.UserService/Test2FA"
-	UserService_CancelSetup2FA_FullMethodName        = "/proto.UserService/CancelSetup2FA"
-	UserService_Get2FAStatus_FullMethodName          = "/proto.UserService/Get2FAStatus"
-	UserService_Disable2FA_FullMethodName            = "/proto.UserService/Disable2FA"
-	UserService_UpdateUserInfo_FullMethodName        = "/proto.UserService/UpdateUserInfo"
-	UserService_CreateNewTicket_FullMethodName       = "/proto.UserService/CreateNewTicket"
-	UserService_SendChatMessage_FullMethodName       = "/proto.UserService/SendChatMessage"
-	UserService_DeleteMyAccount_FullMethodName       = "/proto.UserService/DeleteMyAccount"
-	UserService_GetAllUsers_FullMethodName           = "/proto.UserService/GetAllUsers"
-	UserService_AddUserManually_FullMethodName       = "/proto.UserService/AddUserManually"
-	UserService_UpdateUserInfoAdmin_FullMethodName   = "/proto.UserService/UpdateUserInfoAdmin"
-	UserService_Block2UnblockUserById_FullMethodName = "/proto.UserService/Block2UnblockUserById"
+	UserService_Login_FullMethodName                          = "/proto.UserService/Login"
+	UserService_Register_FullMethodName                       = "/proto.UserService/Register"
+	UserService_CheckPreviousPassword_FullMethodName          = "/proto.UserService/CheckPreviousPassword"
+	UserService_ApplyNewPassword_FullMethodName               = "/proto.UserService/ApplyNewPassword"
+	UserService_Setup2FA_FullMethodName                       = "/proto.UserService/Setup2FA"
+	UserService_Test2FA_FullMethodName                        = "/proto.UserService/Test2FA"
+	UserService_CancelSetup2FA_FullMethodName                 = "/proto.UserService/CancelSetup2FA"
+	UserService_Get2FAStatus_FullMethodName                   = "/proto.UserService/Get2FAStatus"
+	UserService_Disable2FA_FullMethodName                     = "/proto.UserService/Disable2FA"
+	UserService_UpdateUserInfo_FullMethodName                 = "/proto.UserService/UpdateUserInfo"
+	UserService_CreateNewTicket_FullMethodName                = "/proto.UserService/CreateNewTicket"
+	UserService_SendChatMessage_FullMethodName                = "/proto.UserService/SendChatMessage"
+	UserService_DeleteMyAccount_FullMethodName                = "/proto.UserService/DeleteMyAccount"
+	UserService_GetAllUsers_FullMethodName                    = "/proto.UserService/GetAllUsers"
+	UserService_AddUserManually_FullMethodName                = "/proto.UserService/AddUserManually"
+	UserService_UpdateUserInfoAdmin_FullMethodName            = "/proto.UserService/UpdateUserInfoAdmin"
+	UserService_Block2UnblockUserById_FullMethodName          = "/proto.UserService/Block2UnblockUserById"
+	UserService_GetUserInviteCodeByUserId_FullMethodName      = "/proto.UserService/GetUserInviteCodeByUserId"
+	UserService_GetUserInvitedUserListByUserId_FullMethodName = "/proto.UserService/GetUserInvitedUserListByUserId"
+	UserService_CreateUserInviteCodeByUserId_FullMethodName   = "/proto.UserService/CreateUserInviteCodeByUserId"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -63,6 +66,9 @@ type UserServiceClient interface {
 	AddUserManually(ctx context.Context, in *AddUserManuallyRequest, opts ...grpc.CallOption) (*AddUserManuallyResponse, error)
 	UpdateUserInfoAdmin(ctx context.Context, in *UpdateUserInfoAdminRequest, opts ...grpc.CallOption) (*UpdateUserInfoAdminResponse, error)
 	Block2UnblockUserById(ctx context.Context, in *Block2UnblockUserByIdRequest, opts ...grpc.CallOption) (*Block2UnblockUserByIdResponse, error)
+	GetUserInviteCodeByUserId(ctx context.Context, in *GetUserInviteCodeByUserIdRequest, opts ...grpc.CallOption) (*GetUserInviteCodeByUserIdResponse, error)
+	GetUserInvitedUserListByUserId(ctx context.Context, in *GetUserInvitedUserListByUserIdRequest, opts ...grpc.CallOption) (*GetUserInvitedUserListByUserIdResponse, error)
+	CreateUserInviteCodeByUserId(ctx context.Context, in *CreateUserInviteCodeByUserIdRequest, opts ...grpc.CallOption) (*CreateUserInviteCodeByUserIdResponse, error)
 }
 
 type userServiceClient struct {
@@ -243,6 +249,36 @@ func (c *userServiceClient) Block2UnblockUserById(ctx context.Context, in *Block
 	return out, nil
 }
 
+func (c *userServiceClient) GetUserInviteCodeByUserId(ctx context.Context, in *GetUserInviteCodeByUserIdRequest, opts ...grpc.CallOption) (*GetUserInviteCodeByUserIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserInviteCodeByUserIdResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUserInviteCodeByUserId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserInvitedUserListByUserId(ctx context.Context, in *GetUserInvitedUserListByUserIdRequest, opts ...grpc.CallOption) (*GetUserInvitedUserListByUserIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserInvitedUserListByUserIdResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUserInvitedUserListByUserId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) CreateUserInviteCodeByUserId(ctx context.Context, in *CreateUserInviteCodeByUserIdRequest, opts ...grpc.CallOption) (*CreateUserInviteCodeByUserIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateUserInviteCodeByUserIdResponse)
+	err := c.cc.Invoke(ctx, UserService_CreateUserInviteCodeByUserId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -268,6 +304,9 @@ type UserServiceServer interface {
 	AddUserManually(context.Context, *AddUserManuallyRequest) (*AddUserManuallyResponse, error)
 	UpdateUserInfoAdmin(context.Context, *UpdateUserInfoAdminRequest) (*UpdateUserInfoAdminResponse, error)
 	Block2UnblockUserById(context.Context, *Block2UnblockUserByIdRequest) (*Block2UnblockUserByIdResponse, error)
+	GetUserInviteCodeByUserId(context.Context, *GetUserInviteCodeByUserIdRequest) (*GetUserInviteCodeByUserIdResponse, error)
+	GetUserInvitedUserListByUserId(context.Context, *GetUserInvitedUserListByUserIdRequest) (*GetUserInvitedUserListByUserIdResponse, error)
+	CreateUserInviteCodeByUserId(context.Context, *CreateUserInviteCodeByUserIdRequest) (*CreateUserInviteCodeByUserIdResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -328,6 +367,15 @@ func (UnimplementedUserServiceServer) UpdateUserInfoAdmin(context.Context, *Upda
 }
 func (UnimplementedUserServiceServer) Block2UnblockUserById(context.Context, *Block2UnblockUserByIdRequest) (*Block2UnblockUserByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Block2UnblockUserById not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserInviteCodeByUserId(context.Context, *GetUserInviteCodeByUserIdRequest) (*GetUserInviteCodeByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInviteCodeByUserId not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserInvitedUserListByUserId(context.Context, *GetUserInvitedUserListByUserIdRequest) (*GetUserInvitedUserListByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInvitedUserListByUserId not implemented")
+}
+func (UnimplementedUserServiceServer) CreateUserInviteCodeByUserId(context.Context, *CreateUserInviteCodeByUserIdRequest) (*CreateUserInviteCodeByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUserInviteCodeByUserId not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -656,6 +704,60 @@ func _UserService_Block2UnblockUserById_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUserInviteCodeByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserInviteCodeByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserInviteCodeByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUserInviteCodeByUserId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserInviteCodeByUserId(ctx, req.(*GetUserInviteCodeByUserIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserInvitedUserListByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserInvitedUserListByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserInvitedUserListByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUserInvitedUserListByUserId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserInvitedUserListByUserId(ctx, req.(*GetUserInvitedUserListByUserIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_CreateUserInviteCodeByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserInviteCodeByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreateUserInviteCodeByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_CreateUserInviteCodeByUserId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreateUserInviteCodeByUserId(ctx, req.(*CreateUserInviteCodeByUserIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -730,6 +832,18 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Block2UnblockUserById",
 			Handler:    _UserService_Block2UnblockUserById_Handler,
+		},
+		{
+			MethodName: "GetUserInviteCodeByUserId",
+			Handler:    _UserService_GetUserInviteCodeByUserId_Handler,
+		},
+		{
+			MethodName: "GetUserInvitedUserListByUserId",
+			Handler:    _UserService_GetUserInvitedUserListByUserId_Handler,
+		},
+		{
+			MethodName: "CreateUserInviteCodeByUserId",
+			Handler:    _UserService_CreateUserInviteCodeByUserId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

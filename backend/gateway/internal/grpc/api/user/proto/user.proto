@@ -42,11 +42,6 @@ service UserService {
 
   rpc DeleteMyAccount(DeleteMyAccountRequest) returns (DeleteMyAccountResponse);
 
-//    adminAuthorized.GET("users", handler.HandleGetAllUsers)
-//      adminAuthorized.POST("users", handler.HandleAddUserManuallyFromAdmin)
-//      adminAuthorized.PUT("users", handler.HandleUpdateUserInfoByIdFromAdmin)
-//      adminAuthorized.PATCH("users", handler.HandleBlock2UnblockUserByIdFromAdmin)
-
   rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
 
   rpc AddUserManually(AddUserManuallyRequest) returns (AddUserManuallyResponse);
@@ -54,6 +49,12 @@ service UserService {
   rpc UpdateUserInfoAdmin(UpdateUserInfoAdminRequest) returns (UpdateUserInfoAdminResponse);
 
   rpc Block2UnblockUserById(Block2UnblockUserByIdRequest) returns (Block2UnblockUserByIdResponse);
+
+  rpc GetUserInviteCodeByUserId(GetUserInviteCodeByUserIdRequest) returns (GetUserInviteCodeByUserIdResponse);
+
+  rpc GetUserInvitedUserListByUserId(GetUserInvitedUserListByUserIdRequest) returns (GetUserInvitedUserListByUserIdResponse);
+
+  rpc CreateUserInviteCodeByUserId(CreateUserInviteCodeByUserIdRequest) returns (CreateUserInviteCodeByUserIdResponse);
 
 }
 
@@ -91,8 +92,9 @@ message UserLoginResponse {
   bool isAuthed = 2;
   string msg = 3;
   string token = 4;
-  bytes user_data2 = 5;
-  User user_data = 6;
+  //  bytes user_data2 = 5;
+  //  User user_data = 6;
+  bytes user_data = 5;
 }
 
 // 定义用户注册请求消息
@@ -227,10 +229,10 @@ message CreateNewTicketResponse {
 // --------------
 
 message SendChatMessageRequest {
-    int64 user_id = 1;
-    int64 ticket_id = 2;
-    string role = 3;
-    string content = 4;
+  int64 user_id = 1;
+  int64 ticket_id = 2;
+  string role = 3;
+  string content = 4;
 }
 
 message SendChatMessageResponse {
@@ -270,13 +272,13 @@ message AddUserManuallyResponse {
 //
 
 message UpdateUserInfoAdminRequest {
-    int64 id = 1;
-    string email = 2;
-    string password = 3;
-    string invite_code = 4;
-    bool is_admin = 5;
-    bool is_staff = 6;
-    float balance = 7;
+  int64 id = 1;
+  string email = 2;
+  string password = 3;
+  string invite_code = 4;
+  bool is_admin = 5;
+  bool is_staff = 6;
+  float balance = 7;
 }
 
 message UpdateUserInfoAdminResponse {
@@ -308,4 +310,37 @@ message DeleteMyAccountResponse {
   string msg = 3;
 }
 
+//
+
+message GetUserInviteCodeByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetUserInviteCodeByUserIdResponse {
+  int32 code = 1;
+  string my_invite_code = 2;
+  string msg = 3;
+}
+
+message CreateUserInviteCodeByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message CreateUserInviteCodeByUserIdResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message GetUserInvitedUserListByUserIdRequest {
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message GetUserInvitedUserListByUserIdResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes user_list = 3;
+  int64 page_count = 4;
+}
 

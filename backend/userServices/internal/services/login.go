@@ -137,13 +137,30 @@ func (s *UserService) Login(ctx context.Context, req *pb.UserLoginRequest) (*pb.
 		}, nil
 	}
 
-	return &pb.UserLoginResponse{
-		Code:     http.StatusOK,
-		IsAuthed: true,
-		Msg:      "auth_passed",
-		Token:    token,
-		UserData: convertModelUserToProtoUser(&thisUser),
-	}, nil
+	if jsonUser, err := json.Marshal(thisUser); err != nil {
+		return &pb.UserLoginResponse{
+			Code:     http.StatusInternalServerError,
+			IsAuthed: false,
+			Msg:      err.Error(),
+		}, nil
+	} else {
+		return &pb.UserLoginResponse{
+			Code:     http.StatusOK,
+			IsAuthed: true,
+			Msg:      "auth_passed",
+			Token:    token,
+			UserData: jsonUser,
+		}, nil
+	}
+
+	//return &pb.UserLoginResponse{
+	//	Code:     http.StatusOK,
+	//	IsAuthed: true,
+	//	Msg:      "auth_passed",
+	//	Token:    token,
+	//	UserData: convertModelUserToProtoUser(&thisUser),
+	//}, nil
+
 }
 
 func convertModelUserToProtoUser(modelUser *model.User) *pb.User {

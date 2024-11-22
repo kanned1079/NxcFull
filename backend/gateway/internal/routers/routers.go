@@ -151,6 +151,10 @@ func StartApiGateways() {
 		//userAuthorized.PUT("/ticket/chat", handler.HandleSendChatContent) // 发送消息
 		//userAuthorized.GET("/ticket/chat", handler.HandleGetChatContent)  // 获取聊天消息内容
 
+		userAuthorized.GET("/invite/code", handler.HandleGetUserInviteCodeByUserId)
+		userAuthorized.POST("/invite/code", handler.HandleCreateUserInviteCodeByUserId)
+		userAuthorized.GET("/invite/users", handler.HandleGetUserInvitedUserListByUserId)
+
 	}
 
 	// WebSocket 路由组

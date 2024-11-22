@@ -1,327 +1,321 @@
-<script setup lang="ts">
-import {useI18n} from "vue-i18n";
-import {onMounted, ref} from "vue";
-import useThemeStore from "@/stores/useThemeStore";
+<script lang="ts" setup>
+import {ref, computed, onMounted, h} from "vue";
 import useUserInfoStore from "@/stores/useUserInfoStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
+import {
+  CheckmarkDoneOutline as passOrderIcon, ChevronDownOutline as downIcon,
+  LinkOutline as linkIcon,
+  PauseOutline as closeOrderIcon
+} from "@vicons/ionicons5"
 import useAppInfosStore from "@/stores/useAppInfosStore";
-import type {FormInst, FormRules, NotificationType} from 'naive-ui'
-import {NIcon, useMessage, useNotification} from 'naive-ui'
-import {Wallet as walletIcon} from "@vicons/ionicons5"
-import {hashPassword} from "@/utils/encryptor";
+import {useI18n} from "vue-i18n";
+import useThemeStore from "@/stores/useThemeStore";
 import instance from "@/axios";
+import {NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
+import renderIcon from "@/utils/iconFormator";
+import {formatDate} from "@/utils/timeFormat";
 
-interface ModelType {
-  old_password: string | null
-  new_password: string | null
-  new_password_again: string | null
-}
+const {t} = useI18n();
+const userInfoStore = useUserInfoStore();
+const appInfoStore = useAppInfosStore();
+const themeStore = useThemeStore();
+const message = useMessage();
 
-const {t} = useI18n()
-const formRef = ref<FormInst | null>(null)
-const message = useMessage()
-const modelRef = ref<ModelType>({
-  old_password: '',
-  new_password: '',
-  new_password_again: ''
+let animated = ref<boolean>(false);
+let showCreateInviteCodeMention = ref<boolean>(false);
+
+let myFaCode = ref<string>('')
+
+let pageCount = ref(10)
+
+let dataSize = ref<{ pageSize: number, page: number }>({
+  pageSize: 10,
+  page: 1,
 })
 
-const rules: FormRules = {
-  old_password: {
-    required: false,
-    trigger: "blur"
+let dataCountOptions = [
+  {
+    label: computed(() => t('adminViews.userMgr.dataCountOptions10')).value,
+    value: 10,
   },
-  new_password: {
-    required: false,
-    trigger: "blur"
+  {
+    label: computed(() => t('adminViews.userMgr.dataCountOptions20')).value,
+    value: 20,
   },
-  new_password_again: {
-    required: false,
-    trigger: "blur"
+  {
+    label: computed(() => t('adminViews.userMgr.dataCountOptions50')).value,
+    value: 50,
   },
+  {
+    label: computed(() => t('adminViews.userMgr.dataCountOptions100')).value,
+    value: 100,
+  },
+]
+
+const columns = [
+  {
+    title: '#',
+    key: 'id'
+  },
+  {
+    title: '邮箱地址',
+    key: 'email'
+  },
+  {
+    title: '注册时间',
+    key: 'created_at'
+  },
+];
+
+
+interface MyInvitedUser {
+  id: number
+  email: string
+  created_at: string
 }
 
+let myInvitedUserList = ref<MyInvitedUser[]>([]);
 
-const notification = useNotification()
-const apiAddrStore = useApiAddrStore()
-const themeStore = useThemeStore();
-const userInfoStore = useUserInfoStore();
-const appInfosStore = useAppInfosStore();
-
-let notify = (type: NotificationType, title: string, meta: string) => {
-  notification[type]({
-    content: title,
-    meta: meta,
-    duration: 2500,
-    keepAliveOnHover: true
-  })
-}
-
-let verifyOldPassword = async (): Promise<boolean> => {
+let handleCreateMyInviteCode = async () => {
   try {
-    let {data} = await instance.post(apiAddrStore.apiAddr.user.verifyOldPassword, {
-      email: userInfoStore.thisUser.email,
-      old_password: hashPassword(modelRef.value.old_password.trim())
-    });
+    animated.value = false
+    let {data} = await instance.post('/api/user/v1/invite/code', {
+      user_id: userInfoStore.thisUser.id,
+    })
     if (data.code === 200) {
-      return data.verified as boolean;
+      console.log('created ok.');
+      await handleGetMyInviteCode()
     } else {
-      notify('error', t('userProfile.oldPwdVerifiedFailure'), data.msg)
-      console.log(data);
-      return false;
+      message.error('创建失败' + data.msg || '');
     }
-  } catch (error) {
-    notify('error', t('userProfile.oldPwdVerifiedFailure'), error.toString())
-    console.log(error.toString());
-    return false;
+  } catch (err: any) {
+    console.log(err
+    )
   }
 }
 
-let saveNewPassword = async () => {
-  if (modelRef.value.old_password.trim() !== '') {
-    if (modelRef.value.new_password.trim() !== '' && modelRef.value.new_password_again.trim() !== '') {
-      if (modelRef.value.new_password.trim() === modelRef.value.new_password_again.trim()) {
-        console.log('验证ok');
-        if (await verifyOldPassword()) { // 等待验证旧密码的结果
-          try {
-            let {data} = await instance.post(apiAddrStore.apiAddr.user.applyNewPassword, {
-              email: userInfoStore.thisUser.email,
-              new_password: hashPassword(modelRef.value.new_password)
-            });
-            if (data.code === 200 && data.updated as boolean) {
-              modelRef.value.old_password = ''
-              modelRef.value.new_password = ''
-              modelRef.value.new_password_again = ''
-              console.log('修改成功', data);
-              notify('success', t('userProfile.alertSuccess'), t('userProfile.alertSuccessSub'))
-
-            }
-          } catch (error) {
-            notify('error', t('userProfile.alertFailure'), error.toString())
-          }
-        } else {
-          console.log('旧密码验证失败');
-        }
-      } else {
-        notify('error', t('userProfile.pwdNotMatch'))
-        console.log('两次输入密码不一致');
+let handleGetMyInviteCode = async () => {
+  try {
+    let {data} = await instance.get('/api/user/v1/invite/code', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
       }
+    })
+    if (data.code === 200) {
+      console.log(data)
+      myFaCode.value = data.my_invite_code
+      animated.value = true
+    } else if (data.code === 404) {
+      console.log('无')
     } else {
-      console.log('新密码格式错误');
-      notify('error', t('userProfile.errorPwdFormat'))
-
+      console.log(data.msg)
     }
-  } else {
-    console.log('旧密码不能为空');
-    notify('error', t('userProfile.oldPwdNotNull'))
+  } catch (err: any) {
+    console.log(err)
+  }
+}
+
+let handleGetMyInvitedUserList = async () => {
+  try {
+    let {data} = await instance.get('/api/user/v1/invite/users', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        page: dataSize.value.page,
+        size: dataSize.value.pageSize,
+      }
+    })
+    if (data.code === 200) {
+      console.log(data)
+      pageCount.value = data.page_count
+      data.user_list.forEach((item: MyInvitedUser) => myInvitedUserList.value.push(item))
+    } else if (data.code === 404) {
+      console.log('无')
+    } else {
+      console.log(data.msg)
+    }
+  } catch (err: any) {
+    console.log(err)
   }
 }
 
 
-onMounted(() => {
-  console.log('挂载个人中心')
-  themeStore.menuSelected = 'user-profile'
-  themeStore.userPath = '/dashboard/profile'
+onMounted(async () => {
+  themeStore.userPath = '/dashboard/invite'
+
+  await handleGetMyInviteCode()
+
+  if (myFaCode.value !== '') {
+    await handleGetMyInvitedUserList()
+  }
+
+  animated.value = true;
 })
 
 </script>
 
 <script lang="ts">
 export default {
-  name: 'UserInvite',
+  name: "UserInvite",
 }
 </script>
 
 <template>
-  <div class="root">
+  <div style="padding: 20px">
     <n-card
-        class="wallet-card"
-        :embedded="true"
         hoverable
-        content-style="padding: 0"
+        :embedded="true"
         :bordered="false"
-    >
-      <div class="wallet-header">
-        <p class="wallet-title">{{ t('userProfile.myWallet') }}</p>
-        <n-icon size="30" style="opacity: 0.1">
-          <walletIcon/>
-        </n-icon>
-      </div>
-      <div class="wallet-content">
-        <p class="balance">{{ userInfoStore.thisUser.balance }}</p>
-        <p class="unit">{{ appInfosStore.appCommonConfig.currency }}</p>
-      </div>
-      <div class="wallet-bottom">
-        <p class="sub">{{ t('userProfile.walletSub') }}</p>
-      </div>
-    </n-card>
+        :title="'我的邀请'"
+    ></n-card>
 
     <n-card
-        class="password-alert-card"
-        :embedded="true"
         hoverable
-        content-style="padding: 0"
         :bordered="false"
+        :embedded="true"
+        content-style="padding: 0"
+        style="margin-top: 10px"
     >
-      <n-p class="title">{{ t('userProfile.alertPwd') }}</n-p>
-      <div class="form">
-        <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
-          <n-form-item path="old_password" :label="t('userProfile.oldPwd')">
-            <n-input v-model:value="modelRef.old_password" @keydown.enter.prevent :placeholder="t('userProfile.oldPwdSub')"/>
-          </n-form-item>
-          <n-form-item path="new_password" :label="t('userProfile.newPwd')">
-            <n-input v-model:value="modelRef.new_password" @keydown.enter.prevent :placeholder="t('userProfile.newPwdSub')"/>
-          </n-form-item>
-          <n-form-item path="new_password_again" :label="t('userProfile.newPwdAgain')">
-            <n-input v-model:value="modelRef.new_password_again" @keydown.enter.prevent
-                     :placeholder="t('userProfile.newPwdAgainSub')"/>
-          </n-form-item>
-        </n-form>
-        <n-button class="alert-btn" type="primary" @click="saveNewPassword" :bordered="false">{{ t('userProfile.saveBtn') }}</n-button>
-      </div>
+      <n-alert type="success" :bordered="false">
+        当您邀请的用户充值成功时，您可以获得其充值金额的10%。
+      </n-alert>
     </n-card>
 
-    <n-card
-        class="notify-card"
-        :embedded="true"
-        hoverable
-        content-style="padding: 0"
-        :bordered="false"
-    >
-      <n-p class="title">{{ t('userProfile.notify') }}</n-p>
-      <div class="form">
-        <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
-          <n-form-item path="old_password" :label="t('userProfile.enableNotify')">
-            <n-switch />
-          </n-form-item>
-        </n-form>
-      </div>
 
-    </n-card>
-
-    <n-card
-        class="del-card"
-        :embedded="true"
-        hoverable
-        content-style="padding: 0"
-        :bordered="false"
-    >
-      <n-p class="title">{{ t('userProfile.deleteAccount') }}</n-p>
-      <div class="form">
-        <n-alert type="warning" :bordered="false">
-          {{ t('userProfile.deleteAccountSub') }}
-        </n-alert>
-        <n-button strong style="margin-top: 20px;" type="error">{{ t('userProfile.deleteBtn') }}</n-button>
-      </div>
-    </n-card>
   </div>
+
+
+  <transition name="slide-fade">
+    <div style="padding: 0 20px 20px 20px" v-if="animated">
+
+      <n-card
+          hoverable
+          :embedded="true"
+          :bordered="false"
+      >
+
+        <div class="code-mgr-main">
+          <p class="code-mgr-main-title">邀请码管理</p>
+          <n-button
+              type="primary"
+              secondary
+              size="small"
+              @click="showCreateInviteCodeMention=true"
+          >
+            {{ '生成邀请码' }}
+          </n-button>
+        </div>
+
+        <n-table
+            :bordered="false"
+            :bottom-bordered="false"
+            class="code-info"
+        >
+          <n-tr style=" margin-left: 200px">
+            <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请码' }}</n-td>
+            <n-td style="background-color: rgba(0,0,0,0.0);">
+              <n-tag>
+                {{ myFaCode !== '' ? myFaCode : '您还没有邀请码' }}
+              </n-tag>
+            </n-td>
+          </n-tr>
+          <n-tr style=" margin-left: 200px">
+            <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请链接' }}</n-td>
+            <n-td style="background-color: rgba(0,0,0,0.0);">
+              <n-tag>
+                {{
+                  myFaCode !== '' ? ` ${appInfoStore.appCommonConfig.app_url}/register?code=${myFaCode}` : '请先生成邀请码'
+                }}
+              </n-tag>
+            </n-td>
+          </n-tr>
+        </n-table>
+
+
+      </n-card>
+
+
+      <n-card
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          style="margin-top: 20px"
+          content-style="padding: 0"
+      >
+        <div style="padding: 20px">
+          <p style="font-weight: bold; font-size: 1.1rem">我邀请的用户</p>
+
+        </div>
+
+        <n-data-table
+            striped
+            class="table"
+            :columns="columns"
+            :data="myInvitedUserList"
+            :pagination="false"
+            :bordered="true"
+        />
+      </n-card>
+
+      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+        <n-pagination
+            size="medium"
+            v-model:page.number="dataSize.page"
+            :page-count="pageCount"
+            @update:page="animated=false; handleGetMyInvitedUserList()"
+        />
+        <n-select
+            style="width: 160px; margin-left: 20px"
+            v-model:value.number="dataSize.pageSize"
+            size="small"
+            :options="dataCountOptions"
+            :remote="true"
+            @update:value="animated=false; dataSize.page = 1; handleGetMyInvitedUserList()"
+        />
+      </div>
+
+    </div>
+  </transition>
+
+  <n-modal
+      v-model:show="showCreateInviteCodeMention"
+      preset="dialog"
+      title="确认"
+      content="请注意，邀请码创建后不可关闭。"
+      positive-text="确认"
+      negative-text="算了"
+      @positive-click="handleCreateMyInviteCode"
+      @negative-click="showCreateInviteCodeMention=false"
+  />
+
 </template>
 
-<style scoped lang="less">
-.root {
-  margin: 20px;
+<style lang="less" scoped>
 
-  .wallet-card {
-    .wallet-header {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      background-color: rgba(216, 216, 216, 0.0);
-      padding: 10px 20px 10px 20px;
+.code-mgr-main {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 
-      .wallet-title {
-        font-size: 1rem;
-        font-weight: normal;
-        opacity: 0.6;
-      }
-    }
-
-    .wallet-content {
-      display: flex;
-      flex-direction: row;
-      align-items: baseline;
-      padding: 0 20px 0 20px;
-
-      .balance {
-        font-size: 3.25rem;
-        font-weight: 200;
-        font-family: Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
-
-      }
-
-      .unit {
-        font-size: 1rem;
-        margin-left: 15px;
-        font-weight: 300;
-        font-family: Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
-        opacity: 0.6;
-      }
-    }
-
-    .wallet-bottom {
-      margin: 0 20px 20px 20px;
-
-      .sub {
-        opacity: 0.6;
-      }
-    }
-
-    margin-bottom: 20px;
+  .code-mgr-main-title {
+    font-size: 1.1rem;
+    font-weight: bold;
   }
+}
 
-  .password-alert-card {
-    .title {
-      font-size: 1.1rem;
-      font-weight: 400;
-      background-color: rgba(216,216,216,0.1);
-      padding: 10px 20px 10px 20px;
-      border-radius: 3px 3px 0 0;
-    }
-    .form {
-      margin: 20px;
-    }
+.code-info {
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.0);
+}
 
-    .alert-btn {
-      width: 80px;
-    }
+.code-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+  font-size: 1rem;
 
-    //@media screen and (min-width: 769px) {
-    //  .form {
-    //    width: 50%;
-    //  }
-    //}
-    margin-bottom: 20px;
-
+  .code-title {
+    margin-right: 6px;
   }
-
-  .notify-card {
-    .title {
-      font-size: 1.1rem;
-      font-weight: 400;
-      background-color: rgba(216,216,216,0.1);
-      padding: 10px 20px 10px 20px;
-      border-radius: 3px 3px 0 0;
-    }
-    .form {
-      margin: 20px 20px 0 20px;
-    }
-    margin-bottom: 20px;
-  }
-
-  .del-card {
-    .title {
-      font-size: 1.1rem;
-      font-weight: 400;
-      background-color: rgba(216,216,216,0.1);
-      padding: 10px 20px 10px 20px;
-      border-radius: 3px 3px 0 0;
-    }
-    .form {
-      margin: 20px;
-    }
-    margin-bottom: 20px;
-  }
-
-
 }
 </style>
