@@ -8,8 +8,6 @@ import (
 	"github.com/goccy/go-json"
 	"strconv"
 
-	//"google.golang.org/grpc"
-	"log"
 	"net/http"
 	"time"
 )
@@ -25,13 +23,13 @@ func HandleUserLogin(context *gin.Context) {
 	}{}
 	if err := context.ShouldBind(&req); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code":  http.StatusBadRequest,
-			"error": err.Error(),
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
 		})
 		return
 	}
 	//log.Println(req)
-	log.Println("用户输入凭证 ", req.Email, req.Password, req.TwoFaCode, req.Role)
+	//log.Println("用户输入凭证 ", req.Email, req.Password, req.TwoFaCode, req.Role)
 	// 在这里发送rpc请求
 	// 构造grpc请求
 	rpcReq := &pb.UserLoginRequest{
@@ -45,24 +43,32 @@ func HandleUserLogin(context *gin.Context) {
 	defer cancel()
 	//resp, err := GrpcClients.UserServiceClient.Login()
 	resp, err := grpcClient.UserServiceClient.Login(ctx, rpcReq)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	if resp == nil {
+	if err = failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"code":     http.StatusInternalServerError,
+			"isAuthed": false,
+			"msg":      err.Error(),
+		})
+	}
+
+	var userMap map[string]interface{}
+
+	if err := json.Unmarshal(resp.UserData, &userMap); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":     http.StatusInternalServerError,
+			"isAuthed": false,
+			"msg":      "Error format json" + err.Error(),
 		})
 		return
+	} else {
+		context.JSON(http.StatusOK, gin.H{
+			"code":      resp.Code,
+			"isAuthed":  resp.IsAuthed,
+			"msg":       resp.Msg,
+			"token":     resp.Token,
+			"user_data": userMap,
+		})
 	}
-	context.JSON(http.StatusOK, gin.H{
-		"code":      resp.Code,
-		"isAuthed":  resp.IsAuthed,
-		"msg":       resp.Msg,
-		"token":     resp.Token,
-		"user_data": resp.UserData,
-	})
 }
 
 func HandleUserRegister(context *gin.Context) {
@@ -73,12 +79,11 @@ func HandleUserRegister(context *gin.Context) {
 	}{}
 	if err := context.ShouldBind(&postForm); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
-			"code":  http.StatusBadRequest,
-			"msg":   "数据绑定错误",
-			"error": err.Error(),
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
 		})
 	}
-	log.Println("最终注册", postForm)
+	//log.Println("最终注册", postForm)
 
 	// 调用rpc方法
 	ctx, cancel := sysContext.WithTimeout(sysContext.Background(), 5*time.Second)
@@ -122,7 +127,7 @@ func HandleCheckPreviousPassword(context *gin.Context) {
 		return
 	}
 
-	log.Println(postData)
+	//log.Println(postData)
 
 	resp, err := grpcClient.UserServiceClient.CheckPreviousPassword(sysContext.Background(), &pb.CheckPreviousPasswordRequest{
 		Email:       postData.Email,
@@ -141,7 +146,7 @@ func HandleCheckPreviousPassword(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(resp)
+	//log.Println(resp)
 
 	// 如果密码验证通过
 	context.JSON(http.StatusOK, gin.H{
@@ -166,7 +171,7 @@ func HandleApplyNewPassword(context *gin.Context) {
 		return
 	}
 
-	log.Println(postData)
+	//log.Println(postData)
 
 	resp, err := grpcClient.UserServiceClient.ApplyNewPassword(sysContext.Background(), &pb.ApplyNewPasswordRequest{
 		Email:       postData.Email,
@@ -185,7 +190,7 @@ func HandleApplyNewPassword(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(resp)
+	//log.Println(resp)
 
 	//log.Println("修改密码成功")
 	// 密码更新成功
@@ -208,7 +213,7 @@ func HandleSetup2FA(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(postData)
+	//log.Println(postData)
 	resp, err := grpcClient.UserServiceClient.Setup2FA(sysContext.Background(), &pb.Setup2FARequest{
 		Id:    postData.Id,
 		Email: postData.Email,
@@ -227,7 +232,7 @@ func HandleSetup2FA(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(resp)
+	//log.Println(resp)
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
@@ -248,7 +253,7 @@ func HandleTest2FA(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(postData)
+	//log.Println(postData)
 	resp, err := grpcClient.UserServiceClient.Test2FA(sysContext.Background(), &pb.Test2FARequest{
 		Id:        postData.Id,
 		Email:     postData.Email,
@@ -268,7 +273,7 @@ func HandleTest2FA(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(resp)
+	//log.Println(resp)
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
@@ -290,7 +295,7 @@ func HandleGet2FAStatus(context *gin.Context) {
 	//}
 	tempIdStr := context.Query("id")
 	id, err := strconv.Atoi(tempIdStr)
-	log.Println(id)
+	//log.Println(id)
 
 	resp, err := grpcClient.UserServiceClient.Get2FAStatus(sysContext.Background(), &pb.Get2FAStatusRequest{
 		Id: int64(id),
@@ -337,7 +342,7 @@ func HandleCancelSetup2FA(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(resp)
+	//log.Println(resp)
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
@@ -365,7 +370,7 @@ func HandleDisable2FA(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(resp)
+	//log.Println(resp)
 	context.JSON(http.StatusOK, gin.H{
 		"code":     resp.Code,
 		"disabled": resp.Disabled,
@@ -385,7 +390,7 @@ func HandleUpdateUserInfo(context *gin.Context) {
 		return
 	}
 	userId, err = strconv.ParseInt(paramsUserId, 10, 64)
-	log.Println("查询的用户id：", userId)
+	//log.Println("查询的用户id：", userId)
 	resp, err := grpcClient.UserServiceClient.UpdateUserInfo(sysContext.Background(), &pb.UpdateUserInfoRequest{
 		UserId: userId,
 	})
@@ -424,8 +429,16 @@ func HandleDeleteUserAccount(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(userId, confirmed)
+	//log.Println(userId, confirmed)
 	//
+	if !confirmed {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusConflict,
+			"deleted": false,
+			"msg":     "Not confirmed",
+		})
+		return
+	}
 	resp, err := grpcClient.UserServiceClient.DeleteMyAccount(sysContext.Background(), &pb.DeleteMyAccountRequest{
 		UserId: userId,
 	})
@@ -456,7 +469,7 @@ func HandleGetAllUsers(context *gin.Context) {
 		return
 	}
 	var searchEmail = context.Query("email")
-	log.Println(page, size)
+	//log.Println(page, size)
 	resp, err := grpcClient.UserServiceClient.GetAllUsers(sysContext.Background(), &pb.GetAllUsersRequest{
 		Page:        page,
 		Size:        size,
@@ -498,7 +511,7 @@ func HandleAddUserManuallyFromAdmin(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(postData)
+	//log.Println(postData)
 }
 
 func HandleUpdateUserInfoByIdFromAdmin(context *gin.Context) {
@@ -519,7 +532,7 @@ func HandleUpdateUserInfoByIdFromAdmin(context *gin.Context) {
 		})
 		return
 	}
-	log.Println(postData)
+	//log.Println(postData)
 	resp, err := grpcClient.UserServiceClient.UpdateUserInfoAdmin(sysContext.Background(), &pb.UpdateUserInfoAdminRequest{
 		Id:         postData.Id,
 		Email:      postData.Email,

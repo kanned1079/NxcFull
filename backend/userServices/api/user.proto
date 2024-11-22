@@ -91,8 +91,9 @@ message UserLoginResponse {
   bool isAuthed = 2;
   string msg = 3;
   string token = 4;
-  bytes user_data2 = 5;
-  User user_data = 6;
+//  bytes user_data2 = 5;
+//  User user_data = 6;
+  bytes user_data = 5;
 }
 
 // 定义用户注册请求消息

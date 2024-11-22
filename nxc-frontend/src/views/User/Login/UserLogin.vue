@@ -110,6 +110,7 @@ interface DataWithAuth {
 interface UserData {
   id: number;
   invite_user_id: number;
+  invite_code: string;
   name: string;
   email: string;
   is_admin: boolean;
@@ -126,6 +127,7 @@ let bindUserInfo = (data: DataWithAuth) => {
 
   userInfoStore.thisUser.id = user_data.id
   userInfoStore.thisUser.inviteUserId = user_data.invite_user_id
+  userInfoStore.thisUser.inviteCode = user_data.invite_code
   userInfoStore.thisUser.name = user_data.name
   userInfoStore.thisUser.email = user_data.email
   userInfoStore.thisUser.isAdmin = user_data.is_admin

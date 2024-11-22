@@ -28,6 +28,25 @@ let animated = ref<boolean>(false)
 let topUpAmount = ref<number | null>(0)
 let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 
+interface PaymentMethodsKv {
+  id: number
+  name: string
+}
+
+let paymentMethodsKv = ref<PaymentMethodsKv[]>([
+  {
+    id: 1,
+    name: "wechat",
+  },
+  {
+    id: 2,
+    name: "alipay",
+  },
+  {
+    id: 3,
+    name: "apple",
+  }
+])
 
 interface QuickBalance {
   key: number
@@ -156,7 +175,11 @@ export default {
 
               <n-collapse-transition :show="showCustomTopUpInput">
                 <div v-if="showCustomTopUpInput" style="margin-top: 30px">
-                  <n-h4 style="font-weight: bold">自定义金额</n-h4>
+
+                  <div style="display: flex; flex-direction: row; align-items: baseline">
+                    <n-h4 style="font-weight: bold">自定义金额</n-h4>
+                    <p style="opacity: 0.5; margin-left: 10px; font-size: 0.7rem">最大金额：10000000 {{ appInfoStore.appCommonConfig.currency }}</p>
+                  </div>
                   <div>
                     <n-input-number
                         autofocus
@@ -164,8 +187,9 @@ export default {
                         size="large"
                         v-model:value.number="topUpAmount"
                         :placeholder="'输入要充值的金额'"
-                        :max="99999999"
+                        :max="10000000"
                     ></n-input-number>
+
                   </div>
                 </div>
               </n-collapse-transition>

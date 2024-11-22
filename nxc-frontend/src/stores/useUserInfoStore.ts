@@ -6,12 +6,27 @@ import instance from "@/axios";
 
 // const router = useRouter()
 
+interface User {
+    id: number,
+    inviteUserId: number,
+    inviteCode: string
+    name: string,
+    email: string,
+    isAdmin: boolean,
+    isStaff: boolean,
+    balance: number,
+    lastLogin: string,
+    lastLoginIp: string,
+    token: string
+}
+
 const useUserInfoStore = defineStore('userInfoS',() => {
     // 数据
     let isAuthed = ref<boolean>(false)
-    let thisUser = reactive({
+    let thisUser = ref<User>({
         id: 0,
         inviteUserId: 0,
+        inviteCode: '',
         name: '',
         email: '',
         isAdmin: false,
@@ -22,7 +37,7 @@ const useUserInfoStore = defineStore('userInfoS',() => {
         // licenseActive: false,
         // licenseExpiration: '',
         // licenseId: 0,
-        token: 'ewfesrflhweaifuhiesagfesrgfegfesgfvliehsguu',
+        token: '',
     })
 
     // 方法
@@ -35,11 +50,12 @@ const useUserInfoStore = defineStore('userInfoS',() => {
     // logout 登出 设置状态false 写入session 转回登陆页面
     let logout = () => {
         setAndSaveAuthStatus(false)
-        let isAdminBak = thisUser.isAdmin
+        let isAdminBak = thisUser.value.isAdmin
         sessionStorage.removeItem('token')
         Object.assign(thisUser, {
             id: 0,
             inviteUserId: 0,
+            inviteCode: '',
             name: '',
             email: '',
             isAdmin: false,
@@ -63,11 +79,11 @@ const useUserInfoStore = defineStore('userInfoS',() => {
         try {
             let {data} = await instance.get('/api/user/v1/user', {
                 params: {
-                    user_id: thisUser.id
+                    user_id: thisUser.value.id,
                 }
             })
             if ((data.code as number) === 200) {
-                thisUser.balance = data.user_info.balance
+                thisUser.value.balance = data.user_info.balance
                 console.log('ok')
                 return true
             } else {
