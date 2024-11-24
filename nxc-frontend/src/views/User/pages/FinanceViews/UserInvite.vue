@@ -4,7 +4,9 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import {
   CheckmarkDoneOutline as passOrderIcon, ChevronDownOutline as downIcon,
   LinkOutline as linkIcon,
-  PauseOutline as closeOrderIcon
+  PauseOutline as closeOrderIcon,
+  CopyOutline as copyIcon,
+  CheckmarkOutline as copiedIcon,
 } from "@vicons/ionicons5"
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useI18n} from "vue-i18n";
@@ -22,8 +24,17 @@ const message = useMessage();
 
 let animated = ref<boolean>(false);
 let showCreateInviteCodeMention = ref<boolean>(false);
+let showTableLoading = ref<boolean>(true)
 
 let myFaCode = ref<string>('')
+
+interface MyInvitedUser {
+  id: number
+  email: string
+  created_at: string
+}
+
+let myInvitedUserList = ref<MyInvitedUser[]>([]);
 
 let pageCount = ref(10)
 
@@ -62,18 +73,15 @@ const columns = [
   },
   {
     title: '注册时间',
-    key: 'created_at'
+    key: 'created_at',
+    render(row: MyInvitedUser) {
+      return h('span', {}, {default: () => formatDate(row.created_at)});
+    }
   },
 ];
 
 
-interface MyInvitedUser {
-  id: number
-  email: string
-  created_at: string
-}
 
-let myInvitedUserList = ref<MyInvitedUser[]>([]);
 
 let handleCreateMyInviteCode = async () => {
   try {
@@ -104,6 +112,7 @@ let handleGetMyInviteCode = async () => {
       console.log(data)
       myFaCode.value = data.my_invite_code
       animated.value = true
+      showTableLoading.value = false
     } else if (data.code === 404) {
       console.log('无')
     } else {
@@ -124,9 +133,11 @@ let handleGetMyInvitedUserList = async () => {
       }
     })
     if (data.code === 200) {
-      console.log(data)
+      myInvitedUserList.value = []
+      // console.log(data)
       pageCount.value = data.page_count
       data.user_list.forEach((item: MyInvitedUser) => myInvitedUserList.value.push(item))
+      animated.value = true
     } else if (data.code === 404) {
       console.log('无')
     } else {
@@ -137,6 +148,30 @@ let handleGetMyInvitedUserList = async () => {
   }
 }
 
+let faLink = computed(() => `${appInfoStore.appCommonConfig.app_url}/register?code=${myFaCode.value}`)
+
+// 复制成功的反馈
+const copySuccess = ref(false);
+
+// 复制文本的函数
+const copyText = async (key: string, event: MouseEvent) => {
+  event.stopPropagation()
+  try {
+    await navigator.clipboard.writeText(key);
+    // message.success(t('userKeys.copiedSuccessMessage'))
+    message.success('链接复制成功')
+    copySuccess.value = true
+    // copySuccess.value = true;
+    setTimeout(() => {
+      copySuccess.value = false
+      // copySuccess.value = false;
+      // message.success('复制成功')
+    }, 1200); // 显示2秒成功信息
+  } catch (err) {
+    console.error(t('userKeys.copyFailure'), err);
+  }
+};
+
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/invite'
@@ -145,6 +180,8 @@ onMounted(async () => {
 
   if (myFaCode.value !== '') {
     await handleGetMyInvitedUserList()
+  } else {
+    showTableLoading.value = false
   }
 
   animated.value = true;
@@ -200,7 +237,7 @@ export default {
               size="small"
               @click="showCreateInviteCodeMention=true"
           >
-            {{ '生成邀请码' }}
+            {{ myFaCode===''?'生成邀请码':'刷新邀请码' }}
           </n-button>
         </div>
 
@@ -212,7 +249,10 @@ export default {
           <n-tr style=" margin-left: 200px">
             <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请码' }}</n-td>
             <n-td style="background-color: rgba(0,0,0,0.0);">
-              <n-tag>
+              <n-tag
+                type="default"
+                checkable
+              >
                 {{ myFaCode !== '' ? myFaCode : '您还没有邀请码' }}
               </n-tag>
             </n-td>
@@ -220,10 +260,25 @@ export default {
           <n-tr style=" margin-left: 200px">
             <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请链接' }}</n-td>
             <n-td style="background-color: rgba(0,0,0,0.0);">
-              <n-tag>
-                {{
-                  myFaCode !== '' ? ` ${appInfoStore.appCommonConfig.app_url}/register?code=${myFaCode}` : '请先生成邀请码'
-                }}
+              <n-tag
+                  type="default"
+                  checkable
+                  @click="myFaCode !== ''?copyText(faLink, $event):null"
+              >
+
+                <div class="fa-link-main">
+                  <p class="fa-link">
+                    {{myFaCode !== '' ? faLink : '请先生成邀请码' }}
+                  </p>
+                  <n-icon v-if="myFaCode !== '' && !copySuccess" class="fa-link-copy-icon">
+                    <copyIcon/>
+                  </n-icon>
+                  <n-icon v-if="myFaCode !== '' && copySuccess" class="fa-link-copy-icon">
+                    <copiedIcon/>
+                  </n-icon>
+                </div>
+
+
               </n-tag>
             </n-td>
           </n-tr>
@@ -252,6 +307,7 @@ export default {
             :data="myInvitedUserList"
             :pagination="false"
             :bordered="true"
+            :loading="showTableLoading"
         />
       </n-card>
 
@@ -316,6 +372,29 @@ export default {
 
   .code-title {
     margin-right: 6px;
+  }
+}
+
+.fa-link-main {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  .fa-link {
+    margin-right: 6px;
+    transition: ease 200ms;
+  }
+  .fa-link-copy-icon {
+    transition: ease 200ms;
+    opacity: 0;
+  }
+}
+
+.fa-link-main:hover {
+  .fa-link {
+    text-decoration: underline;
+  }
+  .fa-link-copy-icon {
+    opacity: 0.7;
   }
 }
 </style>

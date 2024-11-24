@@ -119,56 +119,6 @@ const copyText = async (key: string, event: MouseEvent) => {
   }
 };
 
-// let modalData = ref<{
-//   name: any
-//   data: any
-// }[]>([
-//   {
-//     name: computed(() => t('userKeys.keyId')).value,
-//     data: myKeys.value[keyIndex].key_id as number,
-//   },
-//   {
-//     name: computed(() => t('userKeys.orderId')).value,
-//     data: myKeys.value[keyIndex].order_id
-//   },
-//   {
-//     name: computed(() => t('userKeys.releaseData')).value,
-//     data: myKeys.value[keyIndex].created_at
-//   },
-//   {
-//     name: computed(() => t('userKeys.expirationData')).value,
-//     data: myKeys.value[keyIndex].expiration_date
-//   },
-//   {
-//     name: computed(() => t('userKeys.clientId.value')).value,
-//     data: myKeys.value[keyIndex].client_id ? myKeys.value[keyIndex].client_id : computed(() => t('userKeys.none')).value as string,
-//   },
-// ])
-
-/*
-*
-* div class="key-item-detail">
-        <p class="key-item-title">{{ t('userKeys.orderId') }}</p>
-        <p class="key-item-content">{{ myKeys[keyIndex].order_id }}</p>
-      </div>
-
-      <div class="key-item-detail">
-        <p class="key-item-title">{{ t('userKeys.releaseData') }}</p>
-        <p class="key-item-content">{{ myKeys[keyIndex].created_at }}</p>
-      </div>
-
-      <div class="key-item-detail">
-        <p class="key-item-title">{{ t('userKeys.expirationData') }}</p>
-        <p class="key-item-content">{{ myKeys[keyIndex].expiration_date }}</p>
-      </div>
-
-      <div class="key-item-detail">
-        <p class="key-item-title">{{ t('userKeys.clientId') }}</p>
-        <p class="key-item-content">{{
-            myKeys[keyIndex].client_id ? myKeys[keyIndex].client_id : t('userKeys.none')
-          }}</p>
-      </div>*/
-
 onBeforeMount(() => {
 
 
@@ -217,11 +167,8 @@ export default {
         <div class="key-item">
           <div class="l-part">
             <p class="plan-name">{{ item.plan_name }}</p>
-            <!--                      <p class="key-id">{{ encodeToBase64(item.key) }}</p>-->
             <n-popover trigger="hover" placement="top-end" :show-arrow="false">
               <template #trigger>
-                <!--              <n-button>悬浮</n-button>-->
-                <!--                        <span class="key-id" style="width: auto">{{ item.key }}</span>-->
                 <n-button
                     :style="themeStore.enableDarkMode?{color: '#fff'}:{color: '#252525'}"
                     text
@@ -316,11 +263,6 @@ export default {
           </n-icon>
         </n-button>
       </template>
-
-<!--      <div v-for="(v, k) in modalData" :key="k" class="key-item-detail">-->
-<!--        <p class="key-item-title">{{ v.name }}</p>-->
-<!--        <p class="key-item-content">{{ v.data }}</p>-->
-<!--      </div>-->
 
       <div class="key-item-detail">
         <p class="key-item-title">{{ t('userKeys.keyId') }}</p>
