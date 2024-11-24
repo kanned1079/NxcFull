@@ -252,8 +252,13 @@ let backgroundStyle = computed(() => ({
 // }
 
 onMounted(async () => {
-  // await getUserIpAddress()
   console.log('挂载普通用户注册')
+
+  // http://localhost:5173/register?code=bz4b7o29i6jto0h393
+  // 解析code的内容填入下面的字段中
+  const queryParams = new URLSearchParams(window.location.search);
+  const code = queryParams.get('code');
+  code?formValue.value.user.invite_user_id = code:null
 
   setTimeout(() => animated.value.leftAnimated = true, 100)
   setTimeout(() => animated.value.rightAnimated = true, 150)
@@ -714,7 +719,6 @@ export default {
 @media (max-width: 900px) {
   .r-content {
     //background: linear-gradient(to right, rgb(217, 167, 199), rgb(255, 252, 220));
-
   }
 }
 

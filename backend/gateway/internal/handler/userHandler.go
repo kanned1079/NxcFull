@@ -6,6 +6,7 @@ import (
 	pb "gateway/internal/grpc/api/user/proto"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
+	"log"
 	"strconv"
 
 	"net/http"
@@ -14,61 +15,141 @@ import (
 
 var grpcClient = grpc.NewClients()
 
+//func HandleUserLogin(context *gin.Context) {
+//	var req = struct {
+//		Email     string `json:"email"`
+//		Password  string `json:"password"`
+//		TwoFaCode string `json:"two_fa_code"`
+//		Role      string `json:"role"`
+//	}{}
+//	if err := context.ShouldBind(&req); err != nil {
+//		context.JSON(http.StatusOK, gin.H{
+//			"code": http.StatusBadRequest,
+//			"msg":  err.Error(),
+//		})
+//		return
+//	}
+//	rpcReq := &pb.UserLoginRequest{
+//		Email:     req.Email,
+//		Password:  req.Password,
+//		TwoFaCode: req.TwoFaCode,
+//		Role:      req.Role,
+//	}
+//	ctx, cancel := sysContext.WithTimeout(sysContext.Background(), time.Second)
+//	defer cancel()
+//	resp, err := grpcClient.UserServiceClient.Login(ctx, rpcReq)
+//	if err = failOnRpcError(err, resp); err != nil {
+//		context.JSON(http.StatusOK, gin.H{
+//			"code":     http.StatusInternalServerError,
+//			"isAuthed": false,
+//			"msg":      err.Error(),
+//		})
+//	}
+//
+//	log.Println("用户登录信息", string(resp.UserData))
+//
+//	// resp.UserData 如果这个[]byte为空 那么就不需要反序列化用户信息
+//
+//	var userMap map[string]interface{}
+//
+//	if err := json.Unmarshal(resp.UserData, &userMap); err != nil {
+//		context.JSON(http.StatusOK, gin.H{
+//			"code":     http.StatusInternalServerError,
+//			"isAuthed": false,
+//			"msg":      "Error format json" + err.Error(),
+//		})
+//		return
+//	} else {
+//		context.JSON(http.StatusOK, gin.H{
+//			"code":      resp.Code,
+//			"isAuthed":  resp.IsAuthed,
+//			"msg":       resp.Msg,
+//			"token":     resp.Token,
+//			"user_data": userMap,
+//		})
+//	}
+//}
+
 func HandleUserLogin(context *gin.Context) {
+	// 定义请求参数结构体，并解析客户端传入的 JSON 数据
 	var req = struct {
-		Email     string `json:"email"`
-		Password  string `json:"password"`
-		TwoFaCode string `json:"two_fa_code"`
-		Role      string `json:"role"`
+		Email     string `json:"email"`       // 用户邮箱
+		Password  string `json:"password"`    // 用户密码
+		TwoFaCode string `json:"two_fa_code"` // 用户的 2FA 验证码（如果有）
+		Role      string `json:"role"`        // 用户角色（如管理员或普通用户）
 	}{}
+
+	// 解析客户端传来的请求体数据
 	if err := context.ShouldBind(&req); err != nil {
+		// 如果解析失败，返回错误信息
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusBadRequest,
-			"msg":  err.Error(),
+			"code": http.StatusBadRequest, // HTTP 状态码 400（客户端请求有误）
+			"msg":  err.Error(),           // 返回错误信息
 		})
 		return
 	}
-	//log.Println(req)
-	//log.Println("用户输入凭证 ", req.Email, req.Password, req.TwoFaCode, req.Role)
-	// 在这里发送rpc请求
-	// 构造grpc请求
+
+	// 创建 gRPC 请求对象，将客户端数据封装为 protobuf 消息
 	rpcReq := &pb.UserLoginRequest{
-		Email:     req.Email,
-		Password:  req.Password,
-		TwoFaCode: req.TwoFaCode,
-		Role:      req.Role,
+		Email:     req.Email,     // 用户邮箱
+		Password:  req.Password,  // 用户密码
+		TwoFaCode: req.TwoFaCode, // 2FA 验证码
+		Role:      req.Role,      // 用户角色
 	}
-	// 调用grpc的login方法
+
+	// 设置 gRPC 请求的上下文和超时时间
 	ctx, cancel := sysContext.WithTimeout(sysContext.Background(), time.Second)
-	defer cancel()
-	//resp, err := GrpcClients.UserServiceClient.Login()
+	defer cancel() // 确保超时后释放资源
+
+	// 调用远程 gRPC 服务的 Login 方法进行用户登录逻辑
 	resp, err := grpcClient.UserServiceClient.Login(ctx, rpcReq)
 	if err = failOnRpcError(err, resp); err != nil {
+		// 如果 gRPC 调用失败，返回错误信息
 		context.JSON(http.StatusOK, gin.H{
-			"code":     http.StatusInternalServerError,
-			"isAuthed": false,
-			"msg":      err.Error(),
-		})
-	}
-
-	var userMap map[string]interface{}
-
-	if err := json.Unmarshal(resp.UserData, &userMap); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code":     http.StatusInternalServerError,
-			"isAuthed": false,
-			"msg":      "Error format json" + err.Error(),
+			"code":     http.StatusInternalServerError, // HTTP 状态码 500（服务器内部错误）
+			"isAuthed": false,                          // 登录失败
+			"msg":      err.Error(),                    // 错误信息
 		})
 		return
-	} else {
-		context.JSON(http.StatusOK, gin.H{
-			"code":      resp.Code,
-			"isAuthed":  resp.IsAuthed,
-			"msg":       resp.Msg,
-			"token":     resp.Token,
-			"user_data": userMap,
-		})
 	}
+
+	// 日志记录：打印用户登录返回的原始用户信息（UserData）
+	log.Println("用户登录信息", string(resp.UserData))
+
+	// 检查 gRPC 返回的用户数据是否为空
+	if len(resp.UserData) == 0 {
+		// 如果用户数据为空，则直接返回登录响应
+		context.JSON(http.StatusOK, gin.H{
+			"code":      resp.Code,     // gRPC 返回的状态码
+			"isAuthed":  resp.IsAuthed, // 是否认证成功
+			"msg":       resp.Msg,      // 消息内容
+			"user_data": nil,           // 用户数据为空
+		})
+		return
+	}
+
+	// 定义用于解析用户信息的 Map
+	var userMap map[string]interface{}
+
+	// 反序列化用户数据（JSON 格式）到 map
+	if err := json.Unmarshal(resp.UserData, &userMap); err != nil {
+		// 如果反序列化失败，返回错误信息
+		context.JSON(http.StatusOK, gin.H{
+			"code":     http.StatusInternalServerError,      // HTTP 状态码 500（服务器内部错误）
+			"isAuthed": false,                               // 登录失败
+			"msg":      "Error format json: " + err.Error(), // 错误信息
+		})
+		return
+	}
+
+	// 返回登录成功的响应
+	context.JSON(http.StatusOK, gin.H{
+		"code":      resp.Code,     // gRPC 返回的状态码
+		"isAuthed":  resp.IsAuthed, // 是否认证成功
+		"msg":       resp.Msg,      // 消息内容
+		"token":     resp.Token,    // 登录 token
+		"user_data": userMap,       // 反序列化后的用户信息
+	})
 }
 
 func HandleUserRegister(context *gin.Context) {
