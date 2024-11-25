@@ -37,22 +37,20 @@ func init() {
 
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer()
+
+	if err = dao.Db.AutoMigrate(&model.SiteSetting{}); err != nil {
+		panic(err)
+	}
+
+	// 刷新缓存
 	if err = services.MakeSettingsCache(); err != nil {
 		log.Panicln(err.Error())
 	}
-
-	if err = dao.Db.Model(model.SiteSetting{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
+	// 自动迁移
 
 }
 
 func main() {
-	//serverAddr := fmt.Sprintf("%s:%d", config.MyLocalConfig.RpcConfig.ListenAddr, config.MyLocalConfig.RpcConfig.ListenPort)
-	//log.Println(local.MyLocalConfig)
-	//log.Println(remote.MyRedisConfig)
-	//log.Println(remote.MyDbConfig)
 	go etcd.RegisterService2Etcd(86400)
 	handler.RunGRPCServer()
-
 }

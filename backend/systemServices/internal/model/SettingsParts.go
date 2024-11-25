@@ -12,6 +12,7 @@ type SystemSettingOptions struct {
 }
 type Site struct {
 	AppName        string `json:"app_name"`
+	AppSubName     string `json:"app_sub_name"`
 	AppDescription string `json:"app_description"`
 	AppURL         string `json:"app_url"`
 	ForceHTTPS     bool   `json:"force_https"`

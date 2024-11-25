@@ -4,14 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"gorm.io/gorm"
+	"time"
 )
 
 // SiteSetting 这是数据库中的定义
 type SiteSetting struct {
-	ID       uint            `gorm:"primaryKey" json:"id"`
-	Category string          `gorm:"size:50;not null;index" json:"category"`
-	Key      string          `gorm:"size:100;not null;index" json:"key"`
-	Value    json.RawMessage `gorm:"type:json;not null" json:"value"`
+	Id        uint            `gorm:"primaryKey" json:"id"`
+	Category  string          `gorm:"size:50;not null;index" json:"category"`
+	Key       string          `gorm:"size:100;not null;index" json:"key"`
+	Value     json.RawMessage `gorm:"type:json;not null" json:"value"`
+	CreatedAt time.Time       `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt time.Time       `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+	DeletedAt gorm.DeletedAt  `json:"deleted_at"`
 }
 
 func (SiteSetting) TableName() string {

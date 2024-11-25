@@ -5,6 +5,7 @@ import useApiAddrStore from "@/stores/useApiAddrStore";
 
 interface SiteSettings {
     app_name: string;
+    app_sub_name: string;
     app_description: string;
     app_url: string;
     'force_https': boolean;
@@ -88,6 +89,7 @@ const useSettingStore = defineStore('SettingStore', () => {
     const settings = reactive({
         site: {
             app_name: '',           // 站点名称
+            app_sub_name: '',   // 站点副标题
             app_description: '',    // 站点描述
             app_url: '',            // 站点网址
             force_https: false,     // 强制HTTPS

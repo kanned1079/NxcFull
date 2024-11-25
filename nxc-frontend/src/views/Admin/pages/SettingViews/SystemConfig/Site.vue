@@ -26,6 +26,7 @@ interface Plan {
 
 type SiteModel =
     | "app_name"
+    | "app_sub_name"
     | "app_description"
     | "app_url"
     | "force_https"
@@ -54,6 +55,13 @@ let appSettings: AppSetting[] = [
     model: "app_name",
     type: "input",
     placeholder: "站点名称"
+  },
+  {
+    title: "站点副标题",
+    shallow: "一般显示在主要标题的下面。",
+    model: "app_sub_name",
+    type: "input",
+    placeholder: "副标题"
   },
   {
     title: "站点描述",

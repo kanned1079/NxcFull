@@ -43,14 +43,28 @@ let sendTestMail = async () => {
       // makeNotify('success', '发送邮件成功', '请查收该管理员邮箱')
       console.log(data)
       let {info} = data
-      dialog.info({
+      // dialog.info({
+      //   title: '成功',
+      //   // content: `收信地址: ${userInfoStore.thisUser.email}\t\n
+      //   //           发信服务器: ${info.host}
+      //   //           发信端口: ${info.port}
+      //   //           发信加密方式: ${info.use_ssl ? 'SSL' : 'TLS'}
+      //   //           发信用户名: ${info.username}`,
+      //   content: () => {
+      //     h('div', {}, )
+      //   }
+      // })
+      dialog.success({
         title: '成功',
-        content: `收信地址: ${userInfoStore.thisUser.email}\t\n
-                  发信服务器: ${info.host}
-                  发信端口: ${info.port}
-                  发信加密方式: ${info.use_ssl ? 'SSL' : 'TLS'}
-                  发信用户名: ${info.username}`
-      })
+        content: () =>
+            h('div', {style: {  marginTop: '15px'}}, [
+              h('p', {style: {  marginBottom: '5px'}}, `收信地址: ${userInfoStore.thisUser.email}`),
+              h('p', {style: {  marginBottom: '5px'}}, `发信服务器: ${info.host}`),
+              h('p', {style: {  marginBottom: '5px'}}, `发信端口: ${info.port}`),
+              h('p', {style: {  marginBottom: '5px'}}, `发信加密方式: ${info.use_ssl ? 'SSL' : 'TLS'}`),
+              h('p', {style: {  marginBottom: '5px'}}, `发信用户名: ${info.username}`),
+            ])
+      });
     } else {
       makeNotify('error', '发送邮件失败', data.msg.toString())
 
@@ -334,7 +348,7 @@ export default {
         </span>
       <span class="r-content to-right">
         <n-spin :show="show" :delay="100" size="small">
-        <n-button @click="sendTestMail" size="large" type="primary">发送测试邮件</n-button>
+        <n-button @click="sendTestMail" size="large" type="primary" :bordered="false">发送测试邮件</n-button>
         </n-spin>
         </span>
     </div>

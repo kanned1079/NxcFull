@@ -16,6 +16,9 @@ import {
   Pencil as penIcon,
   Add as addIcon,
 } from "@vicons/ionicons5"
+import instance from '@/axios/index'
+import {formatDate, formatTimestamp} from "@/utils/timeFormat";
+
 
 const {t} = useI18n();
 const message = useMessage();
@@ -113,6 +116,126 @@ let handleSelectTopUpAmount = (amount: number) => {
   } else {
     topUpAmount.value = null
     showCustomTopUpInput.value = true
+  }
+}
+
+// let pay = async () => {
+//   try {
+//     let {data} = await instance.post('https://openapi.alipay.com/gateway.do', {
+//       app_auth_token: '',
+//       biz_content: JSON.stringify({
+//         out_trade_no: '20241125010101001',
+//         total_amount: '0.02',
+//         subject: 'Iphone6 16G',
+//         product_code: 'QR_CODE_OFFLINE',  // 订单码支付
+//         seller_id: '2088722846526358',
+//         body: 'Iphone6 16G',
+//         goods_detail: [
+//           {
+//             goods_name: 'ipad',
+//             quantity: 1,
+//             price: '2000',
+//             goods_id: 'apple-01',
+//             goods_category: '34543238',
+//             categories_tree: '124868003|126232002|126252004',
+//             show_url: 'http://www.alipay.com/xxx.jpg',
+//           },
+//         ],
+//         extend_params: {
+//           sys_service_provider_id: '2088511833207846',
+//         },
+//         business_params: {
+//           mc_create_trade_ip: '127.0.0.1',
+//         },
+//         discountable_amount: '0.01',
+//         store_id: 'NJ_001',
+//         operator_id: 'yx_001',
+//         terminal_id: 'NJ_T_001',
+//         merchant_order_no: '20161008001',
+//       }),
+//     }, {
+//       headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//       },
+//       params: {
+//         charset: 'UTF-8',
+//         method: 'alipay.trade.precreate',
+//         format: 'json',
+//         sign: 'sign', // 使用签名工具生成的签名
+//         app_id: '2021004199650824',
+//         version: '1.0',
+//         sign_type: 'RSA2',
+//         timestamp: formatTimestamp(Date.now()), // 当前时间戳，格式：yyyy-MM-dd HH:mm:ss
+//       }
+//     })
+//   } catch (err: any) {
+//     message.error(err + '')
+//   }
+// }
+
+const Params = {
+  charset: 'UTF-8',
+  method: 'alipay.trade.precreate',
+  format: 'json',
+  app_id: '2021004199650824',
+  version: '1.0',
+  sign_type: 'RSA2',
+  timestamp: '2024-11-25 22:24:58',
+}
+
+const bizContent = {
+  out_trade_no: '20241125010101001',
+  total_amount: '0.02',
+  subject: 'Iphone6 16G',
+  product_code: 'QR_CODE_OFFLINE',  // 订单码支付
+  seller_id: '2088722846526358',
+  body: 'Iphone6 16G',
+  goods_detail: [
+    {
+      goods_name: 'ipad',
+      quantity: 1,
+      price: '2000',
+      goods_id: 'apple-01',
+      goods_category: '34543238',
+      categories_tree: '124868003|126232002|126252004',
+      show_url: 'http://www.alipay.com/xxx.jpg',
+    },
+  ],
+  extend_params: {
+    sys_service_provider_id: '2088511833207846',
+  },
+  business_params: {
+    mc_create_trade_ip: '127.0.0.1',
+  },
+  discountable_amount: '0.01',
+  store_id: 'NJ_001',
+  operator_id: 'yx_001',
+  terminal_id: 'NJ_T_001',
+  merchant_order_no: '20161008001',
+}
+
+const queryString = new URLSearchParams(Params).toString();
+let result = queryString+ `biz_content=${JSON.stringify(bizContent)}`;
+result = result.replace(/\+/g, ' ');
+
+console.log(result);
+
+let pay = async () => {
+  try {
+    let {data} = await instance.post('https://openapi.alipay.com/gateway.do', {
+      biz_content: bizContent,
+    }, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      params: {
+        ...Params,
+        sign: 'RjFYJcgAl+Lt/VewpH/v1G/1lDv1kHTWTkQ9wmny6cfV+FEl/x5XjWxi1ddhVGHJjyX7dr9E5+Rky3oTwTkwcz+PrxFfysjaNjdeXNFODKIWU5Z68upqkx9tCik7Zwu+YgLj9Bw2WnXtNMWbHK08U+j/VBuYvgwixmJvqGxcb6UwCl6KH+DEXiww/z+1n2ZIhQnIbi6P+m3vGdp5kjbCufCYqflGKNI9ZCNwMGQ5s9qt7DE6Uy9VXXzPACIqEVJehmop78K5dSP8NMDTHoqN0nuqJR8lnHgZ55xfhdF/jgKBPfLEj7kHDVw2tx3/W8kVhR721axSzl8ioBK+LZey1A=='
+      },
+
+    })
+  } catch (err: any) {
+    message.error(err + '')
   }
 }
 
@@ -275,6 +398,7 @@ export default {
                   type="primary"
                   :bordered="false"
                   class="submit-top-up-btn"
+                  @click="pay"
               >
                 提交
               </n-button>

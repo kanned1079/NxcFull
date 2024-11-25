@@ -365,15 +365,15 @@ export default {
         <div class="form">
           <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
             <n-form-item path="old_password" :label="t('userProfile.oldPwd')">
-              <n-input v-model:value="modelRef.old_password" @keydown.enter.prevent
+              <n-input type="password" v-model:value="modelRef.old_password" @keydown.enter.prevent
                        :placeholder="t('userProfile.oldPwdSub')"/>
             </n-form-item>
             <n-form-item path="new_password" :label="t('userProfile.newPwd')">
-              <n-input v-model:value="modelRef.new_password" @keydown.enter.prevent
+              <n-input type="password" v-model:value="modelRef.new_password" @keydown.enter.prevent
                        :placeholder="t('userProfile.newPwdSub')"/>
             </n-form-item>
             <n-form-item path="new_password_again" :label="t('userProfile.newPwdAgain')">
-              <n-input v-model:value="modelRef.new_password_again" @keydown.enter.prevent
+              <n-input type="password" v-model:value="modelRef.new_password_again" @keydown.enter.prevent
                        :placeholder="t('userProfile.newPwdAgainSub')"/>
             </n-form-item>
           </n-form>

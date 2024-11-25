@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"systemServices/internal/dao"
+	"systemServices/internal/model"
 	settings "systemServices/internal/model"
 	"time"
 )
@@ -152,7 +153,7 @@ func MakeSettingsCache() error {
 	var items []settings.SiteSetting
 
 	// 从数据库中读取所有设置项
-	if err := dao.Db.Find(&items).Error; err != nil {
+	if err := dao.Db.Model(&model.SiteSetting{}).Find(&items).Error; err != nil {
 		return err
 	}
 

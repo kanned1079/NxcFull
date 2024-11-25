@@ -191,7 +191,7 @@ func generateInviteCode(userId int64) (code string) {
 	// 生成的随机字符串长度为10
 	// 组成为 <随机字符串><用户id>
 	userIdStr := strconv.FormatInt(userId, 10)
-	randomStrLen := 18 - len(userIdStr)
+	randomStrLen := 12 - len(userIdStr)
 	// 注意随机字符串的长度为 10-用户id长度
 	// 例子 用户id为4 整个输出为fj82jd3as4  用户id为378 整个输出为i20d2h1378
 	rand.Seed(time.Now().UnixNano())
