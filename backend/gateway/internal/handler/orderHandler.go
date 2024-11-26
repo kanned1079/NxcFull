@@ -334,3 +334,41 @@ func HandleManualPassUserOrder(context *gin.Context) {
 		"msg":    resp.Msg,
 	})
 }
+
+func HandleUserTopUp(context *gin.Context) {
+	var err error
+	postData := &struct {
+		UserId        int64   `json:"user_id"`
+		TopUpAmount   float32 `json:"top_up_amount"`
+		PaymentMethod string  `json:"payment_method"`
+		Confirmed     bool    `json:"confirmed"`
+	}{}
+	if err = context.ShouldBind(&postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusBadRequest,
+			"created": false,
+			"msg":     "Bad request" + err.Error(),
+		})
+	}
+	resp, err := grpcClient.OrderServicesClient.CommitNewTopUpOrder(sysContext.Background(), &orderPb.CommitNewTopUpOrderRequest{
+		UserId:        postData.UserId,
+		TopUpAmount:   postData.TopUpAmount,
+		PaymentMethod: postData.PaymentMethod,
+		Confirmed:     postData.Confirmed,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusInternalServerError,
+			"created": false,
+			"msg":     err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":     resp.Code,
+		"created":  resp.Created,
+		"qr_code":  resp.QrCode,
+		"order_id": resp.OrderId,
+		"msg":      resp.Msg,
+	})
+}

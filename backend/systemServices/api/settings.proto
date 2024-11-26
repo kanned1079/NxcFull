@@ -26,6 +26,18 @@ service SettingsService {
 
   // 获取所有的设置
   rpc GetSystemSettings(GetSystemSettingsRequest) returns (GetSystemSettingsResponse);
+
+  // 支付配置
+
+  rpc AddPaymentMethod(AddPaymentMethodRequest) returns (AddPaymentMethodResponse);
+
+  rpc GetAllPaymentSettings(GetAllPaymentSettingsRequest) returns (GetAllPaymentSettingsResponse);
+
+  rpc EditPaymentSettingsBySystemName(EditPaymentSettingsBySystemNameRequest) returns (EditPaymentSettingsBySystemNameResponse);
+
+  rpc EnablePaymentSettingBySystemName(EnablePaymentSettingBySystemNameRequest) returns (EnablePaymentSettingBySystemNameResponse);
+
+  rpc DeletePaymentSettingBySystemName(DeletePaymentSettingBySystemNameRequest) returns (DeletePaymentSettingBySystemNameResponse);
 }
 
 // 更新单个设置项的请求
@@ -155,4 +167,52 @@ message Settings {
   Sendmail sendmail = 6;
   Notice notice = 7;
   Myapp myapp = 8;
+}
+
+message AddPaymentMethodRequest {
+  string system = 1;
+  bytes config = 2;
+}
+
+message AddPaymentMethodResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message GetAllPaymentSettingsRequest {
+  string system = 1;
+}
+
+message GetAllPaymentSettingsResponse {
+  int32 code = 1;
+  bytes config = 2;
+  string msg = 3;
+}
+
+message EditPaymentSettingsBySystemNameRequest {
+  string system = 1;
+  bytes config = 2;
+}
+
+message EditPaymentSettingsBySystemNameResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message EnablePaymentSettingBySystemNameRequest {
+  string system = 1;
+}
+
+message EnablePaymentSettingBySystemNameResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message DeletePaymentSettingBySystemNameRequest {
+  string system = 1;
+}
+
+message DeletePaymentSettingBySystemNameResponse {
+  int32 code = 1;
+  string msg = 2;
 }

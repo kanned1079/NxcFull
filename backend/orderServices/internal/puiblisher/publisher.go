@@ -16,19 +16,6 @@ const (
 func PublishOrderMessage(postOrderData []byte) error {
 	// 声明交换机
 	var err error
-	//err := dao.MqChannel.ExchangeDeclare(
-	//	switchName, // 交换机名
-	//	"direct",   // 交换机类型
-	//	true,       // 持久化
-	//	false,      // 自动删除
-	//	false,      // 内部使用
-	//	false,      // 是否等待
-	//	nil,        // 额外参数
-	//)
-	//if err != nil {
-	//	log.Printf("Failed to declare exchange: %v", err)
-	//	return err
-	//}
 
 	log.Println(string(postOrderData))
 

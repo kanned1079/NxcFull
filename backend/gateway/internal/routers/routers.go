@@ -143,6 +143,9 @@ func StartApiGateways() {
 		userAuthorized.DELETE("/order", handler.HandleCancelOrder)  // 取消订阅
 		userAuthorized.PUT("/order", handler.HandlePlaceOrder)      // 确认并下单
 
+		// 充值
+		userAuthorized.POST("/balance/recharge", handler.HandleUserTopUp)
+
 		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
 
 		userAuthorized.GET("/ticket", handler.HandleGetAllMyTickets)

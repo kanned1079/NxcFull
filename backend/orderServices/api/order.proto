@@ -13,6 +13,9 @@ service OrderService {
   // GetAllMyOrders 獲取該用戶所有的訂單 不管是有效還是無效
   rpc GetAllMyOrders(GetAllMyOrdersRequest) returns (GetAllMyOrdersResponse);
 
+  // 充值
+  rpc CommitNewTopUpOrder(CommitNewTopUpOrderRequest) returns (CommitNewTopUpOrderResponse);
+
   // 管理员的请求
   rpc GetAllOrdersAdmin(GetAllOrdersAdminRequest) returns (GetAllOrdersAdminResponse);
 
@@ -82,3 +85,19 @@ message GetAllOrdersAdminResponse {
   string msg = 4;
 }
 
+//
+
+message CommitNewTopUpOrderRequest {
+  int64 user_id = 1;
+  float top_up_amount = 2;
+  string payment_method = 3;
+  bool confirmed = 4;
+}
+
+message CommitNewTopUpOrderResponse {
+  int32 code = 1;
+  string qr_code = 2;
+  string order_id = 3;
+  bool created = 4;
+  string msg = 5;
+}
