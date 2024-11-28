@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import {computed, onMounted, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
-
-import {LogoAlipay, LogoApple, LogoWechat,} from "@vicons/ionicons5"
+import {useMessage} from "naive-ui";
+import {LogoAlipay, LogoApple, LogoWechat,CheckmarkCircle} from "@vicons/ionicons5"
+import instance from "@/axios";
 
 let animated = ref<boolean>(false)
 
+const message = useMessage()
 const themeStore = useThemeStore();
 let showModal = ref(false);
 
-// let handleAddPaymentMethods = () => {
-//   console.log('handleAddPaymentMethods');
-//   active.value = !active.value
-// }
 
 interface Alipay {
   app_id: string
@@ -21,6 +19,7 @@ interface Alipay {
   alipay_root_cert: string
   alipay_cert_public_key: string
   discount: number
+  enabled: boolean
 }
 
 interface Wechat {
@@ -48,6 +47,8 @@ let alipayConfig = ref<Alipay>({
   alipay_root_cert: '',
   alipay_cert_public_key: '',
   discount: 0.00,
+  enabled: false,
+
 })
 
 let wechatConfig = ref<Wechat>({
@@ -69,20 +70,13 @@ let appleConfig = ref<Apple>({
 });
 
 // 假设这是从服务器获取的支付的方式的状态列表
-let paymentListKv = [
-  {
-    system: 'alipay',
-    enabled: true,
-  },
-  {
-    system: 'wechat',
-    enabled: false,
-  },
-  {
-    system: 'apple',
-    enabled: true,
-  },
-]
+interface PaymentListKv {
+  system: string;
+  discount: number;
+  enabled: boolean;
+}
+
+let paymentListKv = ref<PaymentListKv[]>([]);
 
 interface PaymentConfig {
   id: number
@@ -114,14 +108,135 @@ let paymentMethodList = [
 let computedPaymentMethods = computed(() =>
     paymentMethodList.map((method) => ({
       ...method,
-      enabled: paymentListKv.find((payment) => payment.system === method.system)?.enabled ?? false,
+      enabled: paymentListKv.value.find((payment) => payment.system === method.system)?.enabled ?? false,
     }))
 );
 
 let editSystemName = ref<string>('');
 let showDrawer = ref<boolean>(false);
 
-onMounted(() => {
+let addPaymentMethodClick = () => {
+  message.info('Developing...')
+}
+
+let conf = computed(() => {
+  switch (editSystemName.value) {
+    case 'alipay':
+      return alipayConfig.value;
+    case 'wechat':
+      return wechatConfig.value;
+    case 'apple':
+      return appleConfig.value
+  }
+})
+
+let handleGetAllPaymentMethodsBasic = async () => {
+  try {
+    let { data } = await instance.get('/api/admin/v1/payment');
+    if (data.code === 200) {
+      paymentListKv.value = []
+
+      // 遍历服务器返回的支付方式配置并更新到本地
+      data.conf.forEach((item: PaymentListKv) => {
+        switch (item.system) {
+          case 'alipay':
+            alipayConfig.value.discount = item.discount;
+            alipayConfig.value.enabled = item.enabled;
+            break;
+          case 'wechat':
+            wechatConfig.value.discount = item.discount;
+            wechatConfig.value.enabled = item.enabled;
+            break;
+          case 'apple':
+            appleConfig.value.discount = item.discount;
+            appleConfig.value.enabled = item.enabled;
+            break;
+        }
+        paymentListKv.value.push(item);
+        animated.value = true;
+      });
+
+    } else {
+      message.error(data.msg + '');
+    }
+  } catch (err: any) {
+    console.log(err);
+  }
+};
+
+let handleSavePaymentMethodBySystemName = async () => {
+  try {
+    let {data} = await instance.post('/api/admin/v1/payment', {
+      ...conf.value,
+    }, {
+      params: {
+        system: editSystemName.value,
+      }
+    })
+    if (data.code === 200) {
+      animated.value = true;
+      message.success('Saved successfully')
+    } else {
+      message.error(data.msg + '');
+    }
+  } catch (err: any) {
+    console.log(err)
+  }
+}
+
+let handleChangeEnabledClick = async (system: string) => {
+  try {
+    animated.value = false;
+    let {data} = await instance.patch('/api/admin/v1/payment', {
+      system: system,
+    })
+    if (data.code === 200) {
+      // animated.value = true;
+      await handleGetAllPaymentMethodsBasic()
+      message.success('Alter successfully')
+
+    } else {
+      message.error(data.msg + '');
+    }
+  } catch (err: any) {
+    console.log(err)
+  }
+}
+
+let handleGetPaymentMethodDetailsBySystemName = async (system: string) => {
+  try {
+    let {data} = await instance.get('/api/admin/v1/payment/details', {
+     params: {
+       system: system,
+     }
+    })
+    if (data.code === 200) {
+      message.success('Details get successfully')
+      switch (system) {
+        case 'alipay':
+          Object.assign(alipayConfig.value, data.details);
+          break
+        case 'wechat':
+          Object.assign(wechatConfig.value, data.details);
+          break
+        case 'apple':
+          Object.assign(appleConfig.value, data.details);
+          break
+      }
+
+      animated.value = true;
+
+    } else {
+      message.error(data.msg + '');
+    }
+  } catch (err: any) {
+    console.log(err)
+  }
+}
+
+onMounted(async () => {
+
+  await handleGetAllPaymentMethodsBasic()
   animated.value = true;
 })
 
@@ -144,24 +259,53 @@ export default {
     >
       <div style="display: flex; justify-content: space-between; align-items: center">
         <p style="font-weight: bold; font-size: 1.1rem">支付设置</p>
-        <n-button type="primary" :bordered="false" class="add-btn" @click="">添加支付方式</n-button>
+        <n-button
+            type="primary"
+            :bordered="false"
+            class="add-btn"
+            @click="addPaymentMethodClick"
+        >
+          添加支付方式
+        </n-button>
       </div>
     </n-card>
 
-    <n-alert
-        type="error"
-        :bordered="false"
-        style="margin: 20px 0 10px 0;"
-    >
-      请注意，务必先配置支付方式的信息再进行启用。
-    </n-alert>
+    <!--    <n-alert-->
+    <!--        type="error"-->
+    <!--        :bordered="false"-->
+    <!--        style="margin: 20px 0 10px 0;"-->
+    <!--    >-->
+    <!--      请注意，务必先配置支付方式的信息再进行启用。-->
+    <!--    </n-alert>-->
 
     <n-alert
         type="warning"
-        :bordered="false"
-        style="margin: 0"
+        :bordered="true"
+        style="margin: 15px 0 0 0"
+        :title="'请注意'"
     >
-      目前仅支持支付宝支付，但是您也可以先配置微信和ApplePay，等待项目进一步完善后可以在更新日志中查看是否支持。
+
+      <n-ul>
+        <n-li style="font-weight: bold">
+          务必先配置支付方式的信息再进行启用，这很重要。
+        </n-li>
+        <n-li>
+          修改付款方式配置时，如果显示为"---"则代表该选项已经被设置且非空，如果需要重新修改直接输入新值保存即可。
+        </n-li>
+        <n-li>
+          修改付款方式配置后，该付款方式会默认被禁用，测试无误后您需要重新启用。
+        </n-li>
+        <n-li>
+          由于配置信息有三级缓存，如遇到失败时，可以在重启Redis*和order微服务*后再试。
+        </n-li>
+        <n-li>
+          目前仅支持支付宝支付，但是您也可以先配置微信和ApplePay，等待项目进一步完善后可以在更新日志中查看是否支持。
+        </n-li>
+        <n-li>
+          如出现收款未到账的问题，首先排除开发者问题，项目中不存在任何开发者个人的收款信息。
+        </n-li>
+
+      </n-ul>
     </n-alert>
 
   </div>
@@ -191,6 +335,18 @@ export default {
             </n-icon>
 
             <p class="payment-item-card-inner-l-title">{{ item.title }}</p>
+            <n-tag
+              type="success"
+              size="small"
+              :bordered="false"
+              style="margin-left: 10px"
+              v-if="item.enabled"
+            >
+              Using
+              <template #icon>
+                <n-icon :component="CheckmarkCircle" />
+              </template>
+            </n-tag>
           </div>
           <div class="payment-item-card-inner-r">
             <n-button
@@ -198,6 +354,7 @@ export default {
                 :type="item.enabled? 'warning': 'success'"
                 secondary
                 style="margin-right: 10px"
+                @click="handleChangeEnabledClick(item.system)"
             >
               {{ item.enabled ? '禁用' : '启用' }}
             </n-button>
@@ -205,7 +362,10 @@ export default {
                 class="payment-item-card-inner-r-btn"
                 type="primary"
                 secondary
-                @click="editSystemName=item.system as string; showDrawer=true"
+                @click="
+                handleGetPaymentMethodDetailsBySystemName(item.system);
+                editSystemName=item.system as string;
+                showDrawer=true"
             >
               配置
             </n-button>
@@ -259,7 +419,8 @@ export default {
 
         <div class="item">
           <p class="title">优惠金额</p>
-          <n-input-number size="medium" placeholder="有时或许会有一点优惠"></n-input-number>
+          <n-input-number v-model:value.number="alipayConfig.discount" size="medium"
+                          placeholder="有时或许会有一点优惠"></n-input-number>
         </div>
 
       </div>
@@ -276,6 +437,7 @@ export default {
             type="primary"
             secondary
             style="width: 90px"
+            @click="handleSavePaymentMethodBySystemName"
         >
           保存
         </n-button>
@@ -307,9 +469,27 @@ export default {
 
         <div class="item">
           <p class="title">优惠金额</p>
-          <n-input-number v-model:value="wechatConfig.discount" size="medium"
+          <n-input-number v-model:value.number="wechatConfig.discount" size="medium"
                           placeholder="输入优惠金额"></n-input-number>
         </div>
+      </div>
+      <div style="display: flex; flex-direction: row; justify-content: flex-end">
+        <n-button
+            type="default"
+            secondary
+            style="width: 90px; margin-right: 15px"
+            @click="showDrawer=false; Object.assign(alipayConfig, { app_id: '', app_cert_public: '',app_private_key: '',alipay_root_cert: '',alipay_cert_public_key: '',discount: 0.00,})"
+        >
+          取消
+        </n-button>
+        <n-button
+            type="primary"
+            secondary
+            style="width: 90px"
+            @click="handleSavePaymentMethodBySystemName"
+        >
+          保存
+        </n-button>
       </div>
     </n-drawer-content>
 
@@ -340,6 +520,24 @@ export default {
           <n-input-number v-model:value="appleConfig.discount" size="medium"
                           placeholder="输入优惠金额"></n-input-number>
         </div>
+      </div>
+      <div style="display: flex; flex-direction: row; justify-content: flex-end">
+        <n-button
+            type="default"
+            secondary
+            style="width: 90px; margin-right: 15px"
+            @click="showDrawer=false; Object.assign(alipayConfig, { app_id: '', app_cert_public: '',app_private_key: '',alipay_root_cert: '',alipay_cert_public_key: '',discount: 0.00,})"
+        >
+          取消
+        </n-button>
+        <n-button
+            type="primary"
+            secondary
+            style="width: 90px"
+            @click="handleSavePaymentMethodBySystemName"
+        >
+          保存
+        </n-button>
       </div>
     </n-drawer-content>
   </n-drawer>

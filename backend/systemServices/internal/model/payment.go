@@ -8,9 +8,9 @@ import (
 
 type PaymentSettings struct {
 	ID        uint            `gorm:"primaryKey" json:"id"`
-	System    string          `gorm:"size:50;not null;index" json:"system"` // 支付系统名称，如 "alipay", "wechat"
-	Key       string          `gorm:"size:100;not null;index" json:"key"`   // 配置键
-	Value     json.RawMessage `gorm:"type:longtext;not null" json:"value"`  // 配置值，JSON 存储
+	System    string          `gorm:"size:50;not null;index:idx_system_key" json:"system"` // 支付系统名称
+	Key       string          `gorm:"size:100;not null;index:idx_system_key" json:"key"`   // 配置键
+	Value     json.RawMessage `gorm:"type:longtext;not null" json:"value"`                 // 配置值
 	CreatedAt time.Time       `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt time.Time       `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 	DeletedAt gorm.DeletedAt  `gorm:"index" json:"deleted_at"`
@@ -18,6 +18,12 @@ type PaymentSettings struct {
 
 func (PaymentSettings) TableName() string {
 	return "x_payment_settings"
+}
+
+type PaymentMethodOptions struct {
+	Alipay Alipay `json:"alipay"`
+	Wechat Wechat `json:"wechat"`
+	Apple  Apple  `json:"apple"`
 }
 
 type Alipay struct {

@@ -42,6 +42,10 @@ func init() {
 		panic(err)
 	}
 
+	if err = dao.Db.AutoMigrate(&model.PaymentSettings{}); err != nil {
+		panic(err)
+	}
+
 	// 刷新缓存
 	if err = services.MakeSettingsCache(); err != nil {
 		log.Panicln(err.Error())

@@ -29,14 +29,22 @@ service SettingsService {
 
   // 支付配置
 
+  // pass 添加新的付款方式
   rpc AddPaymentMethod(AddPaymentMethodRequest) returns (AddPaymentMethodResponse);
 
-  rpc GetAllPaymentSettings(GetAllPaymentSettingsRequest) returns (GetAllPaymentSettingsResponse);
+  // 获取所有支付方式的键值对 名称 是否被启用
+  rpc GetAllPaymentSettingsKv(GetAllPaymentSettingsKvRequest) returns (GetAllPaymentSettingsKvResponse);
 
+  // 根据传入的支付方式名称来获取其详细信息
+  rpc GetPaymentMethodDetailsByName(GetPaymentMethodDetailsByNameRequest) returns (GetPaymentMethodDetailsByNameResponse);
+
+  // 根据名称来新增或修改支付方式的信息
   rpc EditPaymentSettingsBySystemName(EditPaymentSettingsBySystemNameRequest) returns (EditPaymentSettingsBySystemNameResponse);
 
+  // 是否启用该支付防止 这个调用后取反enabled字段 之后需要刷新Redis缓存和页面
   rpc EnablePaymentSettingBySystemName(EnablePaymentSettingBySystemNameRequest) returns (EnablePaymentSettingBySystemNameResponse);
 
+  // pass 删除付款方式
   rpc DeletePaymentSettingBySystemName(DeletePaymentSettingBySystemNameRequest) returns (DeletePaymentSettingBySystemNameResponse);
 }
 
@@ -179,11 +187,11 @@ message AddPaymentMethodResponse {
   string msg = 2;
 }
 
-message GetAllPaymentSettingsRequest {
-  string system = 1;
+message GetAllPaymentSettingsKvRequest {
+  
 }
 
-message GetAllPaymentSettingsResponse {
+message GetAllPaymentSettingsKvResponse {
   int32 code = 1;
   bytes config = 2;
   string msg = 3;
@@ -215,4 +223,14 @@ message DeletePaymentSettingBySystemNameRequest {
 message DeletePaymentSettingBySystemNameResponse {
   int32 code = 1;
   string msg = 2;
+}
+
+message GetPaymentMethodDetailsByNameRequest {
+  string system = 1;
+}
+
+message GetPaymentMethodDetailsByNameResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes details = 3;
 }

@@ -112,6 +112,10 @@ func StartApiGateways() {
 		adminAuthorized.DELETE("order", handler.HandleManualCancelUserOrder) // 管理员手动取消用户的订单
 		adminAuthorized.PUT("order", handler.HandleManualPassUserOrder)      // 管理员手动通过用户的订单
 
+		adminAuthorized.GET("payment", handler.HandleGetAllPaymentMethodKv)                       // 获取所有存在的支付方式基础信息 名称 是否启用 优惠金额
+		adminAuthorized.GET("payment/details", handler.HandleGetPaymentMethodDetailsBySystemName) // 获取详细信息 但是隐藏证书私钥等信息
+		adminAuthorized.POST("payment", handler.HandleEditOrSavePaymentMethodBySystemName)        // 新建或编辑支付方式的配置
+		adminAuthorized.PATCH("payment", handler.HandleSwitchPaymentMethodEnableBySystemName)     // 切换是否启用支付方式
 	}
 
 	userAuthorized := protectedRoutes.Group("/user/v1", middleware.RoleMiddleware())

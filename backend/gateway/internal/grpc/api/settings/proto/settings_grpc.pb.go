@@ -23,7 +23,8 @@ const (
 	SettingsService_GetStartTheme_FullMethodName                    = "/settings.SettingsService/GetStartTheme"
 	SettingsService_GetSystemSettings_FullMethodName                = "/settings.SettingsService/GetSystemSettings"
 	SettingsService_AddPaymentMethod_FullMethodName                 = "/settings.SettingsService/AddPaymentMethod"
-	SettingsService_GetAllPaymentSettings_FullMethodName            = "/settings.SettingsService/GetAllPaymentSettings"
+	SettingsService_GetAllPaymentSettingsKv_FullMethodName          = "/settings.SettingsService/GetAllPaymentSettingsKv"
+	SettingsService_GetPaymentMethodDetailsByName_FullMethodName    = "/settings.SettingsService/GetPaymentMethodDetailsByName"
 	SettingsService_EditPaymentSettingsBySystemName_FullMethodName  = "/settings.SettingsService/EditPaymentSettingsBySystemName"
 	SettingsService_EnablePaymentSettingBySystemName_FullMethodName = "/settings.SettingsService/EnablePaymentSettingBySystemName"
 	SettingsService_DeletePaymentSettingBySystemName_FullMethodName = "/settings.SettingsService/DeletePaymentSettingBySystemName"
@@ -41,10 +42,17 @@ type SettingsServiceClient interface {
 	GetStartTheme(ctx context.Context, in *GetStartThemeRequest, opts ...grpc.CallOption) (*GetStartThemeResponse, error)
 	// 获取所有的设置
 	GetSystemSettings(ctx context.Context, in *GetSystemSettingsRequest, opts ...grpc.CallOption) (*GetSystemSettingsResponse, error)
+	// pass 添加新的付款方式
 	AddPaymentMethod(ctx context.Context, in *AddPaymentMethodRequest, opts ...grpc.CallOption) (*AddPaymentMethodResponse, error)
-	GetAllPaymentSettings(ctx context.Context, in *GetAllPaymentSettingsRequest, opts ...grpc.CallOption) (*GetAllPaymentSettingsResponse, error)
+	// 获取所有支付方式的键值对 名称 是否被启用
+	GetAllPaymentSettingsKv(ctx context.Context, in *GetAllPaymentSettingsKvRequest, opts ...grpc.CallOption) (*GetAllPaymentSettingsKvResponse, error)
+	// 根据传入的支付方式名称来获取其详细信息
+	GetPaymentMethodDetailsByName(ctx context.Context, in *GetPaymentMethodDetailsByNameRequest, opts ...grpc.CallOption) (*GetPaymentMethodDetailsByNameResponse, error)
+	// 根据名称来新增或修改支付方式的信息
 	EditPaymentSettingsBySystemName(ctx context.Context, in *EditPaymentSettingsBySystemNameRequest, opts ...grpc.CallOption) (*EditPaymentSettingsBySystemNameResponse, error)
+	// 是否启用该支付防止 这个调用后取反enabled字段 之后需要刷新Redis缓存和页面
 	EnablePaymentSettingBySystemName(ctx context.Context, in *EnablePaymentSettingBySystemNameRequest, opts ...grpc.CallOption) (*EnablePaymentSettingBySystemNameResponse, error)
+	// pass 删除付款方式
 	DeletePaymentSettingBySystemName(ctx context.Context, in *DeletePaymentSettingBySystemNameRequest, opts ...grpc.CallOption) (*DeletePaymentSettingBySystemNameResponse, error)
 }
 
@@ -96,10 +104,20 @@ func (c *settingsServiceClient) AddPaymentMethod(ctx context.Context, in *AddPay
 	return out, nil
 }
 
-func (c *settingsServiceClient) GetAllPaymentSettings(ctx context.Context, in *GetAllPaymentSettingsRequest, opts ...grpc.CallOption) (*GetAllPaymentSettingsResponse, error) {
+func (c *settingsServiceClient) GetAllPaymentSettingsKv(ctx context.Context, in *GetAllPaymentSettingsKvRequest, opts ...grpc.CallOption) (*GetAllPaymentSettingsKvResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAllPaymentSettingsResponse)
-	err := c.cc.Invoke(ctx, SettingsService_GetAllPaymentSettings_FullMethodName, in, out, cOpts...)
+	out := new(GetAllPaymentSettingsKvResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetAllPaymentSettingsKv_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *settingsServiceClient) GetPaymentMethodDetailsByName(ctx context.Context, in *GetPaymentMethodDetailsByNameRequest, opts ...grpc.CallOption) (*GetPaymentMethodDetailsByNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPaymentMethodDetailsByNameResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetPaymentMethodDetailsByName_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,10 +166,17 @@ type SettingsServiceServer interface {
 	GetStartTheme(context.Context, *GetStartThemeRequest) (*GetStartThemeResponse, error)
 	// 获取所有的设置
 	GetSystemSettings(context.Context, *GetSystemSettingsRequest) (*GetSystemSettingsResponse, error)
+	// pass 添加新的付款方式
 	AddPaymentMethod(context.Context, *AddPaymentMethodRequest) (*AddPaymentMethodResponse, error)
-	GetAllPaymentSettings(context.Context, *GetAllPaymentSettingsRequest) (*GetAllPaymentSettingsResponse, error)
+	// 获取所有支付方式的键值对 名称 是否被启用
+	GetAllPaymentSettingsKv(context.Context, *GetAllPaymentSettingsKvRequest) (*GetAllPaymentSettingsKvResponse, error)
+	// 根据传入的支付方式名称来获取其详细信息
+	GetPaymentMethodDetailsByName(context.Context, *GetPaymentMethodDetailsByNameRequest) (*GetPaymentMethodDetailsByNameResponse, error)
+	// 根据名称来新增或修改支付方式的信息
 	EditPaymentSettingsBySystemName(context.Context, *EditPaymentSettingsBySystemNameRequest) (*EditPaymentSettingsBySystemNameResponse, error)
+	// 是否启用该支付防止 这个调用后取反enabled字段 之后需要刷新Redis缓存和页面
 	EnablePaymentSettingBySystemName(context.Context, *EnablePaymentSettingBySystemNameRequest) (*EnablePaymentSettingBySystemNameResponse, error)
+	// pass 删除付款方式
 	DeletePaymentSettingBySystemName(context.Context, *DeletePaymentSettingBySystemNameRequest) (*DeletePaymentSettingBySystemNameResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
@@ -175,8 +200,11 @@ func (UnimplementedSettingsServiceServer) GetSystemSettings(context.Context, *Ge
 func (UnimplementedSettingsServiceServer) AddPaymentMethod(context.Context, *AddPaymentMethodRequest) (*AddPaymentMethodResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPaymentMethod not implemented")
 }
-func (UnimplementedSettingsServiceServer) GetAllPaymentSettings(context.Context, *GetAllPaymentSettingsRequest) (*GetAllPaymentSettingsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllPaymentSettings not implemented")
+func (UnimplementedSettingsServiceServer) GetAllPaymentSettingsKv(context.Context, *GetAllPaymentSettingsKvRequest) (*GetAllPaymentSettingsKvResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPaymentSettingsKv not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetPaymentMethodDetailsByName(context.Context, *GetPaymentMethodDetailsByNameRequest) (*GetPaymentMethodDetailsByNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPaymentMethodDetailsByName not implemented")
 }
 func (UnimplementedSettingsServiceServer) EditPaymentSettingsBySystemName(context.Context, *EditPaymentSettingsBySystemNameRequest) (*EditPaymentSettingsBySystemNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditPaymentSettingsBySystemName not implemented")
@@ -280,20 +308,38 @@ func _SettingsService_AddPaymentMethod_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SettingsService_GetAllPaymentSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllPaymentSettingsRequest)
+func _SettingsService_GetAllPaymentSettingsKv_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllPaymentSettingsKvRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SettingsServiceServer).GetAllPaymentSettings(ctx, in)
+		return srv.(SettingsServiceServer).GetAllPaymentSettingsKv(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SettingsService_GetAllPaymentSettings_FullMethodName,
+		FullMethod: SettingsService_GetAllPaymentSettingsKv_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SettingsServiceServer).GetAllPaymentSettings(ctx, req.(*GetAllPaymentSettingsRequest))
+		return srv.(SettingsServiceServer).GetAllPaymentSettingsKv(ctx, req.(*GetAllPaymentSettingsKvRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SettingsService_GetPaymentMethodDetailsByName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPaymentMethodDetailsByNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetPaymentMethodDetailsByName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetPaymentMethodDetailsByName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetPaymentMethodDetailsByName(ctx, req.(*GetPaymentMethodDetailsByNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -376,8 +422,12 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SettingsService_AddPaymentMethod_Handler,
 		},
 		{
-			MethodName: "GetAllPaymentSettings",
-			Handler:    _SettingsService_GetAllPaymentSettings_Handler,
+			MethodName: "GetAllPaymentSettingsKv",
+			Handler:    _SettingsService_GetAllPaymentSettingsKv_Handler,
+		},
+		{
+			MethodName: "GetPaymentMethodDetailsByName",
+			Handler:    _SettingsService_GetPaymentMethodDetailsByName_Handler,
 		},
 		{
 			MethodName: "EditPaymentSettingsBySystemName",
