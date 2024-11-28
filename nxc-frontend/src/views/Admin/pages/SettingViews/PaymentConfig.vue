@@ -166,6 +166,7 @@ let handleGetAllPaymentMethodsBasic = async () => {
 
 let handleSavePaymentMethodBySystemName = async () => {
   try {
+    animated.value = false;
     let {data} = await instance.post('/api/admin/v1/payment', {
       ...conf.value,
     }, {
@@ -175,6 +176,7 @@ let handleSavePaymentMethodBySystemName = async () => {
     })
     if (data.code === 200) {
       animated.value = true;
+      await handleGetAllPaymentMethodsBasic()
       message.success('Saved successfully')
     } else {
       message.error(data.msg + '');
@@ -282,28 +284,28 @@ export default {
         type="warning"
         :bordered="true"
         style="margin: 15px 0 0 0"
-        :title="'请注意'"
+        :title="'注意事项'"
     >
 
       <n-ul>
         <n-li style="font-weight: bold">
-          务必先配置支付方式的信息再进行启用，这很重要。
+          务必先配置支付方式的信息再进行启用，这真的很重要。
         </n-li>
         <n-li>
           修改付款方式配置时，如果显示为"---"则代表该选项已经被设置且非空，如果需要重新修改直接输入新值保存即可。
         </n-li>
-        <n-li>
-          修改付款方式配置后，该付款方式会默认被禁用，测试无误后您需要重新启用。
-        </n-li>
+<!--        <n-li>-->
+<!--          修改付款方式配置后，该付款方式会默认被禁用，测试无误后您需要重新启用。-->
+<!--        </n-li>-->
         <n-li>
           由于配置信息有三级缓存，如遇到失败时，可以在重启Redis*和order微服务*后再试。
         </n-li>
         <n-li>
           目前仅支持支付宝支付，但是您也可以先配置微信和ApplePay，等待项目进一步完善后可以在更新日志中查看是否支持。
         </n-li>
-        <n-li>
-          如出现收款未到账的问题，首先排除开发者问题，项目中不存在任何开发者个人的收款信息。
-        </n-li>
+<!--        <n-li>-->
+<!--          如出现收款未到账的问题，首先排除开发者问题，项目中不存在任何开发者个人的收款信息。-->
+<!--        </n-li>-->
 
       </n-ul>
     </n-alert>
