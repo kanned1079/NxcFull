@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, computed} from "vue"
+import {computed, onMounted, ref} from "vue"
 import {useRouter} from "vue-router";
 import {type MenuOption, useMessage} from "naive-ui"
 import {useI18n} from "vue-i18n";
@@ -8,16 +8,18 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import renderIcon from "@/utils/iconFormator";
 import {
-  CashOutline as cashIcon,
-  LogoWechat,
-  LogoAlipay,
-  ChevronForwardOutline as toRight,
-  LogoApple,
-  Pencil as penIcon,
   Add as addIcon,
+  CashOutline as cashIcon,
+  CheckmarkOutline as checkIcon,
+  ChevronForwardOutline as toRight,
+  CloseOutline as errIcon,
+  LogoAlipay,
+  LogoApple,
+  LogoWechat,
+  TicketOutline as ticketIcon,
+  GiftOutline as giftIcon,
 } from "@vicons/ionicons5"
 import instance from '@/axios/index'
-import {formatDate, formatTimestamp} from "@/utils/timeFormat";
 
 
 const {t} = useI18n();
@@ -28,51 +30,56 @@ const userInfoStore = useUserInfoStore();
 const themeStore = useThemeStore();
 let animated = ref<boolean>(false)
 
-let topUpAmount = ref<number | null>(0)
+let topUpAmount = ref<number | null>()
 let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 
-interface PaymentMethodsKv {
-  id: number
-  name: string
-}
+let paymentMethodSelected = ref<string>('')
 
-let paymentMethodsKv = ref<PaymentMethodsKv[]>([
-  {
-    id: 1,
-    name: "wechat",
-  },
-  {
-    id: 2,
-    name: "alipay",
-  },
-  {
-    id: 3,
-    name: "apple",
-  }
-])
+// interface PaymentMethodsKv {
+//   id: number
+//   name: string
+// }
 
-interface QuickBalance {
-  key: number
-  value: number
-}
+// let paymentMethodsKv = ref<PaymentMethodsKv[]>([
+//   {
+//     id: 1,
+//     name: "wechat",
+//   },
+//   {
+//     id: 2,
+//     name: "alipay",
+//   },
+//   {
+//     id: 3,
+//     name: "apple",
+//   }
+// ] as PaymentMethodsKv[])
+
+// interface QuickBalance {
+//   key: number
+//   value: number
+// }
+
+let methodsAvailable = ref<MethodsFromServer[]>([])
+
 
 let paymentMethodsList = ref<MenuOption[]>([
   {
-    label: '微信支付',
-    key: 'wechat',
+    label: "微信支付",
+    key: "wechat",
     icon: renderIcon(LogoWechat),
   },
   {
-    label: '支付宝支付',
-    key: 'alipay',
+    label: "支付宝支付",
+    key: "alipay",
     icon: renderIcon(LogoAlipay),
   },
   {
-    label: 'Apple Pay',
-    key: 'apple',
+    label: "Apple Pay",
+    key: "apple",
     icon: renderIcon(LogoApple),
   },
-])
+]);
 
 let quickSelectBalanceList = ref<MenuOption[]>([
   {
@@ -119,130 +126,63 @@ let handleSelectTopUpAmount = (amount: number) => {
   }
 }
 
-// let pay = async () => {
-//   try {
-//     let {data} = await instance.post('https://openapi.alipay.com/gateway.do', {
-//       app_auth_token: '',
-//       biz_content: JSON.stringify({
-//         out_trade_no: '20241125010101001',
-//         total_amount: '0.02',
-//         subject: 'Iphone6 16G',
-//         product_code: 'QR_CODE_OFFLINE',  // 订单码支付
-//         seller_id: '2088722846526358',
-//         body: 'Iphone6 16G',
-//         goods_detail: [
-//           {
-//             goods_name: 'ipad',
-//             quantity: 1,
-//             price: '2000',
-//             goods_id: 'apple-01',
-//             goods_category: '34543238',
-//             categories_tree: '124868003|126232002|126252004',
-//             show_url: 'http://www.alipay.com/xxx.jpg',
-//           },
-//         ],
-//         extend_params: {
-//           sys_service_provider_id: '2088511833207846',
-//         },
-//         business_params: {
-//           mc_create_trade_ip: '127.0.0.1',
-//         },
-//         discountable_amount: '0.01',
-//         store_id: 'NJ_001',
-//         operator_id: 'yx_001',
-//         terminal_id: 'NJ_T_001',
-//         merchant_order_no: '20161008001',
-//       }),
-//     }, {
-//       headers: {
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//       },
-//       params: {
-//         charset: 'UTF-8',
-//         method: 'alipay.trade.precreate',
-//         format: 'json',
-//         sign: 'sign', // 使用签名工具生成的签名
-//         app_id: '2021004199650824',
-//         version: '1.0',
-//         sign_type: 'RSA2',
-//         timestamp: formatTimestamp(Date.now()), // 当前时间戳，格式：yyyy-MM-dd HH:mm:ss
-//       }
-//     })
-//   } catch (err: any) {
-//     message.error(err + '')
-//   }
-// }
-
-const Params = {
-  charset: 'UTF-8',
-  method: 'alipay.trade.precreate',
-  format: 'json',
-  app_id: '2021004199650824',
-  version: '1.0',
-  sign_type: 'RSA2',
-  timestamp: '2024-11-25 22:24:58',
+interface MethodsFromServer {
+  system: string
+  discount: number
+  enabled: boolean
 }
 
-const bizContent = {
-  out_trade_no: '20241125010101001',
-  total_amount: '0.02',
-  subject: 'Iphone6 16G',
-  product_code: 'QR_CODE_OFFLINE',  // 订单码支付
-  seller_id: '2088722846526358',
-  body: 'Iphone6 16G',
-  goods_detail: [
-    {
-      goods_name: 'ipad',
-      quantity: 1,
-      price: '2000',
-      goods_id: 'apple-01',
-      goods_category: '34543238',
-      categories_tree: '124868003|126232002|126252004',
-      show_url: 'http://www.alipay.com/xxx.jpg',
-    },
-  ],
-  extend_params: {
-    sys_service_provider_id: '2088511833207846',
-  },
-  business_params: {
-    mc_create_trade_ip: '127.0.0.1',
-  },
-  discountable_amount: '0.01',
-  store_id: 'NJ_001',
-  operator_id: 'yx_001',
-  terminal_id: 'NJ_T_001',
-  merchant_order_no: '20161008001',
-}
-
-const queryString = new URLSearchParams(Params).toString();
-let result = queryString+ `biz_content=${JSON.stringify(bizContent)}`;
-result = result.replace(/\+/g, ' ');
-
-console.log(result);
-
-let pay = async () => {
+const handleGetAllPaymentMethods = async () => {
   try {
-    let {data} = await instance.post('https://openapi.alipay.com/gateway.do', {
-      biz_content: bizContent,
-    }, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      params: {
-        ...Params,
-        sign: 'RjFYJcgAl+Lt/VewpH/v1G/1lDv1kHTWTkQ9wmny6cfV+FEl/x5XjWxi1ddhVGHJjyX7dr9E5+Rky3oTwTkwcz+PrxFfysjaNjdeXNFODKIWU5Z68upqkx9tCik7Zwu+YgLj9Bw2WnXtNMWbHK08U+j/VBuYvgwixmJvqGxcb6UwCl6KH+DEXiww/z+1n2ZIhQnIbi6P+m3vGdp5kjbCufCYqflGKNI9ZCNwMGQ5s9qt7DE6Uy9VXXzPACIqEVJehmop78K5dSP8NMDTHoqN0nuqJR8lnHgZ55xfhdF/jgKBPfLEj7kHDVw2tx3/W8kVhR721axSzl8ioBK+LZey1A=='
-      },
+    const {data} = await instance.get('/api/user/v1/payment/methods');
+    if (data.code === 200) {
+      // 遍历服务器返回的数据并更新 `paymentMethodsList`
+      data.conf.forEach((item: MethodsFromServer) => methodsAvailable.value.push(item))
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-    })
+let getDiscount = computed(() => {
+  const selectedMethod = methodsAvailable.value.find(
+      (method: MethodsFromServer) => method.system === paymentMethodSelected.value
+  );
+  return selectedMethod && selectedMethod.enabled && selectedMethod.discount !== 0 && topUpAmount.value && topUpAmount.value >= selectedMethod.discount
+      ? selectedMethod.discount
+      : 0;
+});
+
+let checkMethodEnabled = computed(() => {
+  return methodsAvailable.value.some(
+      (method: MethodsFromServer) => method.system === paymentMethodSelected.value && method.enabled && resultAmount.value !== 0.00)
+})
+
+let resultAmount = computed(() => topUpAmount.value ? (topUpAmount.value - getDiscount.value) : 0.00)
+
+let handleCommitNewTopUpOrder = async () => {
+  try {
+    let {data} = await instance.post('/api/user/v1/payment/top-up', {
+      user_id: userInfoStore.thisUser.id, // 用户id
+      payment_method: paymentMethodSelected.value,  // 支付方式
+      amount: topUpAmount.value,  // 选择的充值金额
+      discount: getDiscount.value,  // 优惠金额
+      committed_at: Math.floor(Date.now()), // 当前的毫秒时间戳
+      confirmed: true,
+    });
+    if (data.code === 200) {
+      console.log(data)
+    }
   } catch (err: any) {
-    message.error(err + '')
+    console.log(err)
   }
 }
 
-
-
-onMounted(() => {
+onMounted(async () => {
   themeStore.userPath = '/dashboard/topup'
+
+  await handleGetAllPaymentMethods()
+
   animated.value = true
 })
 
@@ -280,6 +220,19 @@ export default {
             span="3 s:3 m:2"
         >
           <div class="box1">
+            <n-alert
+                type="success"
+                :bordered="true"
+                style="margin-bottom: 10px"
+            >
+              <template #icon>
+                <n-icon size="18">
+                  <giftIcon/>
+                </n-icon>
+              </template>
+                  截止2024年12月31日前，使用支付宝充值优惠2.9USDT，使用Apple Pay充值优惠20USDT。
+              {{ `当前优惠 ` }}
+            </n-alert>
             <n-card
                 hoverable
                 :embedded="true"
@@ -301,7 +254,8 @@ export default {
 
                   <div style="display: flex; flex-direction: row; align-items: baseline">
                     <n-h4 style="font-weight: bold">自定义金额</n-h4>
-                    <p style="opacity: 0.5; margin-left: 10px; font-size: 0.7rem">最大金额：10000000 {{ appInfoStore.appCommonConfig.currency }}</p>
+                    <p style="opacity: 0.5; margin-left: 10px; font-size: 0.7rem">最大金额：10000000
+                      {{ appInfoStore.appCommonConfig.currency }}</p>
                   </div>
                   <div>
                     <n-input-number
@@ -311,6 +265,8 @@ export default {
                         v-model:value.number="topUpAmount"
                         :placeholder="'输入要充值的金额'"
                         :max="10000000"
+                        :min="0.01"
+                        :precision="2"
                     ></n-input-number>
 
                   </div>
@@ -351,7 +307,7 @@ export default {
                   mode="vertical"
                   :options="paymentMethodsList"
                   :default-value="'wechat'"
-                  @update:expanded-keys=""
+                  v-model:value.trim="paymentMethodSelected"
               />
             </n-card>
           </div>
@@ -369,16 +325,25 @@ export default {
               <div class="new-amount-main">
                 <p class="new-amount-main-hex">充值</p>
                 <div class="new-amount-main-price-part">
-                  <p class="new-amount-main-price"> + {{topUpAmount?topUpAmount.toFixed(2):0.00.toFixed(2) }}</p>
+                  <p class="new-amount-main-price"> + {{ resultAmount.toFixed(2) }}</p>
                   <p class="new-amount-main-price-currency">{{ appInfoStore.appCommonConfig.currency }}</p>
                 </div>
               </div>
 
+              <div class="new-amount-main" v-if="getDiscount !== 0.00">
+                <p class="new-amount-main-hex">优惠</p>
+                <div class="new-amount-main-price-part" style="opacity: 0.8">
+                  <p class="new-amount-main-price" style="font-size: 1rem !important;">
+                    - {{ getDiscount.toFixed(2) }}</p>
+                  <p class="new-amount-main-price-currency">{{ appInfoStore.appCommonConfig.currency }}</p>
+                </div>
+              </div>
 
               <div class="new-amount-main">
                 <p class="new-amount-main-hex">账户余额</p>
                 <div class="new-amount-main-price-part" style="opacity: 0.8">
-                  <p class="new-amount-main-price" style="font-size: 1rem !important;">{{ userInfoStore.thisUser.balance.toFixed(2) }}</p>
+                  <p class="new-amount-main-price" style="font-size: 1rem !important;">
+                    {{ userInfoStore.thisUser.balance.toFixed(2) }}</p>
                   <p class="new-amount-main-price-currency">{{ appInfoStore.appCommonConfig.currency }}</p>
                 </div>
               </div>
@@ -388,7 +353,8 @@ export default {
               <div class="new-amount-main">
                 <p class="new-amount-main-hex">余额合计</p>
                 <div class="new-amount-main-price-part">
-                  <p class="new-amount-main-price" style="font-size: 1rem !important;">{{ (userInfoStore.thisUser.balance + (topUpAmount?topUpAmount:0.00)).toFixed(2) }}</p>
+                  <p class="new-amount-main-price" style="font-size: 1rem !important;">
+                    {{ (userInfoStore.thisUser.balance + (topUpAmount ? topUpAmount : 0.00)).toFixed(2) }}</p>
                   <p class="new-amount-main-price-currency">{{ appInfoStore.appCommonConfig.currency }}</p>
                 </div>
               </div>
@@ -398,9 +364,20 @@ export default {
                   type="primary"
                   :bordered="false"
                   class="submit-top-up-btn"
-                  @click="pay"
+                  :disabled="!checkMethodEnabled"
+                  @click="handleCommitNewTopUpOrder"
               >
-                提交
+                <template #icon v-if="checkMethodEnabled">
+                  <n-icon>
+                    <checkIcon/>
+                  </n-icon>
+                </template>
+                <template #icon v-else>
+                  <n-icon>
+                    <errIcon/>
+                  </n-icon>
+                </template>
+                {{ checkMethodEnabled ? '提交' : '支付方式不可用请选择其他' }}
               </n-button>
             </n-card>
           </div>

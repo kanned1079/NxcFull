@@ -148,7 +148,7 @@ func StartApiGateways() {
 		userAuthorized.PUT("/order", handler.HandlePlaceOrder)      // 确认并下单
 
 		// 充值
-		userAuthorized.POST("/balance/recharge", handler.HandleUserTopUp)
+		//userAuthorized.POST("/balance/recharge", handler.HandleUserTopUp)
 
 		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
 
@@ -161,6 +161,9 @@ func StartApiGateways() {
 		userAuthorized.GET("/invite/code", handler.HandleGetUserInviteCodeByUserId)
 		userAuthorized.POST("/invite/code", handler.HandleCreateUserInviteCodeByUserId)
 		userAuthorized.GET("/invite/users", handler.HandleGetUserInvitedUserListByUserId)
+
+		userAuthorized.GET("payment/methods", handler.HandleGetAllPaymentMethodKv) // 获取所有存在的支付方式基础信息 名称 是否启用 优惠金额
+		userAuthorized.POST("payment/top-up", handler.HandleUserCommitNewTopUpOrder)
 
 	}
 

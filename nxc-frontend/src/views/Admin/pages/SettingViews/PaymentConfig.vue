@@ -2,7 +2,7 @@
 import {computed, onMounted, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {useMessage} from "naive-ui";
-import {LogoAlipay, LogoApple, LogoWechat,CheckmarkCircle} from "@vicons/ionicons5"
+import {CheckmarkCircle, LogoAlipay, LogoApple, LogoWechat} from "@vicons/ionicons5"
 import instance from "@/axios";
 
 let animated = ref<boolean>(false)
@@ -132,7 +132,7 @@ let conf = computed(() => {
 
 let handleGetAllPaymentMethodsBasic = async () => {
   try {
-    let { data } = await instance.get('/api/admin/v1/payment');
+    let {data} = await instance.get('/api/admin/v1/payment');
     if (data.code === 200) {
       paymentListKv.value = []
 
@@ -208,9 +208,9 @@ let handleChangeEnabledClick = async (system: string) => {
 let handleGetPaymentMethodDetailsBySystemName = async (system: string) => {
   try {
     let {data} = await instance.get('/api/admin/v1/payment/details', {
-     params: {
-       system: system,
-     }
+      params: {
+        system: system,
+      }
     })
     if (data.code === 200) {
       message.success('Details get successfully')
@@ -294,18 +294,18 @@ export default {
         <n-li>
           修改付款方式配置时，如果显示为"---"则代表该选项已经被设置且非空，如果需要重新修改直接输入新值保存即可。
         </n-li>
-<!--        <n-li>-->
-<!--          修改付款方式配置后，该付款方式会默认被禁用，测试无误后您需要重新启用。-->
-<!--        </n-li>-->
+        <!--        <n-li>-->
+        <!--          修改付款方式配置后，该付款方式会默认被禁用，测试无误后您需要重新启用。-->
+        <!--        </n-li>-->
         <n-li>
           由于配置信息有三级缓存，如遇到失败时，可以在重启Redis*和order微服务*后再试。
         </n-li>
         <n-li>
           目前仅支持支付宝支付，但是您也可以先配置微信和ApplePay，等待项目进一步完善后可以在更新日志中查看是否支持。
         </n-li>
-<!--        <n-li>-->
-<!--          如出现收款未到账的问题，首先排除开发者问题，项目中不存在任何开发者个人的收款信息。-->
-<!--        </n-li>-->
+        <!--        <n-li>-->
+        <!--          如出现收款未到账的问题，首先排除开发者问题，项目中不存在任何开发者个人的收款信息。-->
+        <!--        </n-li>-->
 
       </n-ul>
     </n-alert>
@@ -338,15 +338,15 @@ export default {
 
             <p class="payment-item-card-inner-l-title">{{ item.title }}</p>
             <n-tag
-              type="success"
-              size="small"
-              :bordered="false"
-              style="margin-left: 10px"
-              v-if="item.enabled"
+                type="success"
+                size="small"
+                :bordered="false"
+                style="margin-left: 10px"
+                v-if="item.enabled"
             >
               Using
               <template #icon>
-                <n-icon :component="CheckmarkCircle" />
+                <n-icon :component="CheckmarkCircle"/>
               </template>
             </n-tag>
           </div>
@@ -397,26 +397,37 @@ export default {
 
         <div class="item">
           <p class="title">应用公钥证书内容</p>
-          <n-input v-model:value.trim="alipayConfig.app_cert_public" size="medium"
-                   placeholder="app_cert_public"></n-input>
+          <n-input
+              v-model:value.trim="alipayConfig.app_cert_public"
+              size="medium"
+              placeholder="app_cert_public"
+              type="textarea"
+              :rows="3"
+          ></n-input>
         </div>
 
         <div class="item">
           <p class="title">应用私钥</p>
           <n-input v-model:value.trim="alipayConfig.app_private_key" size="medium"
-                   placeholder="app_private_key"></n-input>
+                   placeholder="app_private_key"
+                   type="textarea"
+                   :rows="3"></n-input>
         </div>
 
         <div class="item">
           <p class="title">支付宝根证书</p>
           <n-input v-model:value.trim="alipayConfig.alipay_root_cert" size="medium"
-                   placeholder="alipay_root_cert"></n-input>
+                   placeholder="alipay_root_cert"
+                   type="textarea"
+                   :rows="3"></n-input>
         </div>
 
         <div class="item">
           <p class="title">支付宝公钥证书内容</p>
           <n-input v-model:value.trim="alipayConfig.alipay_cert_public_key" size="medium"
-                   placeholder="alipay_cert_public_key"></n-input>
+                   placeholder="alipay_cert_public_key"
+                   type="textarea"
+                   :rows="3"></n-input>
         </div>
 
         <div class="item">
@@ -627,6 +638,12 @@ export default {
 
 .payment-item-card:hover {
   transform: translateX(0px) translateY(-3px);
+}
+
+.item {
+  .title {
+    margin-top: 40px;
+  }
 }
 
 

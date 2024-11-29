@@ -8,6 +8,7 @@ import (
 	"orderServices/internal/etcd"
 	"orderServices/internal/handler"
 	"orderServices/internal/model"
+	"orderServices/internal/payment"
 )
 
 var err error
@@ -39,6 +40,11 @@ func init() {
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer() // 初始化Redis服务器
 	dao.InitMq()
+
+	// 初始化支付方式
+	payment.InitPaymentConf()
+
+	payment.PaymentInstanceRoot.Initial() // 初始化所有被启用的支付方式
 
 	if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {
 		panic(err)
