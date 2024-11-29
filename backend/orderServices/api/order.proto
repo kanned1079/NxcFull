@@ -89,9 +89,10 @@ message GetAllOrdersAdminResponse {
 
 message CommitNewTopUpOrderRequest {
   int64 user_id = 1;
-  float top_up_amount = 2;
-  string payment_method = 3;
-  bool confirmed = 4;
+  string payment_method = 2;
+  float amount = 3;
+  float discount  = 4;
+  int64 committed_at = 5;
 }
 
 message CommitNewTopUpOrderResponse {

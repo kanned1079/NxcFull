@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	pb "orderServices/api/proto"
+	"orderServices/internal/payment"
 	"orderServices/internal/puiblisher"
 	"orderServices/internal/utils"
 	"time"
@@ -55,20 +56,35 @@ func (s *OrderServices) CommitNewOrder(context context.Context, request *pb.Comm
 }
 
 func (s *OrderServices) CommitNewTopUpOrder(ctx context.Context, request *pb.CommitNewTopUpOrderRequest) (*pb.CommitNewTopUpOrderResponse, error) {
+	log.Println("CommitNewTopUpOrder")
+
 	postTopUpOrderData := &struct {
 		UserId        int64   `json:"user_id"`
-		TopUpAmount   float32 `json:"top_up_amount"`
 		PaymentMethod string  `json:"payment_method"`
+		Amount        float32 `json:"amount"`
+		Discount      float32 `json:"discount"`
+		CommittedAt   int64   `json:"committed_at"`
 		OrderId       string  `json:"order_id"`
 	}{
 		UserId:        request.UserId,
-		TopUpAmount:   request.TopUpAmount,
 		PaymentMethod: request.PaymentMethod,
+		Amount:        request.Amount,
+		Discount:      request.Discount,
+		CommittedAt:   request.CommittedAt,
 	}
 
 	// 生成唯一订单号
 	postTopUpOrderData.OrderId = utils.GenerateTopUpOrderId(request.UserId)
 
+	// 执行支付宝调用支付接口
+	if code, err := payment.DoAliPayAPISelfV3("充值订单", postTopUpOrderData.OrderId, postTopUpOrderData.Amount, postTopUpOrderData.Discount); err != nil {
+		log.Println("payment.DoAliPayAPISelfV3 error:", err)
+		log.Println("code:", code)
+		return &pb.CommitNewTopUpOrderResponse{}, nil
+	}
+	log.Println("支付宝生成订单成功 推送到消息队 准备处理支付")
+
+	// 推送到消息队列
 	if postTopUpOrderDataJson, err := json.Marshal(postTopUpOrderData); err != nil {
 		return &pb.CommitNewTopUpOrderResponse{
 			Code:    http.StatusInternalServerError,

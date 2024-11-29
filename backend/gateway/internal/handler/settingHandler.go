@@ -3,6 +3,7 @@ package handler
 import (
 	sysContext "context"
 	"encoding/json"
+	orderPb "gateway/internal/grpc/api/order/proto"
 	pb "gateway/internal/grpc/api/settings/proto"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -230,5 +231,55 @@ func HandleSwitchPaymentMethodEnableBySystemName(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
+	})
+}
+
+func HandleUserCommitNewTopUpOrder(context *gin.Context) {
+	postData := &struct {
+		UserId        int64   `json:"user_id"`
+		PaymentMethod string  `json:"payment_method"`
+		Amount        float32 `json:"amount"`
+		Discount      float32 `json:"discount"`
+		CommittedAt   int64   `json:"committed_at"`
+		Confirmed     bool    `json:"confirmed"`
+	}{}
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusBadRequest,
+			"msg":     err.Error(),
+			"created": false,
+		})
+		return
+	}
+	if !postData.Confirmed {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusBadRequest,
+			"msg":     "Not Confirmed",
+			"created": false,
+		})
+		return
+	}
+	resp, err := grpcClient.OrderServicesClient.CommitNewTopUpOrder(sysContext.Background(), &orderPb.CommitNewTopUpOrderRequest{
+		UserId:        postData.UserId,
+		PaymentMethod: postData.PaymentMethod,
+		Amount:        postData.Amount,
+		Discount:      postData.Discount,
+		CommittedAt:   postData.CommittedAt,
+	})
+	if err = failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusInternalServerError,
+			"msg":     err.Error(),
+			"created": false,
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"code":     resp.Code,
+		"msg":      resp.Msg,
+		"order_id": resp.OrderId,
+		"qr_code":  resp.QrCode,
+		"created":  resp.Created,
 	})
 }

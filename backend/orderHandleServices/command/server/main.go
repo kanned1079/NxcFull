@@ -40,7 +40,10 @@ func init() {
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer() // 初始化Redis服务器
 	//dao.InitMq()          // 初始化RabbitMQ消息队列
-	dao.InitMq()
+
+	//dao.InitMq()
+	dao.InitTopUpOrderMq()
+	dao.InitOrderMq()
 
 	if err = dao.Db.Model(&model.User{}).AutoMigrate(); err != nil {
 		panic(err)
@@ -69,12 +72,15 @@ func main() {
 
 	// 使用 WaitGroup 来等待所有 goroutine
 	var wg sync.WaitGroup
+
+	// 注册etcd
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		go etcd.RegisterService2Etcd(86400)
 	}()
 
+	// 注册消费订单服务
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -82,6 +88,15 @@ func main() {
 		go consumer.StartConsumeOrders()
 	}()
 
+	// 注册充值订单服务
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		//go etcd.RegisterService2Etcd(86400)
+		go consumer.StartConsumeTopUpOrders()
+	}()
+
+	// 注册rpc服务
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
