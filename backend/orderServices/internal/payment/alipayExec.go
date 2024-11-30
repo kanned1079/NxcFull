@@ -15,7 +15,10 @@ import (
 // DoAlipayV3PreCreateTopUpOrder 预生成订单并回传订单号 支付二维码
 func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float32, discount float32) (err error, code int, qrCode string, outTradeNo string) {
 	// 格式化浮点数为字符串
-	totalAmount := fmt.Sprintf("%.2f", amount)                                                 // 保留两位小数
+	totalAmount := fmt.Sprintf("%.2f", amount) // 保留两位小数
+	// 规则如下
+	// discount为前端传递的优惠金额 model.AlipayConfCache.Discount为从数据库中取的优惠金额 这两个值应当相等
+	//
 	if discount != model.AlipayConfCache.Discount && amount > model.AlipayConfCache.Discount { // 如果折扣金额不匹配
 		return errors.New("discount amount not match"), http.StatusConflict, "", ""
 	}

@@ -18,6 +18,7 @@ import {
   LogoWechat,
   TicketOutline as ticketIcon,
   GiftOutline as giftIcon,
+  ChevronForwardOutline as toRightIcon,
 } from "@vicons/ionicons5"
 import instance from '@/axios/index'
 
@@ -160,6 +161,22 @@ let checkMethodEnabled = computed(() => {
 
 let resultAmount = computed(() => topUpAmount.value ? (topUpAmount.value - getDiscount.value) : 0.00)
 
+interface TopUpOrderResponse {
+  code: number
+  created: boolean
+  msg: string
+  order_id: string
+  qr_code: string
+}
+
+let topUpOrderResponse = ref<TopUpOrderResponse>({
+  code: 0,
+  created: false,
+  msg: '',
+  order_id: '20190101682468247',
+  qr_code: 'NO_CONTENT_PLEASE_RETRY'
+})
+
 let handleCommitNewTopUpOrder = async () => {
   try {
     let {data} = await instance.post('/api/user/v1/payment/top-up', {
@@ -171,11 +188,22 @@ let handleCommitNewTopUpOrder = async () => {
       confirmed: true,
     });
     if (data.code === 200) {
-      console.log(data)
+      Object.assign(topUpOrderResponse.value, data)
+      showQrCodeModal.value = true
     }
   } catch (err: any) {
     console.log(err)
   }
+}
+
+let showQrCodeModal = ref<boolean>(true)
+
+let clickToPaymentApp = () => {
+  window.open(topUpOrderResponse.value.qr_code, '_blank');
+}
+
+let checkPaymentResult = () => {
+
 }
 
 onMounted(async () => {
@@ -388,6 +416,78 @@ export default {
     </div>
   </transition>
 
+  <n-modal
+      v-model:show="showQrCodeModal"
+      class="qr-card"
+      preset="card"
+      :title="'支付'"
+      size="medium"
+      style="width: 300px;"
+      :bordered="false"
+  >
+
+
+    <div class="qr-body">
+      <div class="qr-code-body">
+        <n-qr-code
+            :size="150"
+            :value="topUpOrderResponse.qr_code"
+            error-correction-level="H"
+            :color="'#252525'"
+            type="svg"
+        />
+        <n-button
+          text
+          type="default"
+          @click="clickToPaymentApp"
+          icon-placement="right"
+          style="margin-top: 5px"
+          >
+          <template #icon>
+            <n-icon>
+              <toRightIcon />
+            </n-icon>
+          </template>
+          或点击跳转到APP
+        </n-button>
+      </div>
+      <div class="qr-hex">
+        <p class="amount">{{ `${resultAmount.toFixed(2)} ${appInfoStore.appCommonConfig.currency}` }}</p>
+        <p class="order-detail">{{ `#${topUpOrderResponse.order_id}` }}</p>
+      </div>
+
+    </div>
+    <div style="width: 100%; display: flex; flex-direction: column; margin-top: 20px">
+      <n-button
+          type="success"
+          secondary
+          :bordered="false"
+          @click="checkPaymentResult"
+      >
+        我已完成支付
+      </n-button>
+    </div>
+
+    <template #footer>
+      <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">
+        <div>
+          支付值遇到问题？
+          <n-button
+              type="primary"
+              text
+              @click="router.push('/dashboard/tickets')"
+          >
+            联系客服
+            <n-icon style="margin-left: 4px">
+              <toRight/>
+            </n-icon>
+          </n-button>
+        </div>
+
+      </div>
+    </template>
+  </n-modal>
+
 </template>
 
 <style scoped lang="less">
@@ -463,6 +563,38 @@ export default {
 .payment-methods-box {
   margin-bottom: 15px;
 
+}
+
+.qr-card {
+  width: 300px;
+  height: 500px;
+}
+
+.qr-body {
+  width: 100%;
+
+  .qr-code-body {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .qr-hex {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .amount {
+      font-size: 1.35rem;
+      font-weight: bold;
+    }
+    .order-detail {
+      font-size: 1rem;
+      opacity: 0.7;
+    }
+  }
 }
 
 </style>

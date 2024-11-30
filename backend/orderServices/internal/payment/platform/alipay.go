@@ -5,6 +5,7 @@ import (
 	"github.com/go-pay/gopay/alipay/v3"
 	"github.com/go-pay/xlog"
 	"log"
+	"orderServices/internal/payment/model"
 )
 
 var (
