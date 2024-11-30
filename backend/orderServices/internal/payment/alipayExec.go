@@ -13,46 +13,109 @@ import (
 )
 
 // DoAlipayV3PreCreateTopUpOrder 预生成订单并回传订单号 支付二维码
-func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float32, discount float32) (err error, code int, qrCode string, outTradeNo string) {
-	// 格式化浮点数为字符串
-	totalAmount := fmt.Sprintf("%.2f", amount) // 保留两位小数
-	// 规则如下
-	// discount为前端传递的优惠金额 model.AlipayConfCache.Discount为从数据库中取的优惠金额 这两个值应当相等
-	//
-	if discount != model.AlipayConfCache.Discount && amount > model.AlipayConfCache.Discount { // 如果折扣金额不匹配
-		return errors.New("discount amount not match"), http.StatusConflict, "", ""
+func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float32) (err error, code int, qrCode string, outTradeNo string) {
+	// 检查金额是否合法
+	if amount <= 0 {
+		return errors.New("amount must be greater than 0"), http.StatusBadRequest, "", ""
 	}
-	discountableAmount := fmt.Sprintf("%.2f", discount)
 
-	// 请求参数
+	// 从缓存中获取折扣信息
+	confDiscount := model.AlipayConfCache.Discount
+
+	// 计算最终总金额
+	var finalAmount float32
+	if confDiscount > 0 {
+		if amount < confDiscount {
+			// 如果充值金额小于优惠金额，不使用优惠
+			finalAmount = amount
+		} else if amount == confDiscount {
+			// 如果充值金额等于优惠金额，返回错误
+			return errors.New("amount equals to discount is not allowed"), http.StatusConflict, "", ""
+		} else {
+			// 充值金额大于优惠金额，减去优惠后为最终金额
+			finalAmount = amount - confDiscount
+		}
+	} else {
+		// 如果没有任何优惠，直接使用原始金额
+		finalAmount = amount
+	}
+
+	// 保留两位小数格式化金额
+	totalAmount := fmt.Sprintf("%.2f", finalAmount)
+
+	// 构建请求参数
 	bm := make(gopay.BodyMap)
 	bm.Set("subject", subject).
 		Set("out_trade_no", orderId).
-		Set("total_amount", totalAmount). // 使用格式化后的字符串
-		Set("discountable_amount", discountableAmount)
+		Set("total_amount", totalAmount) // 使用计算后的最终金额
 
+	// 响应结果结构体
 	rsp := new(struct {
 		OutTradeNo string `json:"out_trade_no"`
 		QrCode     string `json:"qr_code"`
 	})
-	// 创建订单
+
+	// 调用支付 API
 	res, err := PaymentInstanceRoot.AlipayInstance.DoAliPayAPISelfV3(context.Background(), "POST", "/v3/alipay/trade/precreate", bm, rsp)
 	if err != nil {
 		xlog.Errorf("client.TradePrecreate(), err:%v", err)
-		//return http.StatusInternalServerError, err
 		return errors.New("TradePrecreate err"), http.StatusInternalServerError, "", ""
 	}
+
 	xlog.Debugf("aliRsp:%s", js.Marshal(rsp))
 	if res.StatusCode != http.StatusOK {
 		xlog.Errorf("aliRsp.StatusCode:%d", res.StatusCode)
-		//return
-		//return res.StatusCode, "", ""
 		return errors.New("alipay response err"), res.StatusCode, "", ""
 	}
-	//return http.StatusOK, nil
 
 	return nil, res.StatusCode, rsp.QrCode, rsp.OutTradeNo
 }
+
+//func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float32, discount float32) (err error, code int, qrCode string, outTradeNo string) {
+//	totalAmount := fmt.Sprintf("%.2f", amount) // 保留两位小数
+//	// 规则如下
+//	// discount为前端传递的优惠金额 model.AlipayConfCache.Discount为从数据库中取的优惠金额 这两个值应当相等
+//	// 但是注意下面的几条规则
+//	// 1.如果用户的充值金额小于model.AlipayConfCache.Discount 那么则不使用优惠
+//	// 2.如果用户的充值金额等于model.AlipayConfCache.Discount 直接返回错误409，不允许充值0元
+//	// 3.只有当用户充值的金额大于model.AlipayConfCache.Discount时（如model.AlipayConfCache.Discount为10，充值金额amount为10.01）可以使用优惠
+//	// 4.充值金额不可为0或负数
+//	// 4.model.AlipayConfCache.Discount为0时候代表该支付方式没有任何优惠
+//	//
+//	if discount != model.AlipayConfCache.Discount && amount > model.AlipayConfCache.Discount { // 如果折扣金额不匹配
+//		return errors.New("discount amount not match"), http.StatusConflict, "", ""
+//	}
+//	discountableAmount := fmt.Sprintf("%.2f", discount)
+//
+//	// 请求参数
+//	bm := make(gopay.BodyMap)
+//	bm.Set("subject", subject).
+//		Set("out_trade_no", orderId).
+//		Set("total_amount", totalAmount). // 使用格式化后的字符串
+//		Set("discountable_amount", discountableAmount)
+//
+//	rsp := new(struct {
+//		OutTradeNo string `json:"out_trade_no"`
+//		QrCode     string `json:"qr_code"`
+//	})
+//	// 创建订单
+//	res, err := PaymentInstanceRoot.AlipayInstance.DoAliPayAPISelfV3(context.Background(), "POST", "/v3/alipay/trade/precreate", bm, rsp)
+//	if err != nil {
+//		xlog.Errorf("client.TradePrecreate(), err:%v", err)
+//		//return http.StatusInternalServerError, err
+//		return errors.New("TradePrecreate err"), http.StatusInternalServerError, "", ""
+//	}
+//	xlog.Debugf("aliRsp:%s", js.Marshal(rsp))
+//	if res.StatusCode != http.StatusOK {
+//		xlog.Errorf("aliRsp.StatusCode:%d", res.StatusCode)
+//		//return
+//		//return res.StatusCode, "", ""
+//		return errors.New("alipay response err"), res.StatusCode, "", ""
+//	}
+//	//return http.StatusOK, nil
+//
+//	return nil, res.StatusCode, rsp.QrCode, rsp.OutTradeNo
+//}
 
 func DoAlipayV3QueryPreCreateTopUpOrderStatus(orderId string) (err error, tradeStatus string, tradeNo string, outTradeNo string, totalAmount string) {
 	bm := make(gopay.BodyMap)
