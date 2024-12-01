@@ -33,6 +33,14 @@ func (p *PaymentInstance) Initial() {
 				}
 				log.Println("初始化完成")
 			}
+		case "wechat":
+			{
+				// 项目待完善...
+			}
+		case "apple":
+			{
+				// 项目待完善...
+			}
 		}
 	}
 
