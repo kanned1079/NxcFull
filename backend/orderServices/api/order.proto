@@ -16,6 +16,8 @@ service OrderService {
   // 充值
   rpc CommitNewTopUpOrder(CommitNewTopUpOrderRequest) returns (CommitNewTopUpOrderResponse);
 
+  rpc QueryTopUpOrderStatus(QueryTopUpOrderStatusRequest) returns (QueryTopUpOrderStatusResponse);
+
   // 管理员的请求
   rpc GetAllOrdersAdmin(GetAllOrdersAdminRequest) returns (GetAllOrdersAdminResponse);
 
@@ -101,4 +103,23 @@ message CommitNewTopUpOrderResponse {
   string order_id = 3;
   bool created = 4;
   string msg = 5;
+}
+
+//
+
+message QueryTopUpOrderStatusRequest {
+  string order_id = 1;
+  string payment_method = 2;
+}
+
+message QueryTopUpOrderStatusResponse {
+  int32 code = 1;
+  string msg = 2;
+  string trade_status = 3;
+  string trade_no = 4;
+  string out_trade_no = 5;
+  string totalAmount = 6;
+  string buyer_pay_amount = 7;
+  string send_pay_date = 8;
+  //code, msg, tradeStatus, tradeNo, outTradeNo, totalAmount, buyerPayAmount, sendPayDate
 }

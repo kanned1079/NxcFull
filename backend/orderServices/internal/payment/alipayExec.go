@@ -2,6 +2,7 @@ package payment
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-pay/gopay"
@@ -21,6 +22,13 @@ func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float3
 
 	// 从缓存中获取折扣信息
 	confDiscount := model.AlipayConfCache.Discount
+	// 规则如下
+	// discount为前端传递的优惠金额 model.AlipayConfCache.Discount为从数据库中取的优惠金额 这两个值应当相等
+	// 但是注意下面的几条规则
+	// 1.如果用户的充值金额小于model.AlipayConfCache.Discount 那么则不使用优惠
+	// 2.如果用户的充值金额等于model.AlipayConfCache.Discount 直接返回错误409，不允许充值0元
+	// 3.只有当用户充值的金额大于model.AlipayConfCache.Discount时（如model.AlipayConfCache.Discount为10，充值金额amount为10.01）可以使用优惠
+	// 4.充值金额不可为0或负数
 
 	// 计算最终总金额
 	var finalAmount float32
@@ -71,85 +79,52 @@ func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float3
 	return nil, res.StatusCode, rsp.QrCode, rsp.OutTradeNo
 }
 
-//func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float32, discount float32) (err error, code int, qrCode string, outTradeNo string) {
-//	totalAmount := fmt.Sprintf("%.2f", amount) // 保留两位小数
-//	// 规则如下
-//	// discount为前端传递的优惠金额 model.AlipayConfCache.Discount为从数据库中取的优惠金额 这两个值应当相等
-//	// 但是注意下面的几条规则
-//	// 1.如果用户的充值金额小于model.AlipayConfCache.Discount 那么则不使用优惠
-//	// 2.如果用户的充值金额等于model.AlipayConfCache.Discount 直接返回错误409，不允许充值0元
-//	// 3.只有当用户充值的金额大于model.AlipayConfCache.Discount时（如model.AlipayConfCache.Discount为10，充值金额amount为10.01）可以使用优惠
-//	// 4.充值金额不可为0或负数
-//	// 4.model.AlipayConfCache.Discount为0时候代表该支付方式没有任何优惠
-//	//
-//	if discount != model.AlipayConfCache.Discount && amount > model.AlipayConfCache.Discount { // 如果折扣金额不匹配
-//		return errors.New("discount amount not match"), http.StatusConflict, "", ""
-//	}
-//	discountableAmount := fmt.Sprintf("%.2f", discount)
-//
-//	// 请求参数
-//	bm := make(gopay.BodyMap)
-//	bm.Set("subject", subject).
-//		Set("out_trade_no", orderId).
-//		Set("total_amount", totalAmount). // 使用格式化后的字符串
-//		Set("discountable_amount", discountableAmount)
-//
-//	rsp := new(struct {
-//		OutTradeNo string `json:"out_trade_no"`
-//		QrCode     string `json:"qr_code"`
-//	})
-//	// 创建订单
-//	res, err := PaymentInstanceRoot.AlipayInstance.DoAliPayAPISelfV3(context.Background(), "POST", "/v3/alipay/trade/precreate", bm, rsp)
-//	if err != nil {
-//		xlog.Errorf("client.TradePrecreate(), err:%v", err)
-//		//return http.StatusInternalServerError, err
-//		return errors.New("TradePrecreate err"), http.StatusInternalServerError, "", ""
-//	}
-//	xlog.Debugf("aliRsp:%s", js.Marshal(rsp))
-//	if res.StatusCode != http.StatusOK {
-//		xlog.Errorf("aliRsp.StatusCode:%d", res.StatusCode)
-//		//return
-//		//return res.StatusCode, "", ""
-//		return errors.New("alipay response err"), res.StatusCode, "", ""
-//	}
-//	//return http.StatusOK, nil
-//
-//	return nil, res.StatusCode, rsp.QrCode, rsp.OutTradeNo
-//}
-
-func DoAlipayV3QueryPreCreateTopUpOrderStatus(orderId string) (err error, tradeStatus string, tradeNo string, outTradeNo string, totalAmount string) {
+func DoAlipayV3QueryPreCreateTopUpOrderStatus(orderId string) (code int32, msg string, err error, tradeStatus string, tradeNo string, outTradeNo string, totalAmount string, buyerPayAmount string, sendPayDate string) {
 	bm := make(gopay.BodyMap)
 	bm.Set("out_trade_no", orderId)
-
-	//rsp := new(struct {
-	//	OutTradeNo string `json:"out_trade_no"`
-	//	QrCode     string `json:"qr_code"`
-	//})
+	// 调用查询接口
 	res, err := PaymentInstanceRoot.AlipayInstance.TradeQuery(context.Background(), bm)
-	log.Println(res)
+	jsonResp, _ := json.Marshal(res)
+	log.Println("res", string(jsonResp))
 	if res == nil { // 如果没有返回值
-		return errors.New("missing valid response"), "NULL_RESPONSE", "", "", ""
+		return 404, "支付结果获取失败", errors.New("missing valid response"), "NULL_RESPONSE", "", "", "", "", ""
 	}
+
+	if res.StatusCode == 400 {
+		log.Println("请先扫码")
+		return int32(WaitUserScanQrCode), "请先扫描二维码以创建订单", nil, "NULL_RESPONSE", "", "", "", "", ""
+	}
+
+	var resultCode int
+	var resultMsg string
 	switch res.TradeStatus {
 	case "WAIT_BUYER_PAY":
 		{
-			log.Println("交易创建，等待买家付款")
+			resultCode = ScannedQrCodeWaitUserPay
+			resultMsg = "交易创建成功_等待买家付款"
+			//return int32(ScannedQrCodeWaitUserPay), nil, res.TradeStatus, res.TradeNo, res.OutTradeNo, res.TotalAmount, res.BuyerPayAmount, res.SendPayDate
 		}
 
 	case "TRADE_CLOSED":
 		{
-			log.Println("未付款交易超时关闭，或支付完成后全额退款")
+			resultCode = TradeClosed
+			resultMsg = "未付款交易超时关闭_或支付完成后全额退款"
 		}
 
 	case "RADE_SUCCESS":
 		{
-			log.Println("交易支付成功")
+			resultCode = TradeSuccess
+			resultMsg = "交易支付成功"
 		}
 	case "TRADE_FINISHED":
 		{
-			log.Println("交易结束，不可退款")
+			resultCode = TradeFinished
+			resultMsg = "交易结束_不可退款"
 		}
 
 	}
-	return nil, res.TradeStatus, res.TradeNo, res.OutTradeNo, res.TotalAmount
+
+	return int32(resultCode), resultMsg, nil, res.TradeStatus, res.TradeNo, res.OutTradeNo, res.TotalAmount, res.BuyerPayAmount, res.SendPayDate
+
+	//return http.StatusOK, nil, res.TradeStatus, res.TradeNo, res.OutTradeNo, res.TotalAmount, res.BuyerPayAmount, res.SendPayDate
 }

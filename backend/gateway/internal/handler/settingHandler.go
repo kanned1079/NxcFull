@@ -283,3 +283,31 @@ func HandleUserCommitNewTopUpOrder(context *gin.Context) {
 		"created":  resp.Created,
 	})
 }
+
+func HandleQueryTopUpOrderStatus(context *gin.Context) {
+	paymentMethod := context.Query("payment_method")
+	orderId := context.Query("order_id")
+	if paymentMethod == "" || orderId == "" {
+		context.SecureJSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "bad request",
+		})
+		return
+	}
+	log.Println("请求参数", paymentMethod, orderId)
+	resp, err := grpcClient.OrderServicesClient.QueryTopUpOrderStatus(sysContext.Background(), &orderPb.QueryTopUpOrderStatusRequest{
+		PaymentMethod: paymentMethod,
+		OrderId:       orderId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}

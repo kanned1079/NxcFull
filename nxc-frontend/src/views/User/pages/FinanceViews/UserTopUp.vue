@@ -202,8 +202,19 @@ let clickToPaymentApp = () => {
   window.open(topUpOrderResponse.value.qr_code, '_blank');
 }
 
-let checkPaymentResult = () => {
-
+let checkPaymentResult = async () => {
+  message.info('查询支付结果')
+  try {
+  let {data} = await instance.get('/api/user/v1/payment/top-up', {
+    params: {
+      payment_method: paymentMethodSelected.value,
+      order_id:topUpOrderResponse.value.order_id
+    }
+  })
+    console.log(data)
+  } catch(err: any) {
+    console.log(err)
+  }
 }
 
 onMounted(async () => {

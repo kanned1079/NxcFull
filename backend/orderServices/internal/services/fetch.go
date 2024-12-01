@@ -11,6 +11,7 @@ import (
 	pb "orderServices/api/proto"
 	"orderServices/internal/dao"
 	"orderServices/internal/model"
+	"orderServices/internal/payment"
 	"strconv"
 	"strings"
 	"time"
@@ -615,5 +616,44 @@ func (s *OrderServices) GetAllOrdersAdmin(context context.Context, request *pb.G
 		Msg:       "查询成功",
 		Orders:    orderBytes,
 		PageCount: pageCount,
+	}, nil
+}
+
+func (s *OrderServices) QueryTopUpOrderStatus(ctx context.Context, request *pb.QueryTopUpOrderStatusRequest) (*pb.QueryTopUpOrderStatusResponse, error) {
+	switch request.PaymentMethod {
+	case "alipay": // 支付宝
+		{
+			code, msg, err, tradeStatus, tradeNo, outTradeNo, totalAmount, buyerPayAmount, sendPayDate := payment.DoAlipayV3QueryPreCreateTopUpOrderStatus(request.OrderId)
+			if err != nil {
+				log.Println(err)
+			}
+			log.Println(code, msg, tradeStatus, tradeNo, outTradeNo, totalAmount, buyerPayAmount, sendPayDate)
+
+			return &pb.QueryTopUpOrderStatusResponse{
+				Code:           code,
+				Msg:            msg,
+				TradeStatus:    tradeStatus,
+				TradeNo:        tradeNo,
+				OutTradeNo:     outTradeNo,
+				TotalAmount:    totalAmount,
+				BuyerPayAmount: buyerPayAmount,
+				SendPayDate:    sendPayDate,
+			}, nil
+		}
+	case "wechat": // 微信支付
+		{
+			// 项目待完善...
+		}
+
+	case "apple": // Apple Pay支付
+		{
+			// 项目待完善
+		}
+
+	}
+
+	return &pb.QueryTopUpOrderStatusResponse{
+		Code: 409,
+		Msg:  "payment methods not found",
 	}, nil
 }

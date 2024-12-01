@@ -164,6 +164,7 @@ func StartApiGateways() {
 
 		userAuthorized.GET("payment/methods", handler.HandleGetAllPaymentMethodKv) // 获取所有存在的支付方式基础信息 名称 是否启用 优惠金额
 		userAuthorized.POST("payment/top-up", handler.HandleUserCommitNewTopUpOrder)
+		userAuthorized.GET("payment/top-up/check", handler.HandleQueryTopUpOrderStatus)
 
 	}
 
