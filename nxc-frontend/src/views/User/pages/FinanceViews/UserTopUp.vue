@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue"
+import {computed, onMounted, onBeforeUnmount, ref} from "vue"
 import {useRouter} from "vue-router";
 import {type MenuOption, useMessage} from "naive-ui"
 import {useI18n} from "vue-i18n";
@@ -12,13 +12,13 @@ import {
   CashOutline as cashIcon,
   CheckmarkOutline as checkIcon,
   ChevronForwardOutline as toRight,
+  ChevronForwardOutline as toRightIcon,
   CloseOutline as errIcon,
+  GiftOutline as giftIcon,
   LogoAlipay,
   LogoApple,
   LogoWechat,
-  TicketOutline as ticketIcon,
-  GiftOutline as giftIcon,
-  ChevronForwardOutline as toRightIcon,
+  CheckmarkCircle as scannedIcon,
 } from "@vicons/ionicons5"
 import instance from '@/axios/index'
 
@@ -190,6 +190,10 @@ let handleCommitNewTopUpOrder = async () => {
     if (data.code === 200) {
       Object.assign(topUpOrderResponse.value, data)
       showQrCodeModal.value = true
+      setTimeout(() => {
+
+        startQueryTopUpOrderStatusLoop()
+      }, 5000)
     }
   } catch (err: any) {
     console.log(err)
@@ -202,19 +206,82 @@ let clickToPaymentApp = () => {
   window.open(topUpOrderResponse.value.qr_code, '_blank');
 }
 
+/*
+const (
+	// WaitUserScanQrCode 预生成订单成功后的等待用户扫码
+	WaitUserScanQrCode = http.StatusAccepted // 202 - 请求已接受，但尚未处理，等待用户操作
+
+	// ScannedQrCodeWaitUserPay 用户扫描二维码后生成订单等待支付
+	ScannedQrCodeWaitUserPay = http.StatusProcessing // 102 - 请求已接收，正在处理中，但尚未完成
+
+	// TradeClosed 未付款交易超时关闭，或支付完成后全额退款
+	TradeClosed = http.StatusRequestTimeout // 408 - 请求超时，通常表示支付超时未完成
+
+	// TradeSuccess 交易成功
+	TradeSuccess = http.StatusOK // 200 - 请求成功并且已处理完毕
+
+	// TradeFinished TRADE_FINISHED，交易完成，表示交易结束
+	TradeFinished = http.StatusGone // 410 - 资源不再可用，交易已经结束
+)
+*/
+let resultCode = ref<number>(0)
+let qrCodeIsScanned = computed(() => resultCode.value === 102)
+// let qrCodeIsScanned = computed(() => true)
+
 let checkPaymentResult = async () => {
   message.info('查询支付结果')
   try {
-  let {data} = await instance.get('/api/user/v1/payment/top-up', {
-    params: {
-      payment_method: paymentMethodSelected.value,
-      order_id:topUpOrderResponse.value.order_id
-    }
-  })
+    let {data} = await instance.get('/api/user/v1/payment/top-up/check', {
+      params: {
+        payment_method: paymentMethodSelected.value,
+        order_id: topUpOrderResponse.value.order_id,
+        invite_user_id: userInfoStore.thisUser.inviteUserId,
+      }
+    })
+    resultCode.value = data.code || 0
+
     console.log(data)
-  } catch(err: any) {
+  } catch (err: any) {
     console.log(err)
   }
+}
+
+let queryLoopIntervalId = ref<number | undefined>(undefined)
+
+let startQueryTopUpOrderStatusLoop = () => {
+  // 异步请求函数
+  queryLoopIntervalId.value = setInterval(async () => {
+    await checkPaymentResult()
+    switch (resultCode.value) {
+      case 202: {
+        message.info('等待用户付款')
+        break
+      }
+      case 102: {
+        message.info('扫描二维码成功')
+        break
+      }
+      case 408: {
+        message.error('未付款交易超时关闭')
+        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+        break
+      }
+      case 200: {
+        message.success('交易成功')
+        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+
+        break
+      }
+      case 401: {
+        message.info('交易完成，不可退款')
+        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+
+        break
+      }
+
+    }
+  }, 2000)
+
 }
 
 onMounted(async () => {
@@ -223,6 +290,10 @@ onMounted(async () => {
   await handleGetAllPaymentMethods()
 
   animated.value = true
+})
+
+onBeforeUnmount(() => {
+  clearInterval(queryLoopIntervalId.value?queryLoopIntervalId.value:undefined)
 })
 
 </script>
@@ -269,7 +340,7 @@ export default {
                   <giftIcon/>
                 </n-icon>
               </template>
-                  截止2024年12月31日前，使用支付宝充值优惠2.9USDT，使用Apple Pay充值优惠20USDT。
+              截止2024年12月31日前，使用支付宝充值优惠2.9USDT，使用Apple Pay充值优惠20USDT。
               {{ `当前优惠 ` }}
             </n-alert>
             <n-card
@@ -440,23 +511,43 @@ export default {
 
     <div class="qr-body">
       <div class="qr-code-body">
-        <n-qr-code
-            :size="150"
-            :value="topUpOrderResponse.qr_code"
-            error-correction-level="H"
-            :color="'#252525'"
-            type="svg"
-        />
+        <n-spin
+            :rotate="false"
+            size="large"
+            :show="qrCodeIsScanned"
+        >
+<!--          <n-alert title="啦啦啦" type="success">-->
+<!--            明天再打开行李箱。宝贝，挂电话啦。-->
+<!--          </n-alert>-->
+          <n-qr-code
+              :size="160"
+              :value="topUpOrderResponse.qr_code"
+              error-correction-level="H"
+              :color="!qrCodeIsScanned?'#252525':'rgba(25,25,25,0.5)'"
+              type="svg"
+          />
+          <template #icon>
+            <n-icon color="#6cc837">
+              <scannedIcon />
+            </n-icon>
+          </template>
+          <template #description>
+            <p style="color: #6cc837; font-size: 1rem; font-weight: bold">
+              扫描成功
+            </p>
+          </template>
+        </n-spin>
+
         <n-button
-          text
-          type="default"
-          @click="clickToPaymentApp"
-          icon-placement="right"
-          style="margin-top: 5px"
-          >
+            text
+            type="default"
+            @click="clickToPaymentApp"
+            icon-placement="right"
+            style="margin-top: 5px"
+        >
           <template #icon>
             <n-icon>
-              <toRightIcon />
+              <toRightIcon/>
             </n-icon>
           </template>
           或点击跳转到APP
@@ -591,16 +682,19 @@ export default {
     justify-content: center;
     align-items: center;
   }
+
   .qr-hex {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     .amount {
       font-size: 1.35rem;
       font-weight: bold;
     }
+
     .order-detail {
       font-size: 1rem;
       opacity: 0.7;

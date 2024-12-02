@@ -111,7 +111,7 @@ func DoAlipayV3QueryPreCreateTopUpOrderStatus(orderId string) (code int32, msg s
 			resultMsg = "未付款交易超时关闭_或支付完成后全额退款"
 		}
 
-	case "RADE_SUCCESS":
+	case "TRADE_SUCCESS":
 		{
 			resultCode = TradeSuccess
 			resultMsg = "交易支付成功"

@@ -39,9 +39,14 @@ interface FrontendSettings {
     frontend_background_url: string;
 }
 
-interface SubscribeSettings {
-    user_modify_enable: boolean;
-    show_info_in_sub: boolean;
+// interface SubscribeSettings {
+//     user_modify_enable: boolean;
+//     show_info_in_sub: boolean;
+// }
+
+interface InviteRebateSettings {
+    invite_rebate_enable: boolean
+    invite_rebate_rate: number
 }
 
 interface ServerSettings {
@@ -76,7 +81,8 @@ interface Settings {
     site: SiteSettings;
     security: SecuritySettings;
     frontend: FrontendSettings;
-    subscribe: SubscribeSettings;
+    // subscribe: SubscribeSettings;
+    invite: InviteRebateSettings;
     server: ServerSettings;
     sendmail: SendmailSettings;
     notice: NoticeSettings;
@@ -119,9 +125,13 @@ const useSettingStore = defineStore('SettingStore', () => {
             frontend_theme: 'bambooGreen',  // 主题色
             frontend_background_url: '',    // 背景
         },
-        subscribe: {
-            user_modify_enable: true,   // 允许用户修改订阅
-            show_info_in_sub: false,    // 在订阅中展示订阅信息
+        // subscribe: {
+        //     user_modify_enable: true,   // 允许用户修改订阅
+        //     show_info_in_sub: false,    // 在订阅中展示订阅信息
+        // },
+        invite: {
+            invite_rebate_enable: false,
+            invite_rebate_rate: 0.00,
         },
         server: {
             server_token: '@zeBw2cSe6V^kCrz3uJQSd=FJU', // 通讯密钥

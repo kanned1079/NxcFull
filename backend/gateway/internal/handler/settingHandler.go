@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func HandleUpdateSingleOptions(context *gin.Context) {
@@ -294,10 +295,25 @@ func HandleQueryTopUpOrderStatus(context *gin.Context) {
 		})
 		return
 	}
-	log.Println("请求参数", paymentMethod, orderId)
+	inviteUserIdStr := context.Query("invite_user_id")
+	var inviteUserId int64
+	var err error
+
+	if inviteUserIdStr == "" {
+		inviteUserId = -1 // 如果为空，设置为 -1
+	} else {
+		inviteUserId, err = strconv.ParseInt(inviteUserIdStr, 10, 64)
+		if err != nil {
+			// 根据需要处理解析错误
+			log.Printf("Failed to parse invite_user_id: %v", err)
+			inviteUserId = -1
+		}
+	}
+	log.Println("请求参数", paymentMethod, orderId, inviteUserId)
 	resp, err := grpcClient.OrderServicesClient.QueryTopUpOrderStatus(sysContext.Background(), &orderPb.QueryTopUpOrderStatusRequest{
 		PaymentMethod: paymentMethod,
 		OrderId:       orderId,
+		InviteUserId:  inviteUserId,
 	})
 	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{

@@ -1,14 +1,15 @@
 package model
 
 type SystemSettingOptions struct {
-	Site      Site      `json:"site"`
-	Security  Security  `json:"security"`
-	Frontend  Frontend  `json:"frontend"`
-	Subscribe Subscribe `json:"subscription"`
-	Server    Server    `json:"server"`
-	Sendmail  Sendmail  `json:"sendmail"`
-	Notice    Notice    `json:"notice"`
-	Myapp     Myapp     `json:"myapp"`
+	Site     Site     `json:"site"`
+	Security Security `json:"security"`
+	Frontend Frontend `json:"frontend"`
+	//Subscribe Subscribe `json:"subscription"`
+	Invite   Invite   `json:"invite"`
+	Server   Server   `json:"server"`
+	Sendmail Sendmail `json:"sendmail"`
+	Notice   Notice   `json:"notice"`
+	Myapp    Myapp    `json:"myapp"`
 }
 type Site struct {
 	AppName        string `json:"app_name"`
@@ -42,9 +43,15 @@ type Frontend struct {
 	FrontendTheme         string `json:"frontend_theme"`
 	FrontendBackgroundURL string `json:"frontend_background_url"`
 }
-type Subscribe struct {
-	UserModifyEnable bool `json:"user_modify_enable"`
-	ShowInfoInSub    bool `json:"show_info_in_sub"`
+
+//type Subscribe struct {
+//	UserModifyEnable bool `json:"user_modify_enable"`
+//	ShowInfoInSub    bool `json:"show_info_in_sub"`
+//}
+
+type Invite struct {
+	InviteRebateEnable bool  `json:"invite_rebate_enable"`
+	InviteRebateRate   int32 `json:"invite_rebate_rate"`
 }
 type Server struct {
 	ServerToken        string `json:"server_token"`
