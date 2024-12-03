@@ -110,7 +110,8 @@ message CommitNewTopUpOrderResponse {
 message QueryTopUpOrderStatusRequest {
   string order_id = 1;
   string payment_method = 2;
-  int64 invite_user_id = 3;
+  int64 user_id = 3;
+  int64 invite_user_id = 4;
 }
 
 message QueryTopUpOrderStatusResponse {

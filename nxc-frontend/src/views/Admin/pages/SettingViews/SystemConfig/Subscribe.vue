@@ -29,15 +29,15 @@ export default {
     <div class="item">
         <span class="l-content">
           <div class="describe">
-            <p class="title">允许用户修改订阅</p>
-            <p class="shallow">开启后用户将会可以对订阅计划进行变更。</p>
+            <p class="title">启用用户返利</p>
+            <p class="shallow">如果启用则在被邀请的用户充值时，按照下面设置的充值比例给予用户返利。</p>
           </div>
         </span>
       <span class="r-content" style="text-align: right">
           <n-switch
               size="medium"
-              v-model:value="settingStore.settings.subscribe.user_modify_enable"
-              @update:value="settingStore.saveOption('subscribe','user_modify_enable', settingStore.settings.subscribe.user_modify_enable)"
+              v-model:value="settingStore.settings.invite.invite_rebate_enable"
+              @update:value="settingStore.saveOption('invite','invite_rebate_enable', settingStore.settings.invite.invite_rebate_enable)"
           />
         </span>
     </div>
@@ -45,15 +45,15 @@ export default {
     <div class="item">
         <span class="l-content">
           <div class="describe">
-            <p class="title">在订阅中展示订阅信息</p>
-            <p class="shallow">开启后将会在用户订阅节点时输出订阅信息。</p>
+            <p class="title">返利比例</p>
+            <p class="shallow">设置返利的金额比例。</p>
           </div>
         </span>
-      <span class="r-content" style="text-align: right">
-          <n-switch
-              size="medium"
-              v-model:value="settingStore.settings.subscribe.show_info_in_sub"
-              @update:value="settingStore.saveOption('subscribe','show_info_in_sub', settingStore.settings.subscribe.show_info_in_sub)"
+      <span class="r-content" style="">
+          <n-input-number
+              size="large"
+              v-model:value="settingStore.settings.invite.invite_rebate_rate"
+              @blur="settingStore.saveOption('invite','invite_rebate_rate', settingStore.settings.invite.invite_rebate_rate)"
           />
         </span>
     </div>

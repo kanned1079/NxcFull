@@ -17,4 +17,13 @@ const (
 
 	// TradeFinished TRADE_FINISHED，交易完成，表示交易结束
 	TradeFinished = http.StatusGone // 410 - 资源不再可用，交易已经结束
+
+	// UpdateUserBalanceSuccess 更新用户和邀请人的信息都成功
+	UpdateUserBalanceSuccess = http.StatusOK
+
+	// UpdateUserBalanceAccept 更新用户的成功 但是邀请人可能没有成功
+	UpdateUserBalanceAccept = http.StatusPartialContent
+
+	// UpdateUserBalanceFailed 都更新失败
+	UpdateUserBalanceFailed = http.StatusInternalServerError
 )

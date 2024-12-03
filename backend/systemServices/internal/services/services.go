@@ -163,15 +163,14 @@ func (s *SettingServices) UpdateSingleOption(context context.Context, request *p
 
 func (s *SettingServices) GetSystemSettings(rpcCtx context.Context, request *pb.GetSystemSettingsRequest) (*pb.GetSystemSettingsResponse, error) {
 	settingsMap := make(map[string]map[string]any)
-	categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "server", "site", "subscribe"}
+	categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "server", "site", "invite"}
 
 	// 遍历每个类别从 Redis 缓存中获取设置
 	for _, category := range categories {
 		redisKey := fmt.Sprintf("settings:%s", category)
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		// 使用 HGetALL 获取整个类别的键值对
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-
-		// 使用 HGETALL 获取整个类别的键值对
 		entries, err := dao.Rdb.HGetAll(ctx, redisKey).Result()
 		if err == nil && len(entries) > 0 {
 			// 如果 Redis 存在缓存数据，解析并填充 settingsMap

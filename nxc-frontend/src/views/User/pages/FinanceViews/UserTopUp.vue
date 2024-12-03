@@ -200,7 +200,7 @@ let handleCommitNewTopUpOrder = async () => {
   }
 }
 
-let showQrCodeModal = ref<boolean>(true)
+let showQrCodeModal = ref<boolean>(false)
 
 let clickToPaymentApp = () => {
   window.open(topUpOrderResponse.value.qr_code, '_blank');
@@ -229,12 +229,13 @@ let qrCodeIsScanned = computed(() => resultCode.value === 102)
 // let qrCodeIsScanned = computed(() => true)
 
 let checkPaymentResult = async () => {
-  message.info('查询支付结果')
+  // message.info('查询支付结果')
   try {
     let {data} = await instance.get('/api/user/v1/payment/top-up/check', {
       params: {
         payment_method: paymentMethodSelected.value,
         order_id: topUpOrderResponse.value.order_id,
+        user_id: userInfoStore.thisUser.id,
         invite_user_id: userInfoStore.thisUser.inviteUserId,
       }
     })
@@ -254,7 +255,7 @@ let startQueryTopUpOrderStatusLoop = () => {
     await checkPaymentResult()
     switch (resultCode.value) {
       case 202: {
-        message.info('等待用户付款')
+        // message.info('等待用户付款')
         break
       }
       case 102: {
@@ -262,20 +263,35 @@ let startQueryTopUpOrderStatusLoop = () => {
         break
       }
       case 408: {
-        message.error('未付款交易超时关闭')
+        // message.error('未付款交易超时关闭')
         clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
         break
       }
       case 200: {
+        showQrCodeModal.value = false
         message.success('交易成功')
         clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
-
+        setTimeout(async () => {
+         let updated = await userInfoStore.updateUserInfo();
+         if (updated) {
+           message.success("用户信息更新成功")
+           await router.push({
+             path: "/dashboard/profile",
+           })
+         } else {
+           message.warning('用户信息可能更新有延迟')
+         }
+        }, 1000)
         break
       }
       case 401: {
         message.info('交易完成，不可退款')
         clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
-
+        break
+      }
+      case 500: {
+        message.error('更新用户余额失败，请联系客服')
+        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
         break
       }
 
@@ -523,7 +539,7 @@ export default {
               :size="160"
               :value="topUpOrderResponse.qr_code"
               error-correction-level="H"
-              :color="!qrCodeIsScanned?'#252525':'rgba(25,25,25,0.5)'"
+              :color="!qrCodeIsScanned?'#252525':'rgba(25,25,25,0.3)'"
               type="svg"
           />
           <template #icon>
@@ -559,16 +575,16 @@ export default {
       </div>
 
     </div>
-    <div style="width: 100%; display: flex; flex-direction: column; margin-top: 20px">
-      <n-button
-          type="success"
-          secondary
-          :bordered="false"
-          @click="checkPaymentResult"
-      >
-        我已完成支付
-      </n-button>
-    </div>
+<!--    <div style="width: 100%; display: flex; flex-direction: column; margin-top: 20px">-->
+<!--      <n-button-->
+<!--          type="success"-->
+<!--          secondary-->
+<!--          :bordered="false"-->
+<!--          @click="checkPaymentResult"-->
+<!--      >-->
+<!--        我已完成支付-->
+<!--      </n-button>-->
+<!--    </div>-->
 
     <template #footer>
       <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">

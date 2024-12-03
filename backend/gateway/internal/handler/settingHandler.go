@@ -295,8 +295,10 @@ func HandleQueryTopUpOrderStatus(context *gin.Context) {
 		})
 		return
 	}
+	userIdStr := context.Query("user_id")
 	inviteUserIdStr := context.Query("invite_user_id")
 	var inviteUserId int64
+	var userId int64
 	var err error
 
 	if inviteUserIdStr == "" {
@@ -309,10 +311,18 @@ func HandleQueryTopUpOrderStatus(context *gin.Context) {
 			inviteUserId = -1
 		}
 	}
+	if userIdStr != "" {
+		userId, err = strconv.ParseInt(userIdStr, 10, 64)
+		if err != nil {
+			log.Printf("Failed to parse user_id: %v", err)
+		}
+	}
+
 	log.Println("请求参数", paymentMethod, orderId, inviteUserId)
 	resp, err := grpcClient.OrderServicesClient.QueryTopUpOrderStatus(sysContext.Background(), &orderPb.QueryTopUpOrderStatusRequest{
 		PaymentMethod: paymentMethod,
 		OrderId:       orderId,
+		UserId:        userId,
 		InviteUserId:  inviteUserId,
 	})
 	if err := failOnRpcError(err, resp); err != nil {

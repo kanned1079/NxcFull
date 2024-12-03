@@ -623,7 +623,7 @@ func (s *OrderServices) QueryTopUpOrderStatus(ctx context.Context, request *pb.Q
 	switch request.PaymentMethod {
 	case "alipay": // 支付宝
 		{
-			code, msg, err, tradeStatus, tradeNo, outTradeNo, totalAmount, buyerPayAmount, sendPayDate := payment.DoAlipayV3QueryPreCreateTopUpOrderStatus(request.OrderId)
+			code, msg, err, tradeStatus, tradeNo, outTradeNo, totalAmount, buyerPayAmount, sendPayDate := payment.DoAlipayV3QueryPreCreateTopUpOrderStatus(request.OrderId, request.UserId, request.InviteUserId)
 			if err != nil {
 				log.Println(err)
 			}
