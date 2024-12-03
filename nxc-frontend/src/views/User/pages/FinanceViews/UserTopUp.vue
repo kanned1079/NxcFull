@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ColoredRibbon from "@/views/utils/ColoredRibbon.vue"
 import {computed, onMounted, onBeforeUnmount, ref} from "vue"
 import {useRouter} from "vue-router";
 import {type MenuOption, useMessage} from "naive-ui"
@@ -248,6 +249,7 @@ let checkPaymentResult = async () => {
 }
 
 let queryLoopIntervalId = ref<number | undefined>(undefined)
+let topUpIsFinishedSuccess = ref<boolean>(false)
 
 let startQueryTopUpOrderStatusLoop = () => {
   // 异步请求函数
@@ -259,7 +261,7 @@ let startQueryTopUpOrderStatusLoop = () => {
         break
       }
       case 102: {
-        message.info('扫描二维码成功')
+        // message.info('扫描二维码成功')
         break
       }
       case 408: {
@@ -268,16 +270,18 @@ let startQueryTopUpOrderStatusLoop = () => {
         break
       }
       case 200: {
-        showQrCodeModal.value = false
+        // showQrCodeModal.value = false
+        topUpIsFinishedSuccess.value = true
         message.success('交易成功')
         clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+
         setTimeout(async () => {
          let updated = await userInfoStore.updateUserInfo();
          if (updated) {
            message.success("用户信息更新成功")
-           await router.push({
-             path: "/dashboard/profile",
-           })
+           // await router.push({
+           //   path: "/dashboard/profile",
+           // })
          } else {
            message.warning('用户信息可能更新有延迟')
          }
@@ -300,12 +304,17 @@ let startQueryTopUpOrderStatusLoop = () => {
 
 }
 
+let showRibbon = ref<boolean>(false)
+
 onMounted(async () => {
   themeStore.userPath = '/dashboard/topup'
 
   await handleGetAllPaymentMethods()
 
   animated.value = true
+  setTimeout(() => {
+    showRibbon.value = true
+  }, 500)
 })
 
 onBeforeUnmount(() => {
@@ -321,6 +330,7 @@ export default {
 </script>
 
 <template>
+  <ColoredRibbon :show="topUpIsFinishedSuccess"></ColoredRibbon>
   <div style="padding: 20px">
     <n-card
         hoverable
@@ -526,7 +536,7 @@ export default {
 
 
     <div class="qr-body">
-      <div class="qr-code-body">
+      <div class="qr-code-body" v-if="!topUpIsFinishedSuccess">
         <n-spin
             :rotate="false"
             size="large"
@@ -569,6 +579,15 @@ export default {
           或点击跳转到APP
         </n-button>
       </div>
+      <div style="text-align: center" v-if="topUpIsFinishedSuccess">
+        <p style="font-size: 1.5rem; font-weight: bold">
+          充值成功
+        </p>
+        <p style="font-size: 1rem; opacity: 0.6; margin-bottom: 30px">
+          感谢您的支持
+        </p>
+      </div>
+
       <div class="qr-hex">
         <p class="amount">{{ `${resultAmount.toFixed(2)} ${appInfoStore.appCommonConfig.currency}` }}</p>
         <p class="order-detail">{{ `#${topUpOrderResponse.order_id}` }}</p>
@@ -586,7 +605,7 @@ export default {
 <!--      </n-button>-->
 <!--    </div>-->
 
-    <template #footer>
+    <template #footer v-if="!topUpIsFinishedSuccess">
       <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">
         <div>
           支付值遇到问题？
@@ -596,6 +615,24 @@ export default {
               @click="router.push('/dashboard/tickets')"
           >
             联系客服
+            <n-icon style="margin-left: 4px">
+              <toRight/>
+            </n-icon>
+          </n-button>
+        </div>
+
+      </div>
+    </template>
+    <template #footer v-else>
+      <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">
+        <div>
+
+          <n-button
+              type="primary"
+              text
+              @click="router.push('/dashboard/purchase')"
+          >
+            去购买订阅
             <n-icon style="margin-left: 4px">
               <toRight/>
             </n-icon>
