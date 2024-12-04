@@ -397,6 +397,7 @@ onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/usermanager'
   await getAllUsers()
   animated.value = true
+
 })
 
 </script>

@@ -155,7 +155,7 @@ export default {
         <!--        </div>-->
         <!-- 引入悬浮左侧的介绍内容 -->
         <transition name="slide2-fade">
-          <div v-if="animated.appNameAnimate" class="intro">
+          <div v-if="animated.appNameAnimate" class="intro" style="z-index: 1600">
             <div v-if="animated.appNameAnimate" class="web-name">
               <p class="title">{{ t('welcome.A.welcomeTo') }}</p>
               <p class="app-name">{{ appInfosStore.appCommonConfig.app_name }}</p>

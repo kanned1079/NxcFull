@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ColoredRibbon from "@/views/utils/ColoredRibbon.vue"
+import SnowFall from "@/views/utils/SnowFall.vue";
 import {computed, onMounted, onBeforeUnmount, ref} from "vue"
 import {useRouter} from "vue-router";
 import {type MenuOption, useMessage} from "naive-ui"
@@ -330,6 +331,8 @@ export default {
 </script>
 
 <template>
+<!--  <SnowFall :show="showRibbon"></SnowFall>-->
+<!--  <ColoredRibbon :show="showRibbon"></ColoredRibbon>-->
   <ColoredRibbon :show="topUpIsFinishedSuccess"></ColoredRibbon>
   <div style="padding: 20px">
     <n-card

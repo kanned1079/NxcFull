@@ -216,6 +216,7 @@ export default {
   justify-content: space-between;
   padding: 0 20px;
   color: #277aa8;
+  z-index: 10000;
 
   .left-content {
     display: flex;
