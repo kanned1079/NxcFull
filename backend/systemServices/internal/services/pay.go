@@ -49,42 +49,43 @@ func (s *SettingServices) EditPaymentSettingsBySystemName(ctx context.Context, r
 	}, nil
 }
 
-//func (s *SettingServices) GetAllPaymentSettingsKv(ctx context.Context, request *pb.GetAllPaymentSettingsKvRequest) (*pb.GetAllPaymentSettingsKvResponse, error) {
-//	// singleConf 单个支付方式的结构体
-//	singleConf := &struct {
-//		System   string  `json:"system"`
-//		Enabled  bool    `json:"enabled"`
-//		Discount float32 `json:"discount"`
-//	}{}
+//	func (s *SettingServices) GetAllPaymentSettingsKv(ctx context.Context, request *pb.GetAllPaymentSettingsKvRequest) (*pb.GetAllPaymentSettingsKvResponse, error) {
+//		// singleConf 单个支付方式的结构体
+//		singleConf := &struct {
+//			System   string  `json:"system"`
+//			Enabled  bool    `json:"enabled"`
+//			Discount float32 `json:"discount"`
+//		}{}
 //
-//	// 查询方式如下
-//	// 1.查询System列中所有的内容并去重 得到总共有多少种支付方式
-//	// 2.查询System为支付方式的名称下的Key为enabled得到其Value 这个代表此支付方式是否被启用 反序列化后得到bool类型
-//	// 3.查询System为支付方式的名称下的Key为discount得到其Value 这个代表可以优惠的金额 反序列化后得到float32类型
-//	// 最后返回的数据如下[{system: "alipay", enabled: true, discount: 0.71}, {...}, {...}] 但是注意这个需要被序列化后再返回
+//		// 查询方式如下
+//		// 1.查询System列中所有的内容并去重 得到总共有多少种支付方式
+//		// 2.查询System为支付方式的名称下的Key为enabled得到其Value 这个代表此支付方式是否被启用 反序列化后得到bool类型
+//		// 3.查询System为支付方式的名称下的Key为discount得到其Value 这个代表可以优惠的金额 反序列化后得到float32类型
+//		// 最后返回的数据如下[{system: "alipay", enabled: true, discount: 0.71}, {...}, {...}] 但是注意这个需要被序列化后再返回
 //
-//	/*
-//		数据库定义如下
-//		type PaymentSettings struct {
-//			ID        uint            `gorm:"primaryKey" json:"id"`
-//			System    string          `gorm:"size:50;not null;index:idx_system_key" json:"system"` // 支付系统名称
-//			Key       string          `gorm:"size:100;not null;index:idx_system_key" json:"key"`   // 配置键
-//			Value     json.RawMessage `gorm:"type:longtext;not null" json:"value"`                 // 配置值
-//			CreatedAt time.Time       `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-//			UpdatedAt time.Time       `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
-//			DeletedAt gorm.DeletedAt  `gorm:"index" json:"deleted_at"`
-//		}
-//	*/
+//		/*
+//			数据库定义如下
+//			type PaymentSettings struct {
+//				ID        uint            `gorm:"primaryKey" json:"id"`
+//				System    string          `gorm:"size:50;not null;index:idx_system_key" json:"system"` // 支付系统名称
+//				Key       string          `gorm:"size:100;not null;index:idx_system_key" json:"key"`   // 配置键
+//				Value     json.RawMessage `gorm:"type:longtext;not null" json:"value"`                 // 配置值
+//				CreatedAt time.Time       `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+//				UpdatedAt time.Time       `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+//				DeletedAt gorm.DeletedAt  `gorm:"index" json:"deleted_at"`
+//			}
+//		*/
 //
-//	// 数据库操作
-//	dao.Db.
+//		// 数据库操作
+//		dao.Db.
 //
-//	return &pb.GetAllPaymentSettingsKvResponse{
-//		Code: http.StatusOK,
-//		Msg:  "Success",
-//		Config: <返回的数据>,
-//	}, nil
-//}
+//		return &pb.GetAllPaymentSettingsKvResponse{
+//			Code: http.StatusOK,
+//			Msg:  "Success",
+//			Config: <返回的数据>,
+//		}, nil
+//	}
+var err error
 
 func (s *SettingServices) GetAllPaymentSettingsKv(ctx context.Context, request *pb.GetAllPaymentSettingsKvRequest) (*pb.GetAllPaymentSettingsKvResponse, error) {
 	// 定义结果集合
@@ -130,19 +131,29 @@ func (s *SettingServices) GetAllPaymentSettingsKv(ctx context.Context, request *
 		result = append(result, singleConf)
 	}
 
-	if resultJson, err := json.Marshal(result); err != nil {
+	var resultJson, discountMsgJson json.RawMessage
+	var discountMsgString string
+	discountMsgJson, err = readSettingFromDB("invite", "discount_info")
+
+	if err = json.Unmarshal(discountMsgJson, &discountMsgString); err != nil {
+		log.Println("get discount msg err: ", err)
+	}
+
+	if resultJson, err = json.Marshal(result); err != nil {
 		return &pb.GetAllPaymentSettingsKvResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "Failure " + err.Error(),
 		}, nil
-	} else {
-		// 返回结果
-		return &pb.GetAllPaymentSettingsKvResponse{
-			Code:   http.StatusOK,
-			Msg:    "Success",
-			Config: resultJson,
-		}, nil
 	}
+
+	// 返回结果
+	return &pb.GetAllPaymentSettingsKvResponse{
+		Code:        http.StatusOK,
+		Config:      resultJson,
+		DiscountMsg: discountMsgString,
+		Msg:         "Success",
+	}, nil
+
 }
 
 func (s *SettingServices) EnablePaymentSettingBySystemName(ctx context.Context, request *pb.EnablePaymentSettingBySystemNameRequest) (*pb.EnablePaymentSettingBySystemNameResponse, error) {

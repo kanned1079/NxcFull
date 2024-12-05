@@ -50,9 +50,12 @@ type Frontend struct {
 //}
 
 type Invite struct {
-	InviteRebateEnable bool  `json:"invite_rebate_enable"`
-	InviteRebateRate   int32 `json:"invite_rebate_rate"`
+	InviteRebateEnable bool   `json:"invite_rebate_enable"`
+	InviteRebateRate   int32  `json:"invite_rebate_rate"`
+	DiscountInfo       string `json:"discount_info"`
+	InviteInfo         string `json:"invite_info"`
 }
+
 type Server struct {
 	ServerToken        string `json:"server_token"`
 	ServerPullInterval int    `json:"server_pull_interval"`

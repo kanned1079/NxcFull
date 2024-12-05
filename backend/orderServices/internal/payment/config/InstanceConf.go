@@ -23,6 +23,7 @@ type InviteConf struct {
 
 var InviteConfCache InviteConf
 
+// FetchConfFromRedis 从Redis中取出优惠信息 每次调用拉取一次最新值
 func (i *InviteConf) FetchConfFromRedis() error {
 	// 定义 Redis 键
 	redisKey := "settings:invite"

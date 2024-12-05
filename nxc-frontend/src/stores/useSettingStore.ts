@@ -47,6 +47,8 @@ interface FrontendSettings {
 interface InviteRebateSettings {
     invite_rebate_enable: boolean
     invite_rebate_rate: number
+    discount_info: string
+    invite_info: string
 }
 
 interface ServerSettings {
@@ -132,6 +134,7 @@ const useSettingStore = defineStore('SettingStore', () => {
         invite: {
             invite_rebate_enable: false,
             invite_rebate_rate: 0.00,
+            discount_info: '',
         },
         server: {
             server_token: '@zeBw2cSe6V^kCrz3uJQSd=FJU', // 通讯密钥

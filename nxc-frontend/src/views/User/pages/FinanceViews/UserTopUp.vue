@@ -33,6 +33,7 @@ const userInfoStore = useUserInfoStore();
 const themeStore = useThemeStore();
 let animated = ref<boolean>(false)
 
+let discountMsg = ref<string>('')
 let topUpAmount = ref<number | null>()
 let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 
@@ -140,6 +141,7 @@ const handleGetAllPaymentMethods = async () => {
     const {data} = await instance.get('/api/user/v1/payment/methods');
     if (data.code === 200) {
       // 遍历服务器返回的数据并更新 `paymentMethodsList`
+      discountMsg.value = data.discount_msg || ''
       data.conf.forEach((item: MethodsFromServer) => methodsAvailable.value.push(item))
     }
   } catch (err) {
@@ -279,10 +281,12 @@ let startQueryTopUpOrderStatusLoop = () => {
         setTimeout(async () => {
          let updated = await userInfoStore.updateUserInfo();
          if (updated) {
-           message.success("用户信息更新成功")
-           // await router.push({
-           //   path: "/dashboard/profile",
-           // })
+           console.log("用户信息更新成功")
+           setTimeout(async () => {
+             await router.push({
+               path: "/dashboard/profile",
+             })
+           }, 3000)
          } else {
            message.warning('用户信息可能更新有延迟')
          }
@@ -360,17 +364,17 @@ export default {
         >
           <div class="box1">
             <n-alert
-                type="success"
-                :bordered="true"
+                type="warning"
+                :bordered="false"
                 style="margin-bottom: 10px"
+                v-if="discountMsg !== ''"
             >
               <template #icon>
                 <n-icon size="18">
                   <giftIcon/>
                 </n-icon>
               </template>
-              截止2024年12月31日前，使用支付宝充值优惠2.9USDT，使用Apple Pay充值优惠20USDT。
-              {{ `当前优惠 ` }}
+              {{ discountMsg }}
             </n-alert>
             <n-card
                 hoverable
@@ -556,12 +560,12 @@ export default {
               type="svg"
           />
           <template #icon>
-            <n-icon color="#6cc837">
+            <n-icon color="#66c18c">
               <scannedIcon />
             </n-icon>
           </template>
           <template #description>
-            <p style="color: #6cc837; font-size: 1rem; font-weight: bold">
+            <p style="color: #66c18c; font-size: 1rem; font-weight: bold">
               扫描成功
             </p>
           </template>

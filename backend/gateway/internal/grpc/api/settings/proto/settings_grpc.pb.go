@@ -28,6 +28,7 @@ const (
 	SettingsService_EditPaymentSettingsBySystemName_FullMethodName  = "/settings.SettingsService/EditPaymentSettingsBySystemName"
 	SettingsService_EnablePaymentSettingBySystemName_FullMethodName = "/settings.SettingsService/EnablePaymentSettingBySystemName"
 	SettingsService_DeletePaymentSettingBySystemName_FullMethodName = "/settings.SettingsService/DeletePaymentSettingBySystemName"
+	SettingsService_GetInviteUserMsg_FullMethodName                 = "/settings.SettingsService/GetInviteUserMsg"
 )
 
 // SettingsServiceClient is the client API for SettingsService service.
@@ -54,6 +55,8 @@ type SettingsServiceClient interface {
 	EnablePaymentSettingBySystemName(ctx context.Context, in *EnablePaymentSettingBySystemNameRequest, opts ...grpc.CallOption) (*EnablePaymentSettingBySystemNameResponse, error)
 	// pass 删除付款方式
 	DeletePaymentSettingBySystemName(ctx context.Context, in *DeletePaymentSettingBySystemNameRequest, opts ...grpc.CallOption) (*DeletePaymentSettingBySystemNameResponse, error)
+	// 杂项
+	GetInviteUserMsg(ctx context.Context, in *GetInviteUserMsgRequest, opts ...grpc.CallOption) (*GetInviteUserMsgResponse, error)
 }
 
 type settingsServiceClient struct {
@@ -154,6 +157,16 @@ func (c *settingsServiceClient) DeletePaymentSettingBySystemName(ctx context.Con
 	return out, nil
 }
 
+func (c *settingsServiceClient) GetInviteUserMsg(ctx context.Context, in *GetInviteUserMsgRequest, opts ...grpc.CallOption) (*GetInviteUserMsgResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInviteUserMsgResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetInviteUserMsg_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SettingsServiceServer is the server API for SettingsService service.
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
@@ -178,6 +191,8 @@ type SettingsServiceServer interface {
 	EnablePaymentSettingBySystemName(context.Context, *EnablePaymentSettingBySystemNameRequest) (*EnablePaymentSettingBySystemNameResponse, error)
 	// pass 删除付款方式
 	DeletePaymentSettingBySystemName(context.Context, *DeletePaymentSettingBySystemNameRequest) (*DeletePaymentSettingBySystemNameResponse, error)
+	// 杂项
+	GetInviteUserMsg(context.Context, *GetInviteUserMsgRequest) (*GetInviteUserMsgResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
 
@@ -214,6 +229,9 @@ func (UnimplementedSettingsServiceServer) EnablePaymentSettingBySystemName(conte
 }
 func (UnimplementedSettingsServiceServer) DeletePaymentSettingBySystemName(context.Context, *DeletePaymentSettingBySystemNameRequest) (*DeletePaymentSettingBySystemNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePaymentSettingBySystemName not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetInviteUserMsg(context.Context, *GetInviteUserMsgRequest) (*GetInviteUserMsgResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInviteUserMsg not implemented")
 }
 func (UnimplementedSettingsServiceServer) mustEmbedUnimplementedSettingsServiceServer() {}
 func (UnimplementedSettingsServiceServer) testEmbeddedByValue()                         {}
@@ -398,6 +416,24 @@ func _SettingsService_DeletePaymentSettingBySystemName_Handler(srv interface{}, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SettingsService_GetInviteUserMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInviteUserMsgRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetInviteUserMsg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetInviteUserMsg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetInviteUserMsg(ctx, req.(*GetInviteUserMsgRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SettingsService_ServiceDesc is the grpc.ServiceDesc for SettingsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -440,6 +476,10 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePaymentSettingBySystemName",
 			Handler:    _SettingsService_DeletePaymentSettingBySystemName_Handler,
+		},
+		{
+			MethodName: "GetInviteUserMsg",
+			Handler:    _SettingsService_GetInviteUserMsg_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

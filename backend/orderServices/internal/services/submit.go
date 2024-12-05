@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	pb "orderServices/api/proto"
-	"orderServices/internal/payment"
+	"orderServices/internal/payment/exec"
 	"orderServices/internal/puiblisher"
 	"orderServices/internal/utils"
 	"time"
@@ -80,7 +80,7 @@ func (s *OrderServices) CommitNewTopUpOrder(ctx context.Context, request *pb.Com
 	// 执行支付宝调用支付接口
 	var code int
 	var qrCode, tradeNo string
-	if err, code, qrCode, tradeNo = payment.DoAlipayV3PreCreateTopUpOrder("充值订单", postTopUpOrderData.OrderId, postTopUpOrderData.Amount); err != nil {
+	if err, code, qrCode, tradeNo = exec.DoAlipayV3PreCreateTopUpOrder("充值订单", postTopUpOrderData.OrderId, postTopUpOrderData.Amount); err != nil {
 		log.Println("payment.DoAliPayAPISelfV3 error:", err)
 		log.Println("code:", code)
 		log.Println("qrCode:", qrCode)

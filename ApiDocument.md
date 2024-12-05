@@ -106,13 +106,13 @@
   
   - **请求参数**
   
-    - `email` 用户邮箱地址
+    - `email (string)` 用户邮箱地址
     
-    - `password` 密码
+    - `password (string)` 密码
     
-    - `two_fa_code` 两步验证码
+    - `two_fa_code (string)` 两步验证码
     
-    - `role` 用户角色
+    - `role (string)` 用户角色
     
       - 请求示例
     
@@ -127,15 +127,15 @@
   
   - **响应参数**
   
-    - `code` 响应状态码
+    - `code (int32)` 响应状态码
     
-    - `isAuthed` 是否验证通过
+    - `isAuthed (bool)` 是否验证通过
     
-    - `msg` 提示消息
+    - `msg (string)` 提示消息
     
-    - `token` 用户Token
+    - `token (string)` 用户Token
     
-    - `user_data` 用户基本数据
+    - `user_data (Object{email: string, id: number, balance: number, ....})` 用户基本数据
     
       - 响应示例
     
@@ -178,11 +178,11 @@
   
 - **响应参数**
   
-  - `code` 响应状态码
+  - `code (int32)` 响应状态码
   
-  - `msg` 提示消息
+  - `msg (string)` 提示消息
   
-  - `settings` 系统配置项对象
+  - `settings (Object{frontend: Object{...}, site: Object:{...}})` 系统配置项对象
   
     - 响应示例
   
@@ -214,11 +214,11 @@
 
 - **请求参数**
 
-  - `category` 配置参数的类别
+  - `category (string)` 配置参数的类别
 
-  - `key` 配置参数的键
+  - `key (string)` 配置参数的键
 
-  - `value` 配置参数具体的值 可以是`bool/number/string`
+  - `value (string | bool | number | null)` 配置参数具体的值 可以是`bool/number/string`
 
     - 请求示例
 
@@ -232,7 +232,7 @@
 
 - **响应参数**
 
-  - `code` 响应状态码
+  - `code (int32)` 响应状态码
 
   - `msg` 提示信息
 
@@ -249,14 +249,158 @@
 
 #### 请求方式 `POST`
 
+- **功能** 测试邮件配置 如果成功则返回使用的配置信息
+
+- **是否需要携带Token** `YES`
+
+- **请求参数** `Params参数`
+
+  - `email (string)` 要发送到的邮箱地址
+
+    - 请求示例
+
+      ```json
+      {
+        email: "admin@ikanned.com"
+      }
+      ```
+
+- **响应参数**
+
+  - `code (int32)` 响应状态码
+
+  - `info (Object{from: string, host: string, port: int32, ...})` 如果正确 则返回正确的邮件配置信息
+
+  - `msg (string)` 提示信息
+
+    - 响应示例
+
+      ```json	
+      {
+          "code": 200,
+          "info": {
+              "from": "no-reply@ikanned.com",
+              "port": 465,
+              "use_ssl": true,
+          },
+          "msg": "发送测试邮件成功"
+      }
+      ```
+
+      
+
 
 ### **`/api/admin/v1/notice`**
 
 #### 请求方式 `GTE`
 
+- **功能** 获取所有的通知信息 注意请求params参数中需要携带`is_user`参数
+
+- **需要携带Token** `YES`
+
+- **请求参数**
+  - `page (number)` 分页页面号 *该参数用户请求时不可用*
+  
+  - `size (number)` 分页每一个页面条数 *该参数用户请求时不可用*
+  
+  - `is_user (boolean)` 是否为用户的请求
+  
+    - 请求示例
+  
+      ```json
+      {
+        page: 1,
+      	size: 10,
+      	is_user: false,
+      }
+      ```
+  
+- **响应参数**
+
+  - `code (int32)` 响应状态码
+
+  - `msg (string) ` 提示信息
+
+  - `notices ([Object{id: number, content: string, img_url: string}, Object{...}, ...])` 具体的通知信息 对象数组 
+
+    - 响应示例
+
+      ```json
+      {
+          "code": 200,
+          "msg": "获取成功",
+          "notices": [
+              {
+                  "content": "NxcNetworks预祝全體用戶2025年新年快樂。",
+                  "created_at": "2024-11-01T23:54:00+08:00",
+                  "deleted_at": null,
+                  "id": 18,
+                  "img_url": "https://ikanned.com:2444/d/Upload/nxc-test/notice-2025.jpg",
+                  "show": true,
+                  "tags": "优惠券",
+                  "title": "謹賀新年 2025",
+                  "updated_at": "2024-11-12T19:10:44+08:00"
+              },
+              {
+                  "content": "优惠券码：HappyWinter2024\n此优惠码使用截至日期2025-01-12，祝大家2025寒假快乐！",
+                  "created_at": "2024-11-01T23:49:47+08:00",
+                  "deleted_at": null,
+                  "id": 17,
+                  "img_url": "https://ikanned.com:2444/d/Upload/nxc-test/notice-winter.jpg",
+                  "show": true,
+                  "tags": "优惠券",
+                  "title": "2024冬季优惠 40%off",
+                  "updated_at": "2024-11-01T23:49:50+08:00"
+              },
+          ],
+          "page_count": 2
+      }
+      ```
+
+
 #### 请求方式 `POST`
 
-#### 请求方式 `PUT`
+- **功能** 添加一条新的通知
+
+- **需要携带Token** `YES`
+
+- **请求参数** `from-data`
+
+  - `title (string)` 要新增公告的标题 它将作为在用户首页置顶的轮播图中的标题
+
+  - `content (string)` 该公告的主要内容
+
+  - `tags (string)` 公告左上角的标题
+
+  - `img_url (string)` 如果公告有背景图片 在这里填写图片的直链
+
+    - 请求示例
+
+      ```json	
+      {
+        "title": "测试标题",
+        "content": "这里是公告内容",
+        "tags": "通知",
+        "img_url": "http://xxx.xxxx.x.com/bg.img"
+      }
+      ```
+
+- **响应参数**
+
+  - `code (int32)` 响应状态码
+
+  - `msg (string) ` 提示信息
+
+    - 响应示例	
+
+      ```json
+      {
+        "code": 200,
+        "msg": "新建通知成功"
+      }
+      ```
+
+#### x请求方式 `PUT`
 
 #### **`/api/admin/v1/notice/ststus`**
 

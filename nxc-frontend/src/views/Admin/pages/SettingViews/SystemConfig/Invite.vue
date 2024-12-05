@@ -21,7 +21,7 @@ export default {
 
 <template>
 
-  <n-card class="root" :embedded="true" title="订阅管理" :bordered="false">
+  <n-card class="root" :embedded="true" title="支付和返利" :bordered="false">
 <!--    <n-alert title="Warning 警告" type="warning" style="margin-bottom: 30px" :bordered="false">-->
 <!--      如果你更改了本页配置，需要对队列服务进行重启。&nbsp;另外本页配置优先级高于.env中邮件配置。-->
 <!--    </n-alert>-->
@@ -58,6 +58,39 @@ export default {
         </span>
     </div>
 
+    <div class="item">
+        <span class="l-content">
+          <div class="describe">
+            <p class="title">优惠信息</p>
+            <p class="shallow">设置优惠信息，它将会展示在充值页面顶部。</p>
+          </div>
+        </span>
+      <span class="r-content" style="">
+          <n-input
+              size="large"
+              v-model:value="settingStore.settings.invite.discount_info"
+              :placeholder="'设置优惠信息'"
+              @blur="settingStore.saveOption('invite','discount_info', settingStore.settings.invite.discount_info)"
+          />
+        </span>
+    </div>
+
+    <div class="item">
+        <span class="l-content">
+          <div class="describe">
+            <p class="title">邀请信息</p>
+            <p class="shallow">设置邀请信息，它将会展示在用户邀请页面，用于显示返利比例。</p>
+          </div>
+        </span>
+      <span class="r-content" style="">
+          <n-input
+              size="large"
+              v-model:value="settingStore.settings.invite.invite_info"
+              :placeholder="'设置返利信息'"
+              @blur="settingStore.saveOption('invite','invite_info', settingStore.settings.invite.invite_info)"
+          />
+        </span>
+    </div>
 
   </n-card>
 </template>

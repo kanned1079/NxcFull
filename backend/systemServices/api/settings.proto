@@ -46,6 +46,9 @@ service SettingsService {
 
   // pass 删除付款方式
   rpc DeletePaymentSettingBySystemName(DeletePaymentSettingBySystemNameRequest) returns (DeletePaymentSettingBySystemNameResponse);
+
+  // 杂项
+  rpc GetInviteUserMsg(GetInviteUserMsgRequest) returns (GetInviteUserMsgResponse);
 }
 
 // 更新单个设置项的请求
@@ -194,7 +197,8 @@ message GetAllPaymentSettingsKvRequest {
 message GetAllPaymentSettingsKvResponse {
   int32 code = 1;
   bytes config = 2;
-  string msg = 3;
+  string discount_msg = 3;
+  string msg = 4;
 }
 
 message EditPaymentSettingsBySystemNameRequest {
@@ -233,4 +237,16 @@ message GetPaymentMethodDetailsByNameResponse {
   int32 code = 1;
   string msg = 2;
   bytes details = 3;
+}
+
+//
+
+message GetInviteUserMsgRequest {
+
+}
+
+message GetInviteUserMsgResponse {
+  int32 code = 1;
+  string invite_msg = 2;
+  string msg = 3;
 }

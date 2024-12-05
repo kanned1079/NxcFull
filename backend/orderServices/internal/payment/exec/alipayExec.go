@@ -1,8 +1,7 @@
-package payment
+package exec
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-pay/gopay"
@@ -14,6 +13,7 @@ import (
 	"net/http"
 	"orderServices/internal/dao"
 	externalModel "orderServices/internal/model"
+	"orderServices/internal/payment"
 	"orderServices/internal/payment/config"
 	"orderServices/internal/payment/model"
 	"orderServices/internal/payment/utils"
@@ -73,7 +73,7 @@ func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float3
 	})
 
 	// 调用支付 API
-	res, err := PaymentInstanceRoot.AlipayInstance.DoAliPayAPISelfV3(context.Background(), "POST", "/v3/alipay/trade/precreate", bm, rsp)
+	res, err := payment.PaymentInstanceRoot.AlipayInstance.DoAliPayAPISelfV3(context.Background(), "POST", "/v3/alipay/trade/precreate", bm, rsp)
 	if err != nil {
 		xlog.Errorf("client.TradePrecreate(), err:%v", err)
 		return errors.New("TradePrecreate err"), http.StatusInternalServerError, "", ""
@@ -88,6 +88,7 @@ func DoAlipayV3PreCreateTopUpOrder(subject string, orderId string, amount float3
 	// 保存订单进redis缓存 有效时间2h
 	if err = utils.SavePreCreateOrder2Redis(rsp.OutTradeNo, amount, finalAmount, discountCopy); err != nil {
 		log.Println("set pre create order to redis err:", err)
+
 		return err, http.StatusInternalServerError, "", ""
 	}
 
@@ -98,16 +99,16 @@ func DoAlipayV3QueryPreCreateTopUpOrderStatus(orderId string, userid int64, invi
 	bm := make(gopay.BodyMap)
 	bm.Set("out_trade_no", orderId)
 	// 调用查询接口
-	res, err := PaymentInstanceRoot.AlipayInstance.TradeQuery(context.Background(), bm)
-	jsonResp, _ := json.Marshal(res)
-	log.Println("res", string(jsonResp))
+	res, err := payment.PaymentInstanceRoot.AlipayInstance.TradeQuery(context.Background(), bm)
+	//jsonResp, _ := json.Marshal(res)
+	//log.Println("res", string(jsonResp))
 	if res == nil { // 如果没有返回值
 		return 404, "支付结果获取失败", errors.New("missing valid response"), "NULL_RESPONSE", "", "", "", "", ""
 	}
 
 	if res.StatusCode == 400 {
 		log.Println("请先扫码")
-		return int32(WaitUserScanQrCode), "请先扫描二维码以创建订单", nil, "NULL_RESPONSE", "", "", "", "", ""
+		return int32(payment.WaitUserScanQrCode), "请先扫描二维码以创建订单", nil, "NULL_RESPONSE", "", "", "", "", ""
 	}
 
 	var resultCode int
@@ -115,20 +116,20 @@ func DoAlipayV3QueryPreCreateTopUpOrderStatus(orderId string, userid int64, invi
 	switch res.TradeStatus {
 	case "WAIT_BUYER_PAY":
 		{
-			resultCode = ScannedQrCodeWaitUserPay
+			resultCode = payment.ScannedQrCodeWaitUserPay
 			resultMsg = "交易创建成功_等待买家付款"
 			//return int32(ScannedQrCodeWaitUserPay), nil, res.TradeStatus, res.TradeNo, res.OutTradeNo, res.TotalAmount, res.BuyerPayAmount, res.SendPayDate
 		}
 
 	case "TRADE_CLOSED":
 		{
-			resultCode = TradeClosed
+			resultCode = payment.TradeClosed
 			resultMsg = "未付款交易超时关闭_或支付完成后全额退款"
 		}
 
 	case "TRADE_SUCCESS":
 		{
-			resultCode = TradeSuccess
+			resultCode = payment.TradeSuccess
 			resultMsg = "交易支付成功"
 			// 执行更新
 			resultCode = int(UpdateUserBalanceAfterPaymentSuccess(orderId, userid, inviteUserId))
@@ -136,7 +137,7 @@ func DoAlipayV3QueryPreCreateTopUpOrderStatus(orderId string, userid int64, invi
 		}
 	case "TRADE_FINISHED":
 		{
-			resultCode = TradeFinished
+			resultCode = payment.TradeFinished
 			resultMsg = "交易结束_不可退款"
 		}
 
@@ -155,7 +156,7 @@ func UpdateUserBalanceAfterPaymentSuccess(outTradeNo string, userId int64, invit
 	// discount 优惠金额
 	if err != nil {
 		log.Println("GetPreCreateOrderFromRedis error:", err)
-		return UpdateUserBalanceFailed
+		return payment.UpdateUserBalanceFailed
 	}
 	log.Println("redis订单信息", finalAmount, discount, amount)
 
@@ -175,14 +176,14 @@ func UpdateUserBalanceAfterPaymentSuccess(outTradeNo string, userId int64, invit
 	if result := tx.Model(&externalModel.User{}).Where("id =?", userId).First(&user); errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		tx.Rollback()
 		log.Println("找不到用户", userId)
-		return UpdateUserBalanceFailed
+		return payment.UpdateUserBalanceFailed
 	}
 	user.Balance += amount
 
 	if result := tx.Model(&externalModel.User{}).Where("id =?", userId).Save(&user); result.RowsAffected == 0 {
 		tx.Rollback()
 		log.Println("没有修改用户余额", userId)
-		return UpdateUserBalanceFailed
+		return payment.UpdateUserBalanceFailed
 	}
 
 	// 如果有邀请人，处理佣金
@@ -207,14 +208,14 @@ func UpdateUserBalanceAfterPaymentSuccess(outTradeNo string, userId int64, invit
 				if result := tx.Model(&externalModel.User{}).Where("id =?", inviteUserId).First(&inviteUser); errors.Is(result.Error, gorm.ErrRecordNotFound) {
 					tx.Rollback()
 					log.Println("找不到邀请人", inviteUserId)
-					return UpdateUserBalanceFailed
+					return payment.UpdateUserBalanceFailed
 				}
 				inviteUser.Balance += commission
 
 				if result := tx.Model(&externalModel.User{}).Where("id =?", inviteUserId).Save(&inviteUser); result.RowsAffected == 0 {
 					tx.Rollback()
 					log.Println("没有修改邀请人余额", inviteUserId)
-					return UpdateUserBalanceFailed
+					return payment.UpdateUserBalanceFailed
 				}
 
 				log.Println("邀请人佣金已更新")
@@ -226,9 +227,9 @@ func UpdateUserBalanceAfterPaymentSuccess(outTradeNo string, userId int64, invit
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
 		log.Println("事务提交失败:", err)
-		return UpdateUserBalanceFailed
+		return payment.UpdateUserBalanceFailed
 	} else {
 		log.Println("用户余额和佣金更新成功")
-		return UpdateUserBalanceSuccess
+		return payment.UpdateUserBalanceSuccess
 	}
 }

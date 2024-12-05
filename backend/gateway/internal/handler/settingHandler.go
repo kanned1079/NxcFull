@@ -168,9 +168,10 @@ func HandleGetAllPaymentMethodKv(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{
-		"code": resp.Code,
-		"msg":  resp.Msg,
-		"conf": confMap,
+		"code":         resp.Code,
+		"msg":          resp.Msg,
+		"conf":         confMap,
+		"discount_msg": resp.DiscountMsg,
 	})
 }
 
