@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref, computed, onMounted, h} from "vue";
+import {ref, computed, onMounted, h, onBeforeMount} from "vue";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {
   CheckmarkDoneOutline as passOrderIcon, ChevronDownOutline as downIcon,
@@ -23,10 +23,12 @@ const themeStore = useThemeStore();
 const message = useMessage();
 
 let animated = ref<boolean>(false);
+let listAnimated = ref<boolean>(false)
 let showCreateInviteCodeMention = ref<boolean>(false);
 let showTableLoading = ref<boolean>(true)
 
 let myFaCode = ref<string>('')
+let inviteMsg = ref<string>('')
 
 interface MyInvitedUser {
   id: number
@@ -80,9 +82,6 @@ const columns = [
   },
 ];
 
-
-
-
 let handleCreateMyInviteCode = async () => {
   try {
     animated.value = false
@@ -92,12 +91,30 @@ let handleCreateMyInviteCode = async () => {
     if (data.code === 200) {
       console.log('created ok.');
       await handleGetMyInviteCode()
+      await handleGetMyInvitedUserList()
     } else {
       message.error('创建失败' + data.msg || '');
     }
   } catch (err: any) {
     console.log(err
     )
+  }
+}
+
+let handleGetInviteMsg = async () => {
+  try {
+    let {data} = await instance.get('/api/user/v1/invite/banner')
+    if (data.code === 200) {
+      console.log(data)
+      inviteMsg.value = data.invite_msg || ''
+      // animated.value = true
+    } else if (data.code === 404) {
+      console.log('无')
+    } else {
+      console.log(data.msg)
+    }
+  } catch (err: any) {
+    console.log(err)
   }
 }
 
@@ -133,6 +150,7 @@ let handleGetMyInvitedUserList = async () => {
       }
     })
     if (data.code === 200) {
+      listAnimated.value = true
       myInvitedUserList.value = []
       // console.log(data)
       pageCount.value = data.page_count
@@ -172,10 +190,14 @@ const copyText = async (key: string, event: MouseEvent) => {
   }
 };
 
+onBeforeMount(() => {
+  handleGetInviteMsg()
+})
+
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/invite'
-
+  // await handleGetInviteMsg()
   await handleGetMyInviteCode()
 
   if (myFaCode.value !== '') {
@@ -204,17 +226,21 @@ export default {
         :title="'我的邀请'"
     ></n-card>
 
-    <n-card
-        hoverable
-        :bordered="false"
-        :embedded="true"
-        content-style="padding: 0"
-        style="margin-top: 10px"
-    >
-      <n-alert type="success" :bordered="false">
-        当您邀请的用户充值成功时，您可以获得其充值金额的10%。
-      </n-alert>
-    </n-card>
+    <n-collapse-transition :show="inviteMsg !== ''">
+      <n-card
+          hoverable
+          :bordered="false"
+          :embedded="true"
+          content-style="padding: 0"
+          style="margin-top: 10px"
+      >
+        <n-alert type="success" :bordered="false">
+          {{ inviteMsg }}
+        </n-alert>
+      </n-card>
+    </n-collapse-transition>
+
+
 
 
   </div>
@@ -288,45 +314,51 @@ export default {
       </n-card>
 
 
-      <n-card
-          hoverable
-          :embedded="true"
-          :bordered="false"
-          style="margin-top: 20px"
-          content-style="padding: 0"
-      >
-        <div style="padding: 20px">
-          <p style="font-weight: bold; font-size: 1.1rem">我邀请的用户</p>
+      <transition name="slide-fade">
+        <div v-if="listAnimated">
+          <n-card
+              hoverable
+              :embedded="true"
+              :bordered="false"
+              style="margin-top: 20px"
+              content-style="padding: 0"
+          >
+            <div style="padding: 20px">
+              <p style="font-weight: bold; font-size: 1.1rem">我邀请的用户</p>
 
+            </div>
+
+            <n-data-table
+                striped
+                class="table"
+                :columns="columns"
+                :data="myInvitedUserList"
+                :pagination="false"
+                :bordered="true"
+                :loading="showTableLoading"
+            />
+          </n-card>
+
+          <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+            <n-pagination
+                size="medium"
+                v-model:page.number="dataSize.page"
+                :page-count="pageCount"
+                @update:page="animated=false; handleGetMyInvitedUserList()"
+            />
+            <n-select
+                style="width: 160px; margin-left: 20px"
+                v-model:value.number="dataSize.pageSize"
+                size="small"
+                :options="dataCountOptions"
+                :remote="true"
+                @update:value="animated=false; dataSize.page = 1; handleGetMyInvitedUserList()"
+            />
+          </div>
         </div>
+      </transition>
 
-        <n-data-table
-            striped
-            class="table"
-            :columns="columns"
-            :data="myInvitedUserList"
-            :pagination="false"
-            :bordered="true"
-            :loading="showTableLoading"
-        />
-      </n-card>
 
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; handleGetMyInvitedUserList()"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; handleGetMyInvitedUserList()"
-        />
-      </div>
 
     </div>
   </transition>

@@ -5,7 +5,7 @@ import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
-import {useDialog, useMessage} from 'naive-ui'
+import {useDialog} from 'naive-ui'
 import {formatDate} from "@/utils/timeFormat"
 import LoadingBefore from "@/views/utils/LoadingBefore.vue";
 import {
@@ -89,17 +89,20 @@ let pathById = [
 ]
 
 let haveOpenTickets = ref<boolean>(false)
+let openingTicketCount = ref<number>(0)
 
 let checkIsUserHaveOpenTickets = async () => {
   try {
     let {data} = await instance.get('/api/user/v1/ticket/check', {
       params: {
-        is_user: true,
+        user_id: userInfoStore.thisUser.id,
       }
     })
     if (data.code === 200) {
-      thisNotices.value = data.notices
-      data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
+      // thisNotices.value = data.notices
+      // data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
+      haveOpenTickets.value = data.exist || false
+      openingTicketCount.value = data.ticket_count || 0
     }
   } catch (error) {
     console.log(error)
@@ -163,8 +166,8 @@ onMounted(async () => {
   themeStore.userPath = '/dashboard/summary'
   themeStore.menuSelected = 'user-dashboard'
 
-  await getAllNotices()
   await checkIsUserHaveOpenTickets()
+  await getAllNotices()
   await getActivePlanList()
 
 
@@ -188,10 +191,23 @@ export default {
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-      <n-alert :bordered="false" style="margin-bottom: 20px" title="" type="warning">
+
+      <!--      <n-collapse-transition :show="haveOpenTickets">-->
+      <n-alert
+          :bordered="false"
+          style="margin-bottom: 20px"
+          title=""
+          type="warning"
+          v-if="haveOpenTickets"
+      >
         <div style="display: flex; flex-direction: row; align-items: center">
-          您有待处理的工单
-          <n-button style="margin-left: 5px" text type="primary" @click="router.push({path: '/dashboard/tickets'})">
+          {{ `您有${openingTicketCount}条待处理的工单` }}
+          <n-button
+              style="margin-left: 5px"
+              text
+              type="warning"
+              @click="router.push({path: '/dashboard/tickets'})"
+          >
             去查看
             <n-icon>
               <toRightIcon/>
@@ -199,6 +215,8 @@ export default {
           </n-button>
         </div>
       </n-alert>
+      <!--      </n-collapse-transition>-->
+
       <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
         <n-carousel show-arrow autoplay style="border-radius: 3px">
           <n-card
@@ -298,7 +316,7 @@ export default {
           <div class="plan-item">
             <p style="font-size: 1.1rem; font-weight: bold; opacity: 0.9;">{{ plan.plan_name }}</p>
             <p style="font-size: 12px; opacity: 0.6; margin-top: 3px">
-              {{ t('userSummary.timeLeft', { msg: formatDate(plan.expiration_date) }) }}
+              {{ t('userSummary.timeLeft', {msg: formatDate(plan.expiration_date)}) }}
             </p>
           </div>
 
@@ -312,7 +330,9 @@ export default {
           <div style="display: flex; flex-direction: row; align-items: center; justify-content: end;">
             <n-button type="primary" text @click="router.push({path: '/dashboard/keys'})">
               查看所有密鑰
-            <n-icon style="margin-left: 5px"><toRightIcon/></n-icon>
+              <n-icon style="margin-left: 5px">
+                <toRightIcon/>
+              </n-icon>
             </n-button>
           </div>
         </div>

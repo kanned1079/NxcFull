@@ -152,12 +152,14 @@ func StartApiGateways() {
 
 		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
 
+		userAuthorized.GET("ticket/check", handler.HandleCheckIsUserHaveOpeningTickets)
 		userAuthorized.GET("/ticket", handler.HandleGetAllMyTickets)
 		userAuthorized.POST("/ticket", handler.HandleCreateNewTicket) // 新建工单
 		userAuthorized.DELETE("/ticket", handler.HandleCloseTicket)   // 关闭工单
 		//userAuthorized.PUT("/ticket/chat", handler.HandleSendChatContent) // 发送消息
 		//userAuthorized.GET("/ticket/chat", handler.HandleGetChatContent)  // 获取聊天消息内容
 
+		userAuthorized.GET("/invite/banner", handler.HandleGetUserInviteBanner)
 		userAuthorized.GET("/invite/code", handler.HandleGetUserInviteCodeByUserId)
 		userAuthorized.POST("/invite/code", handler.HandleCreateUserInviteCodeByUserId)
 		userAuthorized.GET("/invite/users", handler.HandleGetUserInvitedUserListByUserId)

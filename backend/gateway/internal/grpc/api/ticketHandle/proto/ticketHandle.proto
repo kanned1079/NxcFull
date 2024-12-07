@@ -13,6 +13,8 @@ service TicketHandleService {
   rpc GetChatContent (GetChatContentRequest) returns (GetChatContentResponse);
   // 获取所有工单 分为活跃的和所有工单 管理员的请求
   rpc GetAllTicket (GetAllTicketRequest) returns (GetAllTicketResponse);
+  // 查询用户是否有没有关闭的工单
+  rpc CheckIsUserHaveOpeningTickets(CheckIsUserHaveOpeningTicketsRequest) returns (CheckIsUserHaveOpeningTicketsResponse);
 }
 
 message GetUserTicketsByUserIdRequest {
@@ -61,4 +63,15 @@ message GetAllTicketResponse {
   bytes pending_tickets = 4;
   int64 pending_page_count = 5;
   int64 finished_page_count = 6;
+}
+
+message CheckIsUserHaveOpeningTicketsRequest {
+  int64 user_id = 1;
+}
+
+message CheckIsUserHaveOpeningTicketsResponse {
+  int32 code = 1;
+  bool exist = 2;
+  int64 ticket_count = 3;
+  string msg = 4;
 }

@@ -338,3 +338,19 @@ func HandleQueryTopUpOrderStatus(context *gin.Context) {
 		"msg":  resp.Msg,
 	})
 }
+
+func HandleGetUserInviteBanner(context *gin.Context) {
+	resp, err := grpcClient.SettingServiceClient.GetInviteUserMsg(sysContext.Background(), &pb.GetInviteUserMsgRequest{})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"invite_msg": resp.InviteMsg,
+		"msg":        resp.Msg,
+	})
+}

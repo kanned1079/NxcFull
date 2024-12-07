@@ -217,3 +217,31 @@ func HandleGetAllTickets(context *gin.Context) {
 		"finished_page_count": resp.FinishedPageCount,
 	})
 }
+
+func HandleCheckIsUserHaveOpeningTickets(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.TicketHandleClient.CheckIsUserHaveOpeningTickets(sysContext.Background(), &ticketPb.CheckIsUserHaveOpeningTicketsRequest{
+		UserId: userId,
+	})
+	if err = failOnRpcError(err, resp); err != nil {
+		log.Println(err)
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":         resp.Code,
+		"msg":          resp.Msg,
+		"exist":        resp.Exist,
+		"ticket_count": resp.TicketCount,
+	})
+}

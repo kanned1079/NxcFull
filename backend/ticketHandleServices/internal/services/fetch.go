@@ -10,6 +10,62 @@ import (
 	"ticketHandleServices/internal/model"
 )
 
+// CheckIsUserHaveOpeningTickets 检查用户是否有还没有关闭的工单 管理员和用户都可请求
+// 返回值中 Exist:是否有没关闭的工单 TicketCount:有多少没关闭的工单
+func (s *TicketHandleServices) CheckIsUserHaveOpeningTickets(ctx context.Context, request *pb.CheckIsUserHaveOpeningTicketsRequest) (*pb.CheckIsUserHaveOpeningTicketsResponse, error) {
+	// 初始化变量
+	var isAdmin bool
+	var ticketCount int64
+
+	// 1. 检查用户是否为管理员
+	if err := dao.Db.Model(&model.User{}).
+		Where("id = ?", request.UserId).
+		Select("is_admin").
+		Scan(&isAdmin).Error; err != nil {
+		return &pb.CheckIsUserHaveOpeningTicketsResponse{
+			Code:        http.StatusInternalServerError,
+			Msg:         "查询用户信息失败",
+			Exist:       false,
+			TicketCount: 0,
+		}, err
+	}
+
+	// 2. 根据用户身份查询未关闭的工单数量
+	if isAdmin {
+		// 管理员：查询所有未关闭的工单
+		if err := dao.Db.Model(&model.Ticket{}).
+			Where("status != ?", 204). // 204 表示关闭的状态
+			Count(&ticketCount).Error; err != nil {
+			return &pb.CheckIsUserHaveOpeningTicketsResponse{
+				Code:        http.StatusInternalServerError,
+				Msg:         "查询管理员工单失败",
+				Exist:       false,
+				TicketCount: 0,
+			}, err
+		}
+	} else {
+		// 普通用户：查询该用户的未关闭工单
+		if err := dao.Db.Model(&model.Ticket{}).
+			Where("user_id = ? AND status != ?", request.UserId, 204).
+			Count(&ticketCount).Error; err != nil {
+			return &pb.CheckIsUserHaveOpeningTicketsResponse{
+				Code:        http.StatusInternalServerError,
+				Msg:         "查询用户工单失败",
+				Exist:       false,
+				TicketCount: 0,
+			}, err
+		}
+	}
+
+	// 3. 根据结果构造返回值
+	return &pb.CheckIsUserHaveOpeningTicketsResponse{
+		Code:        http.StatusOK,
+		Msg:         "success",
+		Exist:       ticketCount > 0, // 存在未关闭工单的标志
+		TicketCount: ticketCount,
+	}, nil
+}
+
 func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, request *pb.GetUserTicketsByUserIdRequest) (*pb.GetUserTicketsByUserIdResponse, error) {
 	var tickets []model.Ticket
 	if result := dao.Db.Model(&model.Ticket{}).Where("user_id = ?", request.UserId).Find(&tickets); result.Error != nil {
@@ -64,93 +120,6 @@ func (s *TicketHandleServices) GetChatContent(context context.Context, request *
 		Content: chatHistoryJson,
 	}, nil
 }
-
-//func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb.GetAllTicketRequest) (*pb.GetAllTicketResponse, error) {
-//	/*
-//		修改功能
-//		该查询分为两个部分 1.查询活跃的工单 2.查询已经完成的工单的数量
-//		因此需要修改分页参数 一共有四个 每一组两个
-//		request.PendingPage	活跃工单的页面
-//		request.PendingSize	活跃工单的每一个页面的条目
-//		request.FinishedPage 已经结束的工单的页面
-//		request.FinishedSize 已经结束的工单每一个页面的条目
-//		还需要根据这些分页参数来计算总的页面数量
-//	*/
-//	var err error
-//	var tickets []model.Ticket
-//	var activeTickets []model.Ticket
-//	var ticketsJson, activeTicketsJson json.RawMessage
-//
-//	// 计算分页的起始位置
-//	offset := (request.Page - 1) * request.Size
-//	limit := request.Size
-//
-//	// 查询状态为 204 的工单（所有工单）并分页
-//	if result := dao.Db.Model(&model.Ticket{}).
-//		Where("status = ?", 204).
-//		Order("created_at DESC").
-//		Offset(int(offset)).
-//		Limit(int(limit)).
-//		Find(&tickets); result.Error != nil {
-//		log.Println(result.Error)
-//		return &pb.GetAllTicketResponse{
-//			Code: http.StatusInternalServerError,
-//			Msg:  "查询失败：" + result.Error.Error(),
-//		}, nil
-//	}
-//
-//	// 查询所有活跃的工单（status != 204，不分页）
-//	if result := dao.Db.Model(&model.Ticket{}).
-//		Where("status != ?", 204).
-//		Order("created_at DESC").
-//		Find(&activeTickets); result.Error != nil {
-//		log.Println(result.Error)
-//		return &pb.GetAllTicketResponse{
-//			Code: http.StatusInternalServerError,
-//			Msg:  "查询失败：" + result.Error.Error(),
-//		}, nil
-//	}
-//
-//	// 计算所有工单总数以进行页数计算
-//	var totalTickets int64
-//	if result := dao.Db.Model(&model.Ticket{}).
-//		Where("status = ?", 204).
-//		Count(&totalTickets); result.Error != nil {
-//		log.Println("无法计算总页数：", result.Error)
-//		return &pb.GetAllTicketResponse{
-//			Code: http.StatusInternalServerError,
-//			Msg:  "无法计算总页数：" + result.Error.Error(),
-//		}, nil
-//	}
-//	pageCount := int((totalTickets + int64(request.Size) - 1) / int64(request.Size))
-//
-//	// 序列化 tickets 和 activeTickets
-//	if ticketsJson, err = json.Marshal(tickets); err != nil {
-//		log.Println("tickets 序列化失败")
-//		return &pb.GetAllTicketResponse{
-//			Code: http.StatusInternalServerError,
-//			Msg:  "序列化失败：" + err.Error(),
-//		}, nil
-//	}
-//	if activeTicketsJson, err = json.Marshal(activeTickets); err != nil {
-//		log.Println("activeTickets 序列化失败")
-//		return &pb.GetAllTicketResponse{
-//			Code: http.StatusInternalServerError,
-//			Msg:  "序列化失败：" + err.Error(),
-//		}, nil
-//	}
-//
-//	// 返回结果
-//	return &pb.GetAllTicketResponse{
-//		Code:           http.StatusOK,
-//		Msg:            "获取成功",
-//		Tickets:        ticketsJson,
-//		PendingTickets: activeTicketsJson,
-//		PageCount:      int64(pageCount), // 设置总页数
-//		//PendingPageCount: 10,	计算活跃工单的页面数
-//		//FinishedPageCount: 10, 计算已结束工单的页面数
-//	}, nil
-//}
 
 func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb.GetAllTicketRequest) (*pb.GetAllTicketResponse, error) {
 	/*
