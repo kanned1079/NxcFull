@@ -1,19 +1,12 @@
 <script lang="ts" setup>
-import {ref, computed, onMounted, h, onBeforeMount} from "vue";
+import {computed, h, onBeforeMount, onMounted, ref} from "vue";
 import useUserInfoStore from "@/stores/useUserInfoStore";
-import {
-  CheckmarkDoneOutline as passOrderIcon, ChevronDownOutline as downIcon,
-  LinkOutline as linkIcon,
-  PauseOutline as closeOrderIcon,
-  CopyOutline as copyIcon,
-  CheckmarkOutline as copiedIcon,
-} from "@vicons/ionicons5"
+import {CheckmarkOutline as copiedIcon, CopyOutline as copyIcon,} from "@vicons/ionicons5"
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useI18n} from "vue-i18n";
 import useThemeStore from "@/stores/useThemeStore";
 import instance from "@/axios";
-import {NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
-import renderIcon from "@/utils/iconFormator";
+import {NButton, NIcon, NTag, useMessage} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 
 const {t} = useI18n();
@@ -241,8 +234,6 @@ export default {
     </n-collapse-transition>
 
 
-
-
   </div>
 
 
@@ -263,7 +254,7 @@ export default {
               size="small"
               @click="showCreateInviteCodeMention=true"
           >
-            {{ myFaCode===''?'生成邀请码':'刷新邀请码' }}
+            {{ myFaCode === '' ? '生成邀请码' : '刷新邀请码' }}
           </n-button>
         </div>
 
@@ -276,8 +267,8 @@ export default {
             <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请码' }}</n-td>
             <n-td style="background-color: rgba(0,0,0,0.0);">
               <n-tag
-                type="default"
-                checkable
+                  type="default"
+                  checkable
               >
                 {{ myFaCode !== '' ? myFaCode : '您还没有邀请码' }}
               </n-tag>
@@ -294,7 +285,7 @@ export default {
 
                 <div class="fa-link-main">
                   <p class="fa-link">
-                    {{myFaCode !== '' ? faLink : '请先生成邀请码' }}
+                    {{ myFaCode !== '' ? faLink : '请先生成邀请码' }}
                   </p>
                   <n-icon v-if="myFaCode !== '' && !copySuccess" class="fa-link-copy-icon">
                     <copyIcon/>
@@ -359,7 +350,6 @@ export default {
       </transition>
 
 
-
     </div>
   </transition>
 
@@ -411,10 +401,12 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+
   .fa-link {
     margin-right: 6px;
     transition: ease 200ms;
   }
+
   .fa-link-copy-icon {
     transition: ease 200ms;
     opacity: 0;
@@ -425,6 +417,7 @@ export default {
   .fa-link {
     text-decoration: underline;
   }
+
   .fa-link-copy-icon {
     opacity: 0.7;
   }
