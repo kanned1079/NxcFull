@@ -2,7 +2,10 @@ package main
 
 import (
 	"gateway/internal/config"
+	"gateway/internal/config/remote"
+	"gateway/internal/dao"
 	"gateway/internal/etcd"
+	"gateway/internal/middleware"
 	"gateway/internal/routers"
 	"log"
 )
@@ -28,15 +31,38 @@ func init() {
 	etcd.InitEtcdClient() // 初始化etcd服务器
 	//GrpcClients = grpc2.NewClients() // 初始化所有的rpc客户端连接
 	//userServiceClient = pb.NewUserServiceClient(GrpcClients.UserServiceClient)
+	if err = remote.MyRedisConfig.Get(); err != nil {
+		panic(err)
+	}
+	dao.InitRedisServer()
 
-}
-
-func main() {
-	//routers.StartApiGateways()
 	if err = config.GetServerEnv(); err != nil {
 		log.Println("获取运行环境参数错误")
 		panic(err)
 	}
+
+}
+
+func main() {
+
+	// 使用 WaitGroup 来等待所有 goroutine
+	//var wg sync.WaitGroup
+	//
+	////wg.Add(1)
+	////go func() {
+	////	defer wg.Done()
+	////	go middleware.StartApiAccessCountCron()
+	////}()
+	//
+	//wg.Add(1)
+	//go func() {
+	//	defer wg.Done()
+	//	go routers.StartApiGateways()
+	//}()
+	//
+	//wg.Wait()
+	go middleware.StartApiAccessCountCron()
+
 	routers.StartApiGateways()
 
 }

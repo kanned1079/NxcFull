@@ -36,8 +36,20 @@ let checkIsUserHaveOpenTickets = async () => {
   }
 }
 
-onBeforeMount(() => {
-  checkIsUserHaveOpenTickets()
+let getAppOverview = async () => {
+  try {
+    let {data} = await instance.get('/api/admin/v1/app/overview')
+    if (data.code === 200) {
+      console.log(data)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+onBeforeMount(async () => {
+  await checkIsUserHaveOpenTickets()
+  await getAppOverview()
 })
 
 onMounted(() => {

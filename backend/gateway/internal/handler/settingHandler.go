@@ -354,3 +354,25 @@ func HandleGetUserInviteBanner(context *gin.Context) {
 		"msg":        resp.Msg,
 	})
 }
+
+func HandleGetAppOverview(context *gin.Context) {
+	resp, err := grpcClient.SettingServiceClient.GetAdminDashboardData(sysContext.Background(), &pb.GetAdminDashboardDataRequest{})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":                     resp.Code,
+		"msg":                      resp.Msg,
+		"income_yesterday":         resp.IncomeYesterday,
+		"income_this_month":        resp.IncomeThisMonth,
+		"api_access_count_history": resp.ApiAccessCountHistory,
+		"income_count_history":     resp.IncomeCountHistory,
+		"active_users_count":       resp.ActiveUsersCount,
+		"inactive_users_count":     resp.InactiveUsersCount,
+		"new_users_yesterday":      resp.NewUsersYesterday,
+	})
+}

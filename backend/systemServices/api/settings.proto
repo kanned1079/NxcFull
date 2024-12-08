@@ -49,6 +49,9 @@ service SettingsService {
 
   // 杂项
   rpc GetInviteUserMsg(GetInviteUserMsgRequest) returns (GetInviteUserMsgResponse);
+
+  // 管理员首页的图表
+  rpc GetAdminDashboardData(GetAdminDashboardDataRequest) returns (GetAdminDashboardDataResponse);
 }
 
 // 更新单个设置项的请求
@@ -249,4 +252,22 @@ message GetInviteUserMsgResponse {
   int32 code = 1;
   string invite_msg = 2;
   string msg = 3;
+}
+
+//
+
+message GetAdminDashboardDataRequest {
+
+}
+
+message GetAdminDashboardDataResponse {
+  int32 code = 1;
+  string msg = 2;
+  float income_yesterday = 3; // 昨日收入
+  float income_this_month = 4;  // 当月收入
+  repeated int64 api_access_count_history = 5;
+  repeated float income_count_history = 6;
+  int64 active_users_count = 7;
+  int64 inactive_users_count = 8;
+  int64 new_users_yesterday = 9;
 }

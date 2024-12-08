@@ -11,7 +11,7 @@ import (
 var etcdServersAddr = []string{"api.ikanned.com:22379"}
 
 var (
-	cli      *clientv3.Client
+	EtcdCli  *clientv3.Client
 	srvCache = make(map[string]string)
 	cacheMux sync.RWMutex
 )
@@ -19,7 +19,7 @@ var (
 // InitEtcdClient 初始化 etcd 客户端
 func InitEtcdClient() {
 	var err error
-	cli, err = clientv3.New(clientv3.Config{
+	EtcdCli, err = clientv3.New(clientv3.Config{
 		Endpoints:   etcdServersAddr,
 		DialTimeout: 5 * time.Second,
 		Username:    "services",
@@ -49,11 +49,11 @@ func GetServiceAddress(serviceName string) string {
 	defer cancel()
 
 	// 如果cli没有被初始化则进行初始化
-	if cli == nil {
+	if EtcdCli == nil {
 		InitEtcdClient()
 	}
 
-	resp, err := cli.Get(ctx, "/services/"+serviceName)
+	resp, err := EtcdCli.Get(ctx, "/services/"+serviceName)
 	if err != nil || len(resp.Kvs) == 0 {
 		//log.Printf("获取服务 %s 地址错误: %v", serviceName, err)
 		log.Printf("\033[31m **START** 获取服务 %s 地址错误: %v **END**\033[0m", serviceName, err)

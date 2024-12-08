@@ -25,7 +25,10 @@ func StartApiGateways() {
 		context.Next()
 	})
 
+	router.Use(middleware.APICountMiddleware())
+
 	publicRoutes := router.Group("/api")
+	//publicRoutes.Use(middleware.APICountMiddleware())
 	//publicRoutes := router.Group("/ws")
 
 	// 这里是获取网站的标题 颜色 说明 配置
@@ -61,6 +64,9 @@ func StartApiGateways() {
 		adminAuthorized.GET("/server/status")
 		adminAuthorized.GET("/infrastructure/status", handler.GetSystemInfrastructureInfo)
 		//// adminAuthorized.POST("admin/save-settings", handleUpdateSystemSettings)
+
+		adminAuthorized.GET("/app/overview", handler.HandleGetAppOverview)
+
 		//
 		adminAuthorized.PUT("/setting", handler.HandleUpdateSingleOptions) // 修改单个配置项目
 		adminAuthorized.GET("/setting", handler.HandleGetSystemSetting)    // 获取所有的系统设置

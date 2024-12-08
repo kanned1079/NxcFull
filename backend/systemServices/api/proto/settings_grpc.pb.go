@@ -29,6 +29,7 @@ const (
 	SettingsService_EnablePaymentSettingBySystemName_FullMethodName = "/settings.SettingsService/EnablePaymentSettingBySystemName"
 	SettingsService_DeletePaymentSettingBySystemName_FullMethodName = "/settings.SettingsService/DeletePaymentSettingBySystemName"
 	SettingsService_GetInviteUserMsg_FullMethodName                 = "/settings.SettingsService/GetInviteUserMsg"
+	SettingsService_GetAdminDashboardData_FullMethodName            = "/settings.SettingsService/GetAdminDashboardData"
 )
 
 // SettingsServiceClient is the client API for SettingsService service.
@@ -57,6 +58,8 @@ type SettingsServiceClient interface {
 	DeletePaymentSettingBySystemName(ctx context.Context, in *DeletePaymentSettingBySystemNameRequest, opts ...grpc.CallOption) (*DeletePaymentSettingBySystemNameResponse, error)
 	// 杂项
 	GetInviteUserMsg(ctx context.Context, in *GetInviteUserMsgRequest, opts ...grpc.CallOption) (*GetInviteUserMsgResponse, error)
+	// 管理员首页的图表
+	GetAdminDashboardData(ctx context.Context, in *GetAdminDashboardDataRequest, opts ...grpc.CallOption) (*GetAdminDashboardDataResponse, error)
 }
 
 type settingsServiceClient struct {
@@ -167,6 +170,16 @@ func (c *settingsServiceClient) GetInviteUserMsg(ctx context.Context, in *GetInv
 	return out, nil
 }
 
+func (c *settingsServiceClient) GetAdminDashboardData(ctx context.Context, in *GetAdminDashboardDataRequest, opts ...grpc.CallOption) (*GetAdminDashboardDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAdminDashboardDataResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetAdminDashboardData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SettingsServiceServer is the server API for SettingsService service.
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
@@ -193,6 +206,8 @@ type SettingsServiceServer interface {
 	DeletePaymentSettingBySystemName(context.Context, *DeletePaymentSettingBySystemNameRequest) (*DeletePaymentSettingBySystemNameResponse, error)
 	// 杂项
 	GetInviteUserMsg(context.Context, *GetInviteUserMsgRequest) (*GetInviteUserMsgResponse, error)
+	// 管理员首页的图表
+	GetAdminDashboardData(context.Context, *GetAdminDashboardDataRequest) (*GetAdminDashboardDataResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
 
@@ -232,6 +247,9 @@ func (UnimplementedSettingsServiceServer) DeletePaymentSettingBySystemName(conte
 }
 func (UnimplementedSettingsServiceServer) GetInviteUserMsg(context.Context, *GetInviteUserMsgRequest) (*GetInviteUserMsgResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInviteUserMsg not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetAdminDashboardData(context.Context, *GetAdminDashboardDataRequest) (*GetAdminDashboardDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAdminDashboardData not implemented")
 }
 func (UnimplementedSettingsServiceServer) mustEmbedUnimplementedSettingsServiceServer() {}
 func (UnimplementedSettingsServiceServer) testEmbeddedByValue()                         {}
@@ -434,6 +452,24 @@ func _SettingsService_GetInviteUserMsg_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SettingsService_GetAdminDashboardData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAdminDashboardDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetAdminDashboardData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetAdminDashboardData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetAdminDashboardData(ctx, req.(*GetAdminDashboardDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SettingsService_ServiceDesc is the grpc.ServiceDesc for SettingsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -480,6 +516,10 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetInviteUserMsg",
 			Handler:    _SettingsService_GetInviteUserMsg_Handler,
+		},
+		{
+			MethodName: "GetAdminDashboardData",
+			Handler:    _SettingsService_GetAdminDashboardData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
