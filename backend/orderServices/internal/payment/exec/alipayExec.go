@@ -15,6 +15,7 @@ import (
 	externalModel "orderServices/internal/model"
 	"orderServices/internal/payment"
 	"orderServices/internal/payment/config"
+	"orderServices/internal/payment/count"
 	"orderServices/internal/payment/model"
 	"orderServices/internal/payment/utils"
 )
@@ -159,6 +160,9 @@ func UpdateUserBalanceAfterPaymentSuccess(outTradeNo string, userId int64, invit
 		return payment.UpdateUserBalanceFailed
 	}
 	log.Println("redis订单信息", finalAmount, discount, amount)
+
+	// 用于管理员统计页面的图表 开启协程不阻塞当前线程
+	go count.SaveIncomeCount2Redis(finalAmount)
 
 	// 启动事务
 	tx := dao.Db.Begin()

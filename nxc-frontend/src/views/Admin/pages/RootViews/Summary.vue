@@ -36,20 +36,11 @@ let checkIsUserHaveOpenTickets = async () => {
   }
 }
 
-let getAppOverview = async () => {
-  try {
-    let {data} = await instance.get('/api/admin/v1/app/overview')
-    if (data.code === 200) {
-      console.log(data)
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
+
 
 onBeforeMount(async () => {
+  // await getAppOverview()
   await checkIsUserHaveOpenTickets()
-  await getAppOverview()
 })
 
 onMounted(() => {
@@ -99,9 +90,6 @@ export default {
 
       <div class="setting-panel">
         <Settings></Settings>
-      </div>
-      <div class="income-panel">
-        <Income></Income>
       </div>
       <div class="income-chart">
         <IncomeChart></IncomeChart>
