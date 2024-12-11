@@ -269,5 +269,6 @@ message GetAdminDashboardDataResponse {
   repeated float income_count_history = 6;
   int64 active_users_count = 7;
   int64 inactive_users_count = 8;
-  int64 new_users_yesterday = 9;
+  int64 all_registered_users_count = 9;
+  int64 new_users_yesterday = 10;
 }

@@ -365,14 +365,15 @@ func HandleGetAppOverview(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{
-		"code":                     resp.Code,
-		"msg":                      resp.Msg,
-		"income_yesterday":         resp.IncomeYesterday,
-		"income_this_month":        resp.IncomeThisMonth,
-		"api_access_count_history": resp.ApiAccessCountHistory,
-		"income_count_history":     resp.IncomeCountHistory,
-		"active_users_count":       resp.ActiveUsersCount,
-		"inactive_users_count":     resp.InactiveUsersCount,
-		"new_users_yesterday":      resp.NewUsersYesterday,
+		"code":                       resp.Code,
+		"msg":                        resp.Msg,
+		"income_yesterday":           resp.IncomeYesterday,
+		"income_this_month":          resp.IncomeThisMonth,
+		"api_access_count_history":   resp.ApiAccessCountHistory,
+		"income_count_history":       resp.IncomeCountHistory,
+		"active_users_count":         resp.ActiveUsersCount,
+		"inactive_users_count":       resp.InactiveUsersCount,
+		"all_registered_users_count": resp.AllRegisteredUsersCount,
+		"new_users_yesterday":        resp.NewUsersYesterday,
 	})
 }

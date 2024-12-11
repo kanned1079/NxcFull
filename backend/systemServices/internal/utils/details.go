@@ -8,6 +8,7 @@ import (
 	"math"
 	"strconv"
 	"systemServices/internal/dao"
+	"systemServices/internal/model"
 	"time"
 )
 
@@ -153,4 +154,19 @@ func GetLast7DaysAndMonthIncome() (data []float32, yesterdayIncome float32, mont
 	yesterdayIncome = float32(math.Round(float64(yesterdayIncome)*100) / 100)
 
 	return incomes, yesterdayIncome, monthIncome, nil
+}
+
+func GetUserActiveRate() (active, inactive, all int64, err error) {
+	var allUserCount int64
+	var userActive int64
+	if result := dao.Db.Model(&model.User{}).Where("`status` = ?", true).Count(&allUserCount); result.Error != nil {
+		log.Println(result.Error)
+		return -1, -1, -1, result.Error
+	}
+	if result := dao.Db.Model(&model.User{}).Where("`status` = ? and `balance` > ?", true, 0.00).Count(&userActive); result.Error != nil {
+		log.Println(result.Error)
+		return -1, -1, -1, result.Error
+	}
+
+	return userActive, allUserCount - userActive, allUserCount, nil
 }

@@ -19,6 +19,9 @@ let apiAccessCount = ref<number[]>([])
 let incomeCount = ref<number[]>([])
 let yesterdayIncome = ref<number>(0.00)
 let monthIncome = ref<number>(0.00)
+let activeUserCount = ref<number>(0)
+let inactiveUserCount = ref<number>(0)
+let allUserCount = ref<number>(0)
 
 let getAppOverview = async () => {
   try {
@@ -335,6 +338,25 @@ let reloadCharts = () => {
   }
 }
 
+let usersInfo = ref<{ name: string; data: number }[]>([
+  {
+    name: '总注册用户数',
+    data: 2642,
+  },
+  {
+    name: '活跃用户数',
+    data: 82,
+  },
+  {
+    name: '非活跃用户数',
+    data: 24,
+  },
+  {
+    name: '封禁或注销',
+    data: 13,
+  }
+])
+
 let generalInfo = ref<{ name: string; data: string }[]>([
   {
     name: '浏览器时间',
@@ -357,13 +379,49 @@ let generalInfo = ref<{ name: string; data: string }[]>([
     data: computed(() => appInfoStore.appCommonConfig.app_url).value,
   },
   {
-    name: '当前系统时间',
+    name: '货币单位',
+    data: computed(() => appInfoStore.appCommonConfig.currency).value,
+  },
+  {
+    name: '允许用户注册',
+    data: computed(() => !appInfoStore.appCommonConfig.stop_register?'是':'否').value,
+  },
+])
+
+let serverInfo = ref<{ name: string; data: string }[]>([
+  {
+    name: '服务器时间',
     data: '2024-10-18 15:23:03',
   },
   {
-    name: '当前系统时间',
-    data: '2024-10-18 15:23:03',
+    name: 'API网关运行状态',
+    data: '运行正常 (https)',
   },
+  {
+    name: '数据库运行状态',
+    data: '运行正常',
+  },
+  {
+    name: 'Redis运行状态',
+    data: '运行正常',
+  },
+  {
+    name: 'Etcd运行状态',
+    data: '运行正常',
+  },
+  {
+    name: '服务器操作系统类型',
+    data: 'Linux 5.14.287',
+  },
+  {
+    name: '后端程序操作系统架构',
+    data: 'x86_64',
+  },
+  {
+    name: '启用的支付方式',
+    data: 'Wechat | Alipay | ApplePay',
+  },
+
 ])
 
 onBeforeMount(async () => {
@@ -405,13 +463,36 @@ export default {
 
 <template>
     <div class="root">
-      <n-card class="income-part-root" hoverable :embedded="true" :bordered="false" content-style="padding: 0;">
-        <n-flex style="justify-content: space-between;">
-          <div style="padding: 20px">
-            <n-statistic :label="t('adminViews.summary.incomeText')" tabular-nums>
-              <n-number-animation ref="numberAnimationInstRef" :precision="2" :from="0" :to="yesterdayIncome"/>
+      <n-card
+          class="income-part-root"
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          content-style="padding: 0;"
+      >
+        <n-flex
+            style="justify-content: space-between;"
+        >
+          <div
+              style="padding: 20px"
+          >
+            <n-statistic
+                :label="t('adminViews.summary.incomeText')"
+                tabular-nums
+            >
+              <n-number-animation
+                  ref="numberAnimationInstRef"
+                  :precision="2"
+                  :from="0"
+                  :to="yesterdayIncome"
+              />
               /
-              <n-number-animation ref="numberAnimationInstRef" :precision="2" :from="0" :to="monthIncome"/>
+              <n-number-animation
+                  ref="numberAnimationInstRef"
+                  :precision="2"
+                  :from="0"
+                  :to="monthIncome"
+              />
               <template #suffix>
                 {{ appInfoStore.appCommonConfig.currency }}
               </template>
@@ -427,6 +508,18 @@ export default {
       <div>
         <n-grid cols="1 s:2" responsive="screen" :x-gap="15" :y-gap="15">
           <n-grid-item>
+            <n-card class="user-count-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0" title="用户概览">
+              <n-table
+                  :bordered="false"
+                  :bottom-bordered="false"
+                  style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
+              >
+                <n-tr style=" margin-left: 200px" v-for="(item, index) in usersInfo" :key="index">
+                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.name }}</n-td>
+                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.data }}</n-td>
+                </n-tr>
+              </n-table>
+            </n-card>
             <n-card
                 title="最近一周API接口访问次数"
                 hoverable class="card1" :embedded="true" :bordered="false">
@@ -437,36 +530,74 @@ export default {
                 hoverable class="card2" :embedded="true" :bordered="false">
               <div class="internal" style="height: 280px" ref="incomeChartDOM"></div>
             </n-card>
-            <n-card
-                title="活跃用户占比"
-                hoverable class="card3" :embedded="true" :bordered="false">
-              <div class="internal" style="height: 360px" ref="userActivityDOM"></div>
-            </n-card>
+<!--            <n-card-->
+<!--                title="活跃用户占比"-->
+<!--                hoverable class="card3" :embedded="true" :bordered="false">-->
+<!--              <div class="internal" style="height: 360px" ref="userActivityDOM"></div>-->
+<!--            </n-card>-->
           </n-grid-item>
           <n-grid-item>
-            <n-card class="r-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0" title="一般">
+            <n-card
+                class="r-card"
+                hoverable
+                :embedded="true"
+                :bordered="false"
+                content-style="padding: 0"
+                title="一般"
+            >
               <n-table
                   :bordered="false"
                   :bottom-bordered="false"
                   style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
               >
-                <n-tr style=" margin-left: 200px" v-for="(item, index) in generalInfo" :key="index">
-                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.name }}</n-td>
-                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.data }}</n-td>
+                <n-tr
+                    style=" margin-left: 200px"
+                    v-for="(item, index) in generalInfo"
+                    :key="index"
+                >
+                  <n-td
+                      style="background-color: rgba(0,0,0,0.0);"
+                  >
+                    {{ item.name }}
+                  </n-td>
+                  <n-td
+                      style="background-color: rgba(0,0,0,0.0);"
+                  >
+                    {{ item.data }}
+                  </n-td>
                 </n-tr>
               </n-table>
             </n-card>
 
-            <n-card style="margin-top: 10px" class="r-card" hoverable :embedded="true" :bordered="false"
-                    content-style="padding: 0" title="一般">
+            <n-card
+                style="margin-top: 10px"
+                class="r-card"
+                hoverable
+                :embedded="true"
+                :bordered="false"
+                content-style="padding: 0"
+                title="系统配置"
+            >
               <n-table
                   :bordered="false"
                   :bottom-bordered="false"
                   style="background-color: rgba(0,0,0,0.0); padding: 0 15px 10px 15px"
               >
-                <n-tr style=" margin-left: 200px" v-for="(item, index) in generalInfo" :key="index">
-                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.name }}</n-td>
-                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.data }}</n-td>
+                <n-tr
+                    style=" margin-left: 200px"
+                    v-for="(item, index) in serverInfo"
+                    :key="index"
+                >
+                  <n-td
+                      style="background-color: rgba(0,0,0,0.0);"
+                  >
+                    {{ item.name }}
+                  </n-td>
+                  <n-td
+                      style="background-color: rgba(0,0,0,0.0);"
+                  >
+                    {{ item.data }}
+                  </n-td>
                 </n-tr>
               </n-table>
 
@@ -479,7 +610,7 @@ export default {
 
 <style scoped>
 .root {
-  padding: 15px;
+  padding: 15px 20px 20px 20px;
   display: flex;
   flex-direction: column;
   .income-part-root {
@@ -517,6 +648,11 @@ export default {
 
 .r-card {
 
+}
+
+.user-count-card {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 

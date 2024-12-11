@@ -20,12 +20,20 @@ func (s *SettingServices) GetAdminDashboardData(ctx context.Context, request *pb
 
 	// TODO 待实现用户占比操作
 
+	active, inactive, all, err := utils.GetUserActiveRate()
+	if err != nil {
+		log.Println("get active rate err:", err)
+	}
+
 	return &pb.GetAdminDashboardDataResponse{
-		Code:                  http.StatusOK,
-		Msg:                   "success",
-		ApiAccessCountHistory: apiAccessCount,
-		IncomeCountHistory:    incomeCount,
-		IncomeYesterday:       yesterday,
-		IncomeThisMonth:       month,
+		Code:                    http.StatusOK,
+		Msg:                     "success",
+		ApiAccessCountHistory:   apiAccessCount,
+		IncomeCountHistory:      incomeCount,
+		IncomeYesterday:         yesterday,
+		IncomeThisMonth:         month,
+		ActiveUsersCount:        active,
+		InactiveUsersCount:      inactive,
+		AllRegisteredUsersCount: all,
 	}, nil
 }

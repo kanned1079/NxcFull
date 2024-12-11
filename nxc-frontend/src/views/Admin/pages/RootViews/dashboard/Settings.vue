@@ -131,7 +131,7 @@ export default {
 
 <style lang="less" scoped>
 .root {
-  padding: 20px 20px 0 20px;
+  padding: 15px 20px 0 20px;
   display: flex;
   flex-direction: row;
   text-align: center;

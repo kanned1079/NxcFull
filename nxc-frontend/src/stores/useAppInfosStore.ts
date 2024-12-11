@@ -26,6 +26,7 @@ export interface AppCommonConfig {
     admin_bg: string;
     currency: string;
     currency_symbol: string;
+    stop_register: boolean;
 }
 
 const useAppInfosStore = defineStore('appInfosStore', () => {
@@ -54,6 +55,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         admin_bg: '',
         currency: 'USDT',
         currency_symbol: '$',
+        stop_register: false,   // false允许注册 true关闭注册
     })
 
     return {
