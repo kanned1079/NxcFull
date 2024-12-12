@@ -39,33 +39,7 @@ let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,5
 
 let paymentMethodSelected = ref<string>('')
 
-// interface PaymentMethodsKv {
-//   id: number
-//   name: string
-// }
-
-// let paymentMethodsKv = ref<PaymentMethodsKv[]>([
-//   {
-//     id: 1,
-//     name: "wechat",
-//   },
-//   {
-//     id: 2,
-//     name: "alipay",
-//   },
-//   {
-//     id: 3,
-//     name: "apple",
-//   }
-// ] as PaymentMethodsKv[])
-
-// interface QuickBalance {
-//   key: number
-//   value: number
-// }
-
 let methodsAvailable = ref<MethodsFromServer[]>([])
-
 
 let paymentMethodsList = ref<MenuOption[]>([
   {
