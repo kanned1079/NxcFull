@@ -4,6 +4,8 @@ import 'vfonts/Lato.css'
 import 'vfonts/FiraCode.css'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
+import useAppInfosStore from "@/stores/useAppInfosStore";
+
 // 语言国际化
 import { createI18n } from 'vue-i18n';
 import en_US from "@/language/en_US";
@@ -18,6 +20,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import naive, {zhCN} from "naive-ui";
+import useThemeStore from "@/stores/useThemeStore";
 // import bcrypt from 'bcryptjs'
 // Vue.use(bcrypt)
 
@@ -52,4 +55,12 @@ app.use(pinia)
 app.use(i18n)
 app.use(router)
 
+// const initApp = async () => {
+//     const appInfoStore = useAppInfosStore(pinia)
+//     await appInfoStore.getCommonConfig()
+//     app.mount('#app')
+//
+// }
+
 app.mount('#app')
+// initApp()

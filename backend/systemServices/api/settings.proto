@@ -52,6 +52,11 @@ service SettingsService {
 
   // 管理员首页的图表
   rpc GetAdminDashboardData(GetAdminDashboardDataRequest) returns (GetAdminDashboardDataResponse);
+
+  // 获取整个页面的配置信息
+  rpc GetBasicRuntimeEnvConfig(GetBasicRuntimeEnvConfigRequest) returns (GetBasicRuntimeEnvConfigResponse);
+
+  rpc GetRegisterEnvConfig(GetRegisterEnvConfigRequest) returns (GetRegisterEnvConfigResponse);
 }
 
 // 更新单个设置项的请求
@@ -271,4 +276,52 @@ message GetAdminDashboardDataResponse {
   int64 inactive_users_count = 8;
   int64 all_registered_users_count = 9;
   int64 new_users_yesterday = 10;
+}
+
+//
+
+message GetBasicRuntimeEnvConfigRequest {
+  string lang = 1;
+}
+
+message GetBasicRuntimeEnvConfigResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes config = 3;
+//  string app_name = 3;
+//  string app_sub_name = 4;
+//  string app_description = 5;
+//  string app_url = 6;
+//  string logo = 7;
+//  string user_bg = 8;
+//  string frontend_background_url = 9;
+//  string frontend_theme = 10;
+//  string currency = 11;
+//  string currency_symbol = 12;
+//  bool stop_register = 13;  // false允许注册 true关闭注册
+}
+
+//
+
+message GetRegisterEnvConfigRequest {
+  string lang = 1;
+}
+
+message GetRegisterEnvConfigResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes config = 3;
+//  string app_name = 3;
+//  string app_sub_name = 4;
+//  string app_description = 5;
+//  string app_url = 6;
+//  bool email_whitelist_suffix = 7;
+//  bool is_email_verify = 8;
+//  bool email_gmail_limit_enable = 9;
+//  bool is_invite_force = 10;
+//  bool is_recaptcha = 11;
+//  string logo = 12;
+//  string recaptcha_site_key = 13;
+//  string tos_url = 14;
+//  bool stop_register = 15;
 }

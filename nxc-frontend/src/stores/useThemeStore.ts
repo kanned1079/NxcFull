@@ -2,6 +2,7 @@ import {computed, type ComputedRef, type Ref, ref} from 'vue'
 import {defineStore} from "pinia";
 import {darkTheme, type GlobalThemeOverrides} from 'naive-ui';
 import useSettingStore from "@/stores/useSettingStore"
+import useAppInfosStore from "@/stores/useAppInfosStore";
 
 interface CustomThemeConfig {
     topLogoBgColor: string;
@@ -40,10 +41,15 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
     // 是否启用深色模式
     const enableDarkMode = ref<boolean>(false)
     // 主題名選擇
-    const selectedTheme = ref<string>('glacierBlue')
+    // const selectedTheme = ref<string>('glacierBlue')
+    const selectedTheme = ref<string>('bambooGreen')
 
     // 如在个性化中修改了主题 或者app挂载时候需要调用来应用设置
-    let setThemeFromSetting = () => selectedTheme.value = useSettingStore().settings.frontend.frontend_theme
+    let setThemeFromSetting = () => {
+        let appInfoStore = useAppInfosStore();
+        selectedTheme.value = appInfoStore.appCommonConfig.frontend_theme
+        console.log('当前主题：', selectedTheme.value)
+    }
 
     // saveTheme 保存到浏览器localStorage深色配置
     const saveEnableDarkMode = () => localStorage.setItem('themeCode', JSON.stringify({code: enableDarkMode.value as boolean}));
@@ -790,7 +796,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
     }
 
 }, {
-    // persist: true,
+    persist: true,
 })
 
 export default useThemeStore;

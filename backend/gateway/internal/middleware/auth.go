@@ -38,7 +38,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// 假设令牌中的角色字段名为 "role"
 		context.Set("username", claims["username"])
 		context.Set("userRole", claims["role"])
 		context.Next()

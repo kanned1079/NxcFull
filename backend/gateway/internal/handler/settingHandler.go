@@ -377,3 +377,106 @@ func HandleGetAppOverview(context *gin.Context) {
 		"new_users_yesterday":        resp.NewUsersYesterday,
 	})
 }
+
+func HandleGetAppRuntimeEnv(context *gin.Context) {
+	lang := context.Query("lang") // lang不是必选
+	resp, err := grpcClient.SettingServiceClient.GetBasicRuntimeEnvConfig(sysContext.Background(), &pb.GetBasicRuntimeEnvConfigRequest{
+		Lang: lang,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var config map[string]any
+	err = json.Unmarshal(resp.Config, &config)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	//app_name: string;
+	//app_sub_name: string;
+	//app_description: string;
+	//app_url: string;
+	//logo: string;
+	//user_bg: string;
+	//admin_bg: string;
+	//currency: string;
+	//currency_symbol: string;
+	//stop_register: boolean;
+	context.JSON(http.StatusOK, gin.H{
+		"code":   resp.Code,
+		"msg":    resp.Msg,
+		"config": config,
+		//"app_name":        resp.AppName,
+		//"app_sub_name":    resp.AppSubName,
+		//"app_description": resp.AppDescription,
+		//"app_url":         resp.AppUrl,
+		//"logo":            resp.Logo,
+		//"user_bg":         resp.UserBg,
+		//"admin_bg":        resp.AdminBg,
+		//"currency":        resp.Currency,
+		//"currency_symbol": resp.CurrencySymbol,
+		//"stop_register":   resp.StopRegister,
+	})
+}
+
+func HandleGetRegisterEnv(context *gin.Context) {
+	lang := context.Query("lang") // lang不是必选
+	resp, err := grpcClient.SettingServiceClient.GetRegisterEnvConfig(sysContext.Background(), &pb.GetRegisterEnvConfigRequest{
+		Lang: lang,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var config map[string]any
+	err = json.Unmarshal(resp.Config, &config)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+		/*
+					app_name: 'Nxc Cloud International',
+			        app_sub_name: '全球站点',
+			        app_description: '全球站点',
+			        app_url: 'http://localhost:5173',
+			        email_whitelist_suffix: false,
+			        is_email_verify: true,
+			        email_gmail_limit_enable: false,
+			        is_invite_force: true,
+			        is_recaptcha: false,
+			        logo: 'logo.svg',
+			        recaptcha_site_key: 'password',
+			        tos_url: 'https://ikanned.com:24444/',
+		*/
+		"config": config,
+		//"app_name":                 resp.AppName,
+		//"app_sub_name":             resp.AppSubName,
+		//"app_description":          resp.AppDescription,
+		//"app_url":                  resp.AppUrl,
+		//"email_whitelist_suffix":   resp.EmailWhitelistSuffix,
+		//"is_email_verify":          resp.IsEmailVerify,
+		//"email_gmail_limit_enable": resp.EmailGmailLimitEnable,
+		//"is_invite_force":          resp.IsInviteForce,
+		//"is_recaptcha":             resp.IsRecaptcha,
+		//"logo":                     resp.Logo,
+		//"recaptcha_site_key":       resp.RecaptchaSiteKey,
+		//"tos_url":                  resp.TosUrl,
+	})
+}

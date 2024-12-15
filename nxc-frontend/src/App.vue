@@ -3,8 +3,7 @@ import {onMounted, toRaw, onBeforeUnmount, onBeforeMount, watch, computed} from 
 import {RouterView} from 'vue-router';
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
-import {type NConfigProvider, NThemeEditor} from 'naive-ui'
-import { useDark, useToggle } from '@vueuse/core';
+import {type NConfigProvider} from 'naive-ui'
 
 const themeStore = useThemeStore();
 const appInfosStore = useAppInfosStore()
@@ -35,14 +34,16 @@ watch(isDark, (val: boolean) => {
   themeStore.enableDarkMode = val
 })
 
-// watch(window.matchMedia('(prefers-color-scheme: dark)'), (value) => {
-//   value? themeStore.enableDarkMode=true:themeStore.enableDarkMode = false;
-// })
 
 
 onBeforeMount(() => {
-
+  appInfosStore.getCommonConfig()
+  themeStore.setThemeFromSetting()
 })
+
+// onMounted(() => {
+//   themeStore.setThemeFromSetting()
+// })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize); // 组件卸载时移除监听器
