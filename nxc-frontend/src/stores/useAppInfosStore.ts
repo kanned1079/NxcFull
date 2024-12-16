@@ -82,6 +82,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
                 appCommonConfig.value.logo = data.config.logo_url
 
                 appCommonConfig.value.frontend_theme = data.config.frontend_theme
+                appCommonConfig.value.frontend_background_url = data.config.frontend_background_url
                 appCommonConfig.value.currency = data.config.currency
                 appCommonConfig.value.currency_symbol = data.config.currency_symbol
                 appCommonConfig.value.stop_register = data.config.stop_register

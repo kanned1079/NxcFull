@@ -27,84 +27,84 @@ const adminRoutes: RouteRecordRaw[] = [
         },
         children: [
             {
-                path: '/admin/dashboard/summary',
+                path: 'summary',
                 name: 'summary',
                 component: Summary,
             },
             {
-                path: '/admin/dashboard/monitor',
+                path: 'monitor',
                 name: 'monitor',
                 component: QueueMonitor
             },
             {
-                path: '/admin/dashboard/systemconfig',
+                path: 'systemconfig',
                 name: 'system-config',
                 component: SystemConfig,
             },
             {
-                path: '/admin/dashboard/payment',
+                path: 'payment',
                 name: 'payment',
                 component: PaymentConfig,
             },
             {
-                path: '/admin/dashboard/theme',
+                path: 'theme',
                 name: 'theme',
                 component: ThemeConfig,
             },
             {
-                path: '/admin/dashboard/node',
+                path: 'node',
                 name: 'node',
                 component: ThemeConfig,
             },
 
             // part4
             {
-                path: '/admin/dashboard/usermanager',
+                path: 'usermanager',
                 name: 'user-manager',
                 component: UserManager,
             },
 
             {
-                path: '/admin/dashboard/routermgr',
+                path: 'routermgr',
                 name: 'router-mgr',
                 component: RouterMgr
             },
             {
-                path: '/admin/dashboard/privilegegroup',
+                path: 'privilegegroup',
                 name: 'privilege-mgr',
                 component: PrivilegeGroup,
             },
             {
-                path: '/admin/dashboard/noticemanager',
+                path: 'noticemanager',
                 name: 'notice-manager',
                 component: NoticeManager,
             },
             {
-                path: '/admin/dashboard/subscribemanager',
+                path: 'subscribemanager',
                 name: 'subscription-manager',
                 component: SubscribeMgr,
             },
             {
-                path: '/admin/dashboard/document',
+                path: 'document',
                 name: 'document-mgr',
                 component: DocumentMgr,
             },
             {
-                path: '/admin/dashboard/coupon',
+                path: 'coupon',
                 name: 'coupon',
                 component: CouponMgr,
             },
             {
-                path: '/admin/dashboard/group',
+                path: 'group',
                 name: 'privilege-group-mgr',
                 component: PrivilegeGroupMgr,
             },
             {
-                path: '/admin/dashboard/ticket',
+                path: 'ticket',
                 component: TicketMgr,
             },
             {
-                path: '/admin/dashboard/order',
+                path: 'order',
                 component: OrderMgr,
             }
 

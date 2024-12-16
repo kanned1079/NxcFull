@@ -1,7 +1,3 @@
-<template>
-  <canvas ref="canvasRef" class="confetti-canvas"></canvas>
-</template>
-
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import * as confetti from 'canvas-confetti';
@@ -32,7 +28,7 @@ const initConfetti = () => {
 const fireSnowfall = () => {
   if (!confettiInstance) return;
 
-  const duration = 15 * 1000; // 动画时长
+  const duration = 3 * 1000; // 动画时长
   const animationEnd = Date.now() + duration;
   let skew = 1;
 
@@ -40,7 +36,7 @@ const fireSnowfall = () => {
 
   const frame = () => {
     const timeLeft = animationEnd - Date.now();
-    const ticks = Math.max(200, 500 * (timeLeft / duration));
+    const ticks = Math.max(100, 500 * (timeLeft / duration));
     skew = Math.max(0.8, skew - 0.001);
 
     confettiInstance!({
@@ -92,6 +88,10 @@ export default {
   name: 'SnowFall',
 };
 </script>
+
+<template>
+  <canvas ref="canvasRef" class="confetti-canvas"></canvas>
+</template>
 
 <style scoped>
 .confetti-canvas {

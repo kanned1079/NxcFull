@@ -168,7 +168,6 @@ let getAllMyTickets = async () => {
     })
     if (data.code === 200) {
       ticketList.value = []
-      message.success('获取成功')
       data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
       animated.value = true
     } else if (data.code === 404) {
