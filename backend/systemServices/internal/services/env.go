@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	pb "systemServices/api/proto"
+	"time"
 )
 
 //func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request *pb.GetBasicRuntimeEnvConfigRequest) (*pb.GetBasicRuntimeEnvConfigResponse, error) {
@@ -33,6 +34,11 @@ import (
 //		AppName: "xxx",
 //	}, nil
 //}
+
+type BasicSetting struct {
+	Config    map[string]any
+	LastSaved time.Time
+}
 
 func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request *pb.GetBasicRuntimeEnvConfigRequest) (*pb.GetBasicRuntimeEnvConfigResponse, error) {
 	// 定义要读取的配置项
@@ -93,5 +99,27 @@ func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request 
 		Code:   http.StatusOK,
 		Msg:    "success",
 		Config: data,
+	}, nil
+}
+
+func (s *SettingServices) GetRegisterEnvConfig(ctx context.Context, request *pb.GetRegisterEnvConfigRequest) (*pb.GetRegisterEnvConfigResponse, error) {
+
+	//  string app_name = 3;
+	//  string app_sub_name = 4;
+	//  string app_description = 5;
+	//  string app_url = 6;
+	//  bool email_whitelist_suffix = 7;
+	//  bool is_email_verify = 8;
+	//  bool email_gmail_limit_enable = 9;
+	//  bool is_invite_force = 10;
+	//  bool is_recaptcha = 11;
+	//  string logo = 12;
+	//  string recaptcha_site_key = 13;
+	//  string tos_url = 14;
+	//  bool stop_register = 15;
+
+	return &pb.GetRegisterEnvConfigResponse{
+		Code: http.StatusOK,
+		Msg:  "success",
 	}, nil
 }

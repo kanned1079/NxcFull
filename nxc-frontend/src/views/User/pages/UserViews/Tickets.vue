@@ -149,7 +149,6 @@ let closeTicket = async (ticket_id: number) => {
 // -------------------------------------------------------------------------------------------------------------------------------------------------x
 
 // 表格的字段名
-// 主题 工单级别 工单状态 创建时间 最后回复 操作（查看工单/关闭工单）
 interface TicketItem {
   id: number  // 工单Id
   subject: string // 工单主题
@@ -291,22 +290,6 @@ onMounted(async () => {
             t('userTickets.addTicket')
           }}
         </n-button>
-      </div>
-    </n-card>
-
-    <n-card hoverable :embedded="true" :bordered="false" style="margin-bottom: 20px" content-style="padding: 15px">
-      <div style="display: flex; flex-direction: row; justify-content: space-between">
-        <div style="flex: 1; display: flex">
-          <n-select style="width: 150px; margin-right: 10px" size="medium" :options="[{label: '按照id', value: 'id'}, {label: '按照角色', value: 'role'}]" :default-value="'id'"></n-select>
-          <n-select style="width: 80px; margin-right: 10px" size="medium" :options="[{label: '升序', value: 'asc'}, {label: '降序', value: 'desc'}]" :default-value="'asc'"></n-select>
-          <n-input style="width: 250px; margin-right: 10px" placeholder="留空查询所有"></n-input>
-          <n-button type="primary" secondary size="medium" style="width: 160px">
-            重置搜索
-          </n-button>
-        </div>
-        <div style="flex: 1; display: flex; justify-content:end">
-          <n-button type="info" secondary :bordered="false" style="width: 150px" size="medium">添加</n-button>
-        </div>
       </div>
     </n-card>
 

@@ -43,17 +43,17 @@ let methodsAvailable = ref<MethodsFromServer[]>([])
 
 let paymentMethodsList = ref<MenuOption[]>([
   {
-    label: "微信支付",
+    label: computed(() => t('userTopUp.wechat')),
     key: "wechat",
     icon: renderIcon(LogoWechat),
   },
   {
-    label: "支付宝支付",
+    label: computed(() => t('userTopUp.alipay')),
     key: "alipay",
     icon: renderIcon(LogoAlipay),
   },
   {
-    label: "Apple Pay",
+    label: computed(() => t('userTopUp.apple')),
     key: "apple",
     icon: renderIcon(LogoApple),
   },
@@ -86,7 +86,7 @@ let quickSelectBalanceList = ref<MenuOption[]>([
     icon: renderIcon(cashIcon)
   },
   {
-    label: '其他金额',
+    label: computed(() => t('userTopUp.otherAmount')),
     key: -1,
     icon: renderIcon(addIcon)
   },
@@ -317,7 +317,7 @@ export default {
         hoverable
         :embedded="true"
         :bordered="false"
-        title="加值"
+        :title="t('userTopUp.topUp')"
     >
     </n-card>
   </div>
@@ -356,8 +356,8 @@ export default {
                 :bordered="false"
                 style="transition: ease 200ms"
             >
-              <n-h3 style="font-weight: bold">选择充值金额</n-h3>
-              <n-h4 style="font-weight: bold">快速选择</n-h4>
+              <n-h3 style="font-weight: bold">{{ t('userTopUp.chooseTopUpAmount') }}</n-h3>
+              <n-h4 style="font-weight: bold">{{ t('userTopUp.quickSelect') }}</n-h4>
 
               <n-menu
                   :indent="20"
@@ -370,8 +370,9 @@ export default {
                 <div v-if="showCustomTopUpInput" style="margin-top: 30px">
 
                   <div style="display: flex; flex-direction: row; align-items: baseline">
-                    <n-h4 style="font-weight: bold">自定义金额</n-h4>
-                    <p style="opacity: 0.5; margin-left: 10px; font-size: 0.7rem">最大金额：10000000
+                    <n-h4 style="font-weight: bold">{{ t('userTopUp.customAmount') }}</n-h4>
+                    <p style="opacity: 0.5; margin-left: 10px; font-size: 0.7rem">
+                      {{ t('userTopUp.maxAmount') }}
                       {{ appInfoStore.appCommonConfig.currency }}</p>
                   </div>
                   <div>
@@ -380,7 +381,7 @@ export default {
                         class="amount-input"
                         size="large"
                         v-model:value.number="topUpAmount"
-                        :placeholder="'输入要充值的金额'"
+                        :placeholder="t('userTopUp.amountInputPlaceHolder')"
                         :max="10000000"
                         :min="0.01"
                         :precision="2"
@@ -392,13 +393,13 @@ export default {
 
               <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 40px">
                 <div>
-                  充值遇到问题？
+                  {{ t('userTopUp.topUpIssueOccur') }}
                   <n-button
                       type="primary"
                       text
                       @click="router.push('/dashboard/tickets')"
                   >
-                    联系客服
+                    {{ t('userTopUp.chatWithUs') }}
                     <n-icon style="margin-left: 4px">
                       <toRight/>
                     </n-icon>
@@ -418,7 +419,7 @@ export default {
                 :embedded="true"
                 :bordered="false"
             >
-              <n-h3 style="font-weight: bold">支付方式</n-h3>
+              <n-h3 style="font-weight: bold">{{ t('userTopUp.payMethod') }}</n-h3>
               <n-menu
                   :indent="20"
                   mode="vertical"
@@ -436,11 +437,12 @@ export default {
                 class="r-part-card"
             >
               <n-h3 class="r-part-title">
-                您的金额
+<!--                您的金额-->
+                {{ t('userTopUp.yourAmount') }}
               </n-h3>
 
               <div class="new-amount-main">
-                <p class="new-amount-main-hex">充值</p>
+                <p class="new-amount-main-hex">{{ t('userTopUp.topUp') }}</p>
                 <div class="new-amount-main-price-part">
                   <p class="new-amount-main-price"> + {{ resultAmount.toFixed(2) }}</p>
                   <p class="new-amount-main-price-currency">{{ appInfoStore.appCommonConfig.currency }}</p>
@@ -448,7 +450,7 @@ export default {
               </div>
 
               <div class="new-amount-main" v-if="getDiscount !== 0.00">
-                <p class="new-amount-main-hex">优惠</p>
+                <p class="new-amount-main-hex">{{ t('userTopUp.discount') }}</p>
                 <div class="new-amount-main-price-part" style="opacity: 0.8">
                   <p class="new-amount-main-price" style="font-size: 1rem !important;">
                     - {{ getDiscount.toFixed(2) }}</p>
@@ -457,7 +459,7 @@ export default {
               </div>
 
               <div class="new-amount-main">
-                <p class="new-amount-main-hex">账户余额</p>
+                <p class="new-amount-main-hex">{{ t('userTopUp.accountBalance') }}</p>
                 <div class="new-amount-main-price-part" style="opacity: 0.8">
                   <p class="new-amount-main-price" style="font-size: 1rem !important;">
                     {{ userInfoStore.thisUser.balance.toFixed(2) }}</p>
@@ -468,7 +470,7 @@ export default {
               <hr style="opacity: 0.3; margin: 10px 0 10px 0;"></hr>
 
               <div class="new-amount-main">
-                <p class="new-amount-main-hex">余额合计</p>
+                <p class="new-amount-main-hex">{{ t('userTopUp.balanceResult') }}</p>
                 <div class="new-amount-main-price-part">
                   <p class="new-amount-main-price" style="font-size: 1rem !important;">
                     {{ (userInfoStore.thisUser.balance + (topUpAmount ? topUpAmount : 0.00)).toFixed(2) }}</p>
@@ -494,7 +496,7 @@ export default {
                     <errIcon/>
                   </n-icon>
                 </template>
-                {{ checkMethodEnabled ? '提交' : '支付方式不可用请选择其他' }}
+                {{ checkMethodEnabled ? t('userTopUp.commitTopUp') : t('userTopUp.payMethodNotAllow') }}
               </n-button>
             </n-card>
           </div>
@@ -509,7 +511,7 @@ export default {
       v-model:show="showQrCodeModal"
       class="qr-card"
       preset="card"
-      :title="'支付'"
+      :title="t('userTopUp.pay')"
       size="medium"
       style="width: 300px;"
       :bordered="false"
@@ -523,9 +525,6 @@ export default {
             size="large"
             :show="qrCodeIsScanned"
         >
-<!--          <n-alert title="啦啦啦" type="success">-->
-<!--            明天再打开行李箱。宝贝，挂电话啦。-->
-<!--          </n-alert>-->
           <n-qr-code
               :size="160"
               :value="topUpOrderResponse.qr_code"
@@ -540,7 +539,7 @@ export default {
           </template>
           <template #description>
             <p style="color: #66c18c; font-size: 1rem; font-weight: bold">
-              扫描成功
+              {{ t('userTopUp.qrCodeScannedSuccess') }}
             </p>
           </template>
         </n-spin>
@@ -557,15 +556,15 @@ export default {
               <toRightIcon/>
             </n-icon>
           </template>
-          或点击跳转到APP
+          {{ t('userTopUp.orClickToApp') }}
         </n-button>
       </div>
       <div style="text-align: center" v-if="topUpIsFinishedSuccess">
         <p style="font-size: 1.5rem; font-weight: bold">
-          充值成功
+          {{ t('userTopUp.topUpSuccess') }}
         </p>
         <p style="font-size: 1rem; opacity: 0.6; margin-bottom: 30px">
-          感谢您的支持
+          {{ t('userTopUp.thankU') }}
         </p>
       </div>
 
@@ -589,13 +588,13 @@ export default {
     <template #footer v-if="!topUpIsFinishedSuccess">
       <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">
         <div>
-          支付值遇到问题？
+          {{ t('userTopUp.payIssueOccur') }}
           <n-button
               type="primary"
               text
               @click="router.push('/dashboard/tickets')"
           >
-            联系客服
+            {{ t('userTopUp.chatWithUs') }}
             <n-icon style="margin-left: 4px">
               <toRight/>
             </n-icon>

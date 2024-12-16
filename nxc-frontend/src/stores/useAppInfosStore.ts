@@ -86,12 +86,6 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
                 appCommonConfig.value.currency_symbol = data.config.currency_symbol
                 appCommonConfig.value.stop_register = data.config.stop_register
 
-                themeStore.setThemeFromSetting()
-
-
-
-
-
             }
         } catch (err: any) {
 

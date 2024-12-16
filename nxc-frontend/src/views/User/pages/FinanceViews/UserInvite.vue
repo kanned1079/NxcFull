@@ -63,11 +63,11 @@ const columns = [
     key: 'id'
   },
   {
-    title: '邮箱地址',
+    title: computed(() => t('userInvite.email')).value,
     key: 'email'
   },
   {
-    title: '注册时间',
+    title: computed(() => t('userInvite.createdAt')).value,
     key: 'created_at',
     render(row: MyInvitedUser) {
       return h('span', {}, {default: () => formatDate(row.created_at)});
@@ -216,7 +216,7 @@ export default {
         hoverable
         :embedded="true"
         :bordered="false"
-        :title="'我的邀请'"
+        :title="t('userInvite.myInvite')"
     ></n-card>
 
     <n-collapse-transition :show="inviteMsg !== ''">
@@ -247,14 +247,14 @@ export default {
       >
 
         <div class="code-mgr-main">
-          <p class="code-mgr-main-title">邀请码管理</p>
+          <p class="code-mgr-main-title">{{ t('userInvite.faCodeManage') }}</p>
           <n-button
               type="primary"
               secondary
               size="small"
               @click="showCreateInviteCodeMention=true"
           >
-            {{ myFaCode === '' ? '生成邀请码' : '刷新邀请码' }}
+            {{ myFaCode === '' ? t('userInvite.generateFaCode') : t('userInvite.flushFaCode') }}
           </n-button>
         </div>
 
@@ -264,18 +264,18 @@ export default {
             class="code-info"
         >
           <n-tr style=" margin-left: 200px">
-            <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请码' }}</n-td>
+            <n-td style="background-color: rgba(0,0,0,0.0);">{{ t('userInvite.faCode') }}</n-td>
             <n-td style="background-color: rgba(0,0,0,0.0);">
               <n-tag
                   type="default"
                   checkable
               >
-                {{ myFaCode !== '' ? myFaCode : '您还没有邀请码' }}
+                {{ myFaCode !== '' ? myFaCode : t('userInvite.noFaCode') }}
               </n-tag>
             </n-td>
           </n-tr>
           <n-tr style=" margin-left: 200px">
-            <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请链接' }}</n-td>
+            <n-td style="background-color: rgba(0,0,0,0.0);">{{ t('userInvite.faLink') }}</n-td>
             <n-td style="background-color: rgba(0,0,0,0.0);">
               <n-tag
                   type="default"
@@ -285,7 +285,7 @@ export default {
 
                 <div class="fa-link-main">
                   <p class="fa-link">
-                    {{ myFaCode !== '' ? faLink : '请先生成邀请码' }}
+                    {{ myFaCode !== '' ? faLink : t('userInvite.generateFaCodePlease') }}
                   </p>
                   <n-icon v-if="myFaCode !== '' && !copySuccess" class="fa-link-copy-icon">
                     <copyIcon/>
@@ -315,7 +315,7 @@ export default {
               content-style="padding: 0"
           >
             <div style="padding: 20px">
-              <p style="font-weight: bold; font-size: 1.1rem">我邀请的用户</p>
+              <p style="font-weight: bold; font-size: 1.1rem">{{ t('userInvite.usersMyInvited') }}</p>
 
             </div>
 
@@ -356,10 +356,10 @@ export default {
   <n-modal
       v-model:show="showCreateInviteCodeMention"
       preset="dialog"
-      title="确认"
-      content="请注意，邀请码创建后不可关闭。"
-      positive-text="确认"
-      negative-text="算了"
+      :title="t('userInvite.generateCodeConfirm')"
+      :content="t('userInvite.generateCodeHint')"
+      :positive-text="t('userInvite.positiveClick')"
+      :negative-text="t('userInvite.negativeClick')"
       @positive-click="handleCreateMyInviteCode"
       @negative-click="showCreateInviteCodeMention=false"
   />

@@ -272,7 +272,7 @@ let UserMenuOption = ref([
     disabled: false,
     children: [
       {
-        label: '加值',
+        label: computed(() => t('commonAside.user.topUp')),
         key: 'user-top-up',
         icon: renderIcon(paymentIcon),
       },
@@ -385,7 +385,7 @@ export default {
           :options="MenuOption"
           @update:value="update"
           :value="themeStore.menuSelected"
-          v-model:value="themeStore.menuSelected"
+          v-model="themeStore.menuSelected"
       />
       <n-menu
           v-else
@@ -394,7 +394,7 @@ export default {
           :options="UserMenuOption"
           @update:value="userUpdate"
           :value="themeStore.menuSelected"
-          v-model:value="themeStore.menuSelected"
+          v-model="themeStore.menuSelected"
           :root-indent="36"
           :indent="0"
 

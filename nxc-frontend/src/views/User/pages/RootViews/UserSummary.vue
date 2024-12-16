@@ -162,7 +162,6 @@ let getActivePlanList = async () => {
 }
 
 onMounted(async () => {
-  console.log('用户summary挂载')
   themeStore.userPath = '/dashboard/summary'
   themeStore.menuSelected = 'user-dashboard'
 
@@ -201,14 +200,16 @@ export default {
           v-if="haveOpenTickets"
       >
         <div style="display: flex; flex-direction: row; align-items: center">
-          {{ `您有${openingTicketCount}条待处理的工单` }}
+          {{
+                t('userSummary.haveTicket', { count: openingTicketCount })
+          }}
           <n-button
               style="margin-left: 5px"
               text
               type="warning"
               @click="router.push({path: '/dashboard/tickets'})"
           >
-            去查看
+            {{ t('userSummary.toCheckTicket') }}
             <n-icon>
               <toRightIcon/>
             </n-icon>
@@ -314,7 +315,7 @@ export default {
             :bordered="false"
         >
           <div class="plan-item">
-            <p style="font-size: 1.1rem; font-weight: bold; opacity: 0.9;">{{ plan.plan_name }}</p>
+            <p style="font-size: 0.9rem; font-weight: bold; opacity: 0.9;">{{ plan.plan_name }}</p>
             <p style="font-size: 12px; opacity: 0.6; margin-top: 3px">
               {{ t('userSummary.timeLeft', {msg: formatDate(plan.expiration_date)}) }}
             </p>
@@ -329,7 +330,7 @@ export default {
         >
           <div style="display: flex; flex-direction: row; align-items: center; justify-content: end;">
             <n-button type="primary" text @click="router.push({path: '/dashboard/keys'})">
-              查看所有密鑰
+              {{ t('userSummary.showAllKeys') }}
               <n-icon style="margin-left: 5px">
                 <toRightIcon/>
               </n-icon>

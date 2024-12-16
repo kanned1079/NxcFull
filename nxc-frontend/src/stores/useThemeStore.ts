@@ -25,7 +25,7 @@ interface Theme {
     bambooGreen?: Ref<CustomThemeConfig>;
     allTheme?: Ref<Record<string, Ref<GlobalThemeOverrides>>>;
     // getTheme: ComputedRef<CustomThemeConfig>;
-    getTheme: CustomThemeConfig;
+    getTheme: ComputedRef<CustomThemeConfig>;
     getMainTheme: ComputedRef<any | null>;
     readEnableDarkMode: () => void;
     saveEnableDarkMode: () => void;
@@ -42,14 +42,10 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
     const enableDarkMode = ref<boolean>(false)
     // 主題名選擇
     // const selectedTheme = ref<string>('glacierBlue')
-    const selectedTheme = ref<string>('bambooGreen')
+    const selectedTheme = ref<string>('glacierBlue')
 
     // 如在个性化中修改了主题 或者app挂载时候需要调用来应用设置
-    let setThemeFromSetting = () => {
-        let appInfoStore = useAppInfosStore();
-        selectedTheme.value = appInfoStore.appCommonConfig.frontend_theme
-        console.log('当前主题：', selectedTheme.value)
-    }
+    let setThemeFromSetting = () => selectedTheme.value = useAppInfosStore().appCommonConfig.frontend_theme
 
     // saveTheme 保存到浏览器localStorage深色配置
     const saveEnableDarkMode = () => localStorage.setItem('themeCode', JSON.stringify({code: enableDarkMode.value as boolean}));
@@ -764,7 +760,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 return darkBlueDay.value;
             }
         }
-    }).value as CustomThemeConfig
+    }) as ComputedRef<CustomThemeConfig>
 
     // 菜单折叠
     let menuCollapsed = ref<boolean>(false)
