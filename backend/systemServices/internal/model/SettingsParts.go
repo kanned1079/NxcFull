@@ -7,6 +7,7 @@ type SystemSettingOptions struct {
 	//Subscribe Subscribe `json:"subscription"`
 	Invite   Invite   `json:"invite"`
 	Server   Server   `json:"server"`
+	Welcome  Welcome  `json:"welcome"`
 	Sendmail Sendmail `json:"sendmail"`
 	Notice   Notice   `json:"notice"`
 	Myapp    Myapp    `json:"myapp"`
@@ -61,6 +62,18 @@ type Server struct {
 	ServerPullInterval int    `json:"server_pull_interval"`
 	ServerPushInterval int    `json:"server_push_interval"`
 }
+
+type Welcome struct {
+	AppSubDescription    string `json:"app_sub_description"`    // 首页描述
+	WhyChooseUsHint      string `json:"why_choose_us_hint"`     // 为什么选择我们
+	BilibiliOfficialLink string `json:"bilibili_official_link"` // Bilibili 官方链接
+	YoutubeOfficialLink  string `json:"youtube_official_link"`  // YouTube 官方链接
+	InstagramLink        string `json:"instagram_link"`         // Instagram 官方链接
+	WechatOfficialLink   string `json:"wechat_official_link"`   // 微信公众号链接
+	FilingNumber         string `json:"filing_number"`          // 备案号
+	PageSuffix           string `json:"page_suffix"`            // 站点后缀
+}
+
 type Sendmail struct {
 	EmailHost        string `json:"email_host"`
 	EmailPort        int    `json:"email_port"`

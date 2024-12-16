@@ -32,6 +32,7 @@ const (
 	SettingsService_GetAdminDashboardData_FullMethodName            = "/settings.SettingsService/GetAdminDashboardData"
 	SettingsService_GetBasicRuntimeEnvConfig_FullMethodName         = "/settings.SettingsService/GetBasicRuntimeEnvConfig"
 	SettingsService_GetRegisterEnvConfig_FullMethodName             = "/settings.SettingsService/GetRegisterEnvConfig"
+	SettingsService_GetWelcomePageConfig_FullMethodName             = "/settings.SettingsService/GetWelcomePageConfig"
 )
 
 // SettingsServiceClient is the client API for SettingsService service.
@@ -65,6 +66,7 @@ type SettingsServiceClient interface {
 	// 获取整个页面的配置信息
 	GetBasicRuntimeEnvConfig(ctx context.Context, in *GetBasicRuntimeEnvConfigRequest, opts ...grpc.CallOption) (*GetBasicRuntimeEnvConfigResponse, error)
 	GetRegisterEnvConfig(ctx context.Context, in *GetRegisterEnvConfigRequest, opts ...grpc.CallOption) (*GetRegisterEnvConfigResponse, error)
+	GetWelcomePageConfig(ctx context.Context, in *GetWelcomePageConfigRequest, opts ...grpc.CallOption) (*GetWelcomePageConfigResponse, error)
 }
 
 type settingsServiceClient struct {
@@ -205,6 +207,16 @@ func (c *settingsServiceClient) GetRegisterEnvConfig(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *settingsServiceClient) GetWelcomePageConfig(ctx context.Context, in *GetWelcomePageConfigRequest, opts ...grpc.CallOption) (*GetWelcomePageConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWelcomePageConfigResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetWelcomePageConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SettingsServiceServer is the server API for SettingsService service.
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
@@ -236,6 +248,7 @@ type SettingsServiceServer interface {
 	// 获取整个页面的配置信息
 	GetBasicRuntimeEnvConfig(context.Context, *GetBasicRuntimeEnvConfigRequest) (*GetBasicRuntimeEnvConfigResponse, error)
 	GetRegisterEnvConfig(context.Context, *GetRegisterEnvConfigRequest) (*GetRegisterEnvConfigResponse, error)
+	GetWelcomePageConfig(context.Context, *GetWelcomePageConfigRequest) (*GetWelcomePageConfigResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
 
@@ -284,6 +297,9 @@ func (UnimplementedSettingsServiceServer) GetBasicRuntimeEnvConfig(context.Conte
 }
 func (UnimplementedSettingsServiceServer) GetRegisterEnvConfig(context.Context, *GetRegisterEnvConfigRequest) (*GetRegisterEnvConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRegisterEnvConfig not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetWelcomePageConfig(context.Context, *GetWelcomePageConfigRequest) (*GetWelcomePageConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWelcomePageConfig not implemented")
 }
 func (UnimplementedSettingsServiceServer) mustEmbedUnimplementedSettingsServiceServer() {}
 func (UnimplementedSettingsServiceServer) testEmbeddedByValue()                         {}
@@ -540,6 +556,24 @@ func _SettingsService_GetRegisterEnvConfig_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SettingsService_GetWelcomePageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWelcomePageConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetWelcomePageConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetWelcomePageConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetWelcomePageConfig(ctx, req.(*GetWelcomePageConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SettingsService_ServiceDesc is the grpc.ServiceDesc for SettingsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -598,6 +632,10 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRegisterEnvConfig",
 			Handler:    _SettingsService_GetRegisterEnvConfig_Handler,
+		},
+		{
+			MethodName: "GetWelcomePageConfig",
+			Handler:    _SettingsService_GetWelcomePageConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

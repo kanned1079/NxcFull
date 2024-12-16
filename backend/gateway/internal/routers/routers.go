@@ -36,6 +36,7 @@ func StartApiGateways() {
 
 	publicRoutes.GET("/app/preference/")
 	publicRoutes.GET("/app/v1/env", handler.HandleGetAppRuntimeEnv)
+	publicRoutes.GET("/app/v1/welcome", handler.HandleGetWelcomeConfig)
 
 	adminPublic := publicRoutes.Group("/admin/v1")
 	{

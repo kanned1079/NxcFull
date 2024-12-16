@@ -227,7 +227,23 @@ export default {
         deleteMyNegativeText: '取消',
         deletedSuccessMsg: '账户已删除，后会有期。',
         deleteErrOccur: '遇到错误',
-
+        faAuth: '兩步驗證2FA',
+        faAuthHint: '兩步驗證是一種安全機制，增加了登入帳戶的保護層。用戶在輸入密碼後，還需完成第二步身份驗證，如輸入發送到手機的驗證碼、使用身份驗證應用程序生成的動態碼，或通過指紋等生物特徵確認。',
+        faAuthStatus: '兩步驗證狀態',
+        faEnabled: '已啟用',
+        faNotEnabled: '未啟用',
+        setup2Fa: '設置兩步驗證',
+        disable2Fa: '取消兩步驗證',
+        setup2FaModal: {
+            followStep: '根據提示在您的驗證器上加入',
+            step1Title: '按照以下步驟以啟2FA驗證',
+            step1Context1: '1. 您的移動設備上需要有一個通用的驗證器',
+            step1Context2: '2. 點擊驗證器上的Scan按鈕來掃描此處的QR碼',
+            step1Context3: '3. 該QR Code中包含有您的驗證信息和唯一密鑰，請妥善保存',
+            step2Context1: '為了確保您的驗證器能夠正常使用，我們需要進行測試。',
+            test2Fa: '測試',
+            cancel: '取消',
+        }
     },
     // tickets: {
     //     userTickets: '歷史工單',
@@ -257,7 +273,8 @@ export default {
     },
     userOrders: {
         myOrders: '我的訂單',
-        orderId: '# 訂單號',
+        orderId: '#',
+        planName: '訂閱名稱',
         planCycle: '訂閱週期',
         orderPrice: '訂單金額',
         orderStatus: '訂單狀態',
@@ -271,7 +288,15 @@ export default {
             quarterPay: '季付',
             halfYearPay: '半年付',
             yearPay: '年付',
-        }
+        },
+        orderStatusTags: {
+            success: '成功',
+            cancelled: '失敗',
+            notPay: '未支付'
+        },
+        orderCancelled: '訂單已取消',
+        unknownErr: '未知錯誤',
+
     },
 
     userTopUp: {
@@ -458,5 +483,11 @@ export default {
     adminTicket: {
         ticketMgr: '工單管理',
 
+    },
+    pagination: {
+        perPage10: '10 條數據/頁',
+        perPage20: '20 條數據/頁',
+        perPage50: '50 條數據/頁',
+        perPage100: '100 條數據/頁',
     }
 }

@@ -57,6 +57,8 @@ service SettingsService {
   rpc GetBasicRuntimeEnvConfig(GetBasicRuntimeEnvConfigRequest) returns (GetBasicRuntimeEnvConfigResponse);
 
   rpc GetRegisterEnvConfig(GetRegisterEnvConfigRequest) returns (GetRegisterEnvConfigResponse);
+
+  rpc GetWelcomePageConfig(GetWelcomePageConfigRequest) returns (GetWelcomePageConfigResponse);
 }
 
 // 更新单个设置项的请求
@@ -324,4 +326,14 @@ message GetRegisterEnvConfigResponse {
 //  string recaptcha_site_key = 13;
 //  string tos_url = 14;
 //  bool stop_register = 15;
+}
+
+message GetWelcomePageConfigRequest {
+  string lang = 1;
+}
+
+message GetWelcomePageConfigResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes config = 3;
 }

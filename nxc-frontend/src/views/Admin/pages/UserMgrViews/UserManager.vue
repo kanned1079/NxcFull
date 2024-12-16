@@ -291,19 +291,19 @@ let dataSize = ref<{ pageSize: number, page: number }>({
 
 let dataCountOptions = [
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions10')).value,
+    label: computed(() => t('pagination.perPage10')).value,
     value: 10,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions20')).value,
+    label: computed(() => t('pagination.perPage20')).value,
     value: 20,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions50')).value,
+    label: computed(() => t('pagination.perPage50')).value,
     value: 50,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions100')).value,
+    label: computed(() => t('pagination.perPage100')).value,
     value: 100,
   },
 ]

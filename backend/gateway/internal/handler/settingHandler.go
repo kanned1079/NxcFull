@@ -480,3 +480,32 @@ func HandleGetRegisterEnv(context *gin.Context) {
 		//"tos_url":                  resp.TosUrl,
 	})
 }
+
+func HandleGetWelcomeConfig(context *gin.Context) {
+	lang := context.Query("lang") // lang不是必选
+	resp, err := grpcClient.SettingServiceClient.GetWelcomePageConfig(sysContext.Background(), &pb.GetWelcomePageConfigRequest{
+		Lang: lang,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var config map[string]any
+	err = json.Unmarshal(resp.Config, &config)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"code":   resp.Code,
+		"msg":    resp.Msg,
+		"config": config,
+	})
+}

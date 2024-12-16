@@ -163,7 +163,8 @@ func (s *SettingServices) UpdateSingleOption(context context.Context, request *p
 
 func (s *SettingServices) GetSystemSettings(rpcCtx context.Context, request *pb.GetSystemSettingsRequest) (*pb.GetSystemSettingsResponse, error) {
 	settingsMap := make(map[string]map[string]any)
-	categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "server", "site", "invite"}
+	//categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "server", "site", "invite"}
+	categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "welcome", "site", "invite"}
 
 	// 遍历每个类别从 Redis 缓存中获取设置
 	for _, category := range categories {

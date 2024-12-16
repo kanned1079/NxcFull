@@ -1,4 +1,4 @@
-<script setup lang="ts" name="">
+<script setup lang="ts">
 import {onMounted, reactive} from 'vue'
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
@@ -74,6 +74,12 @@ const themeSettings = reactive({
 //   console.log(themeStore.allTheme)
 // })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Personalization',
+}
 </script>
 
 <template>

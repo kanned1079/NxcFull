@@ -62,7 +62,7 @@ export default {
           <n-tab-pane name="chap4" tab="支付和返利">
             <Subscribe></Subscribe>
           </n-tab-pane>
-          <n-tab-pane name="chap5" tab="后端设置">
+          <n-tab-pane name="chap5" tab="欢迎页">
             <BackendConfig></BackendConfig>
           </n-tab-pane>
           <n-tab-pane name="chap6" tab="邮件">

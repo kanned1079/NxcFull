@@ -408,16 +408,15 @@ export default {
           content-style="padding: 0"
           :bordered="false"
       >
-        <n-p class="title">两步验证2FA</n-p>
+        <n-p class="title">{{ t('userProfile.faAuth') }}</n-p>
         <n-alert :bordered="false" style="margin: 20px" type="info">
-          雙重驗證是一個驗證過程，要求透過兩個不同的驗證因素來確立身分。簡而言之，這意味著使用者必須先以兩種不同的方式證明其身分，然後才會被授予存取權限。2FA
-          是多重要素驗證的一種形式。
+          {{ t('userProfile.faAuthHint') }}
         </n-alert>
         <div class="form">
           <div style="display: flex; flex-direction: row; margin-bottom: 20px; align-items: center">
-            <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">两步验证状态</p>
-            <n-tag v-if="twoFAEnabled" type="success"> 已启用</n-tag>
-            <n-tag v-else type="default"> 未启用</n-tag>
+            <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">{{ t('userProfile.faAuthStatus') }}</p>
+            <n-tag v-if="twoFAEnabled" type="success">{{ t('userProfile.faEnabled') }}</n-tag>
+            <n-tag v-else type="default">{{ t('userProfile.faNotEnabled') }}</n-tag>
           </div>
           <n-button
               secondary
@@ -427,7 +426,7 @@ export default {
               :bordered="false"
               style="margin-bottom: 20px"
           >
-            设置两步验证
+            {{ t('userProfile.setup2Fa') }}
           </n-button>
           <n-button
               secondary
@@ -436,7 +435,7 @@ export default {
               :bordered="false"
               style="margin-bottom: 20px; margin-left: 10px" type="warning"
           >
-            关闭两步验证
+            {{ t('userProfile.disable2Fa') }}
           </n-button>
 
         </div>
@@ -560,7 +559,7 @@ export default {
       <!--      <n-h4 style="opacity: 0.8">按照以下步骤以设置验证器</n-h4>-->
 
       <p style="font-weight: 700; font-size: 1.25rem">STEP1</p>
-      <p style="opacity: 0.8; margin-bottom: 20px">根据提示在您的验证器上加入</p>
+      <p style="opacity: 0.8; margin-bottom: 20px">{{ t('userProfile.setup2FaModal.followStep') }}</p>
       <div class="qr-modal-body">
         <div class="l-part">
           <n-qr-code
@@ -570,16 +569,16 @@ export default {
           />
         </div>
         <div class="r-part">
-          <h3>按照以下步骤以启用2FA</h3>
-          <n-p>1. 您的移动设备上需要有一个通用的验证器</n-p>
-          <n-p>2. 点击右上角的Scan按钮来扫描左侧的QR Code</n-p>
-          <n-p>3. 该QR Code中包含有您的验证信息和唯一密钥，请妥善保存</n-p>
+          <h3>{{ t('userProfile.setup2FaModal.step1Title') }}</h3>
+          <n-p>{{ t('userProfile.setup2FaModal.step1Context1') }}</n-p>
+          <n-p>{{ t('userProfile.setup2FaModal.step1Context2') }}</n-p>
+          <n-p>{{ t('userProfile.setup2FaModal.step1Context3') }}</n-p>
         </div>
 
       </div>
       <n-hr></n-hr>
       <p style="font-weight: 700; font-size: 1.25rem">STEP2</p>
-      <p style="opacity: 0.8; margin-bottom: 20px">为了确保您的验证器能够正常使用 我们需要进行测试</p>
+      <p style="opacity: 0.8; margin-bottom: 20px">{{ t('userProfile.setup2FaModal.step2Context1') }}</p>
       <div class="code-test-body">
         <n-input
             class="code-inp"
@@ -597,7 +596,7 @@ export default {
             type="primary"
             :bordered="false"
         >
-          测试
+          {{ t('userProfile.setup2FaModal.test2Fa') }}
         </n-button>
         <n-button
             @click="handleCancelSetup2FA()"
@@ -607,7 +606,7 @@ export default {
             secondary
             :bordered="false"
         >
-          取消
+          {{ t('userProfile.setup2FaModal.cancel') }}
         </n-button>
       </div>
     </n-card>

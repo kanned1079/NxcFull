@@ -35,19 +35,19 @@ let dataSize = ref<{ pageSize: number, page: number }>({
 
 let dataCountOptions = [
   {
-    label: '10条数据/页',
+    label: computed(() => t('pagination.perPage10')).value,
     value: 10,
   },
   {
-    label: '20条数据/页',
+    label: computed(() => t('pagination.perPage20')).value,
     value: 20,
   },
   {
-    label: '50条数据/页',
+    label: computed(() => t('pagination.perPage50')).value,
     value: 50,
   },
   {
-    label: '100条数据/页',
+    label: computed(() => t('pagination.perPage100')).value,
     value: 100,
   },
 ]
