@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref} from "vue"
+import {computed, h, onMounted, ref, onBeforeMount} from "vue"
 import {type FormInst, NButton, NTag, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -269,9 +269,12 @@ const columns = ref([
   }
 ])
 
+onBeforeMount(() => {
+  themeStore.menuSelected = 'user-tickets'
+
+})
 
 onMounted(async () => {
-  themeStore.menuSelected = ''
   themeStore.userPath = '/dashboard/tickets'
 
   await getAllMyTickets()

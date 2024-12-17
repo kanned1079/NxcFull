@@ -287,6 +287,7 @@ let showRibbon = ref<boolean>(false)
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/topup'
+  themeStore.menuSelected = 'user-top-up'
 
   await handleGetAllPaymentMethods()
 

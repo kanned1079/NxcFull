@@ -368,3 +368,38 @@ func HandleUpdatePlanRenew(context *gin.Context) {
 		"msg":  resp.Msg,
 	})
 }
+
+func HandleGetAllMyActivationLogs(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.SubscriptionServiceClient.GetActivateLogByUserId(sysContext.Background(), &pb.GetActivateLogByUserIdRequest{
+		UserId: userId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var recordsMap []map[string]any
+	if err := json.Unmarshal(resp.Log, &recordsMap); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"log":        recordsMap,
+		"page_count": resp.PageCount,
+	})
+}

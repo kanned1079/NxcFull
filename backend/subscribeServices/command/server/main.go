@@ -55,7 +55,10 @@ func init() {
 	if err = dao.Db.Model(model.Orders{}).AutoMigrate(); err != nil {
 		panic(err)
 	}
-
+	if err = dao.Db.Model(model.ActivateRecord{}).AutoMigrate(model.ActivateRecord{}); err != nil {
+		panic(err)
+	}
+	//log.Println("自動遷移完成")
 }
 
 func main() {

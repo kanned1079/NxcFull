@@ -306,7 +306,7 @@ let UserMenuOption = ref([
       },
       {
         label: computed(() => t('commonAside.user.activateLog')),
-        key: 'user-active-record',
+        key: 'user-activate-log',
         icon: renderIcon(historyIcon),
       },
     ]
@@ -358,6 +358,10 @@ let userUpdate = (key: string) => {
     }
     case 'user-invite': {
       router.push({path: '/dashboard/invite'})
+      break
+    }
+    case 'user-activate-log': {
+      router.push({path: '/dashboard/log'})
       break
     }
   }

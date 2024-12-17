@@ -176,6 +176,8 @@ func StartApiGateways() {
 		userAuthorized.POST("payment/top-up", handler.HandleUserCommitNewTopUpOrder)
 		userAuthorized.GET("payment/top-up/check", handler.HandleQueryTopUpOrderStatus)
 
+		userAuthorized.GET("activation", handler.HandleGetAllMyActivationLogs)
+
 	}
 
 	// WebSocket 路由组

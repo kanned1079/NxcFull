@@ -190,6 +190,7 @@ onBeforeMount(() => {
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/invite'
+  themeStore.menuSelected = 'user-invite'
   // await handleGetInviteMsg()
   await handleGetMyInviteCode()
 

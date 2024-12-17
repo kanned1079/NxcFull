@@ -169,6 +169,8 @@ export default {
     userDocument: {
         searchPlaceholder: '請輸入要搜索的內容（模糊搜索）',
         searchBtn: '搜索',
+        noContentTitle: '無結果',
+        noContentTitleHint: '嘗試換一個關鍵詞吧',
     },
     newPurchase: {
         headerPlaceholder: '選擇最適合您的計畫',
@@ -455,6 +457,26 @@ export default {
         noTickets: '您還沒有提交過工單',
         ticketCloseSuccess: '工單關閉成功',
         ticketCloseFailure: '工單關閉失敗'
+    },
+    userActivation: {
+        activateLog: '激活紀錄',
+        id: '#',
+        orderId: '订单编号',
+        planName: '计划名称',
+        planCycle: '支付周期',
+        orderPrice: '订单价格',
+        orderStatus: '订单状态',
+        createdAt: '紀錄创建时间',
+        operate: '操作',
+        userId: '用户ID',
+        email: '邮箱',
+        keyId: '密钥ID',
+        requestAt: '请求时间',
+        clientVersion: '客户端版本',
+        osType: '操作系统类型',
+        remark: '备注',
+        showDetail: '查看详情',
+        actions:'操作'
     },
     welcome: {
         A: {

@@ -95,43 +95,48 @@ let onScrollFunction = () => {
   }
 };
 
-interface WelcomeSettings {
+const props = defineProps<{
   app_sub_description: string
   why_choose_us_hint: string
-  bilibili_official_link: string
-  youtube_official_link: string
-  instagram_link: string
-  wechat_official_link: string
-  filing_number: string
-  page_suffix: string
-}
+}>()
 
-let settings = ref<WelcomeSettings>({
-  app_sub_description: '',
-  why_choose_us_hint: '',
-  bilibili_official_link: '',
-  youtube_official_link: '',
-  instagram_link: '',
-  wechat_official_link: '',
-  filing_number: '',
-  page_suffix: '',
-})
+// interface WelcomeSettings {
+//   app_sub_description: string
+//   why_choose_us_hint: string
+//   bilibili_official_link: string
+//   youtube_official_link: string
+//   instagram_link: string
+//   wechat_official_link: string
+//   filing_number: string
+//   page_suffix: string
+// }
 
-let handleGetConfig = async () => {
-  try {
-    let {data} = await instance.get('/api/app/v1/welcome', {
-      params: {
-        lang: 'en',
-      }
-    })
-    if (data.code === 200) {
-      console.log("欢迎页面:", data)
-      Object.assign(settings.value, data.config)
-    }
-  } catch (err: any) {
-    console.log(err + '')
-  }
-}
+// let settings = ref<WelcomeSettings>({
+//   app_sub_description: '',
+//   why_choose_us_hint: '',
+//   bilibili_official_link: '',
+//   youtube_official_link: '',
+//   instagram_link: '',
+//   wechat_official_link: '',
+//   filing_number: '',
+//   page_suffix: '',
+// })
+
+// let handleGetConfig = async () => {
+//   try {
+//     let {data} = await instance.get('/api/app/v1/welcome', {
+//       params: {
+//         lang: 'en',
+//       }
+//     })
+//     if (data.code === 200) {
+//       console.log("欢迎页面:", data)
+//       Object.assign(settings.value, data.config)
+//     }
+//   } catch (err: any) {
+//     console.log(err + '')
+//   }
+// }
 
 
 onMounted(() => {
@@ -144,13 +149,21 @@ onMounted(() => {
   setTimeout(() => animated.value.treeFrontAnimate = true, 300)
   setTimeout(() => animated.value.treeMedAnimate = true, 400)
   setTimeout(() => animated.value.sunAnimate = true, 500)
-  setTimeout(() => animated.value.appNameAnimate = true, 450)
+  setTimeout(() => {
+    let intervalId = ref<undefined | number>(undefined)
+    intervalId.value = setInterval(() => {
+      if (props.app_sub_description !== '') {
+        animated.value.appNameAnimate = true;
+        clearInterval(intervalId.value)
+      }
+    }, 200)
+  }, 450)
   setTimeout(() => animated.value.appDescription = true, 700)
 });
 
-onBeforeMount(async () => {
-  await handleGetConfig()
-})
+// onBeforeMount(async () => {
+//   await handleGetConfig()
+// })
 
 onBeforeUnmount(() => {
 //   // 移除 lay-1 的滚动事件监听器
@@ -189,13 +202,6 @@ export default {
           </div>
         </transition>
 
-
-        <!--        <div class="image-wrapper img2">-->
-        <!--          <TreeMedium/>-->
-        <!--        </div>-->
-        <!--        <div class="image-wrapper img3">-->
-        <!--          <Sun/>-->
-        <!--        </div>-->
         <!-- 引入悬浮左侧的介绍内容 -->
         <transition name="slide2-fade">
           <div v-if="animated.appNameAnimate" class="intro" style="z-index: 1600">
@@ -205,7 +211,7 @@ export default {
             </div>
             <p class="desc">
 <!--              {{ t('welcome.A.welcomeToSub') }}-->
-              {{ settings.app_sub_description }}
+              {{ props.app_sub_description }}
             </p>
             <n-button
                 @click="router.push({path: '/dashboard/summary'})"
@@ -229,7 +235,7 @@ export default {
           <p class="why-us-title">{{ t('welcome.A.whyUs') }}</p>
 <!--          <p class="why-us-title">{{ settings.why_choose_us_hint }}</p>-->
           <p class="why-us-sub">
-            {{ settings.why_choose_us_hint }}
+            {{ props.why_choose_us_hint }}
           </p>
         </div>
 
