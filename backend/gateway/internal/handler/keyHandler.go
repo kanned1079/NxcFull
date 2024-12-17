@@ -73,3 +73,103 @@ func HandleGetAllMyKeys(context *gin.Context) {
 	})
 
 }
+
+func HandleGetAllMyActivationLogs(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.GetActivateLogByUserId(sysContext.Background(), &pb.GetActivateLogByUserIdRequest{
+		UserId: userId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var recordsMap []map[string]any
+	if err := json.Unmarshal(resp.Log, &recordsMap); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"log":        recordsMap,
+		"page_count": resp.PageCount,
+	})
+}
+
+func HandleGetKeyDetailsById(context *gin.Context) {
+	keyId, err := strconv.ParseInt(context.Query("key_id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.GetKeyInfoById(sysContext.Background(), &pb.GetKeyInfoByIdRequest{
+		KeyId: keyId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var detailsMap map[string]any
+	err = json.Unmarshal(resp.Details, &detailsMap)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":    resp.Code,
+		"msg":     resp.Msg,
+		"details": detailsMap,
+	})
+}
+
+func HandleDisableBindKey(context *gin.Context) {
+	activationId, err := strconv.ParseInt(context.Query("activation_id"), 10, 64)
+	log.Println(activationId, err)
+}
+
+func BindKeyToThirdExternalApp(context *gin.Context) {
+	postData := &struct {
+		Email         string `json:"email"`
+		Password      string `json:"password"`
+		Key           string `json:"key"`
+		ClientVersion string `json:"client_version"`
+		OsType        string `json:"os_type"`
+	}{}
+
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "Bad Request",
+		})
+		return
+	}
+	log.Println(postData)
+
+	context.JSON(http.StatusOK, gin.H{
+		"code": http.StatusOK,
+		"msg":  "success",
+		"data": postData,
+	})
+}

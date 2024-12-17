@@ -28,13 +28,13 @@ service SubscriptionService {
 
   rpc UpdatePlanRenew(UpdatePlanRenewRequest) returns (UpdatePlanRenewResponse);
 
-  // 密钥使用记录
-  rpc BindOrActiveMyKey2App(BindOrActiveMyKey2AppRequest) returns (BindOrActiveMyKey2AppResponse);
-  rpc UnbindKey(UnbindKeyRequest) returns (UnbindKeyResponse);
-  rpc CheckAccountAndKeyUsability(CheckAccountAndKeyUsabilityRequest) returns (CheckAccountAndKeyUsabilityResponse);
-
-  rpc GetActivateLogByUserId(GetActivateLogByUserIdRequest) returns (GetActivateLogByUserIdResponse);
-  rpc GetActivateLogByAdmin(GetActivateLogByAdminRequest) returns (GetActivateLogByAdminResponse);
+//  // 密钥使用记录
+//  rpc BindOrActiveMyKey2App(BindOrActiveMyKey2AppRequest) returns (BindOrActiveMyKey2AppResponse);
+//  rpc UnbindKey(UnbindKeyRequest) returns (UnbindKeyResponse);
+//  rpc CheckAccountAndKeyUsability(CheckAccountAndKeyUsabilityRequest) returns (CheckAccountAndKeyUsabilityResponse);
+//
+//  rpc GetActivateLogByUserId(GetActivateLogByUserIdRequest) returns (GetActivateLogByUserIdResponse);
+//  rpc GetActivateLogByAdmin(GetActivateLogByAdminRequest) returns (GetActivateLogByAdminResponse);
 }
 
 message GetAllPlanKeyNameRequest {
@@ -235,64 +235,64 @@ message UpdatePlanRenewResponse {
 
 //
 
-message BindOrActiveMyKey2AppRequest {
-  int64 user_id = 1; // 用戶id
-  string email = 2; // 用户邮箱
-  string password = 3;  // 密码
-  string key = 4; // 密钥key
-  int64 request_at = 5; // 时间戳
-  string client_version = 6;  // 客户端版本
-  string os_type = 7; // 操作系统类型
-}
-
-message BindOrActiveMyKey2AppResponse {
-  int32 code = 1;
-  string msg = 2;
-  string significant_number = 3;
-}
-
-message UnbindKeyRequest {
-  int64 record_id = 1;
-}
-
-message UnbindKeyResponse {
-  int32 code = 1;
-  string msg = 2;
-  bool finished = 3;
-}
-
-message CheckAccountAndKeyUsabilityRequest {
-  string email = 1; // 用户邮箱
-  string key = 3; // 密钥key
-}
-
-message CheckAccountAndKeyUsabilityResponse {
-  int32 code = 1;
-  string msg = 2;
-  bool passed = 3;
-}
-
-message GetActivateLogByUserIdRequest {
-  int64 user_id = 1;
-  int64 page = 2;
-  int64 size = 3;
-}
-
-message GetActivateLogByUserIdResponse {
-  int32 code = 1;
-  string msg = 2;
-  bytes log = 3;
-  int64 page_count = 4;
-}
-
-message GetActivateLogByAdminRequest {
-  int64 page = 1;
-  int64 size = 2;
-}
-
-message GetActivateLogByAdminResponse {
-  int32 code = 1;
-  string msg = 2;
-  bytes log = 3;
-  int64 page_count = 4;
-}
+//message BindOrActiveMyKey2AppRequest {
+//  int64 user_id = 1; // 用戶id
+//  string email = 2; // 用户邮箱
+//  string password = 3;  // 密码
+//  string key = 4; // 密钥key
+//  int64 request_at = 5; // 时间戳
+//  string client_version = 6;  // 客户端版本
+//  string os_type = 7; // 操作系统类型
+//}
+//
+//message BindOrActiveMyKey2AppResponse {
+//  int32 code = 1;
+//  string msg = 2;
+//  string significant_number = 3;
+//}
+//
+//message UnbindKeyRequest {
+//  int64 record_id = 1;
+//}
+//
+//message UnbindKeyResponse {
+//  int32 code = 1;
+//  string msg = 2;
+//  bool finished = 3;
+//}
+//
+//message CheckAccountAndKeyUsabilityRequest {
+//  string email = 1; // 用户邮箱
+//  string key = 3; // 密钥key
+//}
+//
+//message CheckAccountAndKeyUsabilityResponse {
+//  int32 code = 1;
+//  string msg = 2;
+//  bool passed = 3;
+//}
+//
+//message GetActivateLogByUserIdRequest {
+//  int64 user_id = 1;
+//  int64 page = 2;
+//  int64 size = 3;
+//}
+//
+//message GetActivateLogByUserIdResponse {
+//  int32 code = 1;
+//  string msg = 2;
+//  bytes log = 3;
+//  int64 page_count = 4;
+//}
+//
+//message GetActivateLogByAdminRequest {
+//  int64 page = 1;
+//  int64 size = 2;
+//}
+//
+//message GetActivateLogByAdminResponse {
+//  int32 code = 1;
+//  string msg = 2;
+//  bytes log = 3;
+//  int64 page_count = 4;
+//}

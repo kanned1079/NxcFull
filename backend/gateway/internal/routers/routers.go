@@ -37,6 +37,7 @@ func StartApiGateways() {
 	publicRoutes.GET("/app/preference/")
 	publicRoutes.GET("/app/v1/env", handler.HandleGetAppRuntimeEnv)
 	publicRoutes.GET("/app/v1/welcome", handler.HandleGetWelcomeConfig)
+	publicRoutes.POST("/user/v1/activation/bind", handler.BindKeyToThirdExternalApp)
 
 	adminPublic := publicRoutes.Group("/admin/v1")
 	{
@@ -159,6 +160,7 @@ func StartApiGateways() {
 		//userAuthorized.POST("/balance/recharge", handler.HandleUserTopUp)
 
 		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
+		userAuthorized.GET("/key/details", handler.HandleGetKeyDetailsById)
 
 		userAuthorized.GET("ticket/check", handler.HandleCheckIsUserHaveOpeningTickets)
 		userAuthorized.GET("/ticket", handler.HandleGetAllMyTickets)
@@ -177,6 +179,7 @@ func StartApiGateways() {
 		userAuthorized.GET("payment/top-up/check", handler.HandleQueryTopUpOrderStatus)
 
 		userAuthorized.GET("activation", handler.HandleGetAllMyActivationLogs)
+		userAuthorized.DELETE("activation", handler.HandleDisableBindKey)
 
 	}
 

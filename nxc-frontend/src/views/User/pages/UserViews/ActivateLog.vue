@@ -1,17 +1,52 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, onMounted, ref, computed, h} from "vue";
-import {NButton, useMessage} from "naive-ui"
+import {computed, h, onBeforeMount, onMounted, ref} from "vue";
+import {NButton, NTag, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {formatDate} from "@/utils/timeFormat";
 import instance from "@/axios";
+import {useRouter} from "vue-router";
+import {ChevronForwardOutline as toRight,} from "@vicons/ionicons5"
+
+interface ActivateRecord {
+  id: number;
+  user_id: number;
+  email: string;
+  order_id: string;
+  key_id: number;
+  request_at: string;
+  client_version: string;
+  os_type: string;
+  remark: string;
+  is_bind: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+let activateRecordList = ref<ActivateRecord[]>([])
+let currentRecord = ref<ActivateRecord>({
+  id: 0,
+  user_id: 0,
+  email: '',
+  order_id: '',
+  key_id: 0,
+  request_at: '',
+  client_version: '',
+  os_type: '',
+  remark: '',
+  is_bind: false,
+  created_at: '',
+  updated_at: '',
+})
 
 const {t} = useI18n();
+const router = useRouter();
 const message = useMessage();
 const themeStore = useThemeStore()
 const userInfoStore = useUserInfoStore()
 
+let showModal = ref<boolean>(false)
 let animated = ref<boolean>(false);
 let pageCount = ref(10)
 
@@ -39,9 +74,32 @@ let dataCountOptions = [
   },
 ]
 
-let showDetails = (index: number) => {
-  console.log(index)
-  message.info("show " + index)
+let keyDetails = ref<{
+  id: number;
+  key: string;
+  created_at: string;
+}>({
+  id: 0,
+  key: '',
+  created_at: '',
+})
+let showDetails = async (row: ActivateRecord) => {
+  try {
+    let {data} = await instance.get('/api/user/v1/key/details', {
+      params: {
+        key_id: row.key_id,
+      }
+    })
+    if (data.code === 200) {
+      Object.assign(currentRecord.value, row)
+      Object.assign(keyDetails.value, data.details)
+      showModal.value = true
+    } else {
+      message.error('err:' + data.msg)
+    }
+  } catch (err: any) {
+    console.log(err)
+  }
 }
 
 const columns = [
@@ -50,69 +108,90 @@ const columns = [
     key: 'id',
   },
   {
+    title: computed(() => t('userActivation.keyId')).value,
+    key: 'key_id',
+    render(row: ActivateRecord) {
+      return h('p', {}, {default: () => '# ' + row.key_id});
+    }
+  },
+  {
+    title: computed(() => t('userActivation.isBind')).value,
+    key: 'is_bind',
+    render(row: ActivateRecord) {
+      return h(
+          NTag,
+          {
+            size: 'small',
+            bordered: false,
+            type: row.is_bind?'success':'error',
+          },
+          {default: () => row.is_bind?t('userActivation.active'):t('userActivation.inactive')
+          });
+    }
+  },
+  {
     title: computed(() => t('userActivation.orderId')).value,
     key: 'order_id',
   },
   {
-    title: computed(() => t('userActivation.keyId')).value,
-    key: 'key_id',
+    title: computed(() => t('userActivation.clientVersion')).value,
+    key: 'client_version',
+    render(row: ActivateRecord) {
+      return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.client_version});
+    }
+  },
+  {
+    title: computed(() => t('userActivation.osType')).value,
+    key: 'os_type',
+    render(row: ActivateRecord) {
+      return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.os_type});
+    }
   },
   {
     title: computed(() => t('userActivation.requestAt')).value,
     key: 'request_at',
     render(row: ActivateRecord) {
-      return h('span', {}, { default: () => formatDate(row.request_at) });
+      return h('span', {}, {default: () => formatDate(row.request_at)});
     },
-  },
-  {
-    title: computed(() => t('userActivation.clientVersion')).value,
-    key: 'client_version',
-  },
-  {
-    title: computed(() => t('userActivation.osType')).value,
-    key: 'os_type',
   },
   {
     title: computed(() => t('userActivation.createdAt')).value,
     key: 'created_at',
     render(row: ActivateRecord) {
-      return h('span', {}, { default: () => formatDate(row.created_at) });
+      return h('span', {}, {default: () => formatDate(row.created_at)});
     },
   },
   {
     title: computed(() => t('userActivation.actions')).value,
     key: 'actions',
+    fixed: 'right',
     render(row: ActivateRecord) {
-      return h('div', { style: { display: 'flex', flexDirection: 'row' } }, [
+      return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
+          secondary: true,
           type: 'primary',
-          onClick: () => showDetails(row.id),
+          bordered: false,
+          onClick: () => showDetails(row),
         }, {
           default: () => computed(() => t('userActivation.showDetail')).value,
         }),
+        h(NButton, {
+          size: 'small',
+          secondary: true,
+          type: 'warning',
+          style: {marginLeft: '10px'},
+          bordered: false,
+          disabled: !row.is_bind,
+          onClick: () => handleCancelBindById(),
+        }, {
+          default: () => computed(() => t('userActivation.cancelBind')).value,
+        }),
       ]);
     },
-    width: 200,
-    fixed: 'right',
+
   }
 ];
-
-interface ActivateRecord {
-  id: number;
-  user_id: number;
-  email: string;
-  order_id: string;
-  key_id: number;
-  request_at: string;
-  client_version: string;
-  os_type: string;
-  remark: string;
-  created_at: string;
-  updated_at: string;
-}
-
-let activateRecordList = ref<ActivateRecord[]>([])
 
 let handleGetAllMyActivateLog = async () => {
   try {
@@ -132,6 +211,17 @@ let handleGetAllMyActivateLog = async () => {
     console.log(error)
     message.error("unknown err: " + error)
   }
+}
+
+let handleCancelBindById = async () => {
+  let {data} = await instance.post('/api/user/v1/activation/bind', {
+    "email": "example@example.com",
+    "password": "123456",
+    "key": "my-secret-key",
+    "client_version": "1.0.0",
+    "os_type": "macOS"
+  })
+  console.log(data)
 }
 
 
@@ -177,6 +267,7 @@ export default {
             :data="activateRecordList"
             :pagination="false"
             :bordered="true"
+            :scroll-x="1000"
         />
       </n-card>
       <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
@@ -198,6 +289,61 @@ export default {
     </div>
   </transition>
 
+  <n-modal
+      v-model:show="showModal"
+      class="custom-card"
+      preset="card"
+      style="width: 640px"
+      :title="t('userActivation.details')"
+      size="huge"
+      :bordered="false"
+  >
+
+    <div class="details-item-detail">
+      <p class="details-item-title">{{ t('userActivation.keyId') }}</p>
+      <p class="details-item-content">{{ '# ' + keyDetails.id }}</p>
+    </div>
+
+    <div class="details-item-detail">
+      <p class="details-item-title">{{ t('userActivation.keyContent') }}</p>
+      <p class="details-item-content">{{ keyDetails.key }}</p>
+    </div>
+
+    <div class="details-item-detail">
+      <p class="details-item-title">{{ t('userActivation.keyGeneratedAt') }}</p>
+      <p class="details-item-content">{{ keyDetails.created_at?formatDate(keyDetails.created_at):'NULL' }}</p>
+    </div>
+
+    <div class="details-item-detail">
+      <p class="details-item-title">{{ t('userActivation.activateRequestAt') }}</p>
+      <p class="details-item-content">{{ currentRecord.request_at?formatDate(currentRecord.request_at):'NULL' }}</p>
+    </div>
+
+    <div class="details-item-detail">
+      <p class="details-item-title">{{ t('userActivation.remark') }}</p>
+      <p class="details-item-content-remark">{{ currentRecord.remark?currentRecord.remark:t('userActivation.noRemark') }}</p>
+    </div>
+
+    <template #footer>
+      <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">
+        <div>
+          {{ t('userActivation.useIssueOccur') }}
+          <n-button
+              type="primary"
+              text
+              @click="router.push('/dashboard/tickets')"
+          >
+            {{ t('userActivation.chatWithUs') }}
+            <n-icon style="margin-left: 4px">
+              <toRight/>
+            </n-icon>
+          </n-button>
+        </div>
+
+      </div>
+    </template>
+  </n-modal>
+
 
 </template>
 
@@ -208,5 +354,30 @@ export default {
 
 .root {
   padding: 20px;
+}
+
+.details-item-detail {
+  //background-color: #66afe9;
+
+  .details-item-title {
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-bottom: 5px;
+  }
+
+  .details-item-content {
+    font-size: 1.2rem;
+    font-weight: 600;
+    opacity: 1;
+    margin-bottom: 25px;
+  }
+  .details-item-content-remark {
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 1;
+    margin-bottom: 25px;
+  }
+
 }
 </style>
