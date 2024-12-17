@@ -79,13 +79,14 @@ message CancelRegisterClientWithKeyResponse {
 }
 
 message BindOrActiveMyKey2AppRequest {
-  int64 user_id = 1; // 用戶id
-  string email = 2; // 用户邮箱
-  string password = 3;  // 密码
-  string key = 4; // 密钥key
-  int64 request_at = 5; // 时间戳
-  string client_version = 6;  // 客户端版本
+  string email = 1; // 用户邮箱
+  string password = 2;  // 密码
+  string key = 3; // 密钥key
+  int64 request_at = 4; // 时间戳
+  string client_version = 5;  // 客户端版本
+  string client_id = 6;
   string os_type = 7; // 操作系统类型
+  string remark = 8;
 }
 
 message BindOrActiveMyKey2AppResponse {
