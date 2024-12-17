@@ -10,7 +10,11 @@ import (
 
 // InitEtcdClient 初始化Etcd服务器
 func InitEtcdClient() error {
-	addr := fmt.Sprintf("%s:%d", local.MyLocalConfig.EtcdConfig.Host, local.MyLocalConfig.EtcdConfig.Port)
+	addr := fmt.Sprintf("%s:%d",
+		local.MyLocalConfig.EtcdConfig.Host,
+		local.MyLocalConfig.EtcdConfig.Port,
+	)
+	log.Println(addr)
 	EtcdCli, err = clientv3.New(clientv3.Config{
 		Endpoints:   []string{addr},
 		DialTimeout: 5 * time.Second,

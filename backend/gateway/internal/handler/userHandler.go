@@ -2,7 +2,6 @@ package handler
 
 import (
 	sysContext "context"
-	"gateway/internal/grpc"
 	pb "gateway/internal/grpc/api/user/proto"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
@@ -12,8 +11,6 @@ import (
 	"net/http"
 	"time"
 )
-
-var grpcClient = grpc.NewClients()
 
 //func HandleUserLogin(context *gin.Context) {
 //	var req = struct {

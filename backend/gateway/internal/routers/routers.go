@@ -37,7 +37,7 @@ func StartApiGateways() {
 	publicRoutes.GET("/app/preference/")
 	publicRoutes.GET("/app/v1/env", handler.HandleGetAppRuntimeEnv)
 	publicRoutes.GET("/app/v1/welcome", handler.HandleGetWelcomeConfig)
-	publicRoutes.POST("/user/v1/activation/bind", handler.BindKeyToThirdExternalApp)
+	publicRoutes.POST("/user/v1/activation/bind", handler.HandleBindKeyToThirdExternalApp)
 
 	adminPublic := publicRoutes.Group("/admin/v1")
 	{

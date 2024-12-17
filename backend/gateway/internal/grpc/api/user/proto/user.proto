@@ -56,6 +56,8 @@ service UserService {
 
   rpc CreateUserInviteCodeByUserId(CreateUserInviteCodeByUserIdRequest) returns (CreateUserInviteCodeByUserIdResponse);
 
+  rpc CheckUserAuthInternal(CheckUserAuthInternalRequest) returns (CheckUserAuthInternalResponse);
+
 }
 
 
@@ -344,3 +346,15 @@ message GetUserInvitedUserListByUserIdResponse {
   int64 page_count = 4;
 }
 
+//
+
+message CheckUserAuthInternalRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message CheckUserAuthInternalResponse {
+  int32 code = 1;
+  string msg = 2;
+  int64 user_id = 3;
+}

@@ -147,15 +147,18 @@ func HandleGetKeyDetailsById(context *gin.Context) {
 func HandleDisableBindKey(context *gin.Context) {
 	activationId, err := strconv.ParseInt(context.Query("activation_id"), 10, 64)
 	log.Println(activationId, err)
+
 }
 
-func BindKeyToThirdExternalApp(context *gin.Context) {
+func HandleBindKeyToThirdExternalApp(context *gin.Context) {
 	postData := &struct {
 		Email         string `json:"email"`
 		Password      string `json:"password"`
 		Key           string `json:"key"`
 		ClientVersion string `json:"client_version"`
+		ClientId      string `json:"client_id"`
 		OsType        string `json:"os_type"`
+		Remark        string `json:"remark"`
 	}{}
 
 	if err := context.ShouldBind(postData); err != nil {
@@ -167,9 +170,26 @@ func BindKeyToThirdExternalApp(context *gin.Context) {
 	}
 	log.Println(postData)
 
+	resp, err := grpcClient.KeyServicesClient.BindOrActiveMyKey2App(sysContext.Background(), &pb.BindOrActiveMyKey2AppRequest{
+		Email:         postData.Email,
+		Password:      postData.Password,
+		Key:           postData.Key,
+		ClientVersion: postData.ClientVersion,
+		ClientId:      postData.ClientId,
+		OsType:        postData.OsType,
+		Remark:        postData.Remark,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+
 	context.JSON(http.StatusOK, gin.H{
-		"code": http.StatusOK,
-		"msg":  "success",
-		"data": postData,
+		"code":               resp.Code,
+		"msg":                resp.Msg,
+		"significant_number": resp.SignificantNumber,
 	})
 }

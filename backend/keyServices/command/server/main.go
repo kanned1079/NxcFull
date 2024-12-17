@@ -1,6 +1,7 @@
 package main
 
 import (
+	rpcClient "keyServices/internal/client"
 	"keyServices/internal/config/local"
 	"keyServices/internal/config/remote"
 	"keyServices/internal/dao"
@@ -34,6 +35,8 @@ func init() {
 	if err := remote.MyMqConfig.Get(); err != nil {
 		panic(err)
 	}
+
+	rpcClient.GrpcClient = rpcClient.NewClients()
 
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer() // 初始化Redis服务器
