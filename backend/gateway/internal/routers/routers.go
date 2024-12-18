@@ -180,6 +180,7 @@ func StartApiGateways() {
 
 		userAuthorized.GET("activation", handler.HandleGetAllMyActivationLogs)
 		userAuthorized.DELETE("activation", handler.HandleDisableBindKey)
+		userAuthorized.PATCH("activation/remark", handler.HandleAlterRemarkByUser)
 
 	}
 

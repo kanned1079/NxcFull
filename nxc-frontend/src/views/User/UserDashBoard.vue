@@ -6,6 +6,10 @@ import CommonHeader from "@/components/CommonHeader.vue";
 import CommonAside from "@/components/CommonAside.vue";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
+import {InformationOutline as infoIcon} from "@vicons/ionicons5"
+import {useMessage} from "naive-ui";
+
+const messages = useMessage();
 
 const apiAddrStore = useApiAddrStore();
 
@@ -15,6 +19,10 @@ const userInfoStore = useUserInfoStore();
 const router = useRouter();
 
 let interfaceAnimated = ref<boolean>(false)
+
+let floatBtnClicked = () => {
+  messages.info('clicked')
+}
 
 
 onMounted(() => {
@@ -67,23 +75,41 @@ export default {
       </n-layout-header>
       <!--        </transition>-->
 
-<!--      <transition name="slide-fade">-->
+      <!--      <transition name="slide-fade">-->
 
-        <n-layout-content content-style="padding: 0" class="content">
-          <n-scrollbar style="max-height: 100vh">
-
-
-            <!--          <n-config-provider>-->
-
-            <RouterView></RouterView>
-
-            <!--          </n-config-provider>-->
+      <n-layout-content content-style="padding: 0" class="content">
+        <n-scrollbar style="max-height: 100vh">
 
 
-            <div style="height: 3rem"></div>
-          </n-scrollbar>
-        </n-layout-content>
-<!--      </transition>-->
+          <!--          <n-config-provider>-->
+
+          <RouterView></RouterView>
+
+          <!--          </n-config-provider>-->
+
+
+          <div
+              style="height: 100%;width: 100%; pointer-events: none; transform: translate(0); z-index: 1000; position: absolute; top: 0; left: 0;">
+            <n-float-button
+                :bottom="100"
+                :right="50"
+                style="pointer-events: auto;"
+                @click="floatBtnClicked"
+            >
+              <n-badge color="#e3e5e7" value="Hi" :offset="[4, -4]">
+                <n-icon>
+                  <infoIcon/>
+                </n-icon>
+              </n-badge>
+
+            </n-float-button>
+          </div>
+
+
+          <div style="height: 3rem"></div>
+        </n-scrollbar>
+      </n-layout-content>
+      <!--      </transition>-->
       <!--      <n-layout-footer>成府路</n-layout-footer>-->
     </n-layout>
   </n-layout>
@@ -129,7 +155,7 @@ export default {
 
 .content {
   margin-top: 52px;
-  background-color: v-bind('themeStore.getTheme.globeTheme.contentBgColor');
+  //background-color: v-bind('themeStore.getTheme.globeTheme.contentBgColor');
 }
 
 </style>

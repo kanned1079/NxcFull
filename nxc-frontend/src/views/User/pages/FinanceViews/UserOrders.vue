@@ -183,22 +183,6 @@ const columns = [
 let showOrderDetails = (row: OrderList) => {
 
   paymentStore.orderDetail.order_id = row.order_id
-  // paymentStore.orderDetail.period = () => {
-  //   switch (row.period) {
-  //     case 'month': {
-  //       return t('userOrders.period.monthPay')
-  //     }
-  //     case 'quarter': {
-  //       return t('userOrders.period.quarterPay')
-  //     }
-  //     case 'half-year': {
-  //       return t('userOrders.period.halfYearPay')
-  //     }
-  //     case 'year': {
-  //       return t('userOrders.period.yearPay')
-  //     }
-  //   }
-  // }
   paymentStore.orderDetail.plan_name = row.plan_name
   paymentStore.orderDetail.period = row.period
   paymentStore.orderDetail.amount = row.amount
