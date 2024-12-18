@@ -35,6 +35,7 @@ interface Theme {
     menuSelected: Ref<string>;
     userPath: Ref<string>;
     menuCollapsed: Ref<boolean>;
+    menuIsFlippActive: Ref<boolean>;
 }
 
 const useThemeStore = defineStore('themeStore', (): Theme => {
@@ -764,6 +765,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
 
     // 菜单折叠
     let menuCollapsed = ref<boolean>(false)
+    let menuIsFlippActive = ref<boolean>(false)
 
     // 当前访问的位置
     let userPath = ref<string>('/dashboard/summary')
@@ -788,7 +790,8 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
         contentPath,
         menuSelected,
         userPath,
-        menuCollapsed
+        menuCollapsed,
+        menuIsFlippActive,
     }
 
 }, {

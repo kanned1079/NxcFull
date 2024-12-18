@@ -7,7 +7,11 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import {formatDate} from "@/utils/timeFormat";
 import instance from "@/axios";
 import {useRouter} from "vue-router";
-import {ChevronForwardOutline as toRight,} from "@vicons/ionicons5"
+import {
+  ChevronForwardOutline as toRight,
+  CheckmarkOutline as checkIcon,
+  SaveOutline as saveIcon,
+} from "@vicons/ionicons5"
 
 interface ActivateRecord {
   id: number;
@@ -123,9 +127,10 @@ const columns = [
           {
             size: 'small',
             bordered: false,
-            type: row.is_bind?'success':'error',
+            type: row.is_bind ? 'success' : 'error',
           },
-          {default: () => row.is_bind?t('userActivation.active'):t('userActivation.inactive')
+          {
+            default: () => row.is_bind ? t('userActivation.active') : t('userActivation.inactive')
           });
     }
   },
@@ -183,7 +188,7 @@ const columns = [
           style: {marginLeft: '10px'},
           bordered: false,
           disabled: !row.is_bind,
-          onClick: () => handleCancelBindById(),
+          onClick: () => handleUnbindById(row),
         }, {
           default: () => computed(() => t('userActivation.cancelBind')).value,
         }),
@@ -213,15 +218,43 @@ let handleGetAllMyActivateLog = async () => {
   }
 }
 
-let handleCancelBindById = async () => {
-  let {data} = await instance.post('/api/user/v1/activation/bind', {
-    "email": "example@example.com",
-    "password": "123456",
-    "key": "my-secret-key",
-    "client_version": "1.0.0",
-    "os_type": "macOS"
-  })
-  console.log(data)
+let handleUnbindById = async (row: ActivateRecord) => {
+  animated.value = false
+  try {
+    let {data} = await instance.delete('/api/user/v1/activation', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        activation_id: row.id,
+      }
+    })
+    if (data.code === 200) {
+      await handleGetAllMyActivateLog()
+    }
+
+  } catch (error: any) {
+    console.log(error)
+    message.error("unknown err: " + error)
+  }
+}
+
+let enableAlterRemark = ref<boolean>(false)
+
+let handleCommitNewRemark = async () => {
+  enableAlterRemark.value = false
+  try {
+    let {data} = await instance.patch('/api/user/v1/activation/remark', {
+      user_id: userInfoStore.thisUser.id,
+      record_id: currentRecord.value.id,
+      remark: currentRecord.value.remark,
+    })
+    if (data.code === 200) {
+      message.success(t('userActivation.updateSuccess'))
+    } else {
+      message.error('err: ' + data.msg || '')
+    }
+  } catch (err: any) {
+    console.log(err)
+  }
 }
 
 
@@ -311,17 +344,41 @@ export default {
 
     <div class="details-item-detail">
       <p class="details-item-title">{{ t('userActivation.keyGeneratedAt') }}</p>
-      <p class="details-item-content">{{ keyDetails.created_at?formatDate(keyDetails.created_at):'NULL' }}</p>
+      <p class="details-item-content">{{ keyDetails.created_at ? formatDate(keyDetails.created_at) : 'NULL' }}</p>
     </div>
 
     <div class="details-item-detail">
       <p class="details-item-title">{{ t('userActivation.activateRequestAt') }}</p>
-      <p class="details-item-content">{{ currentRecord.request_at?formatDate(currentRecord.request_at):'NULL' }}</p>
+      <p class="details-item-content">{{ currentRecord.request_at ? formatDate(currentRecord.request_at) : 'NULL' }}</p>
     </div>
 
     <div class="details-item-detail">
-      <p class="details-item-title">{{ t('userActivation.remark') }}</p>
-      <p class="details-item-content-remark">{{ currentRecord.remark?currentRecord.remark:t('userActivation.noRemark') }}</p>
+      <div class="details-item-detail-remark-title">
+        <p class="details-item-title">{{ t('userActivation.remark') }}</p>
+        <n-button
+            type="primary"
+            text
+            size="small"
+            style="text-decoration: underline"
+            @click="!enableAlterRemark?enableAlterRemark=true:handleCommitNewRemark()"
+        >
+          <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; margin-left: 10px;">
+            <p>{{ !enableAlterRemark?t('userActivation.alterRemark'):t('userActivation.commitRemark') }}</p>
+
+          </div>
+        </n-button>
+      </div>
+        <n-input
+            :rows="2"
+            type="textarea"
+            size="large"
+            :disabled="!enableAlterRemark"
+            :placeholder="'在這裡設置備注信息'"
+            v-model:value.trim="currentRecord.remark"
+            :bordered="true"
+            style="margin-top: 5px"
+        >
+        </n-input>
     </div>
 
     <template #footer>
@@ -339,7 +396,6 @@ export default {
             </n-icon>
           </n-button>
         </div>
-
       </div>
     </template>
   </n-modal>
@@ -372,6 +428,14 @@ export default {
     opacity: 1;
     margin-bottom: 25px;
   }
+
+  .details-item-detail-remark-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: baseline;
+  }
+  
   .details-item-content-remark {
     font-size: 1rem;
     font-weight: 400;

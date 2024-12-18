@@ -155,7 +155,7 @@ let MenuOption = [
 //   console.info(`[onUpdate:expandedKeys]: ${JSON.stringify(keys)}`)
 // }
 let update = (key: string) => {
-  console.log(key)
+  themeStore.menuIsFlippActive = false
   switch (key) {
     case 'dashboard': {
       router.push({path: '/admin/dashboard/summary'})
@@ -263,6 +263,11 @@ let UserMenuOption = ref([
         key: 'user-keys',
         icon: renderIcon(keyIcon),
       },
+      {
+        label: computed(() => t('commonAside.user.activateLog')),
+        key: 'user-activate-log',
+        icon: renderIcon(historyIcon),
+      },
     ]
   },
   {
@@ -304,17 +309,14 @@ let UserMenuOption = ref([
         key: 'user-tickets',
         icon: renderIcon(supportIcon),
       },
-      {
-        label: computed(() => t('commonAside.user.activateLog')),
-        key: 'user-activate-log',
-        icon: renderIcon(historyIcon),
-      },
+
     ]
   },
 ])
 
 
 let userUpdate = (key: string) => {
+  themeStore.menuIsFlippActive = false
   switch (key) {
     case 'user-dashboard': {
       themeStore.menuSelected = 'user-dashboard'

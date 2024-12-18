@@ -303,6 +303,7 @@ export default {
             <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">
               {{ t('userSummary.toPurchase') }}</p>
           </div>
+
         </n-card>
 
         <n-card
@@ -349,6 +350,8 @@ export default {
           content-style="padding: 0;"
           :bordered="false"
       >
+
+
         <div
             :class="themeStore.enableDarkMode?'help-day':'help-night'"
             v-for="item in helpData"
@@ -378,9 +381,9 @@ export default {
         </div>
       </n-card>
 
-
     </div>
   </transition>
+
 
 
 </template>

@@ -20,6 +20,8 @@ service KeyService {
   // 密钥使用记录
   rpc BindOrActiveMyKey2App(BindOrActiveMyKey2AppRequest) returns (BindOrActiveMyKey2AppResponse);
   rpc UnbindKey(UnbindKeyRequest) returns (UnbindKeyResponse);
+  rpc AlterKeyBindRemark(AlterKeyBindRemarkRequest) returns (AlterKeyBindRemarkResponse);
+
   rpc CheckAccountAndKeyUsability(CheckAccountAndKeyUsabilityRequest) returns (CheckAccountAndKeyUsabilityResponse);
 
   rpc GetActivateLogByUserId(GetActivateLogByUserIdRequest) returns (GetActivateLogByUserIdResponse);
@@ -96,7 +98,8 @@ message BindOrActiveMyKey2AppResponse {
 }
 
 message UnbindKeyRequest {
-  int64 record_id = 1;
+  int64 user_id = 1;
+  int64 record_id = 2;
 }
 
 message UnbindKeyResponse {
@@ -139,4 +142,15 @@ message GetActivateLogByAdminResponse {
   string msg = 2;
   bytes log = 3;
   int64 page_count = 4;
+}
+
+message AlterKeyBindRemarkRequest {
+  int64 user_id = 1;
+  int64 record_id = 2;
+  string remark = 3;
+}
+
+message AlterKeyBindRemarkResponse {
+  int32 code = 1;
+  string msg = 2;
 }

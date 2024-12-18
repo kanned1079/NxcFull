@@ -32,7 +32,7 @@ const userInfoStore = useUserInfoStore();
 let thisUser = userInfoStore.thisUser;
 
 const theme = themeStore.getTheme;
-const active = ref(false)
+// const active = ref(false)
 const placement = ref<DrawerPlacement>('right')
 
 // let options = userInfoStore.thisUser.isAdmin ? userDropdownStore.admin_options : userDropdownStore.user_options;
@@ -126,7 +126,9 @@ let handleSelectLang = (lang: string) => {
 }
 
 const activateMenu = (place: DrawerPlacement) => {
-  active.value = true
+  // active.value = true
+  themeStore.menuIsFlippActive = true
+
   placement.value = place
 }
 
@@ -221,7 +223,11 @@ export default {
     </div>
   </div>
 
-  <n-drawer v-model:show="active" :width="themeStore.menuCollapsed?'80%':'320px'" :placement="placement">
+  <n-drawer
+      v-model:show="themeStore.menuIsFlippActive"
+      :width="themeStore.menuCollapsed?'80%':'320px'"
+      :placement="placement"
+  >
     <CommonAside></CommonAside>
   </n-drawer>
 </template>

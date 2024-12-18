@@ -25,6 +25,7 @@ const (
 	KeyService_CancelRegisterClientWithKey_FullMethodName = "/key.KeyService/CancelRegisterClientWithKey"
 	KeyService_BindOrActiveMyKey2App_FullMethodName       = "/key.KeyService/BindOrActiveMyKey2App"
 	KeyService_UnbindKey_FullMethodName                   = "/key.KeyService/UnbindKey"
+	KeyService_AlterKeyBindRemark_FullMethodName          = "/key.KeyService/AlterKeyBindRemark"
 	KeyService_CheckAccountAndKeyUsability_FullMethodName = "/key.KeyService/CheckAccountAndKeyUsability"
 	KeyService_GetActivateLogByUserId_FullMethodName      = "/key.KeyService/GetActivateLogByUserId"
 	KeyService_GetActivateLogByAdmin_FullMethodName       = "/key.KeyService/GetActivateLogByAdmin"
@@ -47,6 +48,7 @@ type KeyServiceClient interface {
 	// 密钥使用记录
 	BindOrActiveMyKey2App(ctx context.Context, in *BindOrActiveMyKey2AppRequest, opts ...grpc.CallOption) (*BindOrActiveMyKey2AppResponse, error)
 	UnbindKey(ctx context.Context, in *UnbindKeyRequest, opts ...grpc.CallOption) (*UnbindKeyResponse, error)
+	AlterKeyBindRemark(ctx context.Context, in *AlterKeyBindRemarkRequest, opts ...grpc.CallOption) (*AlterKeyBindRemarkResponse, error)
 	CheckAccountAndKeyUsability(ctx context.Context, in *CheckAccountAndKeyUsabilityRequest, opts ...grpc.CallOption) (*CheckAccountAndKeyUsabilityResponse, error)
 	GetActivateLogByUserId(ctx context.Context, in *GetActivateLogByUserIdRequest, opts ...grpc.CallOption) (*GetActivateLogByUserIdResponse, error)
 	GetActivateLogByAdmin(ctx context.Context, in *GetActivateLogByAdminRequest, opts ...grpc.CallOption) (*GetActivateLogByAdminResponse, error)
@@ -120,6 +122,16 @@ func (c *keyServiceClient) UnbindKey(ctx context.Context, in *UnbindKeyRequest, 
 	return out, nil
 }
 
+func (c *keyServiceClient) AlterKeyBindRemark(ctx context.Context, in *AlterKeyBindRemarkRequest, opts ...grpc.CallOption) (*AlterKeyBindRemarkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlterKeyBindRemarkResponse)
+	err := c.cc.Invoke(ctx, KeyService_AlterKeyBindRemark_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *keyServiceClient) CheckAccountAndKeyUsability(ctx context.Context, in *CheckAccountAndKeyUsabilityRequest, opts ...grpc.CallOption) (*CheckAccountAndKeyUsabilityResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CheckAccountAndKeyUsabilityResponse)
@@ -167,6 +179,7 @@ type KeyServiceServer interface {
 	// 密钥使用记录
 	BindOrActiveMyKey2App(context.Context, *BindOrActiveMyKey2AppRequest) (*BindOrActiveMyKey2AppResponse, error)
 	UnbindKey(context.Context, *UnbindKeyRequest) (*UnbindKeyResponse, error)
+	AlterKeyBindRemark(context.Context, *AlterKeyBindRemarkRequest) (*AlterKeyBindRemarkResponse, error)
 	CheckAccountAndKeyUsability(context.Context, *CheckAccountAndKeyUsabilityRequest) (*CheckAccountAndKeyUsabilityResponse, error)
 	GetActivateLogByUserId(context.Context, *GetActivateLogByUserIdRequest) (*GetActivateLogByUserIdResponse, error)
 	GetActivateLogByAdmin(context.Context, *GetActivateLogByAdminRequest) (*GetActivateLogByAdminResponse, error)
@@ -197,6 +210,9 @@ func (UnimplementedKeyServiceServer) BindOrActiveMyKey2App(context.Context, *Bin
 }
 func (UnimplementedKeyServiceServer) UnbindKey(context.Context, *UnbindKeyRequest) (*UnbindKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnbindKey not implemented")
+}
+func (UnimplementedKeyServiceServer) AlterKeyBindRemark(context.Context, *AlterKeyBindRemarkRequest) (*AlterKeyBindRemarkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AlterKeyBindRemark not implemented")
 }
 func (UnimplementedKeyServiceServer) CheckAccountAndKeyUsability(context.Context, *CheckAccountAndKeyUsabilityRequest) (*CheckAccountAndKeyUsabilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckAccountAndKeyUsability not implemented")
@@ -336,6 +352,24 @@ func _KeyService_UnbindKey_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KeyService_AlterKeyBindRemark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AlterKeyBindRemarkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).AlterKeyBindRemark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: KeyService_AlterKeyBindRemark_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).AlterKeyBindRemark(ctx, req.(*AlterKeyBindRemarkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _KeyService_CheckAccountAndKeyUsability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckAccountAndKeyUsabilityRequest)
 	if err := dec(in); err != nil {
@@ -420,6 +454,10 @@ var KeyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnbindKey",
 			Handler:    _KeyService_UnbindKey_Handler,
+		},
+		{
+			MethodName: "AlterKeyBindRemark",
+			Handler:    _KeyService_AlterKeyBindRemark_Handler,
 		},
 		{
 			MethodName: "CheckAccountAndKeyUsability",

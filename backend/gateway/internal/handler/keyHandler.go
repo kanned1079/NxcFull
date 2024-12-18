@@ -145,9 +145,26 @@ func HandleGetKeyDetailsById(context *gin.Context) {
 }
 
 func HandleDisableBindKey(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
 	activationId, err := strconv.ParseInt(context.Query("activation_id"), 10, 64)
-	log.Println(activationId, err)
-
+	log.Println(activationId, userId, err)
+	resp, err := grpcClient.KeyServicesClient.UnbindKey(sysContext.Background(), &pb.UnbindKeyRequest{
+		UserId:   userId,
+		RecordId: activationId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":     http.StatusInternalServerError,
+			"msg":      err.Error(),
+			"finished": false,
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":     resp.Code,
+		"msg":      resp.Msg,
+		"finished": true,
+	})
 }
 
 func HandleBindKeyToThirdExternalApp(context *gin.Context) {
@@ -192,4 +209,36 @@ func HandleBindKeyToThirdExternalApp(context *gin.Context) {
 		"msg":                resp.Msg,
 		"significant_number": resp.SignificantNumber,
 	})
+}
+
+func HandleAlterRemarkByUser(context *gin.Context) {
+	postData := &struct {
+		UserId   int64  `json:"user_id"`
+		RecordId int64  `json:"record_id"`
+		Remark   string `json:"remark"`
+	}{}
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "Bad Request",
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.AlterKeyBindRemark(sysContext.Background(), &pb.AlterKeyBindRemarkRequest{
+		UserId:   postData.UserId,
+		RecordId: postData.RecordId,
+		Remark:   postData.Remark,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+
 }
