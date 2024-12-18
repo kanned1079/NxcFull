@@ -313,7 +313,7 @@ export default {
 <!--  <SnowFall :show="showRibbon"></SnowFall>-->
 <!--  <ColoredRibbon :show="showRibbon"></ColoredRibbon>-->
   <ColoredRibbon :show="topUpIsFinishedSuccess"></ColoredRibbon>
-  <div style="padding: 20px">
+  <div style="padding: 20px 20px 15px 20px">
     <n-card
         hoverable
         :embedded="true"

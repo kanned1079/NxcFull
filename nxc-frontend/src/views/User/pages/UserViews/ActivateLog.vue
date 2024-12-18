@@ -303,7 +303,7 @@ export default {
             :scroll-x="1000"
         />
       </n-card>
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+      <div style="margin-top: 15px; display: flex; flex-direction: row; justify-content: right;">
         <n-pagination
             size="medium"
             v-model:page.number="dataSize.page"
@@ -409,7 +409,7 @@ export default {
 }
 
 .root {
-  padding: 20px;
+  padding: 15px 20px;
 }
 
 .details-item-detail {

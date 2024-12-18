@@ -194,7 +194,7 @@ export default {
       <!--      <n-collapse-transition :show="haveOpenTickets">-->
       <n-alert
           :bordered="false"
-          style="margin-bottom: 20px"
+          style="margin-bottom: 15px"
           title=""
           type="warning"
           v-if="haveOpenTickets"
@@ -343,7 +343,7 @@ export default {
       </n-card>
 
       <n-card
-          style="margin: 20px 0; padding-right: 20px"
+          style="margin: 15px 0; padding-right: 20px"
           :embedded="true"
           hoverable
           :title="t('userSummary.shortcut')"
@@ -394,7 +394,7 @@ export default {
   padding: 20px;
 
   .my-subscribe {
-    margin-top: 20px;
+    margin-top: 15px;
     padding-bottom: 20px;
   }
 }

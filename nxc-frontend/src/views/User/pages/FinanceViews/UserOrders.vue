@@ -307,7 +307,7 @@ export default {
   padding: 0 20px 20px 20px;
 
   .order-table {
-    margin-top: 20px;
+    margin-top: 15px;
   }
 
 }

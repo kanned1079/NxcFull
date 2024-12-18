@@ -207,7 +207,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     .search-input {
       line-height: 50px;
       border: 10px;
@@ -220,7 +220,7 @@ export default {
   }
 
   .doc-card {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     .doc-item {
       display: flex;
       flex-direction: column;

@@ -348,7 +348,7 @@ export default {
   //}
 
   .key-card {
-    margin-top: 20px;
+    margin-top: 15px;
 
     .key-item {
       padding: 20px;

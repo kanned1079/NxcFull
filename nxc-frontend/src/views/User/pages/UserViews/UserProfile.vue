@@ -671,7 +671,7 @@ export default {
       }
     }
 
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   .password-alert-card {
@@ -696,7 +696,7 @@ export default {
     //    width: 50%;
     //  }
     //}
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 
   }
 
@@ -730,7 +730,7 @@ export default {
 
     }
 
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   .del-card {
@@ -746,7 +746,7 @@ export default {
       margin: 20px;
     }
 
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
 

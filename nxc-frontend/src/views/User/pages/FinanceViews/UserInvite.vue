@@ -212,7 +212,7 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px">
+  <div style="padding: 20px 20px 15px 20px">
     <n-card
         hoverable
         :embedded="true"
@@ -239,7 +239,7 @@ export default {
 
 
   <transition name="slide-fade">
-    <div style="padding: 0 20px 20px 20px" v-if="animated">
+    <div style="padding: 0 20px 15px 20px" v-if="animated">
 
       <n-card
           hoverable
@@ -312,7 +312,7 @@ export default {
               hoverable
               :embedded="true"
               :bordered="false"
-              style="margin-top: 20px"
+              style="margin-top: 15px"
               content-style="padding: 0"
           >
             <div style="padding: 20px">
@@ -382,7 +382,7 @@ export default {
 }
 
 .code-info {
-  margin-top: 20px;
+  margin-top: 15px;
   background-color: rgba(0, 0, 0, 0.0);
 }
 
