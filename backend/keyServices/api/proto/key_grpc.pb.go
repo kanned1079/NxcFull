@@ -29,6 +29,7 @@ const (
 	KeyService_CheckAccountAndKeyUsability_FullMethodName = "/key.KeyService/CheckAccountAndKeyUsability"
 	KeyService_GetActivateLogByUserId_FullMethodName      = "/key.KeyService/GetActivateLogByUserId"
 	KeyService_GetActivateLogByAdmin_FullMethodName       = "/key.KeyService/GetActivateLogByAdmin"
+	KeyService_GetAllKeysByAdminDesc_FullMethodName       = "/key.KeyService/GetAllKeysByAdminDesc"
 )
 
 // KeyServiceClient is the client API for KeyService service.
@@ -52,6 +53,8 @@ type KeyServiceClient interface {
 	CheckAccountAndKeyUsability(ctx context.Context, in *CheckAccountAndKeyUsabilityRequest, opts ...grpc.CallOption) (*CheckAccountAndKeyUsabilityResponse, error)
 	GetActivateLogByUserId(ctx context.Context, in *GetActivateLogByUserIdRequest, opts ...grpc.CallOption) (*GetActivateLogByUserIdResponse, error)
 	GetActivateLogByAdmin(ctx context.Context, in *GetActivateLogByAdminRequest, opts ...grpc.CallOption) (*GetActivateLogByAdminResponse, error)
+	// Admin
+	GetAllKeysByAdminDesc(ctx context.Context, in *GetAllKeysByAdminDescRequest, opts ...grpc.CallOption) (*GetAllKeysByAdminDescResponse, error)
 }
 
 type keyServiceClient struct {
@@ -162,6 +165,16 @@ func (c *keyServiceClient) GetActivateLogByAdmin(ctx context.Context, in *GetAct
 	return out, nil
 }
 
+func (c *keyServiceClient) GetAllKeysByAdminDesc(ctx context.Context, in *GetAllKeysByAdminDescRequest, opts ...grpc.CallOption) (*GetAllKeysByAdminDescResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllKeysByAdminDescResponse)
+	err := c.cc.Invoke(ctx, KeyService_GetAllKeysByAdminDesc_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KeyServiceServer is the server API for KeyService service.
 // All implementations must embed UnimplementedKeyServiceServer
 // for forward compatibility.
@@ -183,6 +196,8 @@ type KeyServiceServer interface {
 	CheckAccountAndKeyUsability(context.Context, *CheckAccountAndKeyUsabilityRequest) (*CheckAccountAndKeyUsabilityResponse, error)
 	GetActivateLogByUserId(context.Context, *GetActivateLogByUserIdRequest) (*GetActivateLogByUserIdResponse, error)
 	GetActivateLogByAdmin(context.Context, *GetActivateLogByAdminRequest) (*GetActivateLogByAdminResponse, error)
+	// Admin
+	GetAllKeysByAdminDesc(context.Context, *GetAllKeysByAdminDescRequest) (*GetAllKeysByAdminDescResponse, error)
 	mustEmbedUnimplementedKeyServiceServer()
 }
 
@@ -222,6 +237,9 @@ func (UnimplementedKeyServiceServer) GetActivateLogByUserId(context.Context, *Ge
 }
 func (UnimplementedKeyServiceServer) GetActivateLogByAdmin(context.Context, *GetActivateLogByAdminRequest) (*GetActivateLogByAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetActivateLogByAdmin not implemented")
+}
+func (UnimplementedKeyServiceServer) GetAllKeysByAdminDesc(context.Context, *GetAllKeysByAdminDescRequest) (*GetAllKeysByAdminDescResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllKeysByAdminDesc not implemented")
 }
 func (UnimplementedKeyServiceServer) mustEmbedUnimplementedKeyServiceServer() {}
 func (UnimplementedKeyServiceServer) testEmbeddedByValue()                    {}
@@ -424,6 +442,24 @@ func _KeyService_GetActivateLogByAdmin_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KeyService_GetAllKeysByAdminDesc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllKeysByAdminDescRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).GetAllKeysByAdminDesc(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: KeyService_GetAllKeysByAdminDesc_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).GetAllKeysByAdminDesc(ctx, req.(*GetAllKeysByAdminDescRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // KeyService_ServiceDesc is the grpc.ServiceDesc for KeyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -470,6 +506,10 @@ var KeyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetActivateLogByAdmin",
 			Handler:    _KeyService_GetActivateLogByAdmin_Handler,
+		},
+		{
+			MethodName: "GetAllKeysByAdminDesc",
+			Handler:    _KeyService_GetAllKeysByAdminDesc_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

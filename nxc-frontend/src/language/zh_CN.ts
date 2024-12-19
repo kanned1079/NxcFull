@@ -101,6 +101,13 @@ export default {
             editUser: "編輯用戶",
             no: "否",
             yes: "是"
+        },
+        keysMgr: {
+            keyMgr: '密鑰管理',
+            enableKey: '啟用密鑰',
+            disableKey: '禁用密鑰',
+
+
         }
     },
     userLogin: {

@@ -76,6 +76,7 @@ func HandleGetAllMyKeys(context *gin.Context) {
 
 func HandleGetAllMyActivationLogs(context *gin.Context) {
 	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	err, page, size := GetPage2SizeFromQuery(context)
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
@@ -85,6 +86,8 @@ func HandleGetAllMyActivationLogs(context *gin.Context) {
 	}
 	resp, err := grpcClient.KeyServicesClient.GetActivateLogByUserId(sysContext.Background(), &pb.GetActivateLogByUserIdRequest{
 		UserId: userId,
+		Page:   page,
+		Size:   size,
 	})
 	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{

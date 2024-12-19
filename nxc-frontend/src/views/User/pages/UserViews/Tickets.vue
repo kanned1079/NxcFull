@@ -7,6 +7,23 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import instance from "@/axios/index"
 import {formatDate} from "@/utils/timeFormat";
+import {getAllMyTickets, closeTicket, commitNewTicket} from "@/api/user/tickets";
+
+interface Ticket {
+  subject: string
+  urgency: number | null
+  body: string
+}
+
+// 表格的字段名
+interface TicketItem {
+  id: number  // 工单Id
+  subject: string // 工单主题
+  urgency: number // 紧急程度 1低 2中 3高
+  status: number // true工单未关闭 false工单关闭
+  created_at: string  // 工单创建时间
+  last_reply: string // 最后一次回复
+}
 
 const {t} = useI18n();
 const appInfoStore = useAppInfosStore();
@@ -47,7 +64,10 @@ const rules = {
   }
 }
 
+let ticketList = ref<TicketItem[]>([])
+
 let formIsValid = ref<boolean>(false)
+
 
 let validateClick = () => {
   formRef.value?.validate((errors) => {
@@ -80,11 +100,7 @@ let urgencyOptions = [
   }
 ]
 
-interface Ticket {
-  subject: string
-  urgency: number | null
-  body: string
-}
+
 
 let newTicket = ref<Ticket>({
   subject: '',
@@ -101,87 +117,94 @@ let cancelCreateNewTicket = () => {
   newTicket.value.body = ''
 }
 
-let commitNewTicket = async () => {
-  validateClick()
-  if (formIsValid.value) {
-    console.log('表單驗證通過')
-    try {
-      let {data} = await instance.post('/api/user/v1/ticket', {
-        user_id: userInfoStore.thisUser.id,
-        ...newTicket.value
-      })
-      if (data.code === 200 && data.created) {
-        message.success(computed(() => t('userTickets.commitNewTicketSuccess')).value)
-        cancelCreateNewTicket()
-        await getAllMyTickets()
-        console.log(data)
-      } else {
-        message.error(computed(() => t('userTickets.commitNewTicketFailure')).value + data.msg as string || '')
-      }
-    } catch (error: any) {
-      console.log(error)
-      // message.error(error.toString)
-    }
-  } else {
-    message.error(computed(() => t('userTickets.form.ticketNotFinished')).value)
-  }
-}
-
-let closeTicket = async (ticket_id: number) => {
-  try {
-    let {data} = await instance.delete('/api/user/v1/ticket', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        ticket_id,
-      }
-    })
-    if (data.code === 200 && data.closed) {
+let callCloseTicket = async (ticket_id: number) => {
+  let data = await closeTicket(userInfoStore.thisUser.id, ticket_id)
+      if (data.code === 200 && data.closed) {
       message.success(computed(() => t('userTickets.ticketCloseSuccess')).value)
-      await getAllMyTickets()
+      await callGetAllMyTickets()
     } else {
       message.error(computed(() => t('userTickets.ticketCloseFailure')).value + data.msg as string || '')
     }
-  } catch (error: any) {
-    console.log(error)
-  }
 }
+
+// let closeTicket = async (ticket_id: number) => {
+//   try {
+//     let {data} = await instance.delete('/api/user/v1/ticket', {
+//       params: {
+//         user_id: userInfoStore.thisUser.id,
+//         ticket_id,
+//       }
+//     })
+//     if (data.code === 200 && data.closed) {
+//       message.success(computed(() => t('userTickets.ticketCloseSuccess')).value)
+//       await callGetAllMyTickets()
+//     } else {
+//       message.error(computed(() => t('userTickets.ticketCloseFailure')).value + data.msg as string || '')
+//     }
+//   } catch (error: any) {
+//     console.log(error)
+//   }
+// }
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------x
 
-// 表格的字段名
-interface TicketItem {
-  id: number  // 工单Id
-  subject: string // 工单主题
-  urgency: number // 紧急程度 1低 2中 3高
-  status: number // true工单未关闭 false工单关闭
-  created_at: string  // 工单创建时间
-  last_reply: string // 最后一次回复
-}
 
-let getAllMyTickets = async () => {
-  try {
-    animated.value = false
-    let {data} = await instance.get('/api/user/v1/ticket', {
-      params: {
-        user_id: userInfoStore.thisUser.id
-      }
-    })
-    if (data.code === 200) {
-      ticketList.value = []
-      data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
-      animated.value = true
-    } else if (data.code === 404) {
-      message.info(computed(() => t('userTickets.noTickets')).value)
-    } else {
-      message.error(data.msg || '' as string)
-    }
-  } catch (error: any) {
-    message.error(error.toString)
+
+let callGetAllMyTickets = async () => {
+  animated.value = false
+  let data = await getAllMyTickets(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    ticketList.value = []
+    data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
+    animated.value = true
+  } else if (data.code === 404) {
+    message.info(computed(() => t('userTickets.noTickets')).value)
+  } else {
+    message.error(data.msg || '' as string)
   }
-
 }
 
-let ticketList = ref<TicketItem[]>([])
+let callCommitNewTicket = async () => {
+  validateClick()
+  if (formIsValid.value) {
+    console.log('表單驗證通過')
+    let data = await commitNewTicket(userInfoStore.thisUser.id, newTicket.value)
+    if (data.code === 200 && data.created) {
+      message.success(computed(() => t('userTickets.commitNewTicketSuccess')).value)
+      cancelCreateNewTicket()
+      // await callGetAllMyTickets()
+      await callGetAllMyTickets()
+      console.log(data)
+    } else {
+      message.error(computed(() => t('userTickets.commitNewTicketFailure')).value + data.msg as string || '')
+    }
+  }
+}
+
+// let getAllMyTickets = async () => {
+//   try {
+//     animated.value = false
+//     let {data} = await instance.get('/api/user/v1/ticket', {
+//       params: {
+//         user_id: userInfoStore.thisUser.id
+//       }
+//     })
+//     if (data.code === 200) {
+//       ticketList.value = []
+//       data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
+//       animated.value = true
+//     } else if (data.code === 404) {
+//       message.info(computed(() => t('userTickets.noTickets')).value)
+//     } else {
+//       message.error(data.msg || '' as string)
+//     }
+//   } catch (error: any) {
+//     message.error(error.toString)
+//   }
+//
+// }
+
+
 
 // 点击打开工单后 单独打开一个聊天窗口
 let openTicket = (ticket: TicketItem) => {
@@ -260,7 +283,7 @@ const columns = ref([
           secondary: true,
           disabled: row.status === 204,
           style: {marginLeft: '10px'},
-          onClick: () => closeTicket(row.id)
+          onClick: () => callCloseTicket(row.id)
         }, {
           default: () => computed(() => t('userTickets.closeTicket')).value
         })
@@ -277,9 +300,16 @@ onBeforeMount(() => {
 onMounted(async () => {
   themeStore.userPath = '/dashboard/tickets'
 
-  await getAllMyTickets()
+  await callGetAllMyTickets()
   animated.value = true
 })
+
+</script>
+
+<script lang="ts">
+export default {
+name: 'Tickets',
+}
 
 </script>
 
@@ -358,7 +388,7 @@ onMounted(async () => {
           <n-button style="width: 80px; margin-right: 10px;" :bordered="false" secondary type="primary"
                     @click="cancelCreateNewTicket">{{ t('userTickets.cancel') }}
           </n-button>
-          <n-button style="width: 80px" :bordered="false" type="primary" @click="commitNewTicket">
+          <n-button style="width: 80px" :bordered="false" type="primary" @click="callCommitNewTicket">
             {{ t('userTickets.submit') }}
           </n-button>
 

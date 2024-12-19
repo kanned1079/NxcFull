@@ -80,21 +80,21 @@ let MenuOption = [
     // icon: renderIcon(BookIcon),
     disabled: false,
     children: [
-      {
-        label: '节点管理',
-        key: 'node-manager',
-        icon: renderIcon(nodeIcon),
-      },
+      // {
+      //   label: '节点管理',
+      //   key: 'node-manager',
+      //   icon: renderIcon(nodeIcon),
+      // },
       {
         label: '权限组管理',
         key: 'privilege-group-mgr',
         icon: renderIcon(privilegeIcon),
       },
-      {
-        label: '路由管理',
-        key: 'router-config',
-        icon: renderIcon(routerIcon),
-      },
+      // {
+      //   label: '路由管理',
+      //   key: 'router-config',
+      //   icon: renderIcon(routerIcon),
+      // },
     ]
   },
   {
@@ -130,6 +130,11 @@ let MenuOption = [
         label: '用户管理',
         key: 'user-manager',
         icon: renderIcon(usersIcon),
+      },
+      {
+        label: '密钥管理',
+        key: 'keys-manager',
+        icon: renderIcon(keyIcon),
       },
       {
         label: '公告管理',
@@ -230,6 +235,9 @@ let update = (key: string) => {
     case 'order-manager': {
       router.push({path: '/admin/dashboard/order'})
       break
+    }
+    case 'keys-manager': {
+      router.push({path: '/admin/dashboard/keys'})
     }
   }
 }

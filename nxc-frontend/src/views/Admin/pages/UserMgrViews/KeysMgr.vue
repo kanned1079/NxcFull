@@ -12,7 +12,6 @@ import {
   CheckmarkOutline as checkIcon,
   SaveOutline as saveIcon,
 } from "@vicons/ionicons5"
-import {handleGetAllMyActivateLog, handleUnbindById} from "@/api/user/record"
 
 interface ActivateRecord {
   id: number;
@@ -189,7 +188,7 @@ const columns = [
           style: {marginLeft: '10px'},
           bordered: false,
           disabled: !row.is_bind,
-          onClick: () => callHandleUnbindById(row),
+          onClick: () => handleUnbindById(row),
         }, {
           default: () => computed(() => t('userActivation.cancelBind')).value,
         }),
@@ -199,69 +198,46 @@ const columns = [
   }
 ];
 
-let callHandleGetAllMyActivateLog = async () => {
-  let data = await handleGetAllMyActivateLog(
-      userInfoStore.thisUser.id,
-      dataSize.value.page,
-      dataSize.value.pageSize
-  )
-  if (data.code === 200) {
-    activateRecordList.value = []
+let handleGetAllMyActivateLog = async () => {
+  try {
+    let {data} = await instance.get('/api/user/v1/activation', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        page: dataSize.value.page,
+        size: dataSize.value.pageSize,
+      }
+    })
+    if (data.code === 200) {
+      activateRecordList.value = []
       data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
       pageCount.value = data.page_count
       animated.value = true
+    }
+
+  } catch (error: any) {
+    console.log(error)
+    message.error("unknown err: " + error)
   }
 }
 
-// let handleGetAllMyActivateLog = async () => {
-//   try {
-//     let {data} = await instance.get('/api/user/v1/activation', {
-//       params: {
-//         user_id: userInfoStore.thisUser.id,
-//         page: dataSize.value.page,
-//         size: dataSize.value.pageSize,
-//       }
-//     })
-//     if (data.code === 200) {
-//       activateRecordList.value = []
-//       data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
-//       pageCount.value = data.page_count
-//       animated.value = true
-//     }
-//
-//   } catch (error: any) {
-//     console.log(error)
-//     message.error("unknown err: " + error)
-//   }
-// }
+let handleUnbindById = async (row: ActivateRecord) => {
+  animated.value = false
+  try {
+    let {data} = await instance.delete('/api/user/v1/activation', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+        activation_id: row.id,
+      }
+    })
+    if (data.code === 200) {
+      await handleGetAllMyActivateLog()
+    }
 
-let callHandleUnbindById = async (row: ActivateRecord) => {
-  let data = await handleUnbindById(
-      userInfoStore.thisUser.id,
-      row.id,
-  )
-  if (data.code === 200) await callHandleGetAllMyActivateLog()
-  else message.error('err:' + data.message || '')
+  } catch (error: any) {
+    console.log(error)
+    message.error("unknown err: " + error)
+  }
 }
-
-// let handleUnbindById = async (row: ActivateRecord) => {
-//   animated.value = false
-//   try {
-//     let {data} = await instance.delete('/api/user/v1/activation', {
-//       params: {
-//         user_id: userInfoStore.thisUser.id,
-//         activation_id: row.id,
-//       }
-//     })
-//     if (data.code === 200) {
-//       await handleGetAllMyActivateLog()
-//     }
-//
-//   } catch (error: any) {
-//     console.log(error)
-//     message.error("unknown err: " + error)
-//   }
-// }
 
 let enableAlterRemark = ref<boolean>(false)
 
@@ -290,7 +266,7 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-  await callHandleGetAllMyActivateLog()
+  await handleGetAllMyActivateLog()
   animated.value = true
 })
 
@@ -298,7 +274,7 @@ onMounted(async () => {
 
 <script lang="ts">
 export default {
-  name: "ActivateLog",
+  name: "KeysMgr",
 }
 </script>
 
@@ -308,7 +284,7 @@ export default {
         hoverable
         :embedded="true"
         :bordered="false"
-        :title="t('userActivation.activateLog')"
+        :title="t('adminViews.keysMgr.keyMgr')"
     ></n-card>
   </div>
   <transition name="slide-fade">
@@ -334,7 +310,7 @@ export default {
             size="medium"
             v-model:page.number="dataSize.page"
             :page-count="pageCount"
-            @update:page="animated=false; callHandleGetAllMyActivateLog()"
+            @update:page="animated=false; handleGetAllMyActivateLog()"
         />
         <n-select
             style="width: 200px; margin-left: 20px"
@@ -342,7 +318,7 @@ export default {
             size="small"
             :options="dataCountOptions"
             :remote="true"
-            @update:value="animated=false; dataSize.page = 1; callHandleGetAllMyActivateLog()"
+            @update:value="animated=false; dataSize.page = 1; handleGetAllMyActivateLog()"
         />
       </div>
     </div>
@@ -394,17 +370,17 @@ export default {
           </div>
         </n-button>
       </div>
-        <n-input
-            :rows="2"
-            type="textarea"
-            size="large"
-            :disabled="!enableAlterRemark"
-            :placeholder="'在這裡設置備注信息'"
-            v-model:value.trim="currentRecord.remark"
-            :bordered="true"
-            style="margin-top: 5px"
-        >
-        </n-input>
+      <n-input
+          :rows="2"
+          type="textarea"
+          size="large"
+          :disabled="!enableAlterRemark"
+          :placeholder="'在這裡設置備注信息'"
+          v-model:value.trim="currentRecord.remark"
+          :bordered="true"
+          style="margin-top: 5px"
+      >
+      </n-input>
     </div>
 
     <template #footer>
@@ -461,7 +437,7 @@ export default {
     justify-content: flex-start;
     align-items: baseline;
   }
-  
+
   .details-item-content-remark {
     font-size: 1rem;
     font-weight: 400;

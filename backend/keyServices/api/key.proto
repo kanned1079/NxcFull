@@ -27,6 +27,8 @@ service KeyService {
   rpc GetActivateLogByUserId(GetActivateLogByUserIdRequest) returns (GetActivateLogByUserIdResponse);
   rpc GetActivateLogByAdmin(GetActivateLogByAdminRequest) returns (GetActivateLogByAdminResponse);
 
+  // Admin
+  rpc GetAllKeysByAdminDesc(GetAllKeysByAdminDescRequest) returns (GetAllKeysByAdminDescResponse);
 
 
 }
@@ -153,4 +155,19 @@ message AlterKeyBindRemarkRequest {
 message AlterKeyBindRemarkResponse {
   int32 code = 1;
   string msg = 2;
+}
+
+// Admin
+
+message GetAllKeysByAdminDescRequest {
+  int64 page = 1;
+  int64 size = 2;
+  string email = 3;
+}
+
+message GetAllKeysByAdminDescResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes keys = 3;
+  int64 page_count = 4;
 }
