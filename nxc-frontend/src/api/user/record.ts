@@ -10,15 +10,6 @@ export const handleGetAllMyActivateLog = async (userId: number, page: number, si
             }
         })
         return data
-
-
-        // if (data.code === 200) {
-            // activateRecordList.value = []
-            // data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
-            // pageCount.value = data.page_count
-            // animated.value = true
-        // }
-
     } catch (error: any) {
         console.log(error)
         // message.error("unknown err: " + error)

@@ -18,7 +18,8 @@ import {
   HelpBuoyOutline as supportIcon,
   KeyOutline as keyIcon,
 } from '@vicons/ionicons5'
-import instance from "@/axios";
+import {checkIsUserHaveOpenTickets, getActivePlanList, getAllNotices} from "@/api/user/summary";
+
 
 let animated = ref<boolean>(false)
 
@@ -91,38 +92,21 @@ let pathById = [
 let haveOpenTickets = ref<boolean>(false)
 let openingTicketCount = ref<number>(0)
 
-let checkIsUserHaveOpenTickets = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/ticket/check', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-      }
-    })
-    if (data.code === 200) {
-      // thisNotices.value = data.notices
-      // data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
-      haveOpenTickets.value = data.exist || false
-      openingTicketCount.value = data.ticket_count || 0
-    }
-  } catch (error) {
-    console.log(error)
+let callCheckIsUserHaveOpenTickets = async () => {
+  let data = await checkIsUserHaveOpenTickets(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    haveOpenTickets.value = data.exist || false
+    openingTicketCount.value = data.ticket_count || 0
   }
 }
 
-let getAllNotices = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/notice', {
-      params: {
-        is_user: true,
-      }
-    })
-    if (data.code === 200) {
-      thisNotices.value = data.notices
-      data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
-    }
-  } catch (error) {
-    console.log(error)
+let callGetAllNotices = async () => {
+  let data = await getAllNotices(true)
+  if (data.code === 200) {
+    thisNotices.value = data.notices
+    data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
   }
+
 }
 
 let handleConfirm = (title: string, content: string) => {
@@ -141,33 +125,27 @@ interface MyActivePlans {
 let myActivePlans = ref<MyActivePlans[]>([]);
 let haveActive = ref<boolean>(false)
 
-let getActivePlanList = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/plan/summary/fetch', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-      }
-    })
-    if (data.code === 200) {
-      haveActive.value = true
-      myActivePlans.value = data.my_plans
-      console.log(myActivePlans.value)
-      // animated.value = true
-
-    }
-  } catch (error) {
+let callGetActivePlanList = async () => {
+  let data = await getActivePlanList(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    haveActive.value = true
+    myActivePlans.value = data.my_plans
+    console.log(myActivePlans.value)
+    // animated.value = true
+  } else {
     haveActive.value = false
-    console.log(error)
   }
+
 }
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/summary'
   themeStore.menuSelected = 'user-dashboard'
 
-  await checkIsUserHaveOpenTickets()
-  await getAllNotices()
-  await getActivePlanList()
+  await callGetAllNotices()
+  await callGetActivePlanList()
+  setTimeout(async () => await callCheckIsUserHaveOpenTickets(), 500)
+
 
 
   // animated.value = true
@@ -192,30 +170,33 @@ export default {
     <div class="root" v-if="animated">
 
       <!--      <n-collapse-transition :show="haveOpenTickets">-->
-      <n-alert
-          :bordered="false"
-          style="margin-bottom: 15px"
-          title=""
-          type="warning"
-          v-if="haveOpenTickets"
-      >
-        <div style="display: flex; flex-direction: row; align-items: center">
-          {{
-                t('userSummary.haveTicket', { count: openingTicketCount })
-          }}
-          <n-button
-              style="margin-left: 5px"
-              text
-              type="warning"
-              @click="router.push({path: '/dashboard/tickets'})"
-          >
-            {{ t('userSummary.toCheckTicket') }}
-            <n-icon>
-              <toRightIcon/>
-            </n-icon>
-          </n-button>
-        </div>
-      </n-alert>
+
+      <n-collapse-transition :show="haveOpenTickets">
+        <n-alert
+            :bordered="false"
+            style="margin-bottom: 15px"
+            title=""
+            type="warning"
+        >
+          <div style="display: flex; flex-direction: row; align-items: center">
+            {{
+              t('userSummary.haveTicket', {count: openingTicketCount})
+            }}
+            <n-button
+                style="margin-left: 5px"
+                text
+                type="warning"
+                @click="router.push({path: '/dashboard/tickets'})"
+            >
+              {{ t('userSummary.toCheckTicket') }}
+              <n-icon>
+                <toRightIcon/>
+              </n-icon>
+            </n-button>
+          </div>
+        </n-alert>
+      </n-collapse-transition>
+
       <!--      </n-collapse-transition>-->
 
       <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
@@ -383,7 +364,6 @@ export default {
 
     </div>
   </transition>
-
 
 
 </template>
