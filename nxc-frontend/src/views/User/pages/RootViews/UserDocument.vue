@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {ref, reactive, onMounted, onBeforeMount} from "vue";
+import {onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import {formatDate} from "@/utils/timeFormat";
-import  {type DrawerPlacement, useMessage } from 'naive-ui'
-import instance from "@/axios";
+import {type DrawerPlacement, useMessage} from 'naive-ui'
+import {getAllDocuments} from "@/api/user/doc";
 import {MdPreview} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 
@@ -19,7 +19,7 @@ let isEmpty = ref<boolean>(false)
 let search = ref('')
 let active = ref<boolean>(false)
 
-const activate = (place: DrawerPlacement, title:string, body: string) => {
+const activate = (place: DrawerPlacement, title: string, body: string) => {
   drawTitle.value = title
   drawBody.value = body
   active.value = true
@@ -54,37 +54,27 @@ interface CategoryDocuments {
 
 let doc_list = ref<CategoryDocuments[]>([])
 
-let getAllDocuments = async () => {
+let callGetAllDocuments = async () => {
   animated.value = false
-  try {
-    let {data} = await instance.get('http://localhost:8081/api/user/v1/document', {
-      params: {
-        lang: 'zh_CN',
-        find: search.value
-      }
-    })
+  let data = await getAllDocuments('zh_CN', search.value)
+  if (data.code === 200) {
+    doc_list.value = []
 
-    if (data.code === 200) {
-      doc_list.value = []
-
-      // 处理查询为空的情况
-      if (!data.doc_list || data.doc_list.length === 0) {
-        isEmpty.value = true
-        animated.value = true
-        return
-      } else {
-        isEmpty.value = false
-        // 如果有数据，填充文档列表
-        data.doc_list.forEach((category: CategoryDocuments) => {
-          doc_list.value.push(category)
-        })
-        animated.value = true
-      }
+    // 处理查询为空的情况
+    if (!data.doc_list || data.doc_list.length === 0) {
+      isEmpty.value = true
+      animated.value = true
+      return
     } else {
-      message.error(data.msg)
+      isEmpty.value = false
+      // 如果有数据，填充文档列表
+      data.doc_list.forEach((category: CategoryDocuments) => {
+        doc_list.value.push(category)
+      })
+      animated.value = true
     }
-  } catch (error: any) {
-    message.error(error)
+  } else {
+    message.error(data.msg)
   }
 }
 
@@ -95,7 +85,7 @@ onBeforeMount(() => {
 
 onMounted(async () => {
   // getAllDocuments()
-  await getAllDocuments()
+  await callGetAllDocuments()
   animated.value = true
 
 })
@@ -157,7 +147,7 @@ export default {
             @click="activate(themeStore.menuCollapsed?'bottom':'right', doc.title, doc.body)"
         >
           <p class="doc-title">{{ doc.title }}</p>
-          <p class="doc-release">{{ doc.created_at?formatDate(doc.created_at):'' }}</p>
+          <p class="doc-release">{{ doc.created_at ? formatDate(doc.created_at) : '' }}</p>
 
         </div>
       </n-card>
@@ -203,15 +193,18 @@ export default {
 <style scoped lang="less">
 .root {
   padding: 20px;
+
   .search-root {
     display: flex;
     flex-direction: row;
     align-content: space-between;
     margin-bottom: 15px;
+
     .search-input {
       line-height: 50px;
       border: 10px;
     }
+
     .search-btn {
       height: 50px;
       width: 100px;
@@ -221,19 +214,23 @@ export default {
 
   .doc-card {
     margin-bottom: 10px;
+
     .doc-item {
       display: flex;
       flex-direction: column;
       padding: 10px 0 10px 25px;
+
       .doc-title {
         font-weight: 400;
         font-size: 0.9rem;
       }
+
       .doc-release {
         opacity: 0.5;
         font-size: 0.8rem;
       }
     }
+
     .doc-item:hover {
       background-color: rgba(220, 220, 220, 0.15);
     }

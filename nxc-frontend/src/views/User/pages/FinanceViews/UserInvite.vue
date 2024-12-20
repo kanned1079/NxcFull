@@ -5,7 +5,13 @@ import {CheckmarkOutline as copiedIcon, CopyOutline as copyIcon,} from "@vicons/
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useI18n} from "vue-i18n";
 import useThemeStore from "@/stores/useThemeStore";
-import instance from "@/axios";
+// import instance from "@/axios";
+import {
+  handleCreateMyInviteCode,
+  handleGetInviteMsg,
+  handleGetMyInviteCode,
+  handleGetMyInvitedUserList
+} from "@/api/user/invite";
 import {NButton, NIcon, NTag, useMessage} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 
@@ -75,87 +81,57 @@ const columns = [
   },
 ];
 
-let handleCreateMyInviteCode = async () => {
-  try {
-    animated.value = false
-    let {data} = await instance.post('/api/user/v1/invite/code', {
-      user_id: userInfoStore.thisUser.id,
-    })
-    if (data.code === 200) {
-      console.log('created ok.');
-      await handleGetMyInviteCode()
-      await handleGetMyInvitedUserList()
-    } else {
-      message.error('创建失败' + data.msg || '');
-    }
-  } catch (err: any) {
-    console.log(err
-    )
+let callHandleCreateMyInviteCode = async () => {
+  let data = await handleCreateMyInviteCode(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    console.log('created ok.');
+    await callHandleGetMyInviteCode()
+    await callHandleGetMyInvitedUserList()
+  } else {
+    message.error('创建失败' + data.msg || '');
   }
 }
 
-let handleGetInviteMsg = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/invite/banner')
-    if (data.code === 200) {
-      console.log(data)
-      inviteMsg.value = data.invite_msg || ''
-      // animated.value = true
-    } else if (data.code === 404) {
-      console.log('无')
-    } else {
-      console.log(data.msg)
-    }
-  } catch (err: any) {
-    console.log(err)
+let callHandleGetInviteMsg = async () => {
+  let data = await handleGetInviteMsg()
+  if (data.code === 200) {
+    console.log(data)
+    inviteMsg.value = data.invite_msg || ''
+    // animated.value = true
+  } else if (data.code === 404) {
+    console.log('无')
+  } else {
+    console.log(data.msg)
   }
 }
 
-let handleGetMyInviteCode = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/invite/code', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-      }
-    })
-    if (data.code === 200) {
-      console.log(data)
-      myFaCode.value = data.my_invite_code
-      animated.value = true
-      showTableLoading.value = false
-    } else if (data.code === 404) {
-      console.log('无')
-    } else {
-      console.log(data.msg)
-    }
-  } catch (err: any) {
-    console.log(err)
+let callHandleGetMyInviteCode = async () => {
+  let data = await handleGetMyInviteCode(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    console.log(data)
+    myFaCode.value = data.my_invite_code
+    animated.value = true
+    showTableLoading.value = false
+  } else if (data.code === 404) {
+    console.log('无')
+  } else {
+    console.log(data.msg)
   }
 }
 
-let handleGetMyInvitedUserList = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/invite/users', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    })
-    if (data.code === 200) {
-      listAnimated.value = true
-      myInvitedUserList.value = []
-      // console.log(data)
-      pageCount.value = data.page_count
-      data.user_list.forEach((item: MyInvitedUser) => myInvitedUserList.value.push(item))
-      animated.value = true
-    } else if (data.code === 404) {
-      console.log('无')
-    } else {
-      console.log(data.msg)
-    }
-  } catch (err: any) {
-    console.log(err)
+let callHandleGetMyInvitedUserList = async () => {
+  let data = await handleGetMyInvitedUserList(userInfoStore.thisUser.id, dataSize.value.page, dataSize.value.pageSize);
+  if (data.code === 200) {
+    listAnimated.value = true
+    myInvitedUserList.value = []
+    // console.log(data)
+    pageCount.value = data.page_count
+    data.user_list.forEach((item: MyInvitedUser) => myInvitedUserList.value.push(item))
+    animated.value = true
+  } else if (data.code === 404) {
+    console.log('无')
+  } else {
+    console.log(data.msg)
   }
 }
 
@@ -184,7 +160,7 @@ const copyText = async (key: string, event: MouseEvent) => {
 };
 
 onBeforeMount(() => {
-  handleGetInviteMsg()
+  callHandleGetInviteMsg()
 })
 
 
@@ -192,10 +168,10 @@ onMounted(async () => {
   themeStore.userPath = '/dashboard/invite'
   themeStore.menuSelected = 'user-invite'
   // await handleGetInviteMsg()
-  await handleGetMyInviteCode()
+  await callHandleGetMyInviteCode()
 
   if (myFaCode.value !== '') {
-    await handleGetMyInvitedUserList()
+    await callHandleGetMyInvitedUserList()
   } else {
     showTableLoading.value = false
   }
@@ -336,7 +312,7 @@ export default {
                 size="medium"
                 v-model:page.number="dataSize.page"
                 :page-count="pageCount"
-                @update:page="animated=false; handleGetMyInvitedUserList()"
+                @update:page="animated=false; callHandleGetMyInvitedUserList()"
             />
             <n-select
                 style="width: 160px; margin-left: 20px"
@@ -344,7 +320,7 @@ export default {
                 size="small"
                 :options="dataCountOptions"
                 :remote="true"
-                @update:value="animated=false; dataSize.page = 1; handleGetMyInvitedUserList()"
+                @update:value="animated=false; dataSize.page = 1; callHandleGetMyInvitedUserList()"
             />
           </div>
         </div>
@@ -361,7 +337,7 @@ export default {
       :content="t('userInvite.generateCodeHint')"
       :positive-text="t('userInvite.positiveClick')"
       :negative-text="t('userInvite.negativeClick')"
-      @positive-click="handleCreateMyInviteCode"
+      @positive-click="callHandleCreateMyInviteCode"
       @negative-click="showCreateInviteCodeMention=false"
   />
 

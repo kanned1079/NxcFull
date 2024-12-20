@@ -5,10 +5,9 @@ import OrderInfo from "@/views/User/pages/PurchaseViews/Parts/OrderInfo.vue";
 import {useI18n} from "vue-i18n";
 import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue"
 import {NIcon, useMessage, useNotification} from 'naive-ui'
-import instance from "@/axios/index"
+import {cancelOrder, placeOrder, queryOrderInfoAndStatus,} from "@/api/user/confirm";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
-import useApiAddrStore from "@/stores/useApiAddrStore"
 import usePaymentStore from "@/stores/usePaymentStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useRouter} from "vue-router";
@@ -23,7 +22,6 @@ const notify = useNotification()
 const userInfoStore = useUserInfoStore()
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
-const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
 const router = useRouter();
 
@@ -119,55 +117,57 @@ let orderData = ref([
 
 let intervalId = ref<number | null>();
 
-let queryOrderInfoAndStatus = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/order/status', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        order_id: paymentStore.submittedOrderId.trim()
-      }
-    });
-    if (data.code === 200) {
-      console.log('获取成功', data);
-      Object.assign(confirmOrder.value, data.order_info)
-      console.log('订单号：', data.order_info.order_id)
-      setTimeout(async () => {
-        showLoading.value = false
-        animated.value = true
-      }, 2000)
-      // showLoading.value = false
-      // 如果订单状态已完成或达到某个条件，停止轮询
-      if (data.order_info.is_finished && data.order_info.is_success) {  // 订单完成且成功
-        intervalId.value ? clearInterval(intervalId.value) : null
-        message.info('订单成功')
-        message.info('去往下一个页面')
-        // toOrderResult(data.code)
-        toOrderResult(data.code)
-      } else if (data.order_info.is_finished && !data.order_info.is_success) {
-        message.info('订单完成但未成功')
-        // clearInterval(intervalId)
-        intervalId.value ? clearInterval(intervalId.value) : null
-        toOrderResult(data.code)  // 去往下一个页面
-      }
-      console.log('订单未支付，进行下一次轮询查询')
-    } else {
-      console.log('订单已超时，停止轮询');
-      message.error(t('userConfirmOrder.orderExpired'))
-      // clearInterval(intervalId); // 清除轮询
+let callQueryOrderInfoAndStatus = async () => {
+  // try {
+  // let {data} = await instance.get('/api/user/v1/order/status', {
+  //   params: {
+  //     user_id: userInfoStore.thisUser.id,
+  //     order_id: paymentStore.submittedOrderId.trim()
+  //   }
+  // });
+  let data = await queryOrderInfoAndStatus(userInfoStore.thisUser.id, paymentStore.submittedOrderId)
+  if (data.code === 200) {
+    console.log('获取成功', data);
+    Object.assign(confirmOrder.value, data.order_info)
+    console.log('订单号：', data.order_info.order_id)
+    setTimeout(async () => {
+      showLoading.value = false
+      animated.value = true
+    }, 2000)
+    // showLoading.value = false
+    // 如果订单状态已完成或达到某个条件，停止轮询
+    if (data.order_info.is_finished && data.order_info.is_success) {  // 订单完成且成功
       intervalId.value ? clearInterval(intervalId.value) : null
-      router.back()
-
+      message.info('订单成功')
+      message.info('去往下一个页面')
+      // toOrderResult(data.code)
+      toOrderResult(data.code)
+    } else if (data.order_info.is_finished && !data.order_info.is_success) {
+      message.info('订单完成但未成功')
+      // clearInterval(intervalId)
+      intervalId.value ? clearInterval(intervalId.value) : null
+      toOrderResult(data.code)  // 去往下一个页面
     }
-// pass
-  } catch (error: any) {
-    console.log(error);
+    console.log('订单未支付，进行下一次轮询查询')
+  } else {
+    console.log('订单已超时，停止轮询');
+    message.error(t('userConfirmOrder.orderExpired'))
+    // clearInterval(intervalId); // 清除轮询
+    intervalId.value ? clearInterval(intervalId.value) : null
+    router.back()
+
   }
+// pass
+//   } catch (error: any) {
+//     console.log(error);
+//   }
 }
 
 
 let queryOrderInterval = () => {
   intervalId.value = setInterval(() => {
-    queryOrderInfoAndStatus();
+    // queryOrderInfoAndStatus();
+    callQueryOrderInfoAndStatus()
   }, 3000); // 每隔3秒查询一次
 }
 
@@ -181,68 +181,73 @@ let toOrderResult = (code: number) => {
   })
 }
 
-let placeOrder = async () => {
+let callPlaceOrder = async () => {
   // 点击提交按钮立刻停止定时器
   intervalId.value ? clearInterval(intervalId.value) : null
-  try {
-    let {data} = await instance.put('/api/user/v1/order', {
-      user_id: userInfoStore.thisUser.id,
-      order_id: confirmOrder.value.order_id,
-    })
-    if (data.code === 200) {
-      console.log(data)
-      if (data.placed && data.key_generated) {
-        console.log("订单成功")
-        // clearInterval(intervalId) // 停止定时器
-        // intervalId.value?clearInterval(intervalId.value):null
-        message.success(t('userConfirmOrder.paySuccessfully'))
-        setTimeout(async () => {
-          await router.push({
-            path: '/dashboard/keys'
-          })
-        }, 1000)
-      } else {
-        message.error('unknow err')
-      }
-    } else if (data.code == 402) {
-      // 用户余额不足
-      message.warning(t('userConfirmOrder.balanceNotEnough'))
-      await queryOrderInfoAndStatus()
+  // try {
+  //   let {data} = await instance.put('/api/user/v1/order', {
+  //     user_id: userInfoStore.thisUser.id,
+  //     order_id: confirmOrder.value.order_id,
+  //   })
+  let data = await placeOrder(userInfoStore.thisUser.id, confirmOrder.value.order_id)
+  if (!data) return router.back()
+  if (data.code === 200) {
+    console.log(data)
+    if (data.placed && data.key_generated) {
+      console.log("订单成功")
+      // clearInterval(intervalId) // 停止定时器
+      // intervalId.value?clearInterval(intervalId.value):null
+      message.success(t('userConfirmOrder.paySuccessfully'))
+      setTimeout(async () => {
+        await router.push({
+          path: '/dashboard/keys'
+        })
+      }, 1000)
     } else {
-      message.error(t('userConfirmOrder.orderErrorOccur') + data.msg)
-      // clearInterval(intervalId)
-      intervalId.value ? clearInterval(intervalId.value) : null
-      router.back()
+      message.error('unknow err')
     }
-  } catch (error: any) {
-    console.log(error)
+  } else if (data.code == 402) {
+    // 用户余额不足
+    message.warning(t('userConfirmOrder.balanceNotEnough'))
+    // await queryOrderInfoAndStatus()
+    await callQueryOrderInfoAndStatus()
+  } else {
+    message.error(t('userConfirmOrder.orderErrorOccur') + data.msg)
+    // clearInterval(intervalId)
+    intervalId.value ? clearInterval(intervalId.value) : null
     router.back()
   }
+  // } catch (error: any) {
+  //   console.log(error)
+  //   router.back()
+  // }
 }
 
-let cancelOrder = async () => {
-  try {
-    let {data} = await instance.delete('/api/user/v1/order', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        order_id: confirmOrder.value.order_id,
-      }
-    })
-    if (data.code === 200) {
-      console.log(data)
-      message.info(t('userConfirmOrder.orderCancelled'))
-      // clearInterval(intervalId)
-      intervalId.value ? clearInterval(intervalId.value) : null
-      router.back()
-    }
-  } catch (error: any) {
-    console.log(error)
-
+let callCancelOrder = async () => {
+  // try {
+  //   let {data} = await instance.delete('/api/user/v1/order', {
+  //     params: {
+  //       user_id: userInfoStore.thisUser.id,
+  //       order_id: confirmOrder.value.order_id,
+  //     }
+  //   })
+  let data = await cancelOrder(userInfoStore.thisUser.id, confirmOrder.value.order_id)
+  if (data.code === 200) {
+    console.log(data)
+    message.info(t('userConfirmOrder.orderCancelled'))
+    // clearInterval(intervalId)
+    intervalId.value ? clearInterval(intervalId.value) : null
+    router.back()
   }
+  // } catch (error: any) {
+  //   console.log(error)
+  //
+  // }
 }
 
 let reChoosePlan = async () => {
-  await cancelOrder()
+  // await cancelOrder()
+  await callCancelOrder()
   router.back() // 此处只需要返回一次即可 因为cancelOrder中也有一次back
 }
 
@@ -263,7 +268,8 @@ onMounted(() => {
 })
 
 onBeforeMount(async () => {
-  await queryOrderInfoAndStatus()
+  // await queryOrderInfoAndStatus()
+  await callQueryOrderInfoAndStatus()
   queryOrderInterval();
 })
 
@@ -301,7 +307,7 @@ export default {
               {{ t('userConfirmOrder.switchPlan') }}
             </n-button>
             <n-button
-                @click="cancelOrder"
+                @click="callCancelOrder"
                 class="cancel-order-btn"
                 type="error"
                 text
@@ -334,7 +340,7 @@ export default {
             <p class="total-title">{{ t('userConfirmOrder.price') }}</p>
             <p class="price-large">{{ confirmOrder.amount.toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
             <n-button
-                @click="placeOrder"
+                @click="callPlaceOrder"
                 class="settleBtn"
                 type="primary"
                 :bordered="false"

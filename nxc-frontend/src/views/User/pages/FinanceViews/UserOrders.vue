@@ -6,7 +6,8 @@ import useThemeStore from "@/stores/useThemeStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {NButton, NTag, useMessage} from "naive-ui"
-import instance from "@/axios/index"
+// import instance from "@/axios/index"
+import {cancelOrder, getAllMyOrders} from "@/api/user/order";
 import {formatDate} from "@/utils/timeFormat"
 
 const {t} = useI18n()
@@ -169,7 +170,7 @@ const columns = [
           secondary: true,
           disabled: !(!row.is_success && !row.is_finished),
           style: {marginLeft: '10px'},
-          onClick: () => cancelOrder(row)
+          onClick: () => callCancelOrder(row)
         }, {
           default: () => computed(() => t('userOrders.cancelOrder')).value
         })
@@ -196,56 +197,34 @@ let showOrderDetails = (row: OrderList) => {
   })
 }
 
-let cancelOrder = async (row: OrderList) => {
-  try {
-    let {data} = await instance.delete('/api/user/v1/order', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        order_id: row.order_id
-      }
-    })
-    if (data.code === 200) {
-      console.log(data)
-      message.info(t('userOrders.orderCancelled'))
-      // router.back()
-    } else {
-      message.error("unknown err: " + data.msg || '' as string)
-    }
-    await getAllMyOrders()
-  } catch (error: any) {
-    console.log(error)
-    message.error("unknown err: " + error)
+let callCancelOrder = async (row: OrderList) => {
+  let data = await cancelOrder(userInfoStore.thisUser.id, row.order_id)
+  if (data.code === 200) {
+    console.log(data)
+    await callGetAllMyOrders()
+    message.info(t('userOrders.orderCancelled'))
+    // router.back()
+  } else {
+    message.error("unknown err: " + data.msg || '' as string)
   }
 }
 
 
-let getAllMyOrders = async () => {
-  try {
-    let {data} = await instance.get('api/user/v1/orders', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    })
-    if (data.code === 200) {
-      animated.value = true
-      orderList.value = []
-      pageCount.value = data.page_count
-      data.order_list.forEach((order: OrderList) => orderList.value.push(order))
-    }
-
-  } catch (error: any) {
-    console.log(error)
+let callGetAllMyOrders = async () => {
+  let data = await getAllMyOrders(userInfoStore.thisUser.id, dataSize.value.page, dataSize.value.pageSize)
+  if (data.code === 200) {
+    animated.value = true
+    orderList.value = []
+    pageCount.value = data.page_count
+    data.order_list.forEach((order: OrderList) => orderList.value.push(order))
   }
-
 }
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/orders'
   themeStore.menuSelected = 'user-orders'
 
-  await getAllMyOrders()
+  await callGetAllMyOrders()
 
   animated.value = true
 })
@@ -284,7 +263,7 @@ export default {
             size="medium"
             v-model:page.number="dataSize.page"
             :page-count="pageCount"
-            @update:page="animated=false; getAllMyOrders()"
+            @update:page="animated=false; callGetAllMyOrders()"
         />
         <n-select
             style="width: 160px; margin-left: 20px"
@@ -292,7 +271,7 @@ export default {
             size="small"
             :options="dataCountOptions"
             :remote="true"
-            @update:value="animated=false; dataSize.page = 1; getAllMyOrders()"
+            @update:value="animated=false; dataSize.page = 1; callGetAllMyOrders()"
         />
       </div>
     </div>
