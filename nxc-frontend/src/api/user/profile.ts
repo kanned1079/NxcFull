@@ -5,7 +5,7 @@ import {computed} from "vue";
 // verifyOldPassword 验证旧密码是否正确
 export const verifyOldPassword = async (email: string, oldPassword: string): Promise<boolean> => {
     try {
-        let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/verify', {
+        let {data} = await instance.post('/api/user/v1/auth/passcode/verify', {
             email: email.trim(),
             // old_password: hashPassword(modelRef.value.old_password.trim() as string)
             old_password: encodeToBase64(oldPassword.trim()),
@@ -24,7 +24,7 @@ export const verifyOldPassword = async (email: string, oldPassword: string): Pro
 export const saveNewPassword = async (email: string, newPassword: string) => {
     try {
         let hashedNewPassword = await hashPassword(newPassword)
-        let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/update', {
+        let {data} = await instance.post('/api/user/v1/auth/passcode/update', {
             email: email,
             // new_password: hashPassword(modelRef.value.new_password)
             new_password: hashedNewPassword
