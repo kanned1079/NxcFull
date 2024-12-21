@@ -1,5 +1,6 @@
 import instance from "@/axios";
 
+// queryOrderInfoAndStatus 请求提交的订单的状态
 export const queryOrderInfoAndStatus = async (userId: number, orderId: string) => {
     try {
         let {data} = await instance.get('/api/user/v1/order/status', {
@@ -15,9 +16,8 @@ export const queryOrderInfoAndStatus = async (userId: number, orderId: string) =
     }
 }
 
+// placeOrder 确认下单
 export const placeOrder = async (userId: number, orderId: string) => {
-    // 点击提交按钮立刻停止定时器
-    // intervalId.value ? clearInterval(intervalId.value) : null
     try {
         let {data} = await instance.put('/api/user/v1/order', {
             user_id: userId,
@@ -26,11 +26,11 @@ export const placeOrder = async (userId: number, orderId: string) => {
         return data
     } catch (error: any) {
         console.log(error)
-        // router.back()
         return null
     }
 }
 
+// cancelOrder 取消当前的订单
 export const cancelOrder = async (userId: number, orderId: string) => {
     try {
         let {data} = await instance.delete('/api/user/v1/order', {

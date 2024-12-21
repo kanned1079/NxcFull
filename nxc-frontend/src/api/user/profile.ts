@@ -38,7 +38,6 @@ export const saveNewPassword = async (email: string, newPassword: string) => {
 
 }
 
-
 // handleSetup2FA 创建一个新的2FA新建请求
 export const handleSetup2FA = async (userId: number, email: string) => {
     try {
@@ -51,7 +50,6 @@ export const handleSetup2FA = async (userId: number, email: string) => {
         console.log(error)
     }
 }
-
 
 // handleTest2FA 测试2FA可用性 如果可用则写入进数据库
 export const handleTest2FA = async (userId: number, email: string, toFaCode: string) => {

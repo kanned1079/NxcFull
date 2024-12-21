@@ -1,5 +1,6 @@
 import instance from "@/axios/index"
 
+// getAllDocuments 获取所有的文档列表
 export const getAllDocuments = async (lang: string, find?: string) => {
     // animated.value = false
     try {

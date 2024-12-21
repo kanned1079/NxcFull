@@ -16,7 +16,7 @@ import DocumentMgr from "@/views/Admin/pages/UserMgrViews/DocumentMgr.vue";
 import PrivilegeGroupMgr from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue";
 import TicketMgr from "@/views/Admin/pages/UserMgrViews/TicketMgr.vue";
 import OrderMgr from "@/views/Admin/pages/FinanceViews/OrderMgr.vue"
-import KeysMgr from "@/views/Admin/pages/UserMgrViews/KeysMgr.vue";
+import KeysMgr from "@/views/Admin/pages/UserMgrViews/ActivationMgr.vue";
 
 const adminRoutes: RouteRecordRaw[] = [
     {

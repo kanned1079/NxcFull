@@ -12,6 +12,66 @@ import (
 	"net/http"
 )
 
+// GetActivateLogByAdmin 管理员获取所有的密钥列表
+func (s *KeyServices) GetActivateLogByAdmin(ctx context.Context, request *pb.GetActivateLogByAdminRequest) (*pb.GetActivateLogByAdminResponse, error) {
+	page := request.Page
+	size := request.Size
+
+	// 默认页数和每页大小检查
+	if page <= 0 {
+		page = 1
+	}
+	if size <= 0 {
+		size = 10 // 默认每页显示10条
+	}
+
+	var records []model.ActivateRecord
+
+	// 计算分页的偏移量和限制
+	offset := (page - 1) * size
+	limit := size
+
+	// 查询当前页的记录
+	if result := dao.Db.Model(&model.ActivateRecord{}).
+		Order("created_at DESC").
+		Offset(int(offset)).Limit(int(limit)).Find(&records); result.Error != nil {
+		return &pb.GetActivateLogByAdminResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "err: " + result.Error.Error(),
+		}, nil
+	}
+
+	// 查询总记录数
+	var totalCount int64
+	if result := dao.Db.Model(&model.ActivateRecord{}).Count(&totalCount); result.Error != nil {
+		return &pb.GetActivateLogByAdminResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "err: " + result.Error.Error(),
+		}, nil
+	}
+
+	// 计算总页数
+	pageCount := totalCount / size
+	if totalCount%size != 0 {
+		pageCount++
+	}
+
+	// 序列化记录
+	recordsJson, err := json.Marshal(records)
+	if err != nil {
+		return &pb.GetActivateLogByAdminResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "err: " + err.Error(),
+		}, nil
+	}
+
+	return &pb.GetActivateLogByAdminResponse{
+		Code:      http.StatusOK,
+		Log:       recordsJson,
+		PageCount: pageCount,
+	}, nil
+}
+
 // GetActivateLogByUserId 根據用戶的id來檢索所有的激活紀錄
 func (s *KeyServices) GetActivateLogByUserId(ctx context.Context, request *pb.GetActivateLogByUserIdRequest) (*pb.GetActivateLogByUserIdResponse, error) {
 	// 获取分页参数

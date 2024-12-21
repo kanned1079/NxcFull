@@ -125,6 +125,9 @@ func StartApiGateways() {
 		adminAuthorized.GET("payment/details", handler.HandleGetPaymentMethodDetailsBySystemName) // 获取详细信息 但是隐藏证书私钥等信息
 		adminAuthorized.POST("payment", handler.HandleEditOrSavePaymentMethodBySystemName)        // 新建或编辑支付方式的配置
 		adminAuthorized.PATCH("payment", handler.HandleSwitchPaymentMethodEnableBySystemName)     // 切换是否启用支付方式
+
+		adminAuthorized.GET("activation", handler.GetAllActivateLogByAdmin)
+
 	}
 
 	userAuthorized := protectedRoutes.Group("/user/v1", middleware.RoleMiddleware())

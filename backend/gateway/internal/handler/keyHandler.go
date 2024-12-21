@@ -243,5 +243,41 @@ func HandleAlterRemarkByUser(context *gin.Context) {
 		"code": resp.Code,
 		"msg":  resp.Msg,
 	})
+}
 
+func GetAllActivateLogByAdmin(context *gin.Context) {
+	err, page, size := GetPage2SizeFromQuery(context)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.GetActivateLogByAdmin(sysContext.Background(), &pb.GetActivateLogByAdminRequest{
+		Page: page,
+		Size: size,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var logMap []map[string]any
+	err = json.Unmarshal(resp.Log, &logMap)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"log":        logMap,
+		"page_count": resp.PageCount,
+	})
 }

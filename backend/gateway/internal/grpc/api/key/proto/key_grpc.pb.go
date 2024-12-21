@@ -29,6 +29,7 @@ const (
 	KeyService_CheckAccountAndKeyUsability_FullMethodName = "/key.KeyService/CheckAccountAndKeyUsability"
 	KeyService_GetActivateLogByUserId_FullMethodName      = "/key.KeyService/GetActivateLogByUserId"
 	KeyService_GetActivateLogByAdmin_FullMethodName       = "/key.KeyService/GetActivateLogByAdmin"
+	KeyService_AlterKeyValidInfoByAdmin_FullMethodName    = "/key.KeyService/AlterKeyValidInfoByAdmin"
 	KeyService_GetAllKeysByAdminDesc_FullMethodName       = "/key.KeyService/GetAllKeysByAdminDesc"
 )
 
@@ -53,6 +54,7 @@ type KeyServiceClient interface {
 	CheckAccountAndKeyUsability(ctx context.Context, in *CheckAccountAndKeyUsabilityRequest, opts ...grpc.CallOption) (*CheckAccountAndKeyUsabilityResponse, error)
 	GetActivateLogByUserId(ctx context.Context, in *GetActivateLogByUserIdRequest, opts ...grpc.CallOption) (*GetActivateLogByUserIdResponse, error)
 	GetActivateLogByAdmin(ctx context.Context, in *GetActivateLogByAdminRequest, opts ...grpc.CallOption) (*GetActivateLogByAdminResponse, error)
+	AlterKeyValidInfoByAdmin(ctx context.Context, in *AlterKeyValidInfoByAdminRequest, opts ...grpc.CallOption) (*AlterKeyValidInfoByAdminResponse, error)
 	// Admin
 	GetAllKeysByAdminDesc(ctx context.Context, in *GetAllKeysByAdminDescRequest, opts ...grpc.CallOption) (*GetAllKeysByAdminDescResponse, error)
 }
@@ -165,6 +167,16 @@ func (c *keyServiceClient) GetActivateLogByAdmin(ctx context.Context, in *GetAct
 	return out, nil
 }
 
+func (c *keyServiceClient) AlterKeyValidInfoByAdmin(ctx context.Context, in *AlterKeyValidInfoByAdminRequest, opts ...grpc.CallOption) (*AlterKeyValidInfoByAdminResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlterKeyValidInfoByAdminResponse)
+	err := c.cc.Invoke(ctx, KeyService_AlterKeyValidInfoByAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *keyServiceClient) GetAllKeysByAdminDesc(ctx context.Context, in *GetAllKeysByAdminDescRequest, opts ...grpc.CallOption) (*GetAllKeysByAdminDescResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAllKeysByAdminDescResponse)
@@ -196,6 +208,7 @@ type KeyServiceServer interface {
 	CheckAccountAndKeyUsability(context.Context, *CheckAccountAndKeyUsabilityRequest) (*CheckAccountAndKeyUsabilityResponse, error)
 	GetActivateLogByUserId(context.Context, *GetActivateLogByUserIdRequest) (*GetActivateLogByUserIdResponse, error)
 	GetActivateLogByAdmin(context.Context, *GetActivateLogByAdminRequest) (*GetActivateLogByAdminResponse, error)
+	AlterKeyValidInfoByAdmin(context.Context, *AlterKeyValidInfoByAdminRequest) (*AlterKeyValidInfoByAdminResponse, error)
 	// Admin
 	GetAllKeysByAdminDesc(context.Context, *GetAllKeysByAdminDescRequest) (*GetAllKeysByAdminDescResponse, error)
 	mustEmbedUnimplementedKeyServiceServer()
@@ -237,6 +250,9 @@ func (UnimplementedKeyServiceServer) GetActivateLogByUserId(context.Context, *Ge
 }
 func (UnimplementedKeyServiceServer) GetActivateLogByAdmin(context.Context, *GetActivateLogByAdminRequest) (*GetActivateLogByAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetActivateLogByAdmin not implemented")
+}
+func (UnimplementedKeyServiceServer) AlterKeyValidInfoByAdmin(context.Context, *AlterKeyValidInfoByAdminRequest) (*AlterKeyValidInfoByAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AlterKeyValidInfoByAdmin not implemented")
 }
 func (UnimplementedKeyServiceServer) GetAllKeysByAdminDesc(context.Context, *GetAllKeysByAdminDescRequest) (*GetAllKeysByAdminDescResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllKeysByAdminDesc not implemented")
@@ -442,6 +458,24 @@ func _KeyService_GetActivateLogByAdmin_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KeyService_AlterKeyValidInfoByAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AlterKeyValidInfoByAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).AlterKeyValidInfoByAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: KeyService_AlterKeyValidInfoByAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).AlterKeyValidInfoByAdmin(ctx, req.(*AlterKeyValidInfoByAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _KeyService_GetAllKeysByAdminDesc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllKeysByAdminDescRequest)
 	if err := dec(in); err != nil {
@@ -506,6 +540,10 @@ var KeyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetActivateLogByAdmin",
 			Handler:    _KeyService_GetActivateLogByAdmin_Handler,
+		},
+		{
+			MethodName: "AlterKeyValidInfoByAdmin",
+			Handler:    _KeyService_AlterKeyValidInfoByAdmin_Handler,
 		},
 		{
 			MethodName: "GetAllKeysByAdminDesc",

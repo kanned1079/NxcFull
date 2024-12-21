@@ -160,13 +160,13 @@ const columns = [
       return h('span', {}, {default: () => formatDate(row.request_at)});
     },
   },
-  {
-    title: computed(() => t('userActivation.createdAt')).value,
-    key: 'created_at',
-    render(row: ActivateRecord) {
-      return h('span', {}, {default: () => formatDate(row.created_at)});
-    },
-  },
+  // {
+  //   title: computed(() => t('userActivation.createdAt')).value,
+  //   key: 'created_at',
+  //   render(row: ActivateRecord) {
+  //     return h('span', {}, {default: () => formatDate(row.created_at)});
+  //   },
+  // },
   {
     title: computed(() => t('userActivation.actions')).value,
     key: 'actions',

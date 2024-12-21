@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
-import {NButton, NTag, useMessage} from "naive-ui"
+import {NButton, NTag, NPopover, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {formatDate} from "@/utils/timeFormat";
@@ -12,12 +12,14 @@ import {
   CheckmarkOutline as checkIcon,
   SaveOutline as saveIcon,
 } from "@vicons/ionicons5"
+import {handleGetAllActivationLog} from "@/api/admin/activation";
 
 interface ActivateRecord {
   id: number;
   user_id: number;
   email: string;
   order_id: string;
+  key?: string;
   key_id: number;
   request_at: string;
   client_version: string;
@@ -50,7 +52,6 @@ const message = useMessage();
 const themeStore = useThemeStore()
 const userInfoStore = useUserInfoStore()
 
-let showModal = ref<boolean>(false)
 let animated = ref<boolean>(false);
 let pageCount = ref(10)
 
@@ -87,6 +88,7 @@ let keyDetails = ref<{
   key: '',
   created_at: '',
 })
+
 let showDetails = async (row: ActivateRecord) => {
   try {
     let {data} = await instance.get('/api/user/v1/key/details', {
@@ -97,7 +99,6 @@ let showDetails = async (row: ActivateRecord) => {
     if (data.code === 200) {
       Object.assign(currentRecord.value, row)
       Object.assign(keyDetails.value, data.details)
-      showModal.value = true
     } else {
       message.error('err:' + data.msg)
     }
@@ -139,6 +140,64 @@ const columns = [
     key: 'order_id',
   },
   {
+    title: computed(() => '邮箱地址').value,
+    key: 'email',
+  },
+  {
+    title: '密钥',
+    key: 'key',
+    render(row: ActivateRecord) {
+      return h(
+          NPopover,
+          {
+            trigger: 'hover',
+            showArrow: false,
+          },
+          {
+            // 这里定义了 'trigger' 插槽内容
+            trigger: () => h(
+                NTag,
+                {
+                  size: 'small',
+                  bordered: false,
+                  type: 'primary',
+                  style: {
+                    textDecoration: 'none', // 默认不显示下划线
+                    cursor: 'pointer',      // 鼠标悬浮时指针变为手型
+                  },
+                  onMouseover(e: MouseEvent) {
+                    const target = e.target as HTMLElement; // 使用类型断言，告诉 TypeScript target 是 HTMLElement
+                    target.style.textDecoration = 'underline';
+                    target.style.fontWeight = 'bold';
+                  },
+                  onMouseout(e: MouseEvent) {
+                    const target = e.target as HTMLElement;
+                    target.style.textDecoration = 'none';
+                    target.style.fontWeight = 'normal';
+                    Object.assign(keyDetails.value, {id: 0, key: '', created_at: ''});
+                  },
+                  onClick: (e: MouseEvent) => {
+                    e.stopPropagation(); // 阻止事件冒泡
+                    showDetails(row);  // 触发点击事件
+                  },
+                },
+                { default: () => '显示密钥' }
+            ),
+            default: () => {
+              const elements = [];
+              if (keyDetails.value.key !== "") {
+                elements.push(h('p', null, `${keyDetails.value.key} (#${keyDetails.value.id})`));
+                elements.push(h('p', null, `${formatDate(keyDetails.value.created_at)} (创建日期)`));
+              } else {
+                elements.push(h('p', null, '点击按钮以获取密钥信息'));
+              }
+              return h('div', {}, elements); // 返回包含条件渲染元素的 div
+            },
+          }
+      );
+    },
+  },
+  {
     title: computed(() => t('userActivation.clientVersion')).value,
     key: 'client_version',
     render(row: ActivateRecord) {
@@ -159,13 +218,13 @@ const columns = [
       return h('span', {}, {default: () => formatDate(row.request_at)});
     },
   },
-  {
-    title: computed(() => t('userActivation.createdAt')).value,
-    key: 'created_at',
-    render(row: ActivateRecord) {
-      return h('span', {}, {default: () => formatDate(row.created_at)});
-    },
-  },
+  // {
+  //   title: computed(() => t('userActivation.createdAt')).value,
+  //   key: 'created_at',
+  //   render(row: ActivateRecord) {
+  //     return h('span', {}, {default: () => formatDate(row.created_at)});
+  //   },
+  // },
   {
     title: computed(() => t('userActivation.actions')).value,
     key: 'actions',
@@ -179,46 +238,36 @@ const columns = [
           bordered: false,
           onClick: () => showDetails(row),
         }, {
-          default: () => computed(() => t('userActivation.showDetail')).value,
+          default: () => computed(() => '转到密钥').value,
         }),
-        h(NButton, {
-          size: 'small',
-          secondary: true,
-          type: 'warning',
-          style: {marginLeft: '10px'},
-          bordered: false,
-          disabled: !row.is_bind,
-          onClick: () => handleUnbindById(row),
-        }, {
-          default: () => computed(() => t('userActivation.cancelBind')).value,
-        }),
+        // h(NButton, {
+        //   size: 'small',
+        //   secondary: true,
+        //   type: 'warning',
+        //   style: {marginLeft: '10px'},
+        //   bordered: false,
+        //   disabled: !row.is_bind,
+        //   onClick: () => handleUnbindById(row),
+        // }, {
+        //   default: () => computed(() => t('userActivation.cancelBind')).value,
+        // }),
       ]);
     },
 
   }
 ];
 
-let handleGetAllMyActivateLog = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/activation', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    })
-    if (data.code === 200) {
-      activateRecordList.value = []
-      data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
-      pageCount.value = data.page_count
-      animated.value = true
-    }
-
-  } catch (error: any) {
-    console.log(error)
-    message.error("unknown err: " + error)
+let callGetAllActivateLog = async () => {
+  let data = await handleGetAllActivationLog(dataSize.value.page, dataSize.value.pageSize)
+  if (data.code === 200) {
+    activateRecordList.value = []
+    data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
+    pageCount.value = data.page_count
+    animated.value = true
   }
 }
+
+
 
 let handleUnbindById = async (row: ActivateRecord) => {
   animated.value = false
@@ -230,7 +279,7 @@ let handleUnbindById = async (row: ActivateRecord) => {
       }
     })
     if (data.code === 200) {
-      await handleGetAllMyActivateLog()
+      await callGetAllActivateLog()
     }
 
   } catch (error: any) {
@@ -266,7 +315,7 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-  await handleGetAllMyActivateLog()
+  await callGetAllActivateLog()
   animated.value = true
 })
 
@@ -310,7 +359,7 @@ export default {
             size="medium"
             v-model:page.number="dataSize.page"
             :page-count="pageCount"
-            @update:page="animated=false; handleGetAllMyActivateLog()"
+            @update:page="animated=false; callGetAllActivateLog()"
         />
         <n-select
             style="width: 200px; margin-left: 20px"
@@ -318,90 +367,11 @@ export default {
             size="small"
             :options="dataCountOptions"
             :remote="true"
-            @update:value="animated=false; dataSize.page = 1; handleGetAllMyActivateLog()"
+            @update:value="animated=false; dataSize.page = 1; callGetAllActivateLog()"
         />
       </div>
     </div>
   </transition>
-
-  <n-modal
-      v-model:show="showModal"
-      class="custom-card"
-      preset="card"
-      style="width: 640px"
-      :title="t('userActivation.details')"
-      size="huge"
-      :bordered="false"
-  >
-
-    <div class="details-item-detail">
-      <p class="details-item-title">{{ t('userActivation.keyId') }}</p>
-      <p class="details-item-content">{{ '# ' + keyDetails.id }}</p>
-    </div>
-
-    <div class="details-item-detail">
-      <p class="details-item-title">{{ t('userActivation.keyContent') }}</p>
-      <p class="details-item-content">{{ keyDetails.key }}</p>
-    </div>
-
-    <div class="details-item-detail">
-      <p class="details-item-title">{{ t('userActivation.keyGeneratedAt') }}</p>
-      <p class="details-item-content">{{ keyDetails.created_at ? formatDate(keyDetails.created_at) : 'NULL' }}</p>
-    </div>
-
-    <div class="details-item-detail">
-      <p class="details-item-title">{{ t('userActivation.activateRequestAt') }}</p>
-      <p class="details-item-content">{{ currentRecord.request_at ? formatDate(currentRecord.request_at) : 'NULL' }}</p>
-    </div>
-
-    <div class="details-item-detail">
-      <div class="details-item-detail-remark-title">
-        <p class="details-item-title">{{ t('userActivation.remark') }}</p>
-        <n-button
-            type="primary"
-            text
-            size="small"
-            style="text-decoration: underline"
-            @click="!enableAlterRemark?enableAlterRemark=true:handleCommitNewRemark()"
-        >
-          <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; margin-left: 10px;">
-            <p>{{ !enableAlterRemark?t('userActivation.alterRemark'):t('userActivation.commitRemark') }}</p>
-
-          </div>
-        </n-button>
-      </div>
-      <n-input
-          :rows="2"
-          type="textarea"
-          size="large"
-          :disabled="!enableAlterRemark"
-          :placeholder="'在這裡設置備注信息'"
-          v-model:value.trim="currentRecord.remark"
-          :bordered="true"
-          style="margin-top: 5px"
-      >
-      </n-input>
-    </div>
-
-    <template #footer>
-      <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">
-        <div>
-          {{ t('userActivation.useIssueOccur') }}
-          <n-button
-              type="primary"
-              text
-              @click="router.push('/dashboard/tickets')"
-          >
-            {{ t('userActivation.chatWithUs') }}
-            <n-icon style="margin-left: 4px">
-              <toRight/>
-            </n-icon>
-          </n-button>
-        </div>
-      </div>
-    </template>
-  </n-modal>
-
 
 </template>
 
@@ -445,5 +415,9 @@ export default {
     margin-bottom: 25px;
   }
 
+}
+
+.show-key:hover {
+  text-decoration: underline;
 }
 </style>
