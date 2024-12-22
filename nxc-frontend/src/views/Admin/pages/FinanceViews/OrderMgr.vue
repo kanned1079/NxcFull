@@ -504,15 +504,11 @@ export default {
     <n-form-item path="sort" :label="'排序算法'">
       <n-select
           :options="[{label: '升序', value: 'ASC'},{label: '降序', value: 'DESC'}]"
-          :default-value="'ASC'"
+          :default-value="'DESC'"
+          v-model:value="searchForm.sort"
       >
       </n-select>
     </n-form-item>
-
-    <!--    <n-icon size="14" style="margin-left: 6px">-->
-    <!--      <downIcon/>-->
-    <!--    </n-icon>-->
-
 
   </n-modal>
 

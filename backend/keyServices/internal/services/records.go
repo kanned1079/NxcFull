@@ -10,10 +10,16 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"strings"
 )
 
 // GetActivateLogByAdmin 管理员获取所有的密钥列表
 func (s *KeyServices) GetActivateLogByAdmin(ctx context.Context, request *pb.GetActivateLogByAdminRequest) (*pb.GetActivateLogByAdminResponse, error) {
+	// 新增功能说明：
+	// request.Email 模糊查询 email，对应数据库的 email 字段
+	// request.Valid 如果为 true，则只查询字段 is_bind 为 true 的记录
+	// request.Sort 默认为 DESC，如果为 ASC，则按 created_at 升序排列
+
 	page := request.Page
 	size := request.Size
 
@@ -29,30 +35,47 @@ func (s *KeyServices) GetActivateLogByAdmin(ctx context.Context, request *pb.Get
 
 	// 计算分页的偏移量和限制
 	offset := (page - 1) * size
-	limit := size
 
-	// 查询当前页的记录
-	if result := dao.Db.Model(&model.ActivateRecord{}).
-		Order("created_at DESC").
-		Offset(int(offset)).Limit(int(limit)).Find(&records); result.Error != nil {
+	// 构建查询条件
+	query := dao.Db.Model(&model.ActivateRecord{})
+
+	// 模糊查询 email
+	if request.Email != "" {
+		query = query.Where("email LIKE ?", "%"+request.Email+"%")
+	}
+
+	// 筛选 is_bind 字段
+	if request.Valid {
+		query = query.Where("is_bind = ?", true)
+	}
+
+	// 排序
+	sortOrder := "DESC"
+	if strings.ToUpper(request.Sort) == "ASC" {
+		sortOrder = "ASC"
+	}
+	query = query.Order("created_at " + sortOrder)
+
+	// 查询记录
+	if result := query.Offset(int(offset)).Limit(int(size)).Find(&records); result.Error != nil {
 		return &pb.GetActivateLogByAdminResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "err: " + result.Error.Error(),
+			Msg:  "Error fetching records: " + result.Error.Error(),
 		}, nil
 	}
 
 	// 查询总记录数
 	var totalCount int64
-	if result := dao.Db.Model(&model.ActivateRecord{}).Count(&totalCount); result.Error != nil {
+	if result := query.Count(&totalCount); result.Error != nil {
 		return &pb.GetActivateLogByAdminResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "err: " + result.Error.Error(),
+			Msg:  "Error counting records: " + result.Error.Error(),
 		}, nil
 	}
 
 	// 计算总页数
-	pageCount := totalCount / size
-	if totalCount%size != 0 {
+	pageCount := totalCount / int64(size)
+	if totalCount%int64(size) != 0 {
 		pageCount++
 	}
 
@@ -61,7 +84,7 @@ func (s *KeyServices) GetActivateLogByAdmin(ctx context.Context, request *pb.Get
 	if err != nil {
 		return &pb.GetActivateLogByAdminResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "err: " + err.Error(),
+			Msg:  "Error serializing records: " + err.Error(),
 		}, nil
 	}
 

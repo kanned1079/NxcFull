@@ -253,7 +253,8 @@ const columns = [
   {
     title: computed(() => t('adminViews.userMgr.actions')).value,
     fixed: 'right',
-    key: 'actions', render(row: User) {
+    key: 'actions',
+    render(row: User) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -442,6 +443,7 @@ export default {
             :bordered="false"
             :columns="columns"
             :data="users"
+            :scroll-x="1000"
         />
       </n-card>
 

@@ -16,6 +16,7 @@ export const handleGetAllMyActivateLog = async (userId: number, page: number, si
     }
 }
 
+// handleUnbindById 处理取消绑定一个密钥和客户端以重新绑定
 export const handleUnbindById = async (userId: number, recordId: number) => {
     // animated.value = false
     try {

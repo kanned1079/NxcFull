@@ -247,6 +247,10 @@ func HandleAlterRemarkByUser(context *gin.Context) {
 
 func GetAllActivateLogByAdmin(context *gin.Context) {
 	err, page, size := GetPage2SizeFromQuery(context)
+
+	email := context.Query("email")
+	valid, err := strconv.ParseBool(context.Query("valid"))
+	sort := context.Query("sort")
 	if err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusBadRequest,
@@ -255,9 +259,13 @@ func GetAllActivateLogByAdmin(context *gin.Context) {
 		return
 	}
 	resp, err := grpcClient.KeyServicesClient.GetActivateLogByAdmin(sysContext.Background(), &pb.GetActivateLogByAdminRequest{
-		Page: page,
-		Size: size,
+		Page:  page,
+		Size:  size,
+		Email: email,
+		Valid: valid,
+		Sort:  sort,
 	})
+
 	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,

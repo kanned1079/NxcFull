@@ -16,7 +16,8 @@ import DocumentMgr from "@/views/Admin/pages/UserMgrViews/DocumentMgr.vue";
 import PrivilegeGroupMgr from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue";
 import TicketMgr from "@/views/Admin/pages/UserMgrViews/TicketMgr.vue";
 import OrderMgr from "@/views/Admin/pages/FinanceViews/OrderMgr.vue"
-import KeysMgr from "@/views/Admin/pages/UserMgrViews/ActivationMgr.vue";
+import ActivationMgr from "@/views/Admin/pages/FinanceViews/ActivationMgr.vue";
+import keyMgr from "@/views/Admin/pages/FinanceViews/KeyMgr.vue";
 
 const adminRoutes: RouteRecordRaw[] = [
     {
@@ -109,8 +110,12 @@ const adminRoutes: RouteRecordRaw[] = [
                 component: OrderMgr,
             },
             {
-                path: 'keys',
-                component: KeysMgr,
+                path: 'activation',
+                component: ActivationMgr,
+            },
+            {
+                path: 'key',
+                component: keyMgr,
             }
 
         ]

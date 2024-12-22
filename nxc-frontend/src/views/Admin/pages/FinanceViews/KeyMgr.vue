@@ -12,6 +12,7 @@ import {
   CheckmarkOutline as checkIcon,
   SaveOutline as saveIcon,
 } from "@vicons/ionicons5"
+import {RefreshOutline as refreshIcon, Search as searchIcon} from '@vicons/ionicons5'
 import {handleGetAllActivationLog} from "@/api/admin/activation";
 
 interface ActivateRecord {
@@ -310,8 +311,8 @@ let handleCommitNewRemark = async () => {
 
 
 onBeforeMount(() => {
-  themeStore.userPath = '/dashboard/log'
-  themeStore.menuSelected = 'user-activate-log'
+  themeStore.userPath = '/dashboard/key'
+  themeStore.menuSelected = 'key-manager'
 })
 
 onMounted(async () => {
@@ -323,7 +324,7 @@ onMounted(async () => {
 
 <script lang="ts">
 export default {
-  name: "KeysMgr",
+  name: "KeyMgr",
 }
 </script>
 

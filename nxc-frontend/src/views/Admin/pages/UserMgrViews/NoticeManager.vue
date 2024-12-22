@@ -178,6 +178,7 @@ const columns = [
   {
     title: '操作',
     key: 'actions',
+    fixed: 'right',
     render(row: Notice) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
@@ -197,7 +198,6 @@ const columns = [
         }, {default: () => '删除'})
       ]);
     },
-    fixed: 'right',
   }
 ];
 
@@ -325,7 +325,7 @@ export default {
             :pagination="false"
             :bordered="true"
             style=""
-            :scroll-x="800"
+            :scroll-x="1000"
         />
       </n-card>
 

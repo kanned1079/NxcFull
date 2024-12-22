@@ -102,12 +102,19 @@ export default {
             no: "否",
             yes: "是"
         },
+        activation: {
+            activateLog: '激活紀錄',
+            click2getKey: '點擊以獲取密鑰內容',
+            createdAt: '創建時間',
+            turn2keyPage: '轉到密鑰',
+            showKey: '顯示密鑰',
+            email: '郵箱',
+            key: '密鑰'
+        },
         keysMgr: {
             keyMgr: '密鑰管理',
             enableKey: '啟用密鑰',
             disableKey: '禁用密鑰',
-
-
         }
     },
     userLogin: {
