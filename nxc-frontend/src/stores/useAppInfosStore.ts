@@ -31,6 +31,8 @@ export interface AppCommonConfig {
     currency: string;
     currency_symbol: string;
     stop_register: boolean;
+    secure_path: string;
+    safe_mode_enable: boolean;
 }
 
 const useAppInfosStore = defineStore('appInfosStore', () => {
@@ -64,6 +66,8 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         currency: 'USDT',
         currency_symbol: '$',
         stop_register: false,   // false允许注册 true关闭注册
+        secure_path: '',
+        safe_mode_enable: false,
     })
 
     const getCommonConfig = async () => {

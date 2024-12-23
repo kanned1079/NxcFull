@@ -37,7 +37,7 @@ watch(isDark, (val: boolean) => {
 
 
 onBeforeMount(() => {
-  appInfosStore.getCommonConfig()
+  // appInfosStore.getCommonConfig()
   themeStore.setThemeFromSetting()
 })
 

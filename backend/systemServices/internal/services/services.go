@@ -8,6 +8,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"log"
 	"net/http"
+	"sync"
 	pb "systemServices/api/proto"
 	"systemServices/internal/dao"
 	"systemServices/internal/model"
@@ -24,10 +25,21 @@ type AppSettings struct {
 
 type SettingServices struct {
 	pb.UnimplementedSettingsServiceServer
+	basicRuntimeEnvCache      *BasicSetting // 基本运行环境配置的缓存
+	basicRuntimeEnvCacheMux   sync.Mutex    // 用于保护 basicRuntimeEnvCache 的线程安全
+	basicRuntimeEnvCacheTTL   time.Duration // 基本运行环境配置缓存的有效期
+	welcomePageConfigCache    *BasicSetting // 欢迎页面配置的缓存
+	welcomePageConfigCacheMux sync.Mutex    // 用于保护 welcomePageConfigCache 的线程安全
+	welcomePageConfigCacheTTL time.Duration // 欢迎页面配置缓存的有效期
 }
 
 func NewSettingServices() *SettingServices {
-	return &SettingServices{}
+	return &SettingServices{
+		basicRuntimeEnvCache:      nil,             // 初始化时没有缓存
+		basicRuntimeEnvCacheTTL:   1 * time.Minute, // 设置基本运行环境配置的缓存有效期为10分钟
+		welcomePageConfigCache:    nil,
+		welcomePageConfigCacheTTL: 10 * time.Minute,
+	}
 }
 
 // UpdateSingleOption 更新单个设置的键值

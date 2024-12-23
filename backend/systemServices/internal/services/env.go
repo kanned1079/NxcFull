@@ -9,38 +9,30 @@ import (
 	"time"
 )
 
-//func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request *pb.GetBasicRuntimeEnvConfigRequest) (*pb.GetBasicRuntimeEnvConfigResponse, error) {
-//
-//	//settings.site该set下
-//	//string app_name
-//	//string app_sub_name
-//	//string app_description
-//	//string app_url
-//	//string logo_url
-//	//string currency
-//	//string currency_symbol
-//	//bool stop_register
-//
-//	//settings:frontend该set下
-//	//string frontend_theme
-//	//string frontend_background_url
-//
-//	// readSettingFromRedisCache函数用户从redis中读取一个配置项目
-//	// readSettingFromRedisCache(<类别>, <键>) 返回(<json.RawMessage>, <err>)
-//
-//	return &pb.GetBasicRuntimeEnvConfigResponse{
-//		Code:    http.StatusOK,
-//		Msg:     "success",
-//		AppName: "xxx",
-//	}, nil
-//}
-
 type BasicSetting struct {
 	Config    map[string]any
 	LastSaved time.Time
 }
 
 func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request *pb.GetBasicRuntimeEnvConfigRequest) (*pb.GetBasicRuntimeEnvConfigResponse, error) {
+	// 加锁保护缓存
+	s.basicRuntimeEnvCacheMux.Lock()
+	defer s.basicRuntimeEnvCacheMux.Unlock()
+
+	// 检查缓存是否存在且未过期
+	if s.basicRuntimeEnvCache != nil && time.Since(s.basicRuntimeEnvCache.LastSaved) < s.basicRuntimeEnvCacheTTL {
+		// 返回缓存中的配置
+		data, err := json.Marshal(s.basicRuntimeEnvCache.Config)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal cached config: %w", err)
+		}
+		return &pb.GetBasicRuntimeEnvConfigResponse{
+			Code:   http.StatusOK,
+			Msg:    "success (cache)",
+			Config: data,
+		}, nil
+	}
+
 	// 定义要读取的配置项
 	siteKeys := []string{
 		"app_name",
@@ -55,6 +47,10 @@ func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request 
 	frontendKeys := []string{
 		"frontend_theme",
 		"frontend_background_url",
+	}
+	securityKeys := []string{
+		"secure_path",
+		"safe_mode_enable",
 	}
 
 	// 用于存储最终的配置
@@ -88,6 +84,26 @@ func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request 
 		config[key] = parsedValue
 	}
 
+	// 从 settings.security 获取配置
+	for _, key := range securityKeys {
+		value, err := readSettingFromRedisCache("security", key)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read settings.frontend.%s: %w", key, err)
+		}
+		// 假设值是 JSON 序列化的，反序列化后存入 config
+		var parsedValue interface{}
+		if err := json.Unmarshal(value, &parsedValue); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal settings.frontend.%s: %w", key, err)
+		}
+		config[key] = parsedValue
+	}
+
+	// 更新缓存
+	s.basicRuntimeEnvCache = &BasicSetting{
+		Config:    config,
+		LastSaved: time.Now(),
+	}
+
 	// 将最终的配置序列化为 JSON
 	data, err := json.Marshal(config)
 	if err != nil {
@@ -97,7 +113,7 @@ func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request 
 	// 返回 RPC 响应
 	return &pb.GetBasicRuntimeEnvConfigResponse{
 		Code:   http.StatusOK,
-		Msg:    "success",
+		Msg:    "success (redis)",
 		Config: data,
 	}, nil
 }

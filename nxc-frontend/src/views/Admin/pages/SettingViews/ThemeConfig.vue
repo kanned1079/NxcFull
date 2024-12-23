@@ -20,13 +20,11 @@ let formValue = ref<ThemeConfig>({
   id: 0,
   general_color_name: '',
   login_page_bg_url: '',
-  
+
 })
 
 let rules = [
-  {
-
-  }
+  {}
 ]
 
 interface ItemConfig {
@@ -50,7 +48,8 @@ let coverColor = computed(() => {
   }
 })
 
-let itemBgImage = computed(() => {})
+let itemBgImage = computed(() => {
+})
 
 let allThemes = {
   theme1: {
@@ -79,7 +78,7 @@ let handleSetTheme = (name: string) => {
 
 let darkerImage = computed(() => {
   if (themeStore.enableDarkMode)
-    return { opacity: 0.5 }
+    return {opacity: 0.5}
 })
 
 onMounted(() => {
@@ -87,6 +86,48 @@ onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/theme'
 
   animated.value = true
+})
+
+interface SaleItem {
+  id: number,
+  name: string,
+  price: number
+}
+
+let preSaleItems = ref<SaleItem[]>([
+  {
+    id: 0,
+    name: '东西1',
+    price: 10.21,
+  },
+  {
+    id: 1,
+    name: '东西2',
+    price: 6.40,
+  },
+  {
+    id: 2,
+    name: '东西3',
+    price: 16.02,
+  }
+])
+
+let addedItems = ref<SaleItem[]>([])
+
+let addItem2List = (item: SaleItem) => {
+  addedItems.value.push(item)
+}
+
+let addItem2ListByIndex = (index: number) => {
+  addedItems.value.push(preSaleItems.value[index])
+}
+
+let getTotalPrice = computed(() => {
+  let amount = 0;
+  addedItems.value.forEach((item: SaleItem) => {
+    amount += item.price;
+  })
+  return amount;
 })
 
 </script>
@@ -108,18 +149,21 @@ export default {
     </n-alert>
 
 
-
   </div>
 
   <transition name="slide-fade">
     <div style="padding: 0 20px 20px 20px" v-if="animated">
-      <n-card v-for="item in allThemes" :key="item.name" class="theme-card" :embedded="true" hoverable :bordered="false" content-style="padding: 0;">
+      <n-card v-for="item in allThemes" :key="item.name" class="theme-card" :embedded="true" hoverable :bordered="false"
+              content-style="padding: 0;">
         <div class="content">
           <div class="l-content">
-            <p class="theme-name">{{ item.name }}<n-tag v-if="item.enabled" style="margin-left: 10px" :bordered="false" type="success">使用中</n-tag></p>
+            <p class="theme-name">{{ item.name }}
+              <n-tag v-if="item.enabled" style="margin-left: 10px" :bordered="false" type="success">使用中</n-tag>
+            </p>
             <p class="theme-desc">{{ item.describe }}</p>
           </div>
-          <div class="r-content" :style="{backgroundImage: `url(${item.backgroundImageUrl})`, opacity: themeStore.enableDarkMode?0.5:1,}">
+          <div class="r-content"
+               :style="{backgroundImage: `url(${item.backgroundImageUrl})`, opacity: themeStore.enableDarkMode?0.5:1,}">
             <div class="r-content-inner"></div>
             <n-button tertiary type="primary" class="btn" @click="showModal=true">设为当前</n-button>
             <!--          <n-button tertiary type="primary" class="btn" @click="handleSetTheme(item.name)">配置</n-button>-->
@@ -148,17 +192,66 @@ export default {
         :rules="rules"
     >
 
-    <n-form-item
-      :label="'给主题起一个名字'"
-    >
-      <n-input>
-        
-      </n-input>
+      <n-form-item
+          :label="'给主题起一个名字'"
+      >
+        <n-input>
+
+        </n-input>
       </n-form-item>
 
     </n-form>
 
   </n-modal>
+
+  <div
+      style="padding: 30px"
+  >
+    <n-table>
+      <n-tr>
+        <n-td
+            style="column-span: 3; font-weight: bold; font-size: 1rem"
+        >
+          商品
+        </n-td>
+      </n-tr>
+      <n-tr
+          v-for="(item, index) in preSaleItems"
+          :key="item.id"
+      >
+        <n-td>{{ item.name }}</n-td>
+        <n-td>{{ item.price.toFixed(2) }}</n-td>
+        <n-td>
+          <n-button
+              type="primary"
+              secondary
+              style="width: 100%"
+              @click="addItem2ListByIndex(index)"
+          >
+            添加
+          </n-button>
+        </n-td>
+      </n-tr>
+    </n-table>
+
+    <div style="height: 30px"></div>
+
+    <n-table>
+      <n-tr>
+        <n-td style="column-span: 3; font-weight: bold; font-size: 1rem">
+          商品列表
+        </n-td>
+      </n-tr>
+      <n-tr
+          v-for="item in addedItems"
+          :key="item.id"
+      >
+        <n-td>{{ item.name }}</n-td>
+        <n-td>{{ item.price.toFixed(2) }}</n-td>
+      </n-tr>
+    </n-table>
+    <n-h3>总价 {{getTotalPrice.toFixed(2)}}</n-h3>
+  </div>
 
 
 </template>
@@ -170,9 +263,6 @@ export default {
   .root-card {
     margin-bottom: 10px;
   }
-
-
-
 
 
   //.n-card:hover {
@@ -241,7 +331,7 @@ export default {
       background-repeat: no-repeat;
       background-position: center;
 
-      .r-content-inner{
+      .r-content-inner {
         display: flex;
         flex-direction: row;
       }
@@ -262,6 +352,7 @@ export default {
 
 
 }
+
 .theme-card:hover {
   transition: transform 200ms ease;
   transform: translateY(-5px);

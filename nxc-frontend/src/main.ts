@@ -21,6 +21,7 @@ import App from './App.vue'
 import router from './router'
 import naive, {zhCN} from "naive-ui";
 import useThemeStore from "@/stores/useThemeStore";
+// import {setupAdminRoutes} from "@/router/admin";
 // import bcrypt from 'bcryptjs'
 // Vue.use(bcrypt)
 
@@ -55,12 +56,16 @@ app.use(pinia)
 app.use(i18n)
 app.use(router)
 
-// const initApp = async () => {
-//     const appInfoStore = useAppInfosStore(pinia)
-//     await appInfoStore.getCommonConfig()
-//     app.mount('#app')
-//
-// }
+const initApp = async () => {
+    console.log('挂载app')
+    const appInfoStore = useAppInfosStore(pinia)
+    await appInfoStore.getCommonConfig()
 
-app.mount('#app')
-// initApp()
+    // setupAdminRoutes(appInfoStore.appCommonConfig.currency)
+
+
+    app.mount('#app')
+}
+
+// app.mount('#app')
+await initApp()
