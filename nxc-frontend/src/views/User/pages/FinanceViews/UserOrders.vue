@@ -6,9 +6,11 @@ import useThemeStore from "@/stores/useThemeStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {NButton, NTag, useMessage} from "naive-ui"
-import instance from "@/axios/index"
+// import instance from "@/axios/index"
+import {cancelOrder, getAllMyOrders} from "@/api/user/order";
 import {formatDate} from "@/utils/timeFormat"
 
+const {t} = useI18n()
 const message = useMessage()
 const router = useRouter()
 const paymentStore = usePaymentStore()
@@ -24,25 +26,23 @@ let dataSize = ref<{ pageSize: number, page: number }>({
 
 let dataCountOptions = [
   {
-    label: '10条数据/页',
+    label: computed(() => t('pagination.perPage10')).value,
     value: 10,
   },
   {
-    label: '20条数据/页',
+    label: computed(() => t('pagination.perPage20')).value,
     value: 20,
   },
   {
-    label: '50条数据/页',
+    label: computed(() => t('pagination.perPage50')).value,
     value: 50,
   },
   {
-    label: '100条数据/页',
+    label: computed(() => t('pagination.perPage100')).value,
     value: 100,
   },
 ]
 
-
-const {t} = useI18n();
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore()
 
@@ -70,7 +70,7 @@ interface OrderList {
 
 let isOrderCanBeCancelled = ref<boolean>(false)
 
-let orderStatusTagColor = (is_finished: boolean, is_success: boolean): string => {
+let orderStatusTagColor = (is_finished: boolean, is_success: boolean): "warning" | "error" | "success" => {
   if (!is_success && !is_finished) {
     return 'warning'
   } else if (is_finished && !is_success) {
@@ -82,11 +82,11 @@ let orderStatusTagColor = (is_finished: boolean, is_success: boolean): string =>
 
 let orderStatusText = (is_finished: boolean, is_success: boolean): string => {
   if (!is_success && !is_finished) {
-    return '未支付'
+    return computed(() => t('userOrders.orderStatusTags.notPay')).value as string // 還沒支付
   } else if (is_finished && !is_success) {
-    return '交易失败'
+    return computed(() => t('userOrders.orderStatusTags.cancelled')).value as string  // 交易失敗
   } else {
-    return '成功'
+    return computed(() => t('userOrders.orderStatusTags.success')).value as string  // 交易成功
   }
 }
 
@@ -95,10 +95,18 @@ let orderList = ref<OrderList[]>([])
 
 // 定义表格的列
 const columns = [
-  {title: '#', key: 'order_id'},
-  {title: '订阅名', key: 'plan_name'},
   {
-    title: '周期', key: 'period', render(row: OrderList) {
+    title: computed(() => t('userOrders.orderId')).value,
+    key: 'order_id'
+  },
+  {
+    title: computed(() => t('userOrders.planName')).value,
+    key: 'plan_name'
+  },
+  {
+    title: computed(() => t('userOrders.planCycle')).value,
+    key: 'period',
+    render(row: OrderList) {
       const periodLabel = computed(() => {
         switch (row.period) {
           case 'month':
@@ -118,30 +126,34 @@ const columns = [
     }
   },
   {
-    title: '订单金额',
+    title: computed(() => t('userOrders.orderPrice')).value,
     key: 'amount',
     render(row: OrderList) {
       return h('span', {}, {default: () => row.amount.toFixed(2)});
     }
   },
   {
-    title: '订单状态', key: 'is_success', render(row: OrderList) {
+    title: computed(() => t('userOrders.orderStatus')).value,
+    key: 'is_success',
+    render(row: OrderList) {
       return h(NTag, {
         // type: row.is_success ? 'success' : 'error',
-        type: orderStatusTagColor(row.is_finished, row.is_success) as string,
+        type: orderStatusTagColor(row.is_finished, row.is_success),
         bordered: false,
       }, {default: () => orderStatusText(row.is_finished, row.is_success)});
     }
   },
   {
-    title: '创建时间',
+    title: computed(() => t('userOrders.createdAt')).value,
     key: 'created_at',
     render(row: OrderList) {
       return h('span', {}, {default: () => formatDate(row.created_at)});
     }
   },
   {
-    title: '操作', key: 'actions', render(row: OrderList) {
+    title: computed(() => t('userOrders.operate')).value,
+    key: 'actions',
+    render(row: OrderList) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -149,15 +161,19 @@ const columns = [
           secondary: true,
           bordered: false,
           onClick: () => showOrderDetails(row)
-        }, {default: () => '订单详情'}),
+        }, {
+          default: () => computed(() => t('userOrders.showDetail')).value
+        }),
         h(NButton, {
           size: 'small',
           type: 'error',
           secondary: true,
           disabled: !(!row.is_success && !row.is_finished),
           style: {marginLeft: '10px'},
-          onClick: () => cancelOrder(row)
-        }, {default: () => '取消订单'})
+          onClick: () => callCancelOrder(row)
+        }, {
+          default: () => computed(() => t('userOrders.cancelOrder')).value
+        })
       ]);
     },
     width: 200,
@@ -166,24 +182,8 @@ const columns = [
 ];
 
 let showOrderDetails = (row: OrderList) => {
-  console.log('显示订单详情', row.id)
+
   paymentStore.orderDetail.order_id = row.order_id
-  // paymentStore.orderDetail.period = () => {
-  //   switch (row.period) {
-  //     case 'month': {
-  //       return t('userOrders.period.monthPay')
-  //     }
-  //     case 'quarter': {
-  //       return t('userOrders.period.quarterPay')
-  //     }
-  //     case 'half-year': {
-  //       return t('userOrders.period.halfYearPay')
-  //     }
-  //     case 'year': {
-  //       return t('userOrders.period.yearPay')
-  //     }
-  //   }
-  // }
   paymentStore.orderDetail.plan_name = row.plan_name
   paymentStore.orderDetail.period = row.period
   paymentStore.orderDetail.amount = row.amount
@@ -197,63 +197,34 @@ let showOrderDetails = (row: OrderList) => {
   })
 }
 
-let cancelOrder = async (row: OrderList) => {
-  try {
-    let {data} = await instance.delete('/api/user/v1/order', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        order_id: row.order_id
-      }
-    })
-    if (data.code === 200) {
-      console.log(data)
-      message.info('订单已取消')
-      // router.back()
-    } else {
-      message.error("未知错误" + data.msg || '' as string)
-    }
-    await getAllMyOrders()
-  } catch (error: any) {
-    console.log(error)
-    message.error("未知错误" + error)
+let callCancelOrder = async (row: OrderList) => {
+  let data = await cancelOrder(userInfoStore.thisUser.id, row.order_id)
+  if (data.code === 200) {
+    console.log(data)
+    await callGetAllMyOrders()
+    message.info(t('userOrders.orderCancelled'))
+    // router.back()
+  } else {
+    message.error("unknown err: " + data.msg || '' as string)
   }
 }
 
 
-let getAllMyOrders = async () => {
-  try {
-    let {data} = await instance.get('api/user/v1/orders', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    })
-    if (data.code === 200) {
-      animated.value = true
-      orderList.value = []
-      console.log('我的所有订单', data)
-      pageCount.value = data.page_count
-      console.log('add')
-      data.order_list.forEach((order: OrderList) => orderList.value.push(order))
-    }
-
-  } catch (error: any) {
-    console.log(error)
+let callGetAllMyOrders = async () => {
+  let data = await getAllMyOrders(userInfoStore.thisUser.id, dataSize.value.page, dataSize.value.pageSize)
+  if (data.code === 200) {
+    animated.value = true
+    orderList.value = []
+    pageCount.value = data.page_count
+    data.order_list.forEach((order: OrderList) => orderList.value.push(order))
   }
-
 }
-
-
-// onBeforeMount(() => {
-//   getAllMyOrders()
-// })
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/orders'
   themeStore.menuSelected = 'user-orders'
 
-  await getAllMyOrders()
+  await callGetAllMyOrders()
 
   animated.value = true
 })
@@ -292,7 +263,7 @@ export default {
             size="medium"
             v-model:page.number="dataSize.page"
             :page-count="pageCount"
-            @update:page="animated=false; getAllMyOrders()"
+            @update:page="animated=false; callGetAllMyOrders()"
         />
         <n-select
             style="width: 160px; margin-left: 20px"
@@ -300,7 +271,7 @@ export default {
             size="small"
             :options="dataCountOptions"
             :remote="true"
-            @update:value="animated=false; dataSize.page = 1; getAllMyOrders()"
+            @update:value="animated=false; dataSize.page = 1; callGetAllMyOrders()"
         />
       </div>
     </div>
@@ -315,7 +286,7 @@ export default {
   padding: 0 20px 20px 20px;
 
   .order-table {
-    margin-top: 20px;
+    margin-top: 15px;
   }
 
 }

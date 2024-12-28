@@ -80,21 +80,21 @@ let MenuOption = [
     // icon: renderIcon(BookIcon),
     disabled: false,
     children: [
-      {
-        label: '节点管理',
-        key: 'node-manager',
-        icon: renderIcon(nodeIcon),
-      },
+      // {
+      //   label: '节点管理',
+      //   key: 'node-manager',
+      //   icon: renderIcon(nodeIcon),
+      // },
       {
         label: '权限组管理',
         key: 'privilege-group-mgr',
         icon: renderIcon(privilegeIcon),
       },
-      {
-        label: '路由管理',
-        key: 'router-config',
-        icon: renderIcon(routerIcon),
-      },
+      // {
+      //   label: '路由管理',
+      //   key: 'router-config',
+      //   icon: renderIcon(routerIcon),
+      // },
     ]
   },
   {
@@ -109,14 +109,24 @@ let MenuOption = [
         icon: renderIcon(subscriptionIcon),
       },
       {
+        label: '优惠券管理',
+        key: 'coupon-mgr',
+        icon: renderIcon(ticketIcon),
+      },
+      {
         label: '订单管理',
         key: 'order-manager',
         icon: renderIcon(orderIcon),
       },
       {
-        label: '优惠券管理',
-        key: 'coupon-mgr',
-        icon: renderIcon(ticketIcon),
+        label: '激活记录',
+        key: 'activate-manager',
+        icon: renderIcon(historyIcon),
+      },
+      {
+        label: '密鑰管理',
+        key: 'key-manager',
+        icon: renderIcon(keyIcon),
       },
     ]
   },
@@ -151,86 +161,26 @@ let MenuOption = [
 
 ]
 
-// let handleUpdateExpandedKeys = (keys: string[]) => {
-//   console.info(`[onUpdate:expandedKeys]: ${JSON.stringify(keys)}`)
-// }
-let update = (key: string) => {
-  console.log(key)
+
+let adminUpdate = (key: string) => {
+  themeStore.menuIsFlippActive = false
   switch (key) {
-    case 'dashboard': {
-      router.push({path: '/admin/dashboard/summary'})
-      // themeStore.menuSelected = 'dashboard'
-      // themeStore.contentPath = '/admin/dashboard/summary'
-      break
-    }
-    case 'queue-monitor': {
-      // themeStore.menuSelected = 'queue-monitor'
-      router.push({path: '/admin/dashboard/monitor'})
-      // themeStore.contentPath = '/admin/dashboard/monitor'
-      break
-    }
-    case 'system-config': {
-      // themeStore.menuSelected = 'system-config'
-      router.push({path: '/admin/dashboard/systemconfig'})
-      break
-    }
-    case 'payment-config': {
-      // themeStore.menuSelected = 'payment-config'
-      router.push({path: '/admin/dashboard/payment'})
-      break
-    }
-    case 'theme-config': {
-      // themeStore.menuSelected = 'theme-config'
-      router.push({path: '/admin/dashboard/theme'})
-      break
-    }
-
-      // part2
-    case 'router-config' : {
-      // themeStore.menuSelected = 'router-mgr'
-      router.push({path: '/admin/dashboard/routermgr'})
-      break
-    }
-
-      // part4
-    case 'user-manager': {
-      // themeStore.menuSelected = 'user-manager'
-      router.push({path: '/admin/dashboard/usermanager'})
-      break
-    }
-    case 'notice-manager': {
-      // themeStore.menuSelected = 'notice-manager'
-      router.push({path: '/admin/dashboard/noticemanager'})
-      break
-    }
-    case 'subscription-manager': {
-      // themeStore.menuSelected = 'subscription-manager'
-      router.push({path: '/admin/dashboard/subscribemanager'})
-      break
-    }
-    case 'doc-manager': {
-      // themeStore.menuSelected = 'doc-manager'
-      router.push({path: '/admin/dashboard/document'})
-      break
-    }
-    case 'coupon-mgr': {
-      // themeStore.menuSelected = 'publicNotice-manager'
-      router.push({path: '/admin/dashboard/coupon'})
-      break
-    }
-    case 'privilege-group-mgr': {
-      // themeStore.menuSelected = 'privilege-group-mgr'
-      router.push({path: '/admin/dashboard/group'})
-      break
-    }
-    case 'ticket-mgr': {
-      router.push({path: '/admin/dashboard/ticket'})
-      break
-    }
-    case 'order-manager': {
-      router.push({path: '/admin/dashboard/order'})
-      break
-    }
+    case 'dashboard': return router.push({path: '/admin/dashboard/summary'})
+    case 'queue-monitor': return router.push({path: '/admin/dashboard/monitor'})
+    case 'system-config': return router.push({path: '/admin/dashboard/systemconfig'})
+    case 'payment-config': return router.push({path: '/admin/dashboard/payment'})
+    case 'theme-config': return router.push({path: '/admin/dashboard/theme'})
+    case 'router-config' : return router.push({path: '/admin/dashboard/routermgr'})
+    case 'user-manager': return router.push({path: '/admin/dashboard/usermanager'})
+    case 'notice-manager': return router.push({path: '/admin/dashboard/noticemanager'})
+    case 'subscription-manager': return router.push({path: '/admin/dashboard/subscribemanager'})
+    case 'doc-manager':return router.push({path: '/admin/dashboard/document'})
+    case 'coupon-mgr':return router.push({path: '/admin/dashboard/coupon'})
+    case 'privilege-group-mgr':return router.push({path: '/admin/dashboard/group'})
+    case 'ticket-mgr':return router.push({path: '/admin/dashboard/ticket'})
+    case 'order-manager':return router.push({path: '/admin/dashboard/order'})
+    case 'activate-manager': return router.push({path: '/admin/dashboard/activation'})
+    case 'key-manager': return router.push({path: '/admin/dashboard/key'})
   }
 }
 
@@ -263,6 +213,11 @@ let UserMenuOption = ref([
         key: 'user-keys',
         icon: renderIcon(keyIcon),
       },
+      {
+        label: computed(() => t('commonAside.user.activateLog')),
+        key: 'user-activate-log',
+        icon: renderIcon(historyIcon),
+      },
     ]
   },
   {
@@ -272,7 +227,7 @@ let UserMenuOption = ref([
     disabled: false,
     children: [
       {
-        label: '加值',
+        label: computed(() => t('commonAside.user.topUp')),
         key: 'user-top-up',
         icon: renderIcon(paymentIcon),
       },
@@ -304,17 +259,14 @@ let UserMenuOption = ref([
         key: 'user-tickets',
         icon: renderIcon(supportIcon),
       },
-      {
-        label: computed(() => t('commonAside.user.activateLog')),
-        key: 'user-active-record',
-        icon: renderIcon(historyIcon),
-      },
+
     ]
   },
 ])
 
 
 let userUpdate = (key: string) => {
+  themeStore.menuIsFlippActive = false
   switch (key) {
     case 'user-dashboard': {
       themeStore.menuSelected = 'user-dashboard'
@@ -360,6 +312,10 @@ let userUpdate = (key: string) => {
       router.push({path: '/dashboard/invite'})
       break
     }
+    case 'user-activate-log': {
+      router.push({path: '/dashboard/log'})
+      break
+    }
   }
 }
 
@@ -383,9 +339,9 @@ export default {
           :accordion="false"
           :default-expand-all="true"
           :options="MenuOption"
-          @update:value="update"
+          @update:value="adminUpdate"
           :value="themeStore.menuSelected"
-          v-model:value="themeStore.menuSelected"
+          v-model="themeStore.menuSelected"
       />
       <n-menu
           v-else
@@ -394,17 +350,12 @@ export default {
           :options="UserMenuOption"
           @update:value="userUpdate"
           :value="themeStore.menuSelected"
-          v-model:value="themeStore.menuSelected"
+          v-model="themeStore.menuSelected"
           :root-indent="36"
           :indent="0"
 
       />
     </n-scrollbar>
-
-
-
-
-
 
   </div>
 </template>

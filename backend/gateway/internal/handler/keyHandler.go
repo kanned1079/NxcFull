@@ -73,3 +73,219 @@ func HandleGetAllMyKeys(context *gin.Context) {
 	})
 
 }
+
+func HandleGetAllMyActivationLogs(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	err, page, size := GetPage2SizeFromQuery(context)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.GetActivateLogByUserId(sysContext.Background(), &pb.GetActivateLogByUserIdRequest{
+		UserId: userId,
+		Page:   page,
+		Size:   size,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var recordsMap []map[string]any
+	if err := json.Unmarshal(resp.Log, &recordsMap); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"log":        recordsMap,
+		"page_count": resp.PageCount,
+	})
+}
+
+func HandleGetKeyDetailsById(context *gin.Context) {
+	keyId, err := strconv.ParseInt(context.Query("key_id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.GetKeyInfoById(sysContext.Background(), &pb.GetKeyInfoByIdRequest{
+		KeyId: keyId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var detailsMap map[string]any
+	err = json.Unmarshal(resp.Details, &detailsMap)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":    resp.Code,
+		"msg":     resp.Msg,
+		"details": detailsMap,
+	})
+}
+
+func HandleDisableBindKey(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	activationId, err := strconv.ParseInt(context.Query("activation_id"), 10, 64)
+	log.Println(activationId, userId, err)
+	resp, err := grpcClient.KeyServicesClient.UnbindKey(sysContext.Background(), &pb.UnbindKeyRequest{
+		UserId:   userId,
+		RecordId: activationId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":     http.StatusInternalServerError,
+			"msg":      err.Error(),
+			"finished": false,
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":     resp.Code,
+		"msg":      resp.Msg,
+		"finished": true,
+	})
+}
+
+func HandleBindKeyToThirdExternalApp(context *gin.Context) {
+	postData := &struct {
+		Email         string `json:"email"`
+		Password      string `json:"password"`
+		Key           string `json:"key"`
+		ClientVersion string `json:"client_version"`
+		ClientId      string `json:"client_id"`
+		OsType        string `json:"os_type"`
+		Remark        string `json:"remark"`
+	}{}
+
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "Bad Request",
+		})
+		return
+	}
+	log.Println(postData)
+
+	resp, err := grpcClient.KeyServicesClient.BindOrActiveMyKey2App(sysContext.Background(), &pb.BindOrActiveMyKey2AppRequest{
+		Email:         postData.Email,
+		Password:      postData.Password,
+		Key:           postData.Key,
+		ClientVersion: postData.ClientVersion,
+		ClientId:      postData.ClientId,
+		OsType:        postData.OsType,
+		Remark:        postData.Remark,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"code":               resp.Code,
+		"msg":                resp.Msg,
+		"significant_number": resp.SignificantNumber,
+	})
+}
+
+func HandleAlterRemarkByUser(context *gin.Context) {
+	postData := &struct {
+		UserId   int64  `json:"user_id"`
+		RecordId int64  `json:"record_id"`
+		Remark   string `json:"remark"`
+	}{}
+	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "Bad Request",
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.AlterKeyBindRemark(sysContext.Background(), &pb.AlterKeyBindRemarkRequest{
+		UserId:   postData.UserId,
+		RecordId: postData.RecordId,
+		Remark:   postData.Remark,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}
+
+func GetAllActivateLogByAdmin(context *gin.Context) {
+	err, page, size := GetPage2SizeFromQuery(context)
+
+	email := context.Query("email")
+	valid, err := strconv.ParseBool(context.Query("valid"))
+	sort := context.Query("sort")
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.GetActivateLogByAdmin(sysContext.Background(), &pb.GetActivateLogByAdminRequest{
+		Page:  page,
+		Size:  size,
+		Email: email,
+		Valid: valid,
+		Sort:  sort,
+	})
+
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var logMap []map[string]any
+	err = json.Unmarshal(resp.Log, &logMap)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"log":        logMap,
+		"page_count": resp.PageCount,
+	})
+}

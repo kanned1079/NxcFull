@@ -2,6 +2,7 @@ import {computed, type ComputedRef, type Ref, ref} from 'vue'
 import {defineStore} from "pinia";
 import {darkTheme, type GlobalThemeOverrides} from 'naive-ui';
 import useSettingStore from "@/stores/useSettingStore"
+import useAppInfosStore from "@/stores/useAppInfosStore";
 
 interface CustomThemeConfig {
     topLogoBgColor: string;
@@ -24,7 +25,7 @@ interface Theme {
     bambooGreen?: Ref<CustomThemeConfig>;
     allTheme?: Ref<Record<string, Ref<GlobalThemeOverrides>>>;
     // getTheme: ComputedRef<CustomThemeConfig>;
-    getTheme: CustomThemeConfig;
+    getTheme: ComputedRef<CustomThemeConfig>;
     getMainTheme: ComputedRef<any | null>;
     readEnableDarkMode: () => void;
     saveEnableDarkMode: () => void;
@@ -34,16 +35,18 @@ interface Theme {
     menuSelected: Ref<string>;
     userPath: Ref<string>;
     menuCollapsed: Ref<boolean>;
+    menuIsFlippActive: Ref<boolean>;
 }
 
 const useThemeStore = defineStore('themeStore', (): Theme => {
     // 是否启用深色模式
     const enableDarkMode = ref<boolean>(false)
     // 主題名選擇
+    // const selectedTheme = ref<string>('glacierBlue')
     const selectedTheme = ref<string>('glacierBlue')
 
     // 如在个性化中修改了主题 或者app挂载时候需要调用来应用设置
-    let setThemeFromSetting = () => selectedTheme.value = useSettingStore().settings.frontend.frontend_theme
+    let setThemeFromSetting = () => selectedTheme.value = useAppInfosStore().appCommonConfig.frontend_theme
 
     // saveTheme 保存到浏览器localStorage深色配置
     const saveEnableDarkMode = () => localStorage.setItem('themeCode', JSON.stringify({code: enableDarkMode.value as boolean}));
@@ -758,10 +761,11 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 return darkBlueDay.value;
             }
         }
-    }).value as CustomThemeConfig
+    }) as ComputedRef<CustomThemeConfig>
 
     // 菜单折叠
     let menuCollapsed = ref<boolean>(false)
+    let menuIsFlippActive = ref<boolean>(false)
 
     // 当前访问的位置
     let userPath = ref<string>('/dashboard/summary')
@@ -786,11 +790,12 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
         contentPath,
         menuSelected,
         userPath,
-        menuCollapsed
+        menuCollapsed,
+        menuIsFlippActive,
     }
 
 }, {
-    // persist: true,
+    persist: true,
 })
 
 export default useThemeStore;

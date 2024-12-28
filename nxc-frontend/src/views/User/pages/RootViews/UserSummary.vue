@@ -5,7 +5,7 @@ import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
-import {useDialog, useMessage} from 'naive-ui'
+import {useDialog} from 'naive-ui'
 import {formatDate} from "@/utils/timeFormat"
 import LoadingBefore from "@/views/utils/LoadingBefore.vue";
 import {
@@ -18,7 +18,8 @@ import {
   HelpBuoyOutline as supportIcon,
   KeyOutline as keyIcon,
 } from '@vicons/ionicons5'
-import instance from "@/axios";
+import {checkIsUserHaveOpenTickets, getActivePlanList, getAllNotices} from "@/api/user/summary";
+
 
 let animated = ref<boolean>(false)
 
@@ -89,37 +90,23 @@ let pathById = [
 ]
 
 let haveOpenTickets = ref<boolean>(false)
+let openingTicketCount = ref<number>(0)
 
-let checkIsUserHaveOpenTickets = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/ticket/check', {
-      params: {
-        is_user: true,
-      }
-    })
-    if (data.code === 200) {
-      thisNotices.value = data.notices
-      data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
-    }
-  } catch (error) {
-    console.log(error)
+let callCheckIsUserHaveOpenTickets = async () => {
+  let data = await checkIsUserHaveOpenTickets(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    haveOpenTickets.value = data.exist || false
+    openingTicketCount.value = data.ticket_count || 0
   }
 }
 
-let getAllNotices = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/notice', {
-      params: {
-        is_user: true,
-      }
-    })
-    if (data.code === 200) {
-      thisNotices.value = data.notices
-      data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
-    }
-  } catch (error) {
-    console.log(error)
+let callGetAllNotices = async () => {
+  let data = await getAllNotices(true)
+  if (data.code === 200) {
+    thisNotices.value = data.notices
+    data.notices.forEach((notice: Notice) => thisNotices.value.push(notice))
   }
+
 }
 
 let handleConfirm = (title: string, content: string) => {
@@ -138,34 +125,27 @@ interface MyActivePlans {
 let myActivePlans = ref<MyActivePlans[]>([]);
 let haveActive = ref<boolean>(false)
 
-let getActivePlanList = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/plan/summary/fetch', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-      }
-    })
-    if (data.code === 200) {
-      haveActive.value = true
-      myActivePlans.value = data.my_plans
-      console.log(myActivePlans.value)
-      // animated.value = true
-
-    }
-  } catch (error) {
+let callGetActivePlanList = async () => {
+  let data = await getActivePlanList(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    haveActive.value = true
+    myActivePlans.value = data.my_plans
+    console.log(myActivePlans.value)
+    // animated.value = true
+  } else {
     haveActive.value = false
-    console.log(error)
   }
+
 }
 
 onMounted(async () => {
-  console.log('用户summary挂载')
   themeStore.userPath = '/dashboard/summary'
   themeStore.menuSelected = 'user-dashboard'
 
-  await getAllNotices()
-  await checkIsUserHaveOpenTickets()
-  await getActivePlanList()
+  await callGetAllNotices()
+  await callGetActivePlanList()
+  setTimeout(async () => await callCheckIsUserHaveOpenTickets(), 500)
+
 
 
   // animated.value = true
@@ -188,17 +168,37 @@ export default {
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-      <n-alert :bordered="false" style="margin-bottom: 20px" title="" type="warning">
-        <div style="display: flex; flex-direction: row; align-items: center">
-          您有待处理的工单
-          <n-button style="margin-left: 5px" text type="primary" @click="router.push({path: '/dashboard/tickets'})">
-            去查看
-            <n-icon>
-              <toRightIcon/>
-            </n-icon>
-          </n-button>
-        </div>
-      </n-alert>
+
+      <!--      <n-collapse-transition :show="haveOpenTickets">-->
+
+      <n-collapse-transition :show="haveOpenTickets">
+        <n-alert
+            :bordered="false"
+            style="margin-bottom: 15px"
+            title=""
+            type="warning"
+        >
+          <div style="display: flex; flex-direction: row; align-items: center">
+            {{
+              t('userSummary.haveTicket', {count: openingTicketCount})
+            }}
+            <n-button
+                style="margin-left: 5px"
+                text
+                type="warning"
+                @click="router.push({path: '/dashboard/tickets'})"
+            >
+              {{ t('userSummary.toCheckTicket') }}
+              <n-icon>
+                <toRightIcon/>
+              </n-icon>
+            </n-button>
+          </div>
+        </n-alert>
+      </n-collapse-transition>
+
+      <!--      </n-collapse-transition>-->
+
       <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
         <n-carousel show-arrow autoplay style="border-radius: 3px">
           <n-card
@@ -284,6 +284,7 @@ export default {
             <p class="describe" style="margin-top: 5px;opacity: 0.8;font-size: 1rem;font-weight: bold;">
               {{ t('userSummary.toPurchase') }}</p>
           </div>
+
         </n-card>
 
         <n-card
@@ -296,9 +297,9 @@ export default {
             :bordered="false"
         >
           <div class="plan-item">
-            <p style="font-size: 1.1rem; font-weight: bold; opacity: 0.9;">{{ plan.plan_name }}</p>
+            <p style="font-size: 0.9rem; font-weight: bold; opacity: 0.9;">{{ plan.plan_name }}</p>
             <p style="font-size: 12px; opacity: 0.6; margin-top: 3px">
-              {{ t('userSummary.timeLeft', { msg: formatDate(plan.expiration_date) }) }}
+              {{ t('userSummary.timeLeft', {msg: formatDate(plan.expiration_date)}) }}
             </p>
           </div>
 
@@ -311,8 +312,10 @@ export default {
         >
           <div style="display: flex; flex-direction: row; align-items: center; justify-content: end;">
             <n-button type="primary" text @click="router.push({path: '/dashboard/keys'})">
-              查看所有密鑰
-            <n-icon style="margin-left: 5px"><toRightIcon/></n-icon>
+              {{ t('userSummary.showAllKeys') }}
+              <n-icon style="margin-left: 5px">
+                <toRightIcon/>
+              </n-icon>
             </n-button>
           </div>
         </div>
@@ -321,13 +324,15 @@ export default {
       </n-card>
 
       <n-card
-          style="margin: 20px 0; padding-right: 20px"
+          style="margin: 15px 0; padding-right: 20px"
           :embedded="true"
           hoverable
           :title="t('userSummary.shortcut')"
           content-style="padding: 0;"
           :bordered="false"
       >
+
+
         <div
             :class="themeStore.enableDarkMode?'help-day':'help-night'"
             v-for="item in helpData"
@@ -357,7 +362,6 @@ export default {
         </div>
       </n-card>
 
-
     </div>
   </transition>
 
@@ -370,7 +374,7 @@ export default {
   padding: 20px;
 
   .my-subscribe {
-    margin-top: 20px;
+    margin-top: 15px;
     padding-bottom: 20px;
   }
 }

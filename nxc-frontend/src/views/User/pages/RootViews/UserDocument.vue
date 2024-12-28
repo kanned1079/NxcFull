@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {ref, reactive, onMounted, onBeforeMount} from "vue";
-// import {useRouter} from "vue-router";
+import {onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import {formatDate} from "@/utils/timeFormat";
-// import useApiAddrStore from "@/stores/useApiAddrStore";
-import  {type DrawerPlacement, useMessage } from 'naive-ui'
-// import MarkdownIt from 'markdown-it';
-// import {convertMd} from "@/utils/markdown";
-import instance from "@/axios";
+import {type DrawerPlacement, useMessage} from 'naive-ui'
+import {getAllDocuments} from "@/api/user/doc";
 import {MdPreview} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 
@@ -18,14 +14,12 @@ let animated = ref<boolean>(false)
 
 const {t} = useI18n()
 const message = useMessage()
-// const apiAddrStore = useApiAddrStore();
 
 let isEmpty = ref<boolean>(false)
 let search = ref('')
-// let text = ref('')
 let active = ref<boolean>(false)
 
-const activate = (place: DrawerPlacement, title:string, body: string) => {
+const activate = (place: DrawerPlacement, title: string, body: string) => {
   drawTitle.value = title
   drawBody.value = body
   active.value = true
@@ -60,53 +54,38 @@ interface CategoryDocuments {
 
 let doc_list = ref<CategoryDocuments[]>([])
 
-let getAllDocuments = async () => {
-  console.log('拉取所有文档列表')
+let callGetAllDocuments = async () => {
   animated.value = false
-  try {
-    let {data} = await instance.get('http://localhost:8081/api/user/v1/document', {
-      params: {
-        lang: 'zh_CN',
-        find: search.value
-      }
-    })
-    if (data.code === 200) {
-      doc_list.value = []
-      console.log(data)
-      // Object.assign(doc_list, data.doc_list)
-      if (!data.doc_list) {
-        isEmpty.value = true
-        return
-      } else {
-        isEmpty.value = false
-      }
-      data.doc_list.forEach((category: CategoryDocuments) => doc_list.value.push(category))
-      // console.log("doc_list", doc_list.value)
-    animated.value = true
-    } else {
-      message.error(data.msg)
-    }
-  }catch (error: any) {
-    message.error(error)
-  }
+  let data = await getAllDocuments('zh_CN', search.value)
+  if (data.code === 200) {
+    doc_list.value = []
 
+    // 处理查询为空的情况
+    if (!data.doc_list || data.doc_list.length === 0) {
+      isEmpty.value = true
+      animated.value = true
+      return
+    } else {
+      isEmpty.value = false
+      // 如果有数据，填充文档列表
+      data.doc_list.forEach((category: CategoryDocuments) => {
+        doc_list.value.push(category)
+      })
+      animated.value = true
+    }
+  } else {
+    message.error(data.msg)
+  }
 }
 
-// let showDetail = () => {
-//
-// }
-
 onBeforeMount(() => {
-
-
+  themeStore.menuSelected = 'user-doc'
+  themeStore.userPath = '/dashboard/document'
 })
 
 onMounted(async () => {
-  console.log('document挂载');
-  themeStore.menuSelected = 'user-doc'
-  themeStore.userPath = '/dashboard/document'
   // getAllDocuments()
-  await getAllDocuments()
+  await callGetAllDocuments()
   animated.value = true
 
 })
@@ -123,14 +102,44 @@ export default {
 <template>
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-      <n-card hoverable :embedded="true" content-style="padding: 0;" class="search-root" :bordered="false">
+      <n-card
+          hoverable
+          :embedded="true"
+          content-style="padding: 0;"
+          class="search-root"
+          :bordered="false"
+      >
         <n-input-group>
-          <n-input v-model:value="search" :bordered="false" size="medium" class="search-input" :placeholder="t('userDocument.searchPlaceholder')"></n-input>
-          <n-button @click="getAllDocuments" strong :bordered="false" type="primary" size="medium" class="search-btn">{{ t('userDocument.searchBtn') }}</n-button>
+          <n-input
+              v-model:value="search"
+              :bordered="false"
+              size="medium"
+              class="search-input"
+              :placeholder="t('userDocument.searchPlaceholder')"
+          ></n-input>
+          <n-button
+              @click="getAllDocuments"
+              strong
+              :bordered="false"
+              type="primary"
+              size="medium"
+              class="search-btn"
+          >
+            {{ t('userDocument.searchBtn') }}
+          </n-button>
         </n-input-group>
       </n-card>
 
-      <n-card v-for="item in doc_list" :key="item.category" class="doc-card" hoverable :embedded="true" :title="item.category" content-style="padding: 0;" :bordered="false">
+      <n-card
+          v-for="item in doc_list"
+          :key="item.category"
+          class="doc-card"
+          hoverable
+          :embedded="true"
+          :title="item.category"
+          content-style="padding: 0;"
+          :bordered="false"
+      >
         <div
             class="doc-item"
             v-for="doc in item.documents"
@@ -138,20 +147,41 @@ export default {
             @click="activate(themeStore.menuCollapsed?'bottom':'right', doc.title, doc.body)"
         >
           <p class="doc-title">{{ doc.title }}</p>
-          <p class="doc-release">{{ doc.created_at?formatDate(doc.created_at):'' }}</p>
+          <p class="doc-release">{{ doc.created_at ? formatDate(doc.created_at) : '' }}</p>
 
         </div>
       </n-card>
 
-      <n-card v-if="isEmpty" :embedded="true" hoverable :bordered="false" style="padding: 30px 0">
-        <n-result status="404" title="查无结果" description="尝试换一个关键词吧">
+      <n-card
+          v-if="isEmpty"
+          :embedded="true"
+          hoverable
+          :bordered="false"
+          style="padding: 30px 0"
+      >
+        <n-result
+            status="404"
+            :title="t('userDocument.noContentTitle')"
+            :description="t('userDocument.noContentTitleHint')"
+        >
         </n-result>
       </n-card>
 
-      <n-drawer v-model:show="active" width="80%" height="80%" :placement="placement">
-        <n-drawer-content :title="drawTitle">
+      <n-drawer
+          v-model:show="active"
+          width="80%"
+          height="80%"
+          :placement="placement"
+      >
+        <n-drawer-content
+            :title="drawTitle"
+        >
           <!--      <div v-html="convertMd(drawBody as string)"></div>-->
-          <MdPreview :theme="themeStore.enableDarkMode?'dark':'light'" style="background-color: rgba(0,0,0,0.0)" v-model="drawBody"></MdPreview>
+          <MdPreview
+              :theme="themeStore.enableDarkMode?'dark':'light'"
+              style="background-color: rgba(0,0,0,0.0)"
+              v-model="drawBody"
+          ></MdPreview>
         </n-drawer-content>
       </n-drawer>
 
@@ -163,15 +193,18 @@ export default {
 <style scoped lang="less">
 .root {
   padding: 20px;
+
   .search-root {
     display: flex;
     flex-direction: row;
     align-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+
     .search-input {
       line-height: 50px;
       border: 10px;
     }
+
     .search-btn {
       height: 50px;
       width: 100px;
@@ -180,19 +213,24 @@ export default {
   }
 
   .doc-card {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+
     .doc-item {
       display: flex;
       flex-direction: column;
       padding: 10px 0 10px 25px;
+
       .doc-title {
         font-weight: 400;
-        font-size: 1rem;
+        font-size: 0.9rem;
       }
+
       .doc-release {
         opacity: 0.5;
+        font-size: 0.8rem;
       }
     }
+
     .doc-item:hover {
       background-color: rgba(220, 220, 220, 0.15);
     }

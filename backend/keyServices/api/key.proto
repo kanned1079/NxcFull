@@ -8,12 +8,28 @@ option go_package = "./proto";
 service KeyService {
   // 获取用户所有的key 包含有效和无效的 按照时间和是否有效升序排序
   rpc GetAllMyKeysByUserIdAsc(GetAllMyKeysByUserIdAscRequest) returns (GetAllMyKeysByUserIdAscResponse);
+
+  // 獲取單個密鑰的信息
+  rpc GetKeyInfoById(GetKeyInfoByIdRequest) returns (GetKeyInfoByIdResponse);
+
   // 第三方API 激活密钥
   rpc RegisterClientWithKey(RegisterClientWithKeyRequest) returns (RegisterClientWithKeyResponse);
   // 第三方API 取消激活密钥
   rpc CancelRegisterClientWithKey(CancelRegisterClientWithKeyRequest) returns (CancelRegisterClientWithKeyResponse);
 
+  // 密钥使用记录
+  rpc BindOrActiveMyKey2App(BindOrActiveMyKey2AppRequest) returns (BindOrActiveMyKey2AppResponse);
+  rpc UnbindKey(UnbindKeyRequest) returns (UnbindKeyResponse);
+  rpc AlterKeyBindRemark(AlterKeyBindRemarkRequest) returns (AlterKeyBindRemarkResponse);
 
+  rpc CheckAccountAndKeyUsability(CheckAccountAndKeyUsabilityRequest) returns (CheckAccountAndKeyUsabilityResponse);
+
+  rpc GetActivateLogByUserId(GetActivateLogByUserIdRequest) returns (GetActivateLogByUserIdResponse);
+  rpc GetActivateLogByAdmin(GetActivateLogByAdminRequest) returns (GetActivateLogByAdminResponse);
+  rpc AlterKeyValidInfoByAdmin(AlterKeyValidInfoByAdminRequest) returns (AlterKeyValidInfoByAdminResponse);
+
+  // Admin
+  rpc GetAllKeysByAdminDesc(GetAllKeysByAdminDescRequest) returns (GetAllKeysByAdminDescResponse);
 
 }
 
@@ -31,6 +47,17 @@ message GetAllMyKeysByUserIdAscResponse {
 }
 
 // ------
+
+
+message GetKeyInfoByIdRequest {
+  int64 key_id = 1;
+}
+
+message GetKeyInfoByIdResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes details = 3;
+}
 
 message RegisterClientWithKeyRequest {
   string email = 1;
@@ -53,4 +80,110 @@ message CancelRegisterClientWithKeyRequest {
 
 message CancelRegisterClientWithKeyResponse {
 
+}
+
+message BindOrActiveMyKey2AppRequest {
+  string email = 1; // 用户邮箱
+  string password = 2;  // 密码
+  string key = 3; // 密钥key
+  int64 request_at = 4; // 时间戳
+  string client_version = 5;  // 客户端版本
+  string client_id = 6;
+  string os_type = 7; // 操作系统类型
+  string remark = 8;
+}
+
+message BindOrActiveMyKey2AppResponse {
+  int32 code = 1;
+  string msg = 2;
+  string significant_number = 3;
+}
+
+message UnbindKeyRequest {
+  int64 user_id = 1;
+  int64 record_id = 2;
+}
+
+message UnbindKeyResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool finished = 3;
+}
+
+message CheckAccountAndKeyUsabilityRequest {
+  string email = 1; // 用户邮箱
+  string key = 3; // 密钥key
+}
+
+message CheckAccountAndKeyUsabilityResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool passed = 3;
+}
+
+message GetActivateLogByUserIdRequest {
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message GetActivateLogByUserIdResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes log = 3;
+  int64 page_count = 4;
+}
+
+message GetActivateLogByAdminRequest {
+  int64 page = 1;
+  int64 size = 2;
+  string email = 3;
+  bool valid = 4;
+  string sort = 5;
+}
+
+message GetActivateLogByAdminResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes log = 3;
+  int64 page_count = 4;
+}
+
+message AlterKeyBindRemarkRequest {
+  int64 user_id = 1;
+  int64 record_id = 2;
+  string remark = 3;
+}
+
+message AlterKeyBindRemarkResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// Admin
+
+message GetAllKeysByAdminDescRequest {
+  int64 page = 1;
+  int64 size = 2;
+  string email = 3;
+}
+
+message GetAllKeysByAdminDescResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes keys = 3;
+  int64 page_count = 4;
+}
+
+//
+
+message AlterKeyValidInfoByAdminRequest {
+  int64 user_id = 1;
+  int64 key_id = 2;
+  int64 record_id = 3;
+}
+
+message AlterKeyValidInfoByAdminResponse {
+  int32 code = 1;
+  string msg = 2;
 }

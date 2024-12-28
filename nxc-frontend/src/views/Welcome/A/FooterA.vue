@@ -7,25 +7,41 @@ import wechat from "../icons/wechat.svg"
 import {reactive} from "vue";
 
 const {t} = useI18n();
+const props = defineProps<{
+  bilibili_official_link: string,
+  youtube_official_link: string,
+  instagram_link: string,
+  filing_number: string,
+  page_suffix: string,
+}>()
 
 let contactMethods = reactive([
   {
     id: 0,
     name: 'Bilibili',
+    link: props.bilibili_official_link || '',
   },
   {
     id: 1,
     name: 'YouTube',
+    link: props.youtube_official_link || '',
   },
   {
     id: 2,
     name: 'Instagram',
+    link: props.instagram_link || '',
   },
-  {
-    id: 3,
-    name: 'WechatOfficial',
-  },
+  // {
+  //   id: 3,
+  //   name: 'WechatOfficial',
+  // },
 ])
+
+let clickToLink = (link: string) => {
+  // 新开启一个窗口并加载指定的链接
+  console.log(link)
+  window.open(link, '_blank'); // '_blank' 表示在新标签页或窗口中打开链接
+}
 
 </script>
 
@@ -47,16 +63,18 @@ export default {
             text
             color="white"
             class="sub-item"
-            v-for="item in contactMethods"
+            v-for="(item, index) in contactMethods"
             :key="item.id"
+            @click="clickToLink(item.link)"
         >
-          <n-icon v-if="item.name === 'Bilibili'" style="margin-right: 5px" size="25">
+
+          <n-icon v-if="item.name === 'Bilibili'" style="margin-right: 5px" size="20">
             <bilibili/>
           </n-icon>
-          <n-icon v-if="item.name === 'YouTube'" style="margin-right: 5px" size="25">
+          <n-icon v-if="item.name === 'YouTube'" style="margin-right: 5px" size="20">
             <youtube/>
           </n-icon>
-          <n-icon v-if="item.name === 'Instagram'" style="margin-right: 5px" size="25">
+          <n-icon v-if="item.name === 'Instagram'" style="margin-right: 5px" size="20">
             <instagram/>
           </n-icon>
           <n-icon v-if="item.name === 'WechatOfficial'" style="margin-right: 5px" size="25">
@@ -64,12 +82,12 @@ export default {
           </n-icon>
           {{ item.name }}
         </n-button>
-
       </div>
     </div>
     <n-hr style="margin-bottom: 30px"></n-hr>
-    <p class="code">{{ t('welcome.A.filingsCode', {code: '11223'}) }}</p>
-    <p class="right-policy">Copyright © 2013 - 2024 Tencent Cloud. All Rights Reserved. NxcNetworks 版權所有</p>
+<!--    <p class="code">{{ t('welcome.A.filingsCode', {code: '11223'}) }}</p>-->
+    <p class="code">{{ props.filing_number }}</p>
+    <p class="right-policy">{{ props.page_suffix }}</p>
   </div>
 </template>
 
@@ -81,7 +99,7 @@ export default {
 
   .title {
     font-size: 1.5rem;
-    font-weight: 400;
+    font-weight: 300;
     opacity: 18;
     margin-top: 30px;
   }
@@ -102,7 +120,7 @@ export default {
 
       .sub-item {
         margin-right: 20px;
-        font-size: 1.1rem;
+        font-size: 1rem;
         transition: ease 300ms;
       }
 

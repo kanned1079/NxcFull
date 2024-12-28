@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, onMounted, ref, computed, onBeforeUnmount} from "vue"
+import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue"
 import type {MenuOption, NotificationType} from 'naive-ui'
-import {NIcon, useNotification, useMessage} from 'naive-ui'
+import {NIcon, useMessage, useNotification} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
-// import useApiAddrStore from "@/stores/useApiAddrStore"
 import usePaymentStore from "@/stores/usePaymentStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useRouter} from "vue-router";
 import {MdPreview} from 'md-editor-v3';
 import 'md-editor-v3/lib/preview.css';
-import {CheckmarkCircleOutline as settlementIcon, TicketOutline as ticketIcon, ChevronBackOutline as backIcon} from "@vicons/ionicons5"
-import instance from "@/axios";
+import {
+  CheckmarkCircleOutline as settlementIcon,
+  ChevronBackOutline as backIcon,
+  TicketOutline as ticketIcon
+} from "@vicons/ionicons5"
+// import instance from "@/axios";
 import useUserInfoStore from "@/stores/useUserInfoStore";
+import {verifyTicket, saveOrder} from "@/api/user/settlement";
 
 const {t} = useI18n();
 const notification = useNotification()
@@ -132,57 +136,47 @@ let couponInfo = ref<Coupon>({
   percent_off: 0.0,
 })
 
-let verifyTicket = async () => {
+let callVerifyTicket = async () => {
   if (couponCode.value.trim() === '') {
     notify('error', t('newSettlement.err'), t('newSettlement.notify.couponIsNull'))
     return
   }
   console.log('验证优惠券')
-  try {
-    let {data} = await instance.post('http://localhost:8081/api/user/v1/coupon/verify', {
-      coupon_code: couponCode.value.trim(),  // 优惠券码
-      plan_id: plan.id,               // 订阅计划id
-      user_id: userInfoStore.thisUser.id,  // 用户id 判断是否使用过
-    });
-    if (data.code === 200) {
-      if (data.verified) {
-        console.log('验证码有效', data);
-        // ticketVerified.value = true;
-        couponInfo.value.id = data.id;
-        couponInfo.value.verified = true;
-        couponInfo.value.percent_off = data.percent_off;
-        couponInfo.value.name = data.name;
-        await notify('success', t('newSettlement.notify.passTitle'), t('newSettlement.notify.couponVerified'));
-      } else {
-        couponInfo.value.verified = false
-        // console.log('未知错误', data.msg);
-        await notify('error', t('newSettlement.notify.couponInvalid'), data.msg);
-      }
+  let data = await verifyTicket(couponCode.value, plan.id, userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    if (data.verified) {
+      console.log('验证码有效', data);
+      // ticketVerified.value = true;
+      couponInfo.value.id = data.id;
+      couponInfo.value.verified = true;
+      couponInfo.value.percent_off = data.percent_off;
+      couponInfo.value.name = data.name;
+      notify('success', t('newSettlement.notify.passTitle'), t('newSettlement.notify.couponVerified'));
     } else {
       couponInfo.value.verified = false
-      // 处理非200状态码的错误
-      await notify('error', t('newSettlement.notify.couponInvalid'), data.msg);
+      // console.log('未知错误', data.msg);
+      notify('error', t('newSettlement.notify.couponInvalid'), data.msg);
     }
-  } catch (error: Error| any | undefined) {
-    // 处理网络错误或后端500错误
+  } else {
     couponInfo.value.verified = false
-    await notify('error', t('newSettlement.notify.couponInvalid'), error.toString());
-
+    // 处理非200状态码的错误
+    notify('error', t('newSettlement.notify.couponInvalid'), data.msg);
   }
+
 }
 
 // 抵折金额
-let discountPrice = computed(()  => couponInfo.value.verified ? ((couponInfo.value.percent_off / 100) * resultPrice.value) : 0)
+let discountPrice = computed(() => couponInfo.value.verified ? ((couponInfo.value.percent_off / 100) * resultPrice.value) : 0)
 
-let saveOrder = async () => {
-  console.log('提交订单准备支付')
-  try{
-    let {data} = await instance.post('/api/user/v1/order', {
-      plan_id: plan.id,
-      user_id: userInfoStore.thisUser.id,
-      coupon_id: couponInfo.value.id || null,
-      period: period.value || 'month',
-    })
+let callSaveOrder = async () => {
+  // try {
+  //   let {data} = await instance.post('/api/user/v1/order', {
+  //     plan_id: plan.id,
+  //     user_id: userInfoStore.thisUser.id,
+  //     coupon_id: couponInfo.value.id || null,
+  //     period: period.value || 'month',
+  //   })
+    let data = await saveOrder(plan.id, userInfoStore.thisUser.id, couponInfo.value.id, period.value || 'month')
     if (data.code === 200) {
       console.log('订单创建成功')
       // Object.assign(data, paymentStore.confirmOrder)
@@ -190,15 +184,15 @@ let saveOrder = async () => {
       paymentStore.submittedOrderId = data.order_id as string   // 仅保存订单号
       console.log('选择支付方式')
       // 执行异步
-       setTimeout(async () => {
-         await router.push({path: '/dashboard/purchase/confirm'})
+      setTimeout(async () => {
+        await router.push({path: '/dashboard/purchase/confirm'})
       }, 500) // 延迟500ms
 
     }
-  }catch (error: any) {
-    console.log(error)
-    message.error(error)
-  }
+  // } catch (error: any) {
+  //   console.log(error)
+  //   message.error(error)
+  // }
 }
 
 let notify = (type: NotificationType, title: string, meta: string) => {
@@ -224,7 +218,7 @@ onBeforeMount(() => {
   console.log('settlement挂载前', paymentStore.plan_id_selected)
   if (paymentStore.plan_id_selected < 0) {
     router.back()
-  } else{
+  } else {
     appendCycleOptions()
 
   }
@@ -246,7 +240,9 @@ export default {
 <template>
   <div style="margin: 20px 20px 0 20px; font-size: 1rem">
     <n-button type="primary" text @click="router.back()">
-      <n-icon style="margin: 0 5px 0 2px;"><backIcon/></n-icon>
+      <n-icon style="margin: 0 5px 0 2px;">
+        <backIcon/>
+      </n-icon>
       重新選取
     </n-button>
   </div>
@@ -292,7 +288,7 @@ export default {
                   size="large"
                   :keyboard="true"
                   type="primary"
-                  @click="verifyTicket"
+                  @click="callVerifyTicket"
                   :bordered="false"
               >
                 <n-icon style="margin-right: 10px">
@@ -319,9 +315,10 @@ export default {
               <n-hr></n-hr>
             </div>
             <p class="total-title">{{ t('newSettlement.total') }}</p>
-            <p class="price-large">{{ (resultPrice - discountPrice).toFixed(2) }} {{ appInfosStore.appCommonConfig.currency }}</p>
+            <p class="price-large">{{ (resultPrice - discountPrice).toFixed(2) }}
+              {{ appInfosStore.appCommonConfig.currency }}</p>
             <n-button
-                @click="saveOrder"
+                @click="callSaveOrder"
                 class="settleBtn"
                 type="primary"
                 :bordered="false"

@@ -1,22 +1,24 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import useSiteInfo from "@/stores/siteInfo";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import type {NotificationType} from 'naive-ui'
 import {useNotification} from 'naive-ui'
 import { useMessage } from 'naive-ui'
 import {hashPassword, encodeToBase64} from '@/utils/encryptor'
-import axios from 'axios';
-import useApiAddrStore from "@/stores/useApiAddrStore";
 import instance from "@/axios";
 
-const apiAddrStore = useApiAddrStore();
-
+const {t} = useI18n()
 const notification = useNotification()
+const appInfoStore = useAppInfosStore()
 const themeStore = useThemeStore()
 const message = useMessage()
+
+let animated = ref<boolean>(false)
+
 let notifyErr = (type: NotificationType, msg: string) => {
   notification[type]({
     content: '登陆失败',
@@ -35,7 +37,6 @@ let notifyPass = (type: NotificationType) => {
   })
 }
 
-const siteInfo = useSiteInfo();
 const userInfoStore = useUserInfoStore();
 const router = useRouter();
 let username = ref<string>('')
@@ -44,14 +45,6 @@ let usernameInputStatus = ref()
 let passwordInputStatus = ref()
 let enableLogin = ref<boolean>(true)
 
-// encodeToBase64 将密码进行base64加密
-// 移动到utils中
-// let encodeToBase64 = (str: string): string => {
-//   const utf8Encode = new TextEncoder();
-//   const encoded = utf8Encode.encode(str);
-//   const base64Encoded = btoa(String.fromCharCode(...encoded));
-//   return base64Encoded;
-// }
 
 interface DataWithAuth {
   isAuthed: boolean;
@@ -85,30 +78,9 @@ let bindUserInfo =  (data: DataWithAuth) => {
   userInfoStore.thisUser.lastLogin = user_data.last_login.toString()
   userInfoStore.thisUser.lastLoginIp = user_data.last_login_ip
   userInfoStore.thisUser.token = data.token
-  // userInfoStore.thisUser = {
-  //   id: user_data.id,
-  //   inviteUserId: user_data.invite_user_id,
-  //   name: user_data.name,
-  //   email: user_data.email,
-  //   isAdmin: user_data.is_admin,
-  //   isStaff: user_data.is_staff,
-  //   balance: user_data.balance,
-  //   lastLogin: user_data.last_login.toString(),
-  //   lastLoginIp: user_data.last_login_ip,
-  //   token: data.token,
-  // };
   console.log('isAdmin', user_data.is_admin)
   console.log('admin/login: ', userInfoStore.thisUser.isAdmin)
 }
-
-// let ifIsNull = () => {
-//   if (username.value === '' || password.value === '') {
-//     notifyErr('error', '不能为空')
-//     return false
-//   } else {
-//     return true
-//   }
-// }
 
 let setInputStatus = (status: boolean) => {
   return !status?'error':null
@@ -135,8 +107,6 @@ let handleLogin = async () => {
       sessionStorage.setItem('token', data.token)
       // 保存验证状态
       userInfoStore.setAndSaveAuthStatus(true)
-      // userInfoStore.isAuthed = true // 鉴权通过
-      // sessionStorage.setItem('isAuthed', JSON.stringify(true))
       notifyPass('success');
       bindUserInfo(data)
       console.log(userInfoStore.thisUser)
@@ -160,20 +130,31 @@ let handleLogin = async () => {
   }
 }
 
-let handleFrogetPassword = () => {
+let handleForgetPassword = () => {
   noticeInfo()
 }
 
 let noticeInfo = () => {
-  message.info('自己想办法')
+  message.info('...')
+  // TODO 待实现
 }
 
-let backgroundStyle = computed(() => ({
-  backgroundSize: 'cover', // 或者 'contain' 根据你需要的效果选择
-  // backgroundImage: `url(${themeStore.backgroundUrl})`,
-  background: `linear-gradient(to right, rgb(167, 112, 239), rgb(207, 139, 243), rgb(253, 185, 155))`
-}))
+let backgroundStyle = computed(() => {
+  const baseStyle = {
+    backgroundSize: 'cover', // 或者 'contain'，根据需要调整
+    backgroundImage: `url(${appInfoStore.appCommonConfig.frontend_background_url})`,
+  };
 
+  // 如果启用了深色模式，调整亮度和对比度
+  if (themeStore.enableDarkMode) {
+    return {
+      ...baseStyle,
+      filter: 'brightness(0.5) contrast(1)', // 亮度为0.5，对比度为0.8
+    };
+  }
+
+  return baseStyle;
+});
 
 
 onMounted(() => {
@@ -187,19 +168,10 @@ onMounted(() => {
     console.log('to dashboard')
     router.push({path:'/admin/dashboard/summary'})
   }
+  animated.value = true
 
-  // if (sessionStorage.getItem('isAuthed') != null) {
-  //   if (JSON.parse(sessionStorage.getItem('isAuthed') as string) == true) {
-  //     setTimeout(() => {
-  //       notifyPass('success')
-  //       router.push({
-  //         path: '/admin/dashboard'
-  //       })
-  //     }, 500)
-  //
-  //   }
-  // }
 })
+
 </script>
 
 <script lang="ts">
@@ -209,61 +181,111 @@ export default {
 </script>
 
 <template>
+  <div class="background-container">
+    <!-- 背景层 -->
+    <div class="background-layer" :style="backgroundStyle"></div>
 
-  <n-layout style="width: 100%; height: 100vh;" justify="center" :vertical="true" align="center" :style="backgroundStyle">
-    <n-flex justify="center" :vertical="true" align="center">
-      <n-card class="layer-up" :embedded="true" hoverable :bordered="false">
-        <p class="title">{{ siteInfo.siteName }}</p>
-        <p class="sub-title">登陆到管理中心</p>
-        <div class="inp">
-          <n-input
-              secondary
-              v-model:value="username"
-              type="text" placeholder="邮箱"
-              size="large"
-              style="opacity: 0.8"
-              :bordered="true"
-              :status="usernameInputStatus"
-              @blur="!username?usernameInputStatus = 'error':null"
-          />
-          <n-input
-              v-model:value="password"
-              type="password"
-              placeholder="密码"
-              size="large"
-              style="margin-top: 20px; opacity: 0.8"
-              :bordered="true"
-              :status="passwordInputStatus"
-              @blur="!password?passwordInputStatus = 'error':null"
-          />
-        </div>
-        <n-button secondary type="info" class="login-btn" size="large" @click="handleLogin" :disabled="!enableLogin">
-          登入
-        </n-button>
-        <n-button strong tertiary type="warning" size="large" class="login-btn" @click="handleFrogetPassword">
-          忘记密码
-        </n-button>
-      </n-card>
-      <!--      <n-card class="layer-down">-->
-
-      <!--      </n-card>-->
-    </n-flex>
-  </n-layout>
-
-
+    <!-- 内容层 -->
+    <div
+        class="content-layer"
+        style="width: 100%; height: 100vh;"
+    >
+      <n-flex justify="center" :vertical="true" align="center">
+        <transition name="slide-fade">
+          <n-card
+              v-if="animated"
+              class="layer-up"
+              :embedded="true"
+              hoverable
+              :bordered="false"
+              style="text-align: center"
+              content-style="padding: 40px"
+          >
+            <p class="title">{{ appInfoStore.appCommonConfig.app_name }}</p>
+            <p class="sub-title">登陆到管理中心</p>
+            <div class="inp">
+              <n-input
+                  secondary
+                  v-model:value="username"
+                  type="text"
+                  placeholder="邮箱"
+                  size="large"
+                  style="opacity: 0.8"
+                  :bordered="true"
+                  :status="usernameInputStatus"
+                  @blur="!username ? (usernameInputStatus = 'error') : null"
+              />
+              <n-input
+                  v-model:value="password"
+                  type="password"
+                  placeholder="密码"
+                  size="large"
+                  style="margin-top: 20px; opacity: 0.8"
+                  :bordered="true"
+                  :status="passwordInputStatus"
+                  @blur="!password ? (passwordInputStatus = 'error') : null"
+              />
+            </div>
+            <n-button
+                secondary
+                type="info"
+                class="login-btn"
+                size="large"
+                @click="handleLogin"
+                :disabled="!enableLogin"
+            >
+              登入
+            </n-button>
+            <n-button
+                strong
+                tertiary
+                type="warning"
+                size="large"
+                class="login-btn"
+                @click="handleForgetPassword"
+            >
+              忘记密码
+            </n-button>
+          </n-card>
+        </transition>
+      </n-flex>
+    </div>
+  </div>
 </template>
 
 <style lang="less" scoped>
+.background-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 0;
+}
+
+.content-layer {
+  position: relative;
+  z-index: 1; /* 确保内容层在背景层之上 */
+
+}
 
 .n-flex {
   height: 100vh;
-  //background-color: rgba(255, 255, 255, 0.001);
-  //background-color: #66afe9;
-  //background-image:
-  //background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
 }
 
 .layer-up {
+  filter: brightness(1) contrast(1) !important;
+  z-index: 1000;
   width: 480px;
   border: 0;
   padding-bottom: 20px;
@@ -278,16 +300,16 @@ export default {
   }
 
   .inp {
+
     margin-top: 30px;
     text-align: left;
-    width: 90%;
+    width: 100%;
   }
 
   .login-btn {
     margin-top: 20px;
-    width: 90%;
+    width: 100%;
   }
-
 }
 
 .layer-down {
@@ -295,12 +317,4 @@ export default {
   width: 480px;
   height: 40px;
 }
-
-//.n-card {
-//  background-color: v-bind('themeStore.getTheme.globeTheme.loginCardBgColor');
-//  //background-color: rgba(0, 0, 0, 0.7);
-//  backdrop-filter: blur(50px);
-//  border: 0;
-//}
-
 </style>

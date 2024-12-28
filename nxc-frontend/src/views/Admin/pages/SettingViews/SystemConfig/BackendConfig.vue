@@ -1,18 +1,20 @@
-<script setup lang="ts" name="BackendConfig">
+<script setup lang="ts">
 import {defineComponent} from 'vue'
 // import useThemeStore from "@/stores/useThemeStore"
 import useSettingStore from "@/stores/useSettingStore";
 
 // const themeStore = useThemeStore()
 const settingStore = useSettingStore()
-// let handok = () => {
-//
-// }
 
 type BackendModel =
-    | "server_token"
-    | "server_pull_interval"
-    | "server_push_interval";
+    | "app_sub_description"
+    | "why_choose_us_hint"
+    | "bilibili_official_link"
+    | "youtube_official_link"
+    | "instagram_link"
+    | "wechat_official_link"
+    | "filing_number"
+    | "page_suffix";
 
 interface BackendSetting {
   title: string;
@@ -24,27 +26,63 @@ interface BackendSetting {
 
 let settingsData: BackendSetting[] = [
   {
-    title: "通讯密钥",
-    description: "与节点通讯的密钥，以便数据不会被他人获取。",
+    title: "首页描述",
+    description: "设置首页的简要描述内容。",
     type: "input",
-    placeholder: "b5#*(PG*(3tgf4e^!$P$Gp$G789",
-    modelValue: "server_token"
+    placeholder: "请输入首页描述内容",
+    modelValue: "app_sub_description"
   },
   {
-    title: "节点拉取动作轮询间隔",
-    description: "节点从面板获取数据的间隔频率。",
-    type: "input-number",
-    placeholder: "https://x.com/logo.jpeg",
-    modelValue: "server_pull_interval"
+    title: "为什么选择我们",
+    description: "设置关于为什么选择我们的描述。",
+    type: "input",
+    placeholder: "请输入详细描述",
+    modelValue: "why_choose_us_hint"
   },
   {
-    title: "节点推送动作轮询间隔",
-    description: "节点推送数据到面板的间隔频率。",
-    type: "input-number",
-    placeholder: "https://x.com/logo.jpeg",
-    modelValue: "server_push_interval"
+    title: "Bilibili 官方链接",
+    description: "设置 Bilibili 官方账号的链接地址。",
+    type: "input",
+    placeholder: "https://space.bilibili.com/xxxx",
+    modelValue: "bilibili_official_link"
+  },
+  {
+    title: "YouTube 官方链接",
+    description: "设置 YouTube 官方账号的链接地址。",
+    type: "input",
+    placeholder: "https://youtube.com/channel/xxxx",
+    modelValue: "youtube_official_link"
+  },
+  {
+    title: "Instagram 官方链接",
+    description: "设置 Instagram 官方账号的链接地址。",
+    type: "input",
+    placeholder: "https://instagram.com/xxxx",
+    modelValue: "instagram_link"
+  },
+  {
+    title: "微信公众账号链接",
+    description: "设置微信公众账号的链接地址。",
+    type: "input",
+    placeholder: "请输入微信公众链接",
+    modelValue: "wechat_official_link"
+  },
+  {
+    title: "备案号",
+    description: "设置站点的备案号。",
+    type: "input",
+    placeholder: "如：粤ICP备12345678号",
+    modelValue: "filing_number"
+  },
+  {
+    title: "站点后缀",
+    description: "设置站点名称后缀，用于标题显示。",
+    type: "input",
+    placeholder: "如：- 你的站点名称",
+    modelValue: "page_suffix"
   }
-]
+];
+
 
 
 </script>
@@ -120,16 +158,16 @@ export default {
         <n-input
             size="large"
             :placeholder="item.placeholder"
-            v-model:value="settingStore.settings.server[item.modelValue]"
-            @blur="settingStore.saveOption('server', item.modelValue, settingStore.settings.server[item.modelValue])"
+            v-model:value="settingStore.settings.welcome[item.modelValue]"
+            @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"
         ></n-input>
       </span>
       <span v-if="item.type === 'input-number'" class="r-content">
         <n-input-number
             size="large"
             :placeholder="item.placeholder"
-            v-model:value.number="settingStore.settings.server[item.modelValue]"
-            @blur="settingStore.saveOption('server', item.modelValue, settingStore.settings.server[item.modelValue])"
+            v-model:value.number="settingStore.settings.welcome[item.modelValue]"
+            @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"
         ></n-input-number>
       </span>
     </div>

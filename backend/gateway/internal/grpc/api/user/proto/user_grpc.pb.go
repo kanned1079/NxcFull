@@ -39,6 +39,7 @@ const (
 	UserService_GetUserInviteCodeByUserId_FullMethodName      = "/proto.UserService/GetUserInviteCodeByUserId"
 	UserService_GetUserInvitedUserListByUserId_FullMethodName = "/proto.UserService/GetUserInvitedUserListByUserId"
 	UserService_CreateUserInviteCodeByUserId_FullMethodName   = "/proto.UserService/CreateUserInviteCodeByUserId"
+	UserService_CheckUserAuthInternal_FullMethodName          = "/proto.UserService/CheckUserAuthInternal"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -69,6 +70,7 @@ type UserServiceClient interface {
 	GetUserInviteCodeByUserId(ctx context.Context, in *GetUserInviteCodeByUserIdRequest, opts ...grpc.CallOption) (*GetUserInviteCodeByUserIdResponse, error)
 	GetUserInvitedUserListByUserId(ctx context.Context, in *GetUserInvitedUserListByUserIdRequest, opts ...grpc.CallOption) (*GetUserInvitedUserListByUserIdResponse, error)
 	CreateUserInviteCodeByUserId(ctx context.Context, in *CreateUserInviteCodeByUserIdRequest, opts ...grpc.CallOption) (*CreateUserInviteCodeByUserIdResponse, error)
+	CheckUserAuthInternal(ctx context.Context, in *CheckUserAuthInternalRequest, opts ...grpc.CallOption) (*CheckUserAuthInternalResponse, error)
 }
 
 type userServiceClient struct {
@@ -279,6 +281,16 @@ func (c *userServiceClient) CreateUserInviteCodeByUserId(ctx context.Context, in
 	return out, nil
 }
 
+func (c *userServiceClient) CheckUserAuthInternal(ctx context.Context, in *CheckUserAuthInternalRequest, opts ...grpc.CallOption) (*CheckUserAuthInternalResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckUserAuthInternalResponse)
+	err := c.cc.Invoke(ctx, UserService_CheckUserAuthInternal_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -307,6 +319,7 @@ type UserServiceServer interface {
 	GetUserInviteCodeByUserId(context.Context, *GetUserInviteCodeByUserIdRequest) (*GetUserInviteCodeByUserIdResponse, error)
 	GetUserInvitedUserListByUserId(context.Context, *GetUserInvitedUserListByUserIdRequest) (*GetUserInvitedUserListByUserIdResponse, error)
 	CreateUserInviteCodeByUserId(context.Context, *CreateUserInviteCodeByUserIdRequest) (*CreateUserInviteCodeByUserIdResponse, error)
+	CheckUserAuthInternal(context.Context, *CheckUserAuthInternalRequest) (*CheckUserAuthInternalResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -376,6 +389,9 @@ func (UnimplementedUserServiceServer) GetUserInvitedUserListByUserId(context.Con
 }
 func (UnimplementedUserServiceServer) CreateUserInviteCodeByUserId(context.Context, *CreateUserInviteCodeByUserIdRequest) (*CreateUserInviteCodeByUserIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUserInviteCodeByUserId not implemented")
+}
+func (UnimplementedUserServiceServer) CheckUserAuthInternal(context.Context, *CheckUserAuthInternalRequest) (*CheckUserAuthInternalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckUserAuthInternal not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -758,6 +774,24 @@ func _UserService_CreateUserInviteCodeByUserId_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_CheckUserAuthInternal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckUserAuthInternalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CheckUserAuthInternal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_CheckUserAuthInternal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CheckUserAuthInternal(ctx, req.(*CheckUserAuthInternalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -844,6 +878,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateUserInviteCodeByUserId",
 			Handler:    _UserService_CreateUserInviteCodeByUserId_Handler,
+		},
+		{
+			MethodName: "CheckUserAuthInternal",
+			Handler:    _UserService_CheckUserAuthInternal_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

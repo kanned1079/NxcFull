@@ -29,8 +29,8 @@ func SaveOrUpdatePaymentMethodBySystemName(systemName string, conf json.RawMessa
 
 	// 遍历配置字段
 	for key, value := range data {
-		// 跳过空值的字段
-		if strValue, ok := value.(string); ok && strValue == "" {
+		// 跳过空的和已设置的字段
+		if strValue, ok := value.(string); ok && (strValue == "" || strValue == "---") {
 			continue
 		}
 

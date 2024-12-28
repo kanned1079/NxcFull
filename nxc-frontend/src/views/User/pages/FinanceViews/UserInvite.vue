@@ -1,19 +1,18 @@
 <script lang="ts" setup>
-import {ref, computed, onMounted, h} from "vue";
+import {computed, h, onBeforeMount, onMounted, ref} from "vue";
 import useUserInfoStore from "@/stores/useUserInfoStore";
-import {
-  CheckmarkDoneOutline as passOrderIcon, ChevronDownOutline as downIcon,
-  LinkOutline as linkIcon,
-  PauseOutline as closeOrderIcon,
-  CopyOutline as copyIcon,
-  CheckmarkOutline as copiedIcon,
-} from "@vicons/ionicons5"
+import {CheckmarkOutline as copiedIcon, CopyOutline as copyIcon,} from "@vicons/ionicons5"
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useI18n} from "vue-i18n";
 import useThemeStore from "@/stores/useThemeStore";
-import instance from "@/axios";
-import {NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
-import renderIcon from "@/utils/iconFormator";
+// import instance from "@/axios";
+import {
+  handleCreateMyInviteCode,
+  handleGetInviteMsg,
+  handleGetMyInviteCode,
+  handleGetMyInvitedUserList
+} from "@/api/user/invite";
+import {NButton, NIcon, NTag, useMessage} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 
 const {t} = useI18n();
@@ -23,10 +22,12 @@ const themeStore = useThemeStore();
 const message = useMessage();
 
 let animated = ref<boolean>(false);
+let listAnimated = ref<boolean>(false)
 let showCreateInviteCodeMention = ref<boolean>(false);
 let showTableLoading = ref<boolean>(true)
 
 let myFaCode = ref<string>('')
+let inviteMsg = ref<string>('')
 
 interface MyInvitedUser {
   id: number
@@ -45,19 +46,19 @@ let dataSize = ref<{ pageSize: number, page: number }>({
 
 let dataCountOptions = [
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions10')).value,
+    label: computed(() => t('pagination.perPage10')).value,
     value: 10,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions20')).value,
+    label: computed(() => t('pagination.perPage20')).value,
     value: 20,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions50')).value,
+    label: computed(() => t('pagination.perPage50')).value,
     value: 50,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions100')).value,
+    label: computed(() => t('pagination.perPage100')).value,
     value: 100,
   },
 ]
@@ -68,11 +69,11 @@ const columns = [
     key: 'id'
   },
   {
-    title: '邮箱地址',
+    title: computed(() => t('userInvite.email')).value,
     key: 'email'
   },
   {
-    title: '注册时间',
+    title: computed(() => t('userInvite.createdAt')).value,
     key: 'created_at',
     render(row: MyInvitedUser) {
       return h('span', {}, {default: () => formatDate(row.created_at)});
@@ -80,71 +81,57 @@ const columns = [
   },
 ];
 
-
-
-
-let handleCreateMyInviteCode = async () => {
-  try {
-    animated.value = false
-    let {data} = await instance.post('/api/user/v1/invite/code', {
-      user_id: userInfoStore.thisUser.id,
-    })
-    if (data.code === 200) {
-      console.log('created ok.');
-      await handleGetMyInviteCode()
-    } else {
-      message.error('创建失败' + data.msg || '');
-    }
-  } catch (err: any) {
-    console.log(err
-    )
+let callHandleCreateMyInviteCode = async () => {
+  let data = await handleCreateMyInviteCode(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    console.log('created ok.');
+    await callHandleGetMyInviteCode()
+    await callHandleGetMyInvitedUserList()
+  } else {
+    message.error('创建失败' + data.msg || '');
   }
 }
 
-let handleGetMyInviteCode = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/invite/code', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-      }
-    })
-    if (data.code === 200) {
-      console.log(data)
-      myFaCode.value = data.my_invite_code
-      animated.value = true
-      showTableLoading.value = false
-    } else if (data.code === 404) {
-      console.log('无')
-    } else {
-      console.log(data.msg)
-    }
-  } catch (err: any) {
-    console.log(err)
+let callHandleGetInviteMsg = async () => {
+  let data = await handleGetInviteMsg()
+  if (data.code === 200) {
+    console.log(data)
+    inviteMsg.value = data.invite_msg || ''
+    // animated.value = true
+  } else if (data.code === 404) {
+    console.log('无')
+  } else {
+    console.log(data.msg)
   }
 }
 
-let handleGetMyInvitedUserList = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/invite/users', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    })
-    if (data.code === 200) {
-      myInvitedUserList.value = []
-      // console.log(data)
-      pageCount.value = data.page_count
-      data.user_list.forEach((item: MyInvitedUser) => myInvitedUserList.value.push(item))
-      animated.value = true
-    } else if (data.code === 404) {
-      console.log('无')
-    } else {
-      console.log(data.msg)
-    }
-  } catch (err: any) {
-    console.log(err)
+let callHandleGetMyInviteCode = async () => {
+  let data = await handleGetMyInviteCode(userInfoStore.thisUser.id)
+  if (data.code === 200) {
+    console.log(data)
+    myFaCode.value = data.my_invite_code
+    animated.value = true
+    showTableLoading.value = false
+  } else if (data.code === 404) {
+    console.log('无')
+  } else {
+    console.log(data.msg)
+  }
+}
+
+let callHandleGetMyInvitedUserList = async () => {
+  let data = await handleGetMyInvitedUserList(userInfoStore.thisUser.id, dataSize.value.page, dataSize.value.pageSize);
+  if (data.code === 200) {
+    listAnimated.value = true
+    myInvitedUserList.value = []
+    // console.log(data)
+    pageCount.value = data.page_count
+    data.user_list.forEach((item: MyInvitedUser) => myInvitedUserList.value.push(item))
+    animated.value = true
+  } else if (data.code === 404) {
+    console.log('无')
+  } else {
+    console.log(data.msg)
   }
 }
 
@@ -172,14 +159,19 @@ const copyText = async (key: string, event: MouseEvent) => {
   }
 };
 
+onBeforeMount(() => {
+  callHandleGetInviteMsg()
+})
+
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/invite'
-
-  await handleGetMyInviteCode()
+  themeStore.menuSelected = 'user-invite'
+  // await handleGetInviteMsg()
+  await callHandleGetMyInviteCode()
 
   if (myFaCode.value !== '') {
-    await handleGetMyInvitedUserList()
+    await callHandleGetMyInvitedUserList()
   } else {
     showTableLoading.value = false
   }
@@ -196,32 +188,34 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px">
+  <div style="padding: 20px 20px 15px 20px">
     <n-card
         hoverable
         :embedded="true"
         :bordered="false"
-        :title="'我的邀请'"
+        :title="t('userInvite.myInvite')"
     ></n-card>
 
-    <n-card
-        hoverable
-        :bordered="false"
-        :embedded="true"
-        content-style="padding: 0"
-        style="margin-top: 10px"
-    >
-      <n-alert type="success" :bordered="false">
-        当您邀请的用户充值成功时，您可以获得其充值金额的10%。
-      </n-alert>
-    </n-card>
+    <n-collapse-transition :show="inviteMsg !== ''">
+      <n-card
+          hoverable
+          :bordered="false"
+          :embedded="true"
+          content-style="padding: 0"
+          style="margin-top: 10px"
+      >
+        <n-alert type="success" :bordered="false">
+          {{ inviteMsg }}
+        </n-alert>
+      </n-card>
+    </n-collapse-transition>
 
 
   </div>
 
 
   <transition name="slide-fade">
-    <div style="padding: 0 20px 20px 20px" v-if="animated">
+    <div style="padding: 0 20px 15px 20px" v-if="animated">
 
       <n-card
           hoverable
@@ -230,14 +224,14 @@ export default {
       >
 
         <div class="code-mgr-main">
-          <p class="code-mgr-main-title">邀请码管理</p>
+          <p class="code-mgr-main-title">{{ t('userInvite.faCodeManage') }}</p>
           <n-button
               type="primary"
               secondary
               size="small"
               @click="showCreateInviteCodeMention=true"
           >
-            {{ myFaCode===''?'生成邀请码':'刷新邀请码' }}
+            {{ myFaCode === '' ? t('userInvite.generateFaCode') : t('userInvite.flushFaCode') }}
           </n-button>
         </div>
 
@@ -247,18 +241,18 @@ export default {
             class="code-info"
         >
           <n-tr style=" margin-left: 200px">
-            <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请码' }}</n-td>
+            <n-td style="background-color: rgba(0,0,0,0.0);">{{ t('userInvite.faCode') }}</n-td>
             <n-td style="background-color: rgba(0,0,0,0.0);">
               <n-tag
-                type="default"
-                checkable
+                  type="default"
+                  checkable
               >
-                {{ myFaCode !== '' ? myFaCode : '您还没有邀请码' }}
+                {{ myFaCode !== '' ? myFaCode : t('userInvite.noFaCode') }}
               </n-tag>
             </n-td>
           </n-tr>
           <n-tr style=" margin-left: 200px">
-            <n-td style="background-color: rgba(0,0,0,0.0);">{{ '邀请链接' }}</n-td>
+            <n-td style="background-color: rgba(0,0,0,0.0);">{{ t('userInvite.faLink') }}</n-td>
             <n-td style="background-color: rgba(0,0,0,0.0);">
               <n-tag
                   type="default"
@@ -268,7 +262,7 @@ export default {
 
                 <div class="fa-link-main">
                   <p class="fa-link">
-                    {{myFaCode !== '' ? faLink : '请先生成邀请码' }}
+                    {{ myFaCode !== '' ? faLink : t('userInvite.generateFaCodePlease') }}
                   </p>
                   <n-icon v-if="myFaCode !== '' && !copySuccess" class="fa-link-copy-icon">
                     <copyIcon/>
@@ -288,45 +282,50 @@ export default {
       </n-card>
 
 
-      <n-card
-          hoverable
-          :embedded="true"
-          :bordered="false"
-          style="margin-top: 20px"
-          content-style="padding: 0"
-      >
-        <div style="padding: 20px">
-          <p style="font-weight: bold; font-size: 1.1rem">我邀请的用户</p>
+      <transition name="slide-fade">
+        <div v-if="listAnimated">
+          <n-card
+              hoverable
+              :embedded="true"
+              :bordered="false"
+              style="margin-top: 15px"
+              content-style="padding: 0"
+          >
+            <div style="padding: 20px">
+              <p style="font-weight: bold; font-size: 1.1rem">{{ t('userInvite.usersMyInvited') }}</p>
 
+            </div>
+
+            <n-data-table
+                striped
+                class="table"
+                :columns="columns"
+                :data="myInvitedUserList"
+                :pagination="false"
+                :bordered="true"
+                :loading="showTableLoading"
+            />
+          </n-card>
+
+          <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
+            <n-pagination
+                size="medium"
+                v-model:page.number="dataSize.page"
+                :page-count="pageCount"
+                @update:page="animated=false; callHandleGetMyInvitedUserList()"
+            />
+            <n-select
+                style="width: 160px; margin-left: 20px"
+                v-model:value.number="dataSize.pageSize"
+                size="small"
+                :options="dataCountOptions"
+                :remote="true"
+                @update:value="animated=false; dataSize.page = 1; callHandleGetMyInvitedUserList()"
+            />
+          </div>
         </div>
+      </transition>
 
-        <n-data-table
-            striped
-            class="table"
-            :columns="columns"
-            :data="myInvitedUserList"
-            :pagination="false"
-            :bordered="true"
-            :loading="showTableLoading"
-        />
-      </n-card>
-
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; handleGetMyInvitedUserList()"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; handleGetMyInvitedUserList()"
-        />
-      </div>
 
     </div>
   </transition>
@@ -334,11 +333,11 @@ export default {
   <n-modal
       v-model:show="showCreateInviteCodeMention"
       preset="dialog"
-      title="确认"
-      content="请注意，邀请码创建后不可关闭。"
-      positive-text="确认"
-      negative-text="算了"
-      @positive-click="handleCreateMyInviteCode"
+      :title="t('userInvite.generateCodeConfirm')"
+      :content="t('userInvite.generateCodeHint')"
+      :positive-text="t('userInvite.positiveClick')"
+      :negative-text="t('userInvite.negativeClick')"
+      @positive-click="callHandleCreateMyInviteCode"
       @negative-click="showCreateInviteCodeMention=false"
   />
 
@@ -359,7 +358,7 @@ export default {
 }
 
 .code-info {
-  margin-top: 20px;
+  margin-top: 15px;
   background-color: rgba(0, 0, 0, 0.0);
 }
 
@@ -379,10 +378,12 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+
   .fa-link {
     margin-right: 6px;
     transition: ease 200ms;
   }
+
   .fa-link-copy-icon {
     transition: ease 200ms;
     opacity: 0;
@@ -393,6 +394,7 @@ export default {
   .fa-link {
     text-decoration: underline;
   }
+
   .fa-link-copy-icon {
     opacity: 0.7;
   }

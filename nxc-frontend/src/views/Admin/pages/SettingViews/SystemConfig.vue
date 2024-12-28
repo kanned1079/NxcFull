@@ -9,7 +9,7 @@ import Notice from "@/views/Admin/pages/SettingViews/SystemConfig/Notice.vue"
 import BackendConfig from "@/views/Admin/pages/SettingViews/SystemConfig/BackendConfig.vue"
 import {ref} from "vue"
 import useThemeStore from "@/stores/useThemeStore";
-import Subscribe from "@/views/Admin/pages/SettingViews/SystemConfig/Subscribe.vue";
+import Subscribe from "@/views/Admin/pages/SettingViews/SystemConfig/Invite.vue";
 import useSettingStore from "@/stores/useSettingStore";
 import {onBeforeMount, onMounted} from "vue";
 import instance from "@/axios";
@@ -59,10 +59,10 @@ export default {
           <n-tab-pane name="chap3" tab="个性化">
             <Personalization></Personalization>
           </n-tab-pane>
-          <n-tab-pane name="chap4" tab="订阅">
+          <n-tab-pane name="chap4" tab="支付和返利">
             <Subscribe></Subscribe>
           </n-tab-pane>
-          <n-tab-pane name="chap5" tab="后端设置">
+          <n-tab-pane name="chap5" tab="欢迎页">
             <BackendConfig></BackendConfig>
           </n-tab-pane>
           <n-tab-pane name="chap6" tab="邮件">

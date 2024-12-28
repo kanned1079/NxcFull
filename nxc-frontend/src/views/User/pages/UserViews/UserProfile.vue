@@ -12,8 +12,19 @@ import {
   ChevronForwardOutline as toRightIcon,
   InformationCircle as infoIcon,
 } from "@vicons/ionicons5"
-import {encodeToBase64, hashPassword} from "@/utils/encryptor";
-import instance from "@/axios";
+// import {encodeToBase64, hashPassword} from "@/utils/encryptor";
+import {
+  handleCancelSetup2FA, handleGet2FAStatus,
+  handleSetup2FA,
+  handleTest2FA,
+  saveNewPassword,
+  verifyOldPassword,
+  handleDisable2FA,
+  handleDeleteMyAccount
+} from "@/api/user/profile";
+// import instance from "@/axios";
+
+// import {handleTest2FA, handleCancelSetup2FA, handleSetup2FA, handleGet2FAStatus, verifyOldPassword, saveNewPassword} from "@/api/user/profile";
 
 interface ModelType {
   old_password: string
@@ -71,52 +82,53 @@ let notify = (type: NotificationType, title: string, meta?: string) => {
 }
 
 // verifyOldPassword 验证旧密码是否正确
-let verifyOldPassword = async (): Promise<boolean> => {
-  try {
-    let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/verify', {
-      email: userInfoStore.thisUser.email,
-      // old_password: hashPassword(modelRef.value.old_password.trim() as string)
-      old_password: encodeToBase64(modelRef.value.old_password.trim() as string)
-    });
-    if (data.code === 200) {
-      return data.verified as boolean;
-    } else {
-      notify('error', t('userProfile.oldPwdVerifiedFailure'), data.msg)
-      console.log(data);
-      return false;
-    }
-  } catch (error: any) {
-    notify('error', t('userProfile.oldPwdVerifiedFailure'), error.toString())
-    console.log(error.toString());
-    return false;
-  }
-}
+// let verifyOldPassword = async (): Promise<boolean> => {
+//   try {
+//     let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/verify', {
+//       email: userInfoStore.thisUser.email,
+//       // old_password: hashPassword(modelRef.value.old_password.trim() as string)
+//       old_password: encodeToBase64(modelRef.value.old_password.trim() as string)
+//     });
+//     if (data.code === 200) {
+//       return data.verified as boolean;
+//     } else {
+//       notify('error', t('userProfile.oldPwdVerifiedFailure'), data.msg)
+//       console.log(data);
+//       return false;
+//     }
+//   } catch (error: any) {
+//     notify('error', t('userProfile.oldPwdVerifiedFailure'), error.toString())
+//     console.log(error.toString());
+//     return false;
+//   }
+// }
 
 // saveNewPassword 保存新的密码
-let saveNewPassword = async () => {
+let callSaveNewPassword = async () => {
   if (modelRef.value.old_password.trim() !== '') {
     if (modelRef.value.new_password.trim() !== '' && modelRef.value.new_password_again.trim() !== '') {
       if (modelRef.value.new_password.trim() === modelRef.value.new_password_again.trim()) {
         console.log('验证ok');
-        if (await verifyOldPassword()) { // 等待验证旧密码的结果
-          try {
-            let hashedNewPassword = await hashPassword(modelRef.value.new_password.trim() as string)
-            let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/update', {
-              email: userInfoStore.thisUser.email,
-              // new_password: hashPassword(modelRef.value.new_password)
-              new_password: hashedNewPassword
-            });
+        // if (await verifyOldPassword()) { // 等待验证旧密码的结果
+          if (await verifyOldPassword(userInfoStore.thisUser.email, modelRef.value.old_password.trim())) { // 等待验证旧密码的结果
+          // try {
+          //   let hashedNewPassword = await hashPassword(modelRef.value.new_password.trim() as string)
+          //   let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/update', {
+          //     email: userInfoStore.thisUser.email,
+          //     // new_password: hashPassword(modelRef.value.new_password)
+          //     new_password: hashedNewPassword
+          //   });
+          //   let hashedNewPassword = await hashPassword(modelRef.value.new_password.trim() as string)
+            let data = await saveNewPassword(userInfoStore.thisUser.email, modelRef.value.new_password.trim())
             if (data.code === 200 && data.updated as boolean) {
               modelRef.value.old_password = ''
               modelRef.value.new_password = ''
               modelRef.value.new_password_again = ''
-              console.log('修改成功', data);
               notify('success', t('userProfile.alertSuccess'), t('userProfile.alertSuccessSub'))
-
             }
-          } catch (error: any) {
-            notify('error', t('userProfile.alertFailure'), error.toString())
-          }
+          // } catch (error: any) {
+          //   notify('error', t('userProfile.alertFailure'), error.toString())
+          // }
         } else {
           console.log('旧密码验证失败');
         }
@@ -139,83 +151,88 @@ let url = ref<string>('')
 let showModal = ref<boolean>(false)
 
 // handleSetup2FA 创建一个新的2FA新建请求
-let handleSetup2FA = async () => {
-  try {
-    let {data} = await instance.post('/api/user/v1/auth/2fa/setup', {
-      id: userInfoStore.thisUser.id,
-      email: userInfoStore.thisUser.email,
-    })
+let callHandleSetup2FA = async () => {
+  // try {
+  //   let {data} = await instance.post('/api/user/v1/auth/2fa/setup', {
+  //     id: userInfoStore.thisUser.id,
+  //     email: userInfoStore.thisUser.email,
+  //   })
+  let data = await handleSetup2FA(userInfoStore.thisUser.id, userInfoStore.thisUser.email)
     if (data.code === 200) {
       console.log(data)
       url.value = data.url
       showModal.value = true
       handleCalTime()
     }
-  } catch (error: any) {
-    console.log(error)
-  }
+  // } catch (error: any) {
+  //   console.log(error)
+  // }
 }
 
 let twoFaCode = ref<string>('')
 
 // handleTest2FA 测试2FA可用性 如果可用则写入进数据库
-let handleTest2FA = async () => {
-  try {
-    let {data} = await instance.post('/api/user/v1/auth/2fa/setup/test', {
-      id: userInfoStore.thisUser.id,
-      email: userInfoStore.thisUser.email,
-      two_fa_code: twoFaCode.value.trim(),
-    })
+let callHandleTest2FA = async () => {
+  // try {
+  //   let {data} = await instance.post('/api/user/v1/auth/2fa/setup/test', {
+  //     id: userInfoStore.thisUser.id,
+  //     email: userInfoStore.thisUser.email,
+  //     two_fa_code: twoFaCode.value.trim(),
+  //   })
+  let data = await handleTest2FA(userInfoStore.thisUser.id, userInfoStore.thisUser.email, twoFaCode.value.trim())
     if (data.code === 200) {
       console.log('绑定2fa成功', data)
       showModal.value = false
       message.success('绑定两步验证成功')
+      await callHandleGet2FAStatus()
     } else {
       message.error(data.msg)
     }
-  } catch (error: any) {
-    console.log(error)
-  }
+  // } catch (error: any) {
+  //   console.log(error)
+  // }
 }
 
 // handleCancelSetup2FA 删除redis中的新建临时2FA数据
-let handleCancelSetup2FA = async () => {
-  try {
-    let {data} = await instance.delete('/api/user/v1/auth/2fa/setup/cancel', {
-      params: {
-        // id: userInfoStore.thisUser.id,
-        email: userInfoStore.thisUser.email,
-      }
-    })
+let callHandleCancelSetup2FA = async () => {
+  // try {
+  //   let {data} = await instance.delete('/api/user/v1/auth/2fa/setup/cancel', {
+  //     params: {
+  //       // id: userInfoStore.thisUser.id,
+  //       email: userInfoStore.thisUser.email,
+  //     }
+  //   })
+  let data = await handleCancelSetup2FA(userInfoStore.thisUser.email)
     if (data.code === 200) {
       console.log('取消2fa成功', data)
       message.info('已取消')
     }
     showModal.value = false
-  } catch (error: any) {
-    console.log(error)
-    message.info('错误' + error)
-  }
+  // } catch (error: any) {
+  //   console.log(error)
+  //   message.info('错误' + error)
+  // }
 }
 
 let twoFAEnabled = ref<boolean>(false)
 // handleGet2FAStatus 测试2FA可用性 如果可用则写入进数据库
-let handleGet2FAStatus = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/auth/2fa/status', {
-      params: {
-        id: userInfoStore.thisUser.id,
-      }
-    })
+let callHandleGet2FAStatus = async () => {
+  // try {
+  //   let {data} = await instance.get('/api/user/v1/auth/2fa/status', {
+  //     params: {
+  //       id: userInfoStore.thisUser.id,
+  //     }
+  //   })
+  let data = await handleGet2FAStatus(userInfoStore.thisUser.id)
     if (data.code === 200) {
       twoFAEnabled.value = data.enabled as boolean
     } else {
       message.error(data.msg)
     }
-  } catch (error: any) {
-    message.info('错误' + error)
-    console.log(error)
-  }
+  // } catch (error: any) {
+  //   message.info('错误' + error)
+  //   console.log(error)
+  // }
 }
 
 let leftTime = ref<number>(0)
@@ -240,24 +257,26 @@ let handleCalTime = () => {
   }, 1000)
 }
 
-let handleDisable2FA = async () => {
-  try {
-    let {data} = await instance.delete('/api/user/v1/auth/2fa/disable', {
-      params: {
-        // id: userInfoStore.thisUser.id,
-        email: userInfoStore.thisUser.email,
-      }
-    })
+let callHandleDisable2FA = async () => {
+  // try {
+  //   let {data} = await instance.delete('/api/user/v1/auth/2fa/disable', {
+  //     params: {
+  //       // id: userInfoStore.thisUser.id,
+  //       email: userInfoStore.thisUser.email,
+  //     }
+  //   })
+  let data = await handleDisable2FA(userInfoStore.thisUser.email)
     if (data.code === 200) {
       console.log('关闭2fa成功', data)
       message.info('已关闭2fa验证')
       // 再次查询2fa状态
-      await handleGet2FAStatus()
+      // await handleGet2FAStatus()
+      await callHandleGet2FAStatus()
     }
-  } catch (error: any) {
-    console.log(error)
-    message.info('错误' + error)
-  }
+  // } catch (error: any) {
+  //   console.log(error)
+  //   message.info('错误' + error)
+  // }
 }
 
 let handleClickToTopUp = () => {
@@ -267,14 +286,15 @@ let handleClickToTopUp = () => {
   })
 }
 
-let handleDeleteMyAccount = async () => {
-  try {
-    let {data} = await instance.delete('/api/user/v1/user/delete', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        confirmed: true,
-      },
-    })
+let callHandleDeleteMyAccount = async () => {
+  // try {
+  //   let {data} = await instance.delete('/api/user/v1/user/delete', {
+  //     params: {
+  //       user_id: userInfoStore.thisUser.id,
+  //       confirmed: true,
+  //     },
+  //   })
+  let data = await handleDeleteMyAccount(userInfoStore.thisUser.id, true)
     if (data.code === 200 && data.deleted) {
       message.success(computed(() => t('userProfile.deletedSuccessMsg')).value)
       setTimeout(() => {
@@ -283,9 +303,9 @@ let handleDeleteMyAccount = async () => {
     } else {
       message.error(computed(() => t('userProfile.deleteErrOccur')).value + ' ' + data.msg || '')
     }
-  } catch (err: any) {
-    console.log(err + '')
-  }
+  // } catch (err: any) {
+  //   console.log(err + '')
+  // }
 }
 
 let isEmailCurrent = computed(() => confirmDeleteAccountEmailInput.value === userInfoStore.thisUser.email)
@@ -296,7 +316,8 @@ let confirmedDelete = () => {
   setTimeout(() => {
     loadingDeleteSpin.value = false
     showDeleteMyModal.value = false
-    handleDeleteMyAccount()
+    // handleDeleteMyAccount()
+    callHandleDeleteMyAccount()
   }, 1500)
 }
 
@@ -309,7 +330,8 @@ onMounted(async () => {
   let isUpdated = await userInfoStore.updateUserInfo()
   console.log(isUpdated)
   !isUpdated ? notify('error', '失败', '个人信息更新失败以下当前数据可能不是最新的') : null
-  await handleGet2FAStatus()
+  // await handleGet2FAStatus()
+  await callHandleGet2FAStatus()
 
   animated.value = true
 
@@ -377,7 +399,7 @@ export default {
                        :placeholder="t('userProfile.newPwdAgainSub')"/>
             </n-form-item>
           </n-form>
-          <n-button class="alert-btn" type="primary" secondary @click="saveNewPassword" :bordered="false">
+          <n-button class="alert-btn" type="primary" secondary @click="callSaveNewPassword" :bordered="false">
             {{ t('userProfile.saveBtn') }}
           </n-button>
         </div>
@@ -408,35 +430,38 @@ export default {
           content-style="padding: 0"
           :bordered="false"
       >
-        <n-p class="title">两步验证2FA</n-p>
+        <n-p class="title">{{ t('userProfile.faAuth') }}</n-p>
         <n-alert :bordered="false" style="margin: 20px" type="info">
-          雙重驗證是一個驗證過程，要求透過兩個不同的驗證因素來確立身分。簡而言之，這意味著使用者必須先以兩種不同的方式證明其身分，然後才會被授予存取權限。2FA
-          是多重要素驗證的一種形式。
+          {{ t('userProfile.faAuthHint') }}
         </n-alert>
         <div class="form">
           <div style="display: flex; flex-direction: row; margin-bottom: 20px; align-items: center">
-            <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">两步验证状态</p>
-            <n-tag v-if="twoFAEnabled" type="success"> 已启用</n-tag>
-            <n-tag v-else type="default"> 未启用</n-tag>
+            <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">{{ t('userProfile.faAuthStatus') }}</p>
+            <div
+                :style="twoFAEnabled?{backgroundColor: '#86c166'}:{backgroundColor: 'rgba(25,25,25,0.5)'}"
+                style="width: 6px; height: 6px; border-radius: 50%; margin-right: 5px"
+            ></div>
+            <p v-if="twoFAEnabled" style="color: #86c166">{{ t('userProfile.faEnabled') }}</p>
+            <p v-else style="color: rgba(25,25,25,0.5)">{{ t('userProfile.faNotEnabled') }}</p>
           </div>
           <n-button
               secondary
               type="primary"
               :disabled="twoFAEnabled"
-              @click="handleSetup2FA"
+              @click="callHandleSetup2FA"
               :bordered="false"
               style="margin-bottom: 20px"
           >
-            设置两步验证
+            {{ t('userProfile.setup2Fa') }}
           </n-button>
           <n-button
               secondary
               :disabled="!twoFAEnabled"
-              @click="handleDisable2FA"
+              @click="callHandleDisable2FA"
               :bordered="false"
               style="margin-bottom: 20px; margin-left: 10px" type="warning"
           >
-            关闭两步验证
+            {{ t('userProfile.disable2Fa') }}
           </n-button>
 
         </div>
@@ -560,7 +585,7 @@ export default {
       <!--      <n-h4 style="opacity: 0.8">按照以下步骤以设置验证器</n-h4>-->
 
       <p style="font-weight: 700; font-size: 1.25rem">STEP1</p>
-      <p style="opacity: 0.8; margin-bottom: 20px">根据提示在您的验证器上加入</p>
+      <p style="opacity: 0.8; margin-bottom: 20px">{{ t('userProfile.setup2FaModal.followStep') }}</p>
       <div class="qr-modal-body">
         <div class="l-part">
           <n-qr-code
@@ -570,16 +595,16 @@ export default {
           />
         </div>
         <div class="r-part">
-          <h3>按照以下步骤以启用2FA</h3>
-          <n-p>1. 您的移动设备上需要有一个通用的验证器</n-p>
-          <n-p>2. 点击右上角的Scan按钮来扫描左侧的QR Code</n-p>
-          <n-p>3. 该QR Code中包含有您的验证信息和唯一密钥，请妥善保存</n-p>
+          <h3>{{ t('userProfile.setup2FaModal.step1Title') }}</h3>
+          <n-p>{{ t('userProfile.setup2FaModal.step1Context1') }}</n-p>
+          <n-p>{{ t('userProfile.setup2FaModal.step1Context2') }}</n-p>
+          <n-p>{{ t('userProfile.setup2FaModal.step1Context3') }}</n-p>
         </div>
 
       </div>
       <n-hr></n-hr>
       <p style="font-weight: 700; font-size: 1.25rem">STEP2</p>
-      <p style="opacity: 0.8; margin-bottom: 20px">为了确保您的验证器能够正常使用 我们需要进行测试</p>
+      <p style="opacity: 0.8; margin-bottom: 20px">{{ t('userProfile.setup2FaModal.step2Context1') }}</p>
       <div class="code-test-body">
         <n-input
             class="code-inp"
@@ -591,23 +616,23 @@ export default {
         >
         </n-input>
         <n-button
-            @click="handleTest2FA"
+            @click="callHandleTest2FA"
             size="large"
             class="test-btn"
             type="primary"
             :bordered="false"
         >
-          测试
+          {{ t('userProfile.setup2FaModal.test2Fa') }}
         </n-button>
         <n-button
-            @click="handleCancelSetup2FA()"
+            @click="callHandleCancelSetup2FA()"
             size="large"
             class="cancel-btn"
             type="primary"
             secondary
             :bordered="false"
         >
-          取消
+          {{ t('userProfile.setup2FaModal.cancel') }}
         </n-button>
       </div>
     </n-card>
@@ -668,7 +693,7 @@ export default {
       }
     }
 
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   .password-alert-card {
@@ -693,7 +718,7 @@ export default {
     //    width: 50%;
     //  }
     //}
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 
   }
 
@@ -727,7 +752,7 @@ export default {
 
     }
 
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   .del-card {
@@ -743,7 +768,7 @@ export default {
       margin: 20px;
     }
 
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
 

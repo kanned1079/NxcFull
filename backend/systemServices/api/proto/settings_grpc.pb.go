@@ -28,6 +28,11 @@ const (
 	SettingsService_EditPaymentSettingsBySystemName_FullMethodName  = "/settings.SettingsService/EditPaymentSettingsBySystemName"
 	SettingsService_EnablePaymentSettingBySystemName_FullMethodName = "/settings.SettingsService/EnablePaymentSettingBySystemName"
 	SettingsService_DeletePaymentSettingBySystemName_FullMethodName = "/settings.SettingsService/DeletePaymentSettingBySystemName"
+	SettingsService_GetInviteUserMsg_FullMethodName                 = "/settings.SettingsService/GetInviteUserMsg"
+	SettingsService_GetAdminDashboardData_FullMethodName            = "/settings.SettingsService/GetAdminDashboardData"
+	SettingsService_GetBasicRuntimeEnvConfig_FullMethodName         = "/settings.SettingsService/GetBasicRuntimeEnvConfig"
+	SettingsService_GetRegisterEnvConfig_FullMethodName             = "/settings.SettingsService/GetRegisterEnvConfig"
+	SettingsService_GetWelcomePageConfig_FullMethodName             = "/settings.SettingsService/GetWelcomePageConfig"
 )
 
 // SettingsServiceClient is the client API for SettingsService service.
@@ -54,6 +59,14 @@ type SettingsServiceClient interface {
 	EnablePaymentSettingBySystemName(ctx context.Context, in *EnablePaymentSettingBySystemNameRequest, opts ...grpc.CallOption) (*EnablePaymentSettingBySystemNameResponse, error)
 	// pass 删除付款方式
 	DeletePaymentSettingBySystemName(ctx context.Context, in *DeletePaymentSettingBySystemNameRequest, opts ...grpc.CallOption) (*DeletePaymentSettingBySystemNameResponse, error)
+	// 杂项
+	GetInviteUserMsg(ctx context.Context, in *GetInviteUserMsgRequest, opts ...grpc.CallOption) (*GetInviteUserMsgResponse, error)
+	// 管理员首页的图表
+	GetAdminDashboardData(ctx context.Context, in *GetAdminDashboardDataRequest, opts ...grpc.CallOption) (*GetAdminDashboardDataResponse, error)
+	// 获取整个页面的配置信息
+	GetBasicRuntimeEnvConfig(ctx context.Context, in *GetBasicRuntimeEnvConfigRequest, opts ...grpc.CallOption) (*GetBasicRuntimeEnvConfigResponse, error)
+	GetRegisterEnvConfig(ctx context.Context, in *GetRegisterEnvConfigRequest, opts ...grpc.CallOption) (*GetRegisterEnvConfigResponse, error)
+	GetWelcomePageConfig(ctx context.Context, in *GetWelcomePageConfigRequest, opts ...grpc.CallOption) (*GetWelcomePageConfigResponse, error)
 }
 
 type settingsServiceClient struct {
@@ -154,6 +167,56 @@ func (c *settingsServiceClient) DeletePaymentSettingBySystemName(ctx context.Con
 	return out, nil
 }
 
+func (c *settingsServiceClient) GetInviteUserMsg(ctx context.Context, in *GetInviteUserMsgRequest, opts ...grpc.CallOption) (*GetInviteUserMsgResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInviteUserMsgResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetInviteUserMsg_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *settingsServiceClient) GetAdminDashboardData(ctx context.Context, in *GetAdminDashboardDataRequest, opts ...grpc.CallOption) (*GetAdminDashboardDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAdminDashboardDataResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetAdminDashboardData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *settingsServiceClient) GetBasicRuntimeEnvConfig(ctx context.Context, in *GetBasicRuntimeEnvConfigRequest, opts ...grpc.CallOption) (*GetBasicRuntimeEnvConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBasicRuntimeEnvConfigResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetBasicRuntimeEnvConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *settingsServiceClient) GetRegisterEnvConfig(ctx context.Context, in *GetRegisterEnvConfigRequest, opts ...grpc.CallOption) (*GetRegisterEnvConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRegisterEnvConfigResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetRegisterEnvConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *settingsServiceClient) GetWelcomePageConfig(ctx context.Context, in *GetWelcomePageConfigRequest, opts ...grpc.CallOption) (*GetWelcomePageConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWelcomePageConfigResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetWelcomePageConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SettingsServiceServer is the server API for SettingsService service.
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
@@ -178,6 +241,14 @@ type SettingsServiceServer interface {
 	EnablePaymentSettingBySystemName(context.Context, *EnablePaymentSettingBySystemNameRequest) (*EnablePaymentSettingBySystemNameResponse, error)
 	// pass 删除付款方式
 	DeletePaymentSettingBySystemName(context.Context, *DeletePaymentSettingBySystemNameRequest) (*DeletePaymentSettingBySystemNameResponse, error)
+	// 杂项
+	GetInviteUserMsg(context.Context, *GetInviteUserMsgRequest) (*GetInviteUserMsgResponse, error)
+	// 管理员首页的图表
+	GetAdminDashboardData(context.Context, *GetAdminDashboardDataRequest) (*GetAdminDashboardDataResponse, error)
+	// 获取整个页面的配置信息
+	GetBasicRuntimeEnvConfig(context.Context, *GetBasicRuntimeEnvConfigRequest) (*GetBasicRuntimeEnvConfigResponse, error)
+	GetRegisterEnvConfig(context.Context, *GetRegisterEnvConfigRequest) (*GetRegisterEnvConfigResponse, error)
+	GetWelcomePageConfig(context.Context, *GetWelcomePageConfigRequest) (*GetWelcomePageConfigResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
 
@@ -214,6 +285,21 @@ func (UnimplementedSettingsServiceServer) EnablePaymentSettingBySystemName(conte
 }
 func (UnimplementedSettingsServiceServer) DeletePaymentSettingBySystemName(context.Context, *DeletePaymentSettingBySystemNameRequest) (*DeletePaymentSettingBySystemNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePaymentSettingBySystemName not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetInviteUserMsg(context.Context, *GetInviteUserMsgRequest) (*GetInviteUserMsgResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInviteUserMsg not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetAdminDashboardData(context.Context, *GetAdminDashboardDataRequest) (*GetAdminDashboardDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAdminDashboardData not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetBasicRuntimeEnvConfig(context.Context, *GetBasicRuntimeEnvConfigRequest) (*GetBasicRuntimeEnvConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBasicRuntimeEnvConfig not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetRegisterEnvConfig(context.Context, *GetRegisterEnvConfigRequest) (*GetRegisterEnvConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRegisterEnvConfig not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetWelcomePageConfig(context.Context, *GetWelcomePageConfigRequest) (*GetWelcomePageConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWelcomePageConfig not implemented")
 }
 func (UnimplementedSettingsServiceServer) mustEmbedUnimplementedSettingsServiceServer() {}
 func (UnimplementedSettingsServiceServer) testEmbeddedByValue()                         {}
@@ -398,6 +484,96 @@ func _SettingsService_DeletePaymentSettingBySystemName_Handler(srv interface{}, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SettingsService_GetInviteUserMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInviteUserMsgRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetInviteUserMsg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetInviteUserMsg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetInviteUserMsg(ctx, req.(*GetInviteUserMsgRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SettingsService_GetAdminDashboardData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAdminDashboardDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetAdminDashboardData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetAdminDashboardData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetAdminDashboardData(ctx, req.(*GetAdminDashboardDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SettingsService_GetBasicRuntimeEnvConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBasicRuntimeEnvConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetBasicRuntimeEnvConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetBasicRuntimeEnvConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetBasicRuntimeEnvConfig(ctx, req.(*GetBasicRuntimeEnvConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SettingsService_GetRegisterEnvConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRegisterEnvConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetRegisterEnvConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetRegisterEnvConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetRegisterEnvConfig(ctx, req.(*GetRegisterEnvConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SettingsService_GetWelcomePageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWelcomePageConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetWelcomePageConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetWelcomePageConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetWelcomePageConfig(ctx, req.(*GetWelcomePageConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SettingsService_ServiceDesc is the grpc.ServiceDesc for SettingsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -440,6 +616,26 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePaymentSettingBySystemName",
 			Handler:    _SettingsService_DeletePaymentSettingBySystemName_Handler,
+		},
+		{
+			MethodName: "GetInviteUserMsg",
+			Handler:    _SettingsService_GetInviteUserMsg_Handler,
+		},
+		{
+			MethodName: "GetAdminDashboardData",
+			Handler:    _SettingsService_GetAdminDashboardData_Handler,
+		},
+		{
+			MethodName: "GetBasicRuntimeEnvConfig",
+			Handler:    _SettingsService_GetBasicRuntimeEnvConfig_Handler,
+		},
+		{
+			MethodName: "GetRegisterEnvConfig",
+			Handler:    _SettingsService_GetRegisterEnvConfig_Handler,
+		},
+		{
+			MethodName: "GetWelcomePageConfig",
+			Handler:    _SettingsService_GetWelcomePageConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

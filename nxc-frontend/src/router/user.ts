@@ -7,7 +7,7 @@ import UserSummary from "@/views/User/pages/RootViews/UserSummary.vue";
 import UserDocument from "@/views/User/pages/RootViews/UserDocument.vue";
 import NewPurchase from "@/views/User/pages/PurchaseViews/NewPurchase.vue";
 import NewSettlement from "@/views/User/pages/PurchaseViews/NewSettlement.vue";
-import UserProfile from "@/views/User/pages/Profile/UserProfile.vue";
+import UserProfile from "@/views/User/pages/UserViews/UserProfile.vue";
 import UserTopUp from "@/views/User/pages/FinanceViews/UserTopUp.vue";
 import Tickets from "@/views/User/pages/UserViews/Tickets.vue"
 import UserKeys from "@/views/User/pages/PurchaseViews/UserKeys.vue";
@@ -16,7 +16,7 @@ import UserOrders from "@/views/User/pages/FinanceViews/UserOrders.vue";
 import ConfirmOrder from "@/views/User/pages/PurchaseViews/ConfirmOrder.vue";
 import PaymentResult from "@/views/User/pages/PurchaseViews/PaymentResult/PaymentResult.vue";
 import ChatDialog from "@/views/utils/ChatDialog.vue";
-
+import ActivateLog from "@/views/User/pages/UserViews/ActivateLog.vue";
 
 
 // WhyChooseUs页面
@@ -109,7 +109,11 @@ const userRoutes: RouteRecordRaw[] = [
             {
                 path: 'invite',
                 component: UserInvite
-            }
+            },
+            {
+                path: 'log',
+                component: ActivateLog
+            },
         ]
     }
 ];

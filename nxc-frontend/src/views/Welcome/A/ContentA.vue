@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref, onBeforeMount} from "vue";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import TreeFront from "./assets/TreeFront.svg";
 import TreeMedium from "./assets/TreeMedium.svg";
 import Sun from "./assets/Sun.svg";
 import {useRouter} from "vue-router";
+import instance from "@/axios/authInstance"
 
 import {
   ChevronForward as userIcon,
@@ -94,6 +95,49 @@ let onScrollFunction = () => {
   }
 };
 
+const props = defineProps<{
+  app_sub_description: string
+  why_choose_us_hint: string
+}>()
+
+// interface WelcomeSettings {
+//   app_sub_description: string
+//   why_choose_us_hint: string
+//   bilibili_official_link: string
+//   youtube_official_link: string
+//   instagram_link: string
+//   wechat_official_link: string
+//   filing_number: string
+//   page_suffix: string
+// }
+
+// let settings = ref<WelcomeSettings>({
+//   app_sub_description: '',
+//   why_choose_us_hint: '',
+//   bilibili_official_link: '',
+//   youtube_official_link: '',
+//   instagram_link: '',
+//   wechat_official_link: '',
+//   filing_number: '',
+//   page_suffix: '',
+// })
+
+// let handleGetConfig = async () => {
+//   try {
+//     let {data} = await instance.get('/api/app/v1/welcome', {
+//       params: {
+//         lang: 'en',
+//       }
+//     })
+//     if (data.code === 200) {
+//       console.log("欢迎页面:", data)
+//       Object.assign(settings.value, data.config)
+//     }
+//   } catch (err: any) {
+//     console.log(err + '')
+//   }
+// }
+
 
 onMounted(() => {
   // // 监听 lay-1 的滚动事件
@@ -105,9 +149,21 @@ onMounted(() => {
   setTimeout(() => animated.value.treeFrontAnimate = true, 300)
   setTimeout(() => animated.value.treeMedAnimate = true, 400)
   setTimeout(() => animated.value.sunAnimate = true, 500)
-  setTimeout(() => animated.value.appNameAnimate = true, 450)
+  setTimeout(() => {
+    let intervalId = ref<undefined | number>(undefined)
+    intervalId.value = setInterval(() => {
+      if (props.app_sub_description !== '') {
+        animated.value.appNameAnimate = true;
+        clearInterval(intervalId.value)
+      }
+    }, 200)
+  }, 450)
   setTimeout(() => animated.value.appDescription = true, 700)
 });
+
+// onBeforeMount(async () => {
+//   await handleGetConfig()
+// })
 
 onBeforeUnmount(() => {
 //   // 移除 lay-1 的滚动事件监听器
@@ -146,22 +202,16 @@ export default {
           </div>
         </transition>
 
-
-        <!--        <div class="image-wrapper img2">-->
-        <!--          <TreeMedium/>-->
-        <!--        </div>-->
-        <!--        <div class="image-wrapper img3">-->
-        <!--          <Sun/>-->
-        <!--        </div>-->
         <!-- 引入悬浮左侧的介绍内容 -->
         <transition name="slide2-fade">
-          <div v-if="animated.appNameAnimate" class="intro">
+          <div v-if="animated.appNameAnimate" class="intro" style="z-index: 1600">
             <div v-if="animated.appNameAnimate" class="web-name">
               <p class="title">{{ t('welcome.A.welcomeTo') }}</p>
               <p class="app-name">{{ appInfosStore.appCommonConfig.app_name }}</p>
             </div>
             <p class="desc">
-              {{ t('welcome.A.welcomeToSub') }}
+<!--              {{ t('welcome.A.welcomeToSub') }}-->
+              {{ props.app_sub_description }}
             </p>
             <n-button
                 @click="router.push({path: '/dashboard/summary'})"
@@ -183,8 +233,9 @@ export default {
       <div class="lay-2" ref="lay2Ref">
         <div class="why-us-head">
           <p class="why-us-title">{{ t('welcome.A.whyUs') }}</p>
+<!--          <p class="why-us-title">{{ settings.why_choose_us_hint }}</p>-->
           <p class="why-us-sub">
-            {{ t('welcome.A.whyUsSub') }}
+            {{ props.why_choose_us_hint }}
           </p>
         </div>
 
@@ -384,7 +435,7 @@ export default {
     .why-us-sub {
       color: rgba(9, 27, 68, 1);
       width: 80%;
-      font-size: 1rem;
+      font-size: 1.2rem;
       font-weight: 400;
       opacity: 0.7;
     }
@@ -492,12 +543,12 @@ export default {
 
   .title {
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: #1d3144;
   }
 
   .desc2 {
-    font-size: 1.2rem;
+    font-size: 1rem;
     opacity: 0.7;
     color: rgba(9, 27, 68, 0.9);
   }

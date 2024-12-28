@@ -35,19 +35,19 @@ let dataSize = ref<{ pageSize: number, page: number }>({
 
 let dataCountOptions = [
   {
-    label: '10条数据/页',
+    label: computed(() => t('pagination.perPage10')).value,
     value: 10,
   },
   {
-    label: '20条数据/页',
+    label: computed(() => t('pagination.perPage20')).value,
     value: 20,
   },
   {
-    label: '50条数据/页',
+    label: computed(() => t('pagination.perPage50')).value,
     value: 50,
   },
   {
-    label: '100条数据/页',
+    label: computed(() => t('pagination.perPage100')).value,
     value: 100,
   },
 ]
@@ -63,6 +63,7 @@ interface Key {
   is_used: boolean;
   client_id: string;
   expiration_date: string;
+  expiration_date_stamp: number;
   created_at: string;
 }
 
@@ -82,7 +83,6 @@ let getAllMyKeys = async () => {
       }
     })
     if (data.code === 200) {
-      // console.log(data)
       myKeys.value = []
       showSkeleton.value = false
       data.my_keys.forEach((key: Key) => myKeys.value.push(key))
@@ -98,6 +98,12 @@ let getAllMyKeys = async () => {
   }
 }
 
+// isKeyExpired 根据expired时间戳判断是否过期
+let isKeyExpired = (expirationDateStamp: number): boolean => {
+  const currentTimestamp = Date.now();
+  return currentTimestamp > expirationDateStamp;
+};
+
 // 复制成功的反馈
 const copySuccess = ref(false);
 
@@ -111,13 +117,30 @@ const copyText = async (key: string, event: MouseEvent) => {
     // copySuccess.value = true;
     setTimeout(() => {
       copySuccess.value = false
-      // copySuccess.value = false;
-      // message.success('复制成功')
     }, 1200); // 显示2秒成功信息
   } catch (err) {
     console.error(t('userKeys.copyFailure'), err);
   }
 };
+
+const getKeyContentStyle = (isValid: boolean, expirationDateStamp: number) => {
+  const style: Record<string, string | number> = {};
+
+  // 根据 is_valid 设置样式
+  if (!isValid) {
+    style.color = '#f0a020';
+    style.textDecoration = 'underline';
+  }
+
+  // 根据 isKeyExpired 设置样式
+  if (isKeyExpired(expirationDateStamp)) {
+    style.opacity = 0.5;
+    style.textDecoration = 'line-through';
+  }
+
+  return style;
+}
+
 
 onBeforeMount(() => {
 
@@ -180,8 +203,11 @@ export default {
                     checkable
                     @click="copyText(item.key, $event)"
                 >
-
-                  <div class="key-inner" style="display: flex; flex-direction: row; align-items: center;">
+                  <div
+                      class="key-inner"
+                      style="display: flex; flex-direction: row; align-items: center;"
+                      :style="getKeyContentStyle(item.is_valid, item.expiration_date_stamp)"
+                  >
                     {{ item.key }}
                     <n-icon v-if="!copySuccess" class="copy-icon" size="16" style="margin: 0 10px">
                       <copyIcon/>
@@ -196,11 +222,21 @@ export default {
               <span>{{ copySuccess ? t('userKeys.hoverCopiedSuccessMention') : t('userKeys.hoverClickMention') }}</span>
             </n-popover>
             <div style="display: flex; flex-direction: row">
-              <n-tag :bordered="false" size="small" style="margin-right: 10px" :type="item.is_active?'success':'error'">
-                {{ item.is_active ? t('userKeys.active') : t('userKeys.inActive') }}
+              <n-tag
+                  :bordered="false"
+                  size="small"
+                  style="margin-right: 10px"
+                  :type="!isKeyExpired(item.expiration_date_stamp) ?'success':'error'"
+              >
+<!--                {{item.is_active ? t('userKeys.active') : t('userKeys.inActive') }}-->
+                {{ !isKeyExpired(item.expiration_date_stamp) ? t('userKeys.active') : t('userKeys.inActive') }}
               </n-tag>
-              <n-tag :bordered="false" size="small" style="margin-right: 10px"
-                     :type="item.is_valid?'success':'warning'">
+              <n-tag
+                  :bordered="false"
+                  size="small"
+                  style="margin-right: 10px"
+                  :type="item.is_valid?'success':'warning'"
+              >
                 {{ item.is_valid ? t('userKeys.valid') : t('userKeys.invalid') }}
               </n-tag>
               <n-tag :bordered="false" size="small" :type="item.is_used?'info':'success'">
@@ -312,7 +348,7 @@ export default {
   //}
 
   .key-card {
-    margin-top: 20px;
+    margin-top: 15px;
 
     .key-item {
       padding: 20px;

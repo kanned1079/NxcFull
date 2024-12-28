@@ -14,6 +14,7 @@ export default {
             purchase: '購買訂閱',
             surplus: '我的密鑰',
             fiance: '財務',
+            topUp: '充值',
             myOrder: '我的訂單',
             myInvite: '我的邀請',
             user: '用戶',
@@ -100,6 +101,20 @@ export default {
             editUser: "編輯用戶",
             no: "否",
             yes: "是"
+        },
+        activation: {
+            activateLog: '激活紀錄',
+            click2getKey: '點擊以獲取密鑰內容',
+            createdAt: '創建時間',
+            turn2keyPage: '轉到密鑰',
+            showKey: '顯示密鑰',
+            email: '郵箱',
+            key: '密鑰'
+        },
+        keysMgr: {
+            keyMgr: '密鑰管理',
+            enableKey: '啟用密鑰',
+            disableKey: '禁用密鑰',
         }
     },
     userLogin: {
@@ -160,11 +175,16 @@ export default {
         support: {
             title: '遇到問題',
             content: '遇到問題可以通過工單與我們的人機溝通',
-        }
+        },
+        haveTicket: '您有 {count} 條待處理的工單',
+        toCheckTicket: '去查看',
+        showAllKeys: '查看所有密鑰',
     },
     userDocument: {
         searchPlaceholder: '請輸入要搜索的內容（模糊搜索）',
         searchBtn: '搜索',
+        noContentTitle: '無結果',
+        noContentTitleHint: '嘗試換一個關鍵詞吧',
     },
     newPurchase: {
         headerPlaceholder: '選擇最適合您的計畫',
@@ -223,7 +243,23 @@ export default {
         deleteMyNegativeText: '取消',
         deletedSuccessMsg: '账户已删除，后会有期。',
         deleteErrOccur: '遇到错误',
-
+        faAuth: '兩步驗證2FA',
+        faAuthHint: '兩步驗證是一種安全機制，增加了登入帳戶的保護層。用戶在輸入密碼後，還需完成第二步身份驗證，如輸入發送到手機的驗證碼、使用身份驗證應用程序生成的動態碼，或通過指紋等生物特徵確認。',
+        faAuthStatus: '兩步驗證狀態',
+        faEnabled: '已啟用',
+        faNotEnabled: '未啟用',
+        setup2Fa: '設置兩步驗證',
+        disable2Fa: '取消兩步驗證',
+        setup2FaModal: {
+            followStep: '根據提示在您的驗證器上加入',
+            step1Title: '按照以下步驟以啟2FA驗證',
+            step1Context1: '1. 您的移動設備上需要有一個通用的驗證器',
+            step1Context2: '2. 點擊驗證器上的Scan按鈕來掃描此處的QR碼',
+            step1Context3: '3. 該QR Code中包含有您的驗證信息和唯一密鑰，請妥善保存',
+            step2Context1: '為了確保您的驗證器能夠正常使用，我們需要進行測試。',
+            test2Fa: '測試',
+            cancel: '取消',
+        }
     },
     // tickets: {
     //     userTickets: '歷史工單',
@@ -236,12 +272,12 @@ export default {
         keyId: '密鑰ID',
         orderId: '链接订单ID',
         clientId: '激活客戶端ID',
-        active: '活躍',
-        inActive: '不可用',
-        valid: '密鑰有效',
-        invalid: '密鑰不可用',
+        active: '在有效期內',
+        inActive: '已過期',
+        valid: '密鑰狀態正常',
+        invalid: '密鑰已被禁用',
         isUsed: '已激活使用',
-        noUsed: '待使用',
+        noUsed: '還未使用',
         releaseData: '密钥生成日期',
         expirationData: '到期日期',
         none: '無',
@@ -253,7 +289,8 @@ export default {
     },
     userOrders: {
         myOrders: '我的訂單',
-        orderId: '# 訂單號',
+        orderId: '#',
+        planName: '訂閱名稱',
         planCycle: '訂閱週期',
         orderPrice: '訂單金額',
         orderStatus: '訂單狀態',
@@ -267,7 +304,45 @@ export default {
             quarterPay: '季付',
             halfYearPay: '半年付',
             yearPay: '年付',
-        }
+        },
+        orderStatusTags: {
+            success: '成功',
+            cancelled: '失敗',
+            notPay: '未支付'
+        },
+        orderCancelled: '訂單已取消',
+        unknownErr: '未知錯誤',
+
+    },
+
+    userTopUp: {
+        topUp: '充值',
+        chooseTopUpAmount: '選擇充值金額',
+        quickSelect: '快速選擇',
+        customAmount: '自定義金額',
+        maxAmount: '最大金額: 10,000,000',
+        amountInputPlaceHolder: '輸入要充值的金額',
+        otherAmount: '其他金額',
+        payMethod: '支付方式',
+        wechat: '微信支付',
+        alipay: '支付寶',
+        apple: 'Apple Pay',
+        yourAmount: '您的金額',
+        discount: '優惠',
+        accountBalance: '帳戶餘額',
+        balanceResult: '餘額合計',
+        commitTopUp: '提交',
+        payMethodNotAllow: '支付方式不可用請選擇其他',
+        topUpIssueOccur: '充值遇到問題？',
+        payIssueOccur: '支付遇到問題？',
+        chatWithUs: '聯繫客服',
+        pay: '支付',
+        qrCodeScannedSuccess: 'QR碼掃描成功',
+        orClickToApp: '或點擊條轉到App繼續',
+        topUpSuccess: '充值成功',
+        thankU: '感謝您的支持'
+
+
     },
     userConfirmOrder: {
         switchPlan: '切換訂閱',
@@ -345,6 +420,22 @@ export default {
         unit: '人數',
         inviteCodeMgr: '您的邀請碼',
         generateInviteCode: '生成隨機邀請碼',
+        faCodeManage: '邀請碼管理',
+        email: '郵箱',
+        createdAt: '註冊時間',
+        createFaCodeFailure: '创建失败',
+        linkCopiedSuccess: '链接复制成功',
+        generateFaCode: '生成邀請碼',
+        flushFaCode: '刷新邀請碼',
+        faCode: '邀請碼',
+        noFaCode: '你還沒有邀請碼，請先生成。',
+        faLink: '邀請連結',
+        generateFaCodePlease: '請先生成邀請碼',
+        usersMyInvited: '我邀請的用戶',
+        generateCodeConfirm: '確認生成/刷新',
+        generateCodeHint: '請注意，邀請碼創建後不可關閉。',
+        positiveClick: '確認',
+        negativeClick: '取消',
     },
     userTickets: {
         ticketId: '#',
@@ -381,6 +472,37 @@ export default {
         ticketCloseSuccess: '工單關閉成功',
         ticketCloseFailure: '工單關閉失敗'
     },
+    userActivation: {
+        activateLog: '激活紀錄',
+        id: '#',
+        orderId: '訂單編號',
+        orderStatus: '訂單',
+        createdAt: '创建时间',
+        operate: '操作',
+        userId: '用戶Id',
+        email: '郵箱',
+        keyId: '密钥Id',
+        isBind: '是否激活',
+        active: '有效',
+        inactive: '無效',
+        requestAt: '請求時間',
+        clientVersion: '客戶端',
+        osType: '操作系統',
+        remark: '備注',
+        noRemark: '無備注',
+        showDetail: '查看詳情',
+        actions:'操作',
+        details: '細節',
+        keyContent: '密鑰內容',
+        keyGeneratedAt: '密鑰生成時間',
+        activateRequestAt: '激活請求時間',
+        useIssueOccur: '使用遇到問題？',
+        chatWithUs: '聯繫我們',
+        cancelBind: '取消綁定',
+        alterRemark: '修改備注',
+        commitRemark: '提交',
+        updateSuccess: '更新成功',
+    },
     welcome: {
         A: {
             aboutUs: '關於我們',
@@ -388,7 +510,7 @@ export default {
             login: '登錄',
             register: '註冊帳號',
             welcomeTo: '歡迎來到',
-            welcomeToSub: '“穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。”在这里川端康成用几近吝啬的简洁文字，拉开了《雪国》的序幕。',
+            welcomeToSub: '穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。”在这里川端康成用几近吝啬的简洁文字，拉开了《雪国》的序幕。',
             startingUse: '開始使用',
             whyUs: '為什麼選擇我們',
             whyUsSub: '“穿过县境上长长的隧道，便是雪国。夜空下，大地一片莹白，火车在信号所前停下来。”在这里川端康成用几近吝啬的简洁文字，拉开了《雪国》的序幕。',
@@ -408,5 +530,11 @@ export default {
     adminTicket: {
         ticketMgr: '工單管理',
 
+    },
+    pagination: {
+        perPage10: '10 條數據/頁',
+        perPage20: '20 條數據/頁',
+        perPage50: '50 條數據/頁',
+        perPage100: '100 條數據/頁',
     }
 }

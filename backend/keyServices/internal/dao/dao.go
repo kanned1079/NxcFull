@@ -59,5 +59,8 @@ func InitMysqlServer() {
 	if err := Db.AutoMigrate(&model.Keys{}); err != nil {
 		panic(err)
 	}
+	if err := Db.AutoMigrate(&model.ActivateRecord{}); err != nil {
+		panic(err)
+	}
 
 }

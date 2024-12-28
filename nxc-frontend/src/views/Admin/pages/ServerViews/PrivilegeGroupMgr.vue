@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import {h, onMounted, ref} from 'vue'
+import {useI18n} from "vue-i18n";
+import {computed, h, onMounted, ref} from 'vue'
 import {type FormInst, NButton, NIcon, type NotificationType, useMessage, useNotification} from "naive-ui";
 
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import instance from "@/axios";
 import {BarChartOutlined, UserOutlined} from '@vicons/antd' // 引入所需圖標
+
+const {t} = useI18n()
 const message = useMessage()
 
 let modifyFunc = ref<string>('add')
@@ -227,19 +230,19 @@ let submitUpdate = async () => {
 
 let dataCountOptions = [
   {
-    label: '10条数据/页',
+    label: computed(() => t('pagination.perPage10')).value,
     value: 10,
   },
   {
-    label: '20条数据/页',
+    label: computed(() => t('pagination.perPage20')).value,
     value: 20,
   },
   {
-    label: '50条数据/页',
+    label: computed(() => t('pagination.perPage50')).value,
     value: 50,
   },
   {
-    label: '100条数据/页',
+    label: computed(() => t('pagination.perPage100')).value,
     value: 100,
   },
 ]

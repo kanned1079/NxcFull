@@ -1,4 +1,4 @@
-<script setup lang="ts" name="">
+<script setup lang="ts">
 import {onMounted, reactive} from 'vue'
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
@@ -13,20 +13,51 @@ const options = [
     disabled: false,
   },
   {
-    label: '奶绿色',
-    value: 'milkGreenDay',
-    disabled: false,
-  },
-  {
     label: '深蓝色',
     value: 'darkBlueDay',
     disabled: false,
   },
   {
-    label: '深黑色',
-    value: 'Black',
-    disabled: true,
+    label: '奶绿色',
+    value: 'milkGreenDay',
+    disabled: false,
   },
+  {
+    label: '若竹',
+    value: 'bambooGreen',
+    disabled: false,
+  },
+
+  {
+    label: '雾松',
+    value: 'mistyPine',
+    disabled: false,
+  },
+  {
+    label: '冰川蓝',
+    value: 'glacierBlue',
+    disabled: false,
+  },
+
+
+    /*
+    *  case 'darkBlueDay': {
+                return darkBlueDay.value;
+            }
+            case 'milkGreenDay': {
+                return milkGreenDay.value;
+            }
+            case 'biliPink': {
+                return biliPink.value;
+            }
+            case 'bambooGreen': {
+                return bambooGreen.value;
+            }
+            case 'mistyPine': {
+                return mistyPine.value;
+            }
+            case 'glacierBlue': {
+    * */
 ]
 
 const themeSettings = reactive({
@@ -43,6 +74,12 @@ const themeSettings = reactive({
 //   console.log(themeStore.allTheme)
 // })
 
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Personalization',
+}
 </script>
 
 <template>

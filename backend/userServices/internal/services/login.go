@@ -247,6 +247,16 @@ func (s *UserService) Login(ctx context.Context, req *pb.UserLoginRequest) (*pb.
 				Msg:      "密码错误",
 			}, nil
 		}
+
+		if thisUser.IsTwoFA && !thisUser.IsAdmin {
+			if passed, err := auth.GetSecretAndVerify2FACode(req.Email, req.TwoFaCode); !passed || err != nil {
+				return &pb.UserLoginResponse{
+					Code:     http.StatusUnauthorized,
+					IsAuthed: false,
+					Msg:      "2fa验证未通过",
+				}, nil
+			}
+		}
 	}
 
 	// 调试日志：用户信息检查

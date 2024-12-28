@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TicketHandleService_GetUserTicketsByUserId_FullMethodName = "/ticketHandle.TicketHandleService/GetUserTicketsByUserId"
-	TicketHandleService_CloseTicketByTicketId_FullMethodName  = "/ticketHandle.TicketHandleService/CloseTicketByTicketId"
-	TicketHandleService_GetChatContent_FullMethodName         = "/ticketHandle.TicketHandleService/GetChatContent"
-	TicketHandleService_GetAllTicket_FullMethodName           = "/ticketHandle.TicketHandleService/GetAllTicket"
+	TicketHandleService_GetUserTicketsByUserId_FullMethodName        = "/ticketHandle.TicketHandleService/GetUserTicketsByUserId"
+	TicketHandleService_CloseTicketByTicketId_FullMethodName         = "/ticketHandle.TicketHandleService/CloseTicketByTicketId"
+	TicketHandleService_GetChatContent_FullMethodName                = "/ticketHandle.TicketHandleService/GetChatContent"
+	TicketHandleService_GetAllTicket_FullMethodName                  = "/ticketHandle.TicketHandleService/GetAllTicket"
+	TicketHandleService_CheckIsUserHaveOpeningTickets_FullMethodName = "/ticketHandle.TicketHandleService/CheckIsUserHaveOpeningTickets"
 )
 
 // TicketHandleServiceClient is the client API for TicketHandleService service.
@@ -37,6 +38,8 @@ type TicketHandleServiceClient interface {
 	GetChatContent(ctx context.Context, in *GetChatContentRequest, opts ...grpc.CallOption) (*GetChatContentResponse, error)
 	// 获取所有工单 分为活跃的和所有工单 管理员的请求
 	GetAllTicket(ctx context.Context, in *GetAllTicketRequest, opts ...grpc.CallOption) (*GetAllTicketResponse, error)
+	// 查询用户是否有没有关闭的工单
+	CheckIsUserHaveOpeningTickets(ctx context.Context, in *CheckIsUserHaveOpeningTicketsRequest, opts ...grpc.CallOption) (*CheckIsUserHaveOpeningTicketsResponse, error)
 }
 
 type ticketHandleServiceClient struct {
@@ -87,6 +90,16 @@ func (c *ticketHandleServiceClient) GetAllTicket(ctx context.Context, in *GetAll
 	return out, nil
 }
 
+func (c *ticketHandleServiceClient) CheckIsUserHaveOpeningTickets(ctx context.Context, in *CheckIsUserHaveOpeningTicketsRequest, opts ...grpc.CallOption) (*CheckIsUserHaveOpeningTicketsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckIsUserHaveOpeningTicketsResponse)
+	err := c.cc.Invoke(ctx, TicketHandleService_CheckIsUserHaveOpeningTickets_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TicketHandleServiceServer is the server API for TicketHandleService service.
 // All implementations must embed UnimplementedTicketHandleServiceServer
 // for forward compatibility.
@@ -99,6 +112,8 @@ type TicketHandleServiceServer interface {
 	GetChatContent(context.Context, *GetChatContentRequest) (*GetChatContentResponse, error)
 	// 获取所有工单 分为活跃的和所有工单 管理员的请求
 	GetAllTicket(context.Context, *GetAllTicketRequest) (*GetAllTicketResponse, error)
+	// 查询用户是否有没有关闭的工单
+	CheckIsUserHaveOpeningTickets(context.Context, *CheckIsUserHaveOpeningTicketsRequest) (*CheckIsUserHaveOpeningTicketsResponse, error)
 	mustEmbedUnimplementedTicketHandleServiceServer()
 }
 
@@ -120,6 +135,9 @@ func (UnimplementedTicketHandleServiceServer) GetChatContent(context.Context, *G
 }
 func (UnimplementedTicketHandleServiceServer) GetAllTicket(context.Context, *GetAllTicketRequest) (*GetAllTicketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllTicket not implemented")
+}
+func (UnimplementedTicketHandleServiceServer) CheckIsUserHaveOpeningTickets(context.Context, *CheckIsUserHaveOpeningTicketsRequest) (*CheckIsUserHaveOpeningTicketsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckIsUserHaveOpeningTickets not implemented")
 }
 func (UnimplementedTicketHandleServiceServer) mustEmbedUnimplementedTicketHandleServiceServer() {}
 func (UnimplementedTicketHandleServiceServer) testEmbeddedByValue()                             {}
@@ -214,6 +232,24 @@ func _TicketHandleService_GetAllTicket_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TicketHandleService_CheckIsUserHaveOpeningTickets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckIsUserHaveOpeningTicketsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TicketHandleServiceServer).CheckIsUserHaveOpeningTickets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TicketHandleService_CheckIsUserHaveOpeningTickets_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TicketHandleServiceServer).CheckIsUserHaveOpeningTickets(ctx, req.(*CheckIsUserHaveOpeningTicketsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TicketHandleService_ServiceDesc is the grpc.ServiceDesc for TicketHandleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -236,6 +272,10 @@ var TicketHandleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllTicket",
 			Handler:    _TicketHandleService_GetAllTicket_Handler,
+		},
+		{
+			MethodName: "CheckIsUserHaveOpeningTickets",
+			Handler:    _TicketHandleService_CheckIsUserHaveOpeningTickets_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

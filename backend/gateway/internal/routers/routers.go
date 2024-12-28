@@ -25,13 +25,19 @@ func StartApiGateways() {
 		context.Next()
 	})
 
+	router.Use(middleware.APICountMiddleware())
+
 	publicRoutes := router.Group("/api")
+	//publicRoutes.Use(middleware.APICountMiddleware())
 	//publicRoutes := router.Group("/ws")
 
 	// 这里是获取网站的标题 颜色 说明 配置
 	//publicRoutes.GET("/admin/getStartTheme", getStartTheme)
 
 	publicRoutes.GET("/app/preference/")
+	publicRoutes.GET("/app/v1/env", handler.HandleGetAppRuntimeEnv)
+	publicRoutes.GET("/app/v1/welcome", handler.HandleGetWelcomeConfig)
+	publicRoutes.POST("/user/v1/activation/bind", handler.HandleBindKeyToThirdExternalApp)
 
 	adminPublic := publicRoutes.Group("/admin/v1")
 	{
@@ -61,6 +67,9 @@ func StartApiGateways() {
 		adminAuthorized.GET("/server/status")
 		adminAuthorized.GET("/infrastructure/status", handler.GetSystemInfrastructureInfo)
 		//// adminAuthorized.POST("admin/save-settings", handleUpdateSystemSettings)
+
+		adminAuthorized.GET("/app/overview", handler.HandleGetAppOverview)
+
 		//
 		adminAuthorized.PUT("/setting", handler.HandleUpdateSingleOptions) // 修改单个配置项目
 		adminAuthorized.GET("/setting", handler.HandleGetSystemSetting)    // 获取所有的系统设置
@@ -116,6 +125,9 @@ func StartApiGateways() {
 		adminAuthorized.GET("payment/details", handler.HandleGetPaymentMethodDetailsBySystemName) // 获取详细信息 但是隐藏证书私钥等信息
 		adminAuthorized.POST("payment", handler.HandleEditOrSavePaymentMethodBySystemName)        // 新建或编辑支付方式的配置
 		adminAuthorized.PATCH("payment", handler.HandleSwitchPaymentMethodEnableBySystemName)     // 切换是否启用支付方式
+
+		adminAuthorized.GET("activation", handler.GetAllActivateLogByAdmin)
+
 	}
 
 	userAuthorized := protectedRoutes.Group("/user/v1", middleware.RoleMiddleware())
@@ -151,13 +163,16 @@ func StartApiGateways() {
 		//userAuthorized.POST("/balance/recharge", handler.HandleUserTopUp)
 
 		userAuthorized.GET("/keys", handler.HandleGetAllMyKeys)
+		userAuthorized.GET("/key/details", handler.HandleGetKeyDetailsById)
 
+		userAuthorized.GET("ticket/check", handler.HandleCheckIsUserHaveOpeningTickets)
 		userAuthorized.GET("/ticket", handler.HandleGetAllMyTickets)
 		userAuthorized.POST("/ticket", handler.HandleCreateNewTicket) // 新建工单
 		userAuthorized.DELETE("/ticket", handler.HandleCloseTicket)   // 关闭工单
 		//userAuthorized.PUT("/ticket/chat", handler.HandleSendChatContent) // 发送消息
 		//userAuthorized.GET("/ticket/chat", handler.HandleGetChatContent)  // 获取聊天消息内容
 
+		userAuthorized.GET("/invite/banner", handler.HandleGetUserInviteBanner)
 		userAuthorized.GET("/invite/code", handler.HandleGetUserInviteCodeByUserId)
 		userAuthorized.POST("/invite/code", handler.HandleCreateUserInviteCodeByUserId)
 		userAuthorized.GET("/invite/users", handler.HandleGetUserInvitedUserListByUserId)
@@ -165,6 +180,10 @@ func StartApiGateways() {
 		userAuthorized.GET("payment/methods", handler.HandleGetAllPaymentMethodKv) // 获取所有存在的支付方式基础信息 名称 是否启用 优惠金额
 		userAuthorized.POST("payment/top-up", handler.HandleUserCommitNewTopUpOrder)
 		userAuthorized.GET("payment/top-up/check", handler.HandleQueryTopUpOrderStatus)
+
+		userAuthorized.GET("activation", handler.HandleGetAllMyActivationLogs)
+		userAuthorized.DELETE("activation", handler.HandleDisableBindKey)
+		userAuthorized.PATCH("activation/remark", handler.HandleAlterRemarkByUser)
 
 	}
 

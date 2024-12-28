@@ -253,7 +253,8 @@ const columns = [
   {
     title: computed(() => t('adminViews.userMgr.actions')).value,
     fixed: 'right',
-    key: 'actions', render(row: User) {
+    key: 'actions',
+    render(row: User) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -291,19 +292,19 @@ let dataSize = ref<{ pageSize: number, page: number }>({
 
 let dataCountOptions = [
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions10')).value,
+    label: computed(() => t('pagination.perPage10')).value,
     value: 10,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions20')).value,
+    label: computed(() => t('pagination.perPage20')).value,
     value: 20,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions50')).value,
+    label: computed(() => t('pagination.perPage50')).value,
     value: 50,
   },
   {
-    label: computed(() => t('adminViews.userMgr.dataCountOptions100')).value,
+    label: computed(() => t('pagination.perPage100')).value,
     value: 100,
   },
 ]
@@ -397,6 +398,7 @@ onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/usermanager'
   await getAllUsers()
   animated.value = true
+
 })
 
 </script>
@@ -441,6 +443,7 @@ export default {
             :bordered="false"
             :columns="columns"
             :data="users"
+            :scroll-x="1000"
         />
       </n-card>
 

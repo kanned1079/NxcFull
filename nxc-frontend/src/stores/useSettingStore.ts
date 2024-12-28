@@ -39,15 +39,33 @@ interface FrontendSettings {
     frontend_background_url: string;
 }
 
-interface SubscribeSettings {
-    user_modify_enable: boolean;
-    show_info_in_sub: boolean;
+// interface SubscribeSettings {
+//     user_modify_enable: boolean;
+//     show_info_in_sub: boolean;
+// }
+
+interface InviteRebateSettings {
+    invite_rebate_enable: boolean
+    invite_rebate_rate: number
+    discount_info: string
+    invite_info: string
 }
 
 interface ServerSettings {
     server_token: string;
     server_pull_interval: number;
     server_push_interval: number;
+}
+
+interface WelcomeSettings {
+    app_sub_description: string
+    why_choose_us_hint: string
+    bilibili_official_link: string
+    youtube_official_link: string
+    instagram_link: string
+    wechat_official_link: string
+    filing_number: string
+    page_suffix: string
 }
 
 interface SendmailSettings {
@@ -76,8 +94,10 @@ interface Settings {
     site: SiteSettings;
     security: SecuritySettings;
     frontend: FrontendSettings;
-    subscribe: SubscribeSettings;
+    // subscribe: SubscribeSettings;
+    invite: InviteRebateSettings;
     server: ServerSettings;
+    welcome: WelcomeSettings;
     sendmail: SendmailSettings;
     notice: NoticeSettings;
     my_app: MyAppSettings;
@@ -119,14 +139,29 @@ const useSettingStore = defineStore('SettingStore', () => {
             frontend_theme: 'bambooGreen',  // 主题色
             frontend_background_url: '',    // 背景
         },
-        subscribe: {
-            user_modify_enable: true,   // 允许用户修改订阅
-            show_info_in_sub: false,    // 在订阅中展示订阅信息
+        // subscribe: {
+        //     user_modify_enable: true,   // 允许用户修改订阅
+        //     show_info_in_sub: false,    // 在订阅中展示订阅信息
+        // },
+        invite: {
+            invite_rebate_enable: false,
+            invite_rebate_rate: 0.00,
+            discount_info: '',
         },
         server: {
             server_token: '@zeBw2cSe6V^kCrz3uJQSd=FJU', // 通讯密钥
             server_pull_interval: 0,                    // 节点拉取动作轮询间隔
             server_push_interval: 0,                    // 节点推送动作轮询间隔
+        },
+        welcome: {
+            app_sub_description: '',
+            why_choose_us_hint: '',
+            bilibili_official_link: '',
+            youtube_official_link: '',
+            instagram_link: '',
+            wechat_official_link: '',
+            filing_number: '',
+            page_suffix: '',
         },
         sendmail: {
             email_host: '',         // SMTP服务器地址

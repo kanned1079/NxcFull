@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue"
+import ColoredRibbon from "@/views/utils/ColoredRibbon.vue"
+import SnowFall from "@/views/utils/SnowFall.vue";
+import {computed, onMounted, onBeforeUnmount, ref} from "vue"
 import {useRouter} from "vue-router";
 import {type MenuOption, useMessage} from "naive-ui"
 import {useI18n} from "vue-i18n";
@@ -12,13 +14,13 @@ import {
   CashOutline as cashIcon,
   CheckmarkOutline as checkIcon,
   ChevronForwardOutline as toRight,
+  ChevronForwardOutline as toRightIcon,
   CloseOutline as errIcon,
+  GiftOutline as giftIcon,
   LogoAlipay,
   LogoApple,
   LogoWechat,
-  TicketOutline as ticketIcon,
-  GiftOutline as giftIcon,
-  ChevronForwardOutline as toRightIcon,
+  CheckmarkCircle as scannedIcon,
 } from "@vicons/ionicons5"
 import instance from '@/axios/index'
 
@@ -31,52 +33,27 @@ const userInfoStore = useUserInfoStore();
 const themeStore = useThemeStore();
 let animated = ref<boolean>(false)
 
+let discountMsg = ref<string>('')
 let topUpAmount = ref<number | null>()
 let rightSideCardBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(54,55,55,0.8)' : 'rgba(54,56,61,0.8)')
 
 let paymentMethodSelected = ref<string>('')
 
-// interface PaymentMethodsKv {
-//   id: number
-//   name: string
-// }
-
-// let paymentMethodsKv = ref<PaymentMethodsKv[]>([
-//   {
-//     id: 1,
-//     name: "wechat",
-//   },
-//   {
-//     id: 2,
-//     name: "alipay",
-//   },
-//   {
-//     id: 3,
-//     name: "apple",
-//   }
-// ] as PaymentMethodsKv[])
-
-// interface QuickBalance {
-//   key: number
-//   value: number
-// }
-
 let methodsAvailable = ref<MethodsFromServer[]>([])
-
 
 let paymentMethodsList = ref<MenuOption[]>([
   {
-    label: "微信支付",
+    label: computed(() => t('userTopUp.wechat')),
     key: "wechat",
     icon: renderIcon(LogoWechat),
   },
   {
-    label: "支付宝支付",
+    label: computed(() => t('userTopUp.alipay')),
     key: "alipay",
     icon: renderIcon(LogoAlipay),
   },
   {
-    label: "Apple Pay",
+    label: computed(() => t('userTopUp.apple')),
     key: "apple",
     icon: renderIcon(LogoApple),
   },
@@ -109,7 +86,7 @@ let quickSelectBalanceList = ref<MenuOption[]>([
     icon: renderIcon(cashIcon)
   },
   {
-    label: '其他金额',
+    label: computed(() => t('userTopUp.otherAmount')),
     key: -1,
     icon: renderIcon(addIcon)
   },
@@ -138,6 +115,7 @@ const handleGetAllPaymentMethods = async () => {
     const {data} = await instance.get('/api/user/v1/payment/methods');
     if (data.code === 200) {
       // 遍历服务器返回的数据并更新 `paymentMethodsList`
+      discountMsg.value = data.discount_msg || ''
       data.conf.forEach((item: MethodsFromServer) => methodsAvailable.value.push(item))
     }
   } catch (err) {
@@ -190,39 +168,137 @@ let handleCommitNewTopUpOrder = async () => {
     if (data.code === 200) {
       Object.assign(topUpOrderResponse.value, data)
       showQrCodeModal.value = true
+      setTimeout(() => {
+
+        startQueryTopUpOrderStatusLoop()
+      }, 5000)
     }
   } catch (err: any) {
     console.log(err)
   }
 }
 
-let showQrCodeModal = ref<boolean>(true)
+let showQrCodeModal = ref<boolean>(false)
 
 let clickToPaymentApp = () => {
   window.open(topUpOrderResponse.value.qr_code, '_blank');
 }
 
+/*
+const (
+	// WaitUserScanQrCode 预生成订单成功后的等待用户扫码
+	WaitUserScanQrCode = http.StatusAccepted // 202 - 请求已接受，但尚未处理，等待用户操作
+
+	// ScannedQrCodeWaitUserPay 用户扫描二维码后生成订单等待支付
+	ScannedQrCodeWaitUserPay = http.StatusProcessing // 102 - 请求已接收，正在处理中，但尚未完成
+
+	// TradeClosed 未付款交易超时关闭，或支付完成后全额退款
+	TradeClosed = http.StatusRequestTimeout // 408 - 请求超时，通常表示支付超时未完成
+
+	// TradeSuccess 交易成功
+	TradeSuccess = http.StatusOK // 200 - 请求成功并且已处理完毕
+
+	// TradeFinished TRADE_FINISHED，交易完成，表示交易结束
+	TradeFinished = http.StatusGone // 410 - 资源不再可用，交易已经结束
+)
+*/
+let resultCode = ref<number>(0)
+let qrCodeIsScanned = computed(() => resultCode.value === 102)
+// let qrCodeIsScanned = computed(() => true)
+
 let checkPaymentResult = async () => {
-  message.info('查询支付结果')
+  // message.info('查询支付结果')
   try {
-  let {data} = await instance.get('/api/user/v1/payment/top-up', {
-    params: {
-      payment_method: paymentMethodSelected.value,
-      order_id:topUpOrderResponse.value.order_id
-    }
-  })
+    let {data} = await instance.get('/api/user/v1/payment/top-up/check', {
+      params: {
+        payment_method: paymentMethodSelected.value,
+        order_id: topUpOrderResponse.value.order_id,
+        user_id: userInfoStore.thisUser.id,
+        invite_user_id: userInfoStore.thisUser.inviteUserId,
+      }
+    })
+    resultCode.value = data.code || 0
+
     console.log(data)
-  } catch(err: any) {
+  } catch (err: any) {
     console.log(err)
   }
 }
 
+let queryLoopIntervalId = ref<number | undefined>(undefined)
+let topUpIsFinishedSuccess = ref<boolean>(false)
+
+let startQueryTopUpOrderStatusLoop = () => {
+  // 异步请求函数
+  queryLoopIntervalId.value = setInterval(async () => {
+    await checkPaymentResult()
+    switch (resultCode.value) {
+      case 202: {
+        // message.info('等待用户付款')
+        break
+      }
+      case 102: {
+        // message.info('扫描二维码成功')
+        break
+      }
+      case 408: {
+        // message.error('未付款交易超时关闭')
+        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+        break
+      }
+      case 200: {
+        // showQrCodeModal.value = false
+        topUpIsFinishedSuccess.value = true
+        message.success('交易成功')
+        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+
+        setTimeout(async () => {
+         let updated = await userInfoStore.updateUserInfo();
+         if (updated) {
+           console.log("用户信息更新成功")
+           setTimeout(async () => {
+             await router.push({
+               path: "/dashboard/profile",
+             })
+           }, 3000)
+         } else {
+           message.warning('用户信息可能更新有延迟')
+         }
+        }, 1000)
+        break
+      }
+      case 401: {
+        message.info('交易完成，不可退款')
+        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+        break
+      }
+      case 500: {
+        message.error('更新用户余额失败，请联系客服')
+        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+        break
+      }
+
+    }
+  }, 2000)
+
+}
+
+let showRibbon = ref<boolean>(false)
+
 onMounted(async () => {
   themeStore.userPath = '/dashboard/topup'
+  themeStore.menuSelected = 'user-top-up'
 
   await handleGetAllPaymentMethods()
 
   animated.value = true
+  setTimeout(() => {
+    showRibbon.value = true
+  }, 500)
+})
+
+onBeforeUnmount(() => {
+  clearInterval(queryLoopIntervalId.value?queryLoopIntervalId.value:undefined)
 })
 
 </script>
@@ -234,12 +310,15 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px">
+<!--  <SnowFall :show="showRibbon"></SnowFall>-->
+<!--  <ColoredRibbon :show="showRibbon"></ColoredRibbon>-->
+  <ColoredRibbon :show="topUpIsFinishedSuccess"></ColoredRibbon>
+  <div style="padding: 20px 20px 15px 20px">
     <n-card
         hoverable
         :embedded="true"
         :bordered="false"
-        title="加值"
+        :title="t('userTopUp.topUp')"
     >
     </n-card>
   </div>
@@ -260,17 +339,17 @@ export default {
         >
           <div class="box1">
             <n-alert
-                type="success"
-                :bordered="true"
+                type="warning"
+                :bordered="false"
                 style="margin-bottom: 10px"
+                v-if="discountMsg !== ''"
             >
               <template #icon>
                 <n-icon size="18">
                   <giftIcon/>
                 </n-icon>
               </template>
-                  截止2024年12月31日前，使用支付宝充值优惠2.9USDT，使用Apple Pay充值优惠20USDT。
-              {{ `当前优惠 ` }}
+              {{ discountMsg }}
             </n-alert>
             <n-card
                 hoverable
@@ -278,8 +357,8 @@ export default {
                 :bordered="false"
                 style="transition: ease 200ms"
             >
-              <n-h3 style="font-weight: bold">选择充值金额</n-h3>
-              <n-h4 style="font-weight: bold">快速选择</n-h4>
+              <n-h3 style="font-weight: bold">{{ t('userTopUp.chooseTopUpAmount') }}</n-h3>
+              <n-h4 style="font-weight: bold">{{ t('userTopUp.quickSelect') }}</n-h4>
 
               <n-menu
                   :indent="20"
@@ -292,8 +371,9 @@ export default {
                 <div v-if="showCustomTopUpInput" style="margin-top: 30px">
 
                   <div style="display: flex; flex-direction: row; align-items: baseline">
-                    <n-h4 style="font-weight: bold">自定义金额</n-h4>
-                    <p style="opacity: 0.5; margin-left: 10px; font-size: 0.7rem">最大金额：10000000
+                    <n-h4 style="font-weight: bold">{{ t('userTopUp.customAmount') }}</n-h4>
+                    <p style="opacity: 0.5; margin-left: 10px; font-size: 0.7rem">
+                      {{ t('userTopUp.maxAmount') }}
                       {{ appInfoStore.appCommonConfig.currency }}</p>
                   </div>
                   <div>
@@ -302,7 +382,7 @@ export default {
                         class="amount-input"
                         size="large"
                         v-model:value.number="topUpAmount"
-                        :placeholder="'输入要充值的金额'"
+                        :placeholder="t('userTopUp.amountInputPlaceHolder')"
                         :max="10000000"
                         :min="0.01"
                         :precision="2"
@@ -314,13 +394,13 @@ export default {
 
               <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 40px">
                 <div>
-                  充值遇到问题？
+                  {{ t('userTopUp.topUpIssueOccur') }}
                   <n-button
                       type="primary"
                       text
                       @click="router.push('/dashboard/tickets')"
                   >
-                    联系客服
+                    {{ t('userTopUp.chatWithUs') }}
                     <n-icon style="margin-left: 4px">
                       <toRight/>
                     </n-icon>
@@ -340,7 +420,7 @@ export default {
                 :embedded="true"
                 :bordered="false"
             >
-              <n-h3 style="font-weight: bold">支付方式</n-h3>
+              <n-h3 style="font-weight: bold">{{ t('userTopUp.payMethod') }}</n-h3>
               <n-menu
                   :indent="20"
                   mode="vertical"
@@ -358,11 +438,12 @@ export default {
                 class="r-part-card"
             >
               <n-h3 class="r-part-title">
-                您的金额
+<!--                您的金额-->
+                {{ t('userTopUp.yourAmount') }}
               </n-h3>
 
               <div class="new-amount-main">
-                <p class="new-amount-main-hex">充值</p>
+                <p class="new-amount-main-hex">{{ t('userTopUp.topUp') }}</p>
                 <div class="new-amount-main-price-part">
                   <p class="new-amount-main-price"> + {{ resultAmount.toFixed(2) }}</p>
                   <p class="new-amount-main-price-currency">{{ appInfoStore.appCommonConfig.currency }}</p>
@@ -370,7 +451,7 @@ export default {
               </div>
 
               <div class="new-amount-main" v-if="getDiscount !== 0.00">
-                <p class="new-amount-main-hex">优惠</p>
+                <p class="new-amount-main-hex">{{ t('userTopUp.discount') }}</p>
                 <div class="new-amount-main-price-part" style="opacity: 0.8">
                   <p class="new-amount-main-price" style="font-size: 1rem !important;">
                     - {{ getDiscount.toFixed(2) }}</p>
@@ -379,7 +460,7 @@ export default {
               </div>
 
               <div class="new-amount-main">
-                <p class="new-amount-main-hex">账户余额</p>
+                <p class="new-amount-main-hex">{{ t('userTopUp.accountBalance') }}</p>
                 <div class="new-amount-main-price-part" style="opacity: 0.8">
                   <p class="new-amount-main-price" style="font-size: 1rem !important;">
                     {{ userInfoStore.thisUser.balance.toFixed(2) }}</p>
@@ -390,7 +471,7 @@ export default {
               <hr style="opacity: 0.3; margin: 10px 0 10px 0;"></hr>
 
               <div class="new-amount-main">
-                <p class="new-amount-main-hex">余额合计</p>
+                <p class="new-amount-main-hex">{{ t('userTopUp.balanceResult') }}</p>
                 <div class="new-amount-main-price-part">
                   <p class="new-amount-main-price" style="font-size: 1rem !important;">
                     {{ (userInfoStore.thisUser.balance + (topUpAmount ? topUpAmount : 0.00)).toFixed(2) }}</p>
@@ -416,7 +497,7 @@ export default {
                     <errIcon/>
                   </n-icon>
                 </template>
-                {{ checkMethodEnabled ? '提交' : '支付方式不可用请选择其他' }}
+                {{ checkMethodEnabled ? t('userTopUp.commitTopUp') : t('userTopUp.payMethodNotAllow') }}
               </n-button>
             </n-card>
           </div>
@@ -431,7 +512,7 @@ export default {
       v-model:show="showQrCodeModal"
       class="qr-card"
       preset="card"
-      :title="'支付'"
+      :title="t('userTopUp.pay')"
       size="medium"
       style="width: 300px;"
       :bordered="false"
@@ -439,56 +520,100 @@ export default {
 
 
     <div class="qr-body">
-      <div class="qr-code-body">
-        <n-qr-code
-            :size="150"
-            :value="topUpOrderResponse.qr_code"
-            error-correction-level="H"
-            :color="'#252525'"
-            type="svg"
-        />
-        <n-button
-          text
-          type="default"
-          @click="clickToPaymentApp"
-          icon-placement="right"
-          style="margin-top: 5px"
-          >
+      <div class="qr-code-body" v-if="!topUpIsFinishedSuccess">
+        <n-spin
+            :rotate="false"
+            size="large"
+            :show="qrCodeIsScanned"
+        >
+          <n-qr-code
+              :size="160"
+              :value="topUpOrderResponse.qr_code"
+              error-correction-level="H"
+              :color="!qrCodeIsScanned?'#252525':'rgba(25,25,25,0.3)'"
+              type="svg"
+          />
           <template #icon>
-            <n-icon>
-              <toRightIcon />
+            <n-icon color="#66c18c">
+              <scannedIcon />
             </n-icon>
           </template>
-          或点击跳转到APP
+          <template #description>
+            <p style="color: #66c18c; font-size: 1rem; font-weight: bold">
+              {{ t('userTopUp.qrCodeScannedSuccess') }}
+            </p>
+          </template>
+        </n-spin>
+
+        <n-button
+            text
+            type="default"
+            @click="clickToPaymentApp"
+            icon-placement="right"
+            style="margin-top: 5px"
+        >
+          <template #icon>
+            <n-icon>
+              <toRightIcon/>
+            </n-icon>
+          </template>
+          {{ t('userTopUp.orClickToApp') }}
         </n-button>
       </div>
+      <div style="text-align: center" v-if="topUpIsFinishedSuccess">
+        <p style="font-size: 1.5rem; font-weight: bold">
+          {{ t('userTopUp.topUpSuccess') }}
+        </p>
+        <p style="font-size: 1rem; opacity: 0.6; margin-bottom: 30px">
+          {{ t('userTopUp.thankU') }}
+        </p>
+      </div>
+
       <div class="qr-hex">
         <p class="amount">{{ `${resultAmount.toFixed(2)} ${appInfoStore.appCommonConfig.currency}` }}</p>
         <p class="order-detail">{{ `#${topUpOrderResponse.order_id}` }}</p>
       </div>
 
     </div>
-    <div style="width: 100%; display: flex; flex-direction: column; margin-top: 20px">
-      <n-button
-          type="success"
-          secondary
-          :bordered="false"
-          @click="checkPaymentResult"
-      >
-        我已完成支付
-      </n-button>
-    </div>
+<!--    <div style="width: 100%; display: flex; flex-direction: column; margin-top: 20px">-->
+<!--      <n-button-->
+<!--          type="success"-->
+<!--          secondary-->
+<!--          :bordered="false"-->
+<!--          @click="checkPaymentResult"-->
+<!--      >-->
+<!--        我已完成支付-->
+<!--      </n-button>-->
+<!--    </div>-->
 
-    <template #footer>
+    <template #footer v-if="!topUpIsFinishedSuccess">
       <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">
         <div>
-          支付值遇到问题？
+          {{ t('userTopUp.payIssueOccur') }}
           <n-button
               type="primary"
               text
               @click="router.push('/dashboard/tickets')"
           >
-            联系客服
+            {{ t('userTopUp.chatWithUs') }}
+            <n-icon style="margin-left: 4px">
+              <toRight/>
+            </n-icon>
+          </n-button>
+        </div>
+
+      </div>
+    </template>
+    <template #footer v-else>
+      <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">
+        <div>
+
+          <n-button
+              type="primary"
+              text
+              @click="router.push('/dashboard/purchase')"
+          >
+            去购买订阅
             <n-icon style="margin-left: 4px">
               <toRight/>
             </n-icon>
@@ -591,16 +716,19 @@ export default {
     justify-content: center;
     align-items: center;
   }
+
   .qr-hex {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     .amount {
       font-size: 1.35rem;
       font-weight: bold;
     }
+
     .order-detail {
       font-size: 1rem;
       opacity: 0.7;

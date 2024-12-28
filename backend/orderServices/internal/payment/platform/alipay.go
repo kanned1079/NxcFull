@@ -4,19 +4,18 @@ import (
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/alipay/v3"
 	"github.com/go-pay/xlog"
-	"log"
 	"orderServices/internal/payment/model"
 )
 
-var (
-	err error
-)
+//var (
+//	err error
+//)
 
 // InitAlipayClient 初始化支付宝客户端
 func InitAlipayClient() (error, *alipay.ClientV3) {
 	xlog.SetLevel(xlog.DebugLevel)
-	log.Println(model.AlipayConfCache.AppId)
-	log.Println(model.AlipayConfCache.AppPrivateKey)
+	//log.Println(model.AlipayConfCache.AppId)
+	//log.Println(model.AlipayConfCache.AppPrivateKey)
 	client, err := alipay.NewClientV3(model.AlipayConfCache.AppId, model.AlipayConfCache.AppPrivateKey, true)
 	if err != nil {
 		xlog.Error(err)

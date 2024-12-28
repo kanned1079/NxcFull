@@ -1,8 +1,8 @@
 import {ref} from 'vue'
 import {defineStore} from "pinia";
-import instance from "@/axios";
+// import instance from "@/axios";
+import {handleGetAllPlans} from "@/api/user/plans";
 // import {useMessage} from "naive-ui"
-import useApiAddrStore from "@/stores/useApiAddrStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 
 export interface Plan {
@@ -51,30 +51,17 @@ const usePaymentStore = defineStore('paymentStore', () => {
     const userInfoStore = useUserInfoStore()
     let plan_list = ref<Plan[]>([])
 
-    let getAllPlans = async (page: number, size: number): Promise<{success: boolean, page_count: number}> => {
-        // let apiAddrStore = useApiAddrStore()
-        try {
-            let {data} = await instance.get('/api/user/v1/plan', {
-               params: {
-                   is_user: !userInfoStore.thisUser.isAdmin,
-                   // is_user: false
-                   page,
-                   size,
-               }
-            })
-            if (data.code === 200) {
-                plan_list.value = []
-                data.plans.forEach((item: Plan) => plan_list.value.push(item))
-                console.log('页面计数 ', data.page_count)
-                return {
-                    success: true,
-                    page_count: data.page_count as number,
-                }
-            } else {
-                console.log('获取订阅数据失败')
+    let getAllPlans = async (page: number, size: number): Promise<{ success: boolean, page_count: number }> => {
+        let data = await handleGetAllPlans(!userInfoStore.thisUser.isAdmin, page, size)
+        if (data && data.code === 200) {
+            plan_list.value = []
+            data.plans.forEach((item: Plan) => plan_list.value.push(item))
+            return {
+                success: true,
+                page_count: data.page_count as number,
             }
-        } catch (error) {
-            console.log(error)
+        } else {
+            console.log('err:', data.msg)
         }
         return {
             success: false,
