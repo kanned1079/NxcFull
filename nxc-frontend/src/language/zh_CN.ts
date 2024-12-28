@@ -109,7 +109,14 @@ export default {
             turn2keyPage: '轉到密鑰',
             showKey: '顯示密鑰',
             email: '郵箱',
-            key: '密鑰'
+            key: '密鑰',
+            search: '搜尋',
+            filter: '篩選',
+            filterAll: '全部',
+            filterActive: '僅有效',
+            sortAlgorithm: '排序算法',
+            sortASC: '升序',
+            sortDESC: '降序',
         },
         keysMgr: {
             keyMgr: '密鑰管理',

@@ -298,8 +298,6 @@ let callGetAllActivateLog = async () => {
   }
 }
 
-
-
 let handleUnbindById = async (row: ActivateRecord) => {
   animated.value = false
   try {
@@ -426,7 +424,7 @@ export default {
   </transition>
 
   <n-modal
-      :title="'搜索'"
+      :title="t('adminViews.activation.search')"
       v-model:show="showSearchModal"
       preset="dialog"
       :positive-text="t('adminViews.userMgr.query')"
@@ -447,18 +445,18 @@ export default {
       ></n-input>
     </n-form-item>
 
-    <n-form-item path="valid" :label="'篩選'">
+    <n-form-item path="valid" :label="t('adminViews.activation.filter')">
       <n-select
-          :options="[{label: '全部', value: false},{label: '僅有效', value: true}]"
+          :options="[{label: t('adminViews.activation.filterAll'), value: false},{label: t('adminViews.activation.filterActive'), value: true}]"
           :default-value="false"
           v-model:value="searchForm.valid"
       >
       </n-select>
     </n-form-item>
 
-    <n-form-item path="sort" :label="'排序算法'">
+    <n-form-item path="sort" :label="t('adminViews.activation.sortAlgorithm')">
       <n-select
-          :options="[{label: '升序', value: 'ASC'},{label: '降序', value: 'DESC'}]"
+          :options="[{label: t('adminViews.activation.sortASC'), value: 'ASC'},{label: t('adminViews.activation.sortDESC'), value: 'DESC'}]"
           :default-value="'DESC'"
           v-model:value="searchForm.sort"
       >
