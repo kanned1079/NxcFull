@@ -11,7 +11,7 @@ import {Podium as incomeIcon} from '@vicons/ionicons5'
 
 type EChartsOption = echarts.EChartsOption;
 
-const {t} = useI18n()
+const {t, locale} = useI18n()
 const themeStore = useThemeStore();
 const appInfoStore = useAppInfosStore();
 
@@ -40,7 +40,15 @@ let getAppOverview = async () => {
 }
 
 let getLast7DaysWeekdays = (): string[] => {
-  const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+  const weekdays = [
+    t('week.sunday'),
+    t('week.monday'),
+    t('week.tuesday'),
+    t('week.wednesday'),
+    t('week.thursday'),
+    t('week.friday'),
+    t('week.saturday'),
+  ];
 
   // 当前日期
   const now = new Date();
@@ -56,254 +64,19 @@ let getLast7DaysWeekdays = (): string[] => {
   return last7Days;
 }
 
+watch(() => locale.value, () => {
+  clearCharts()
+  reloadCharts()  // 再渲染图表
+})
 
 // 历史访问人数
 let visitedChartDOM = ref(null)
 // 历史收入
 let incomeChartDOM = ref(null)
-// 用户活跃情况
-let userActivityDOM = ref(null)
 
 let visitedChart: echarts.ECharts | null = null;
 let incomeChart: echarts.ECharts | null = null;
-let activityChart: echarts.ECharts | null = null;
 
-let visitedChartOption: EChartsOption = {
-  color: {
-    type: 'linear',
-    x: 0,
-    y: 0,
-    x2: 0,
-    y2: 1,
-    colorStops: [
-      {
-        offset: 0,
-        color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
-      },
-      {
-        offset: 1,
-        color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
-      },
-    ],
-    global: false,
-  },
-  tooltip: {
-    trigger: 'axis',
-    formatter: '{b}: {c}',
-    backgroundColor: 'rgba(50, 50, 50, 0.7)',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    textStyle: {
-      color: '#fff',
-    },
-  },
-  grid: {
-    top: '10px', // 调整顶部间距
-    left: '10px', // 调整左侧间距
-    right: '10px', // 调整右侧间距
-    bottom: '10px', // 调整底部间距
-    containLabel: true, // 确保标签显示完整
-  },
-  xAxis: {
-    type: 'category',
-    data: getLast7DaysWeekdays(),
-    axisLine: {
-      lineStyle: {
-        color: '#ccc',
-      },
-    },
-    axisLabel: {
-      fontSize: 12,
-    },
-  },
-  yAxis: {
-    type: 'value',
-    axisLine: {
-      lineStyle: {
-        color: '#ccc',
-      },
-    },
-    axisLabel: {
-      fontSize: 12,
-    },
-    splitLine: {
-      lineStyle: {
-        type: 'dashed',
-      },
-    },
-  },
-  series: [
-    {
-      name: '访问次数',
-      data: apiAccessCount.value,
-      type: 'line',
-      smooth: true,
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [
-            {
-              offset: 0,
-              color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
-            },
-            {
-              offset: 1,
-              color: 'rgba(255, 255, 255, 0)',
-            },
-          ],
-        },
-      },
-      lineStyle: {
-        width: 2,
-      },
-      symbol: 'circle',
-      symbolSize: 6,
-    },
-  ],
-  backgroundColor: 'rgba(255, 255, 255, 0.0)',
-};
-
-let incomeChartOptions: EChartsOption = {
-  color: {
-    type: 'linear',
-    x: 0,
-    y: 0,
-    x2: 0,
-    y2: 1,
-    colorStops: [
-      {
-        offset: 0,
-        color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
-      },
-      {
-        offset: 1,
-        color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
-      },
-    ],
-    global: false,
-  },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'shadow',
-    },
-    formatter: '{b}: {c} ' + appInfoStore.appCommonConfig.currency,
-    backgroundColor: 'rgba(50, 50, 50, 0.7)',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    textStyle: {
-      color: '#fff',
-    },
-  },
-  grid: {
-    top: '10px', // 调整顶部间距
-    left: '10px', // 调整左侧间距
-    right: '10px', // 调整右侧间距
-    bottom: '10px', // 调整底部间距
-    containLabel: true, // 确保标签显示完整
-  },
-  xAxis: {
-    type: 'category',
-    data: getLast7DaysWeekdays(),
-    axisLine: {
-      lineStyle: {
-        color: '#ccc',
-      },
-    },
-    axisLabel: {
-      fontSize: 12,
-    },
-    axisTick: {
-      alignWithLabel: true,
-    },
-  },
-  yAxis: {
-    type: 'value',
-    axisLine: {
-      lineStyle: {
-        color: '#ccc',
-      },
-    },
-    axisLabel: {
-      fontSize: 12,
-    },
-    splitLine: {
-      lineStyle: {
-        type: 'dashed',
-      },
-    },
-  },
-  series: [
-    {
-      name: '收入',
-      type: 'bar',
-      barWidth: '50%',
-      data: incomeCount.value,
-      itemStyle: {
-        borderRadius: [4, 4, 0, 0], // 柱状图圆角
-      },
-    },
-  ],
-  backgroundColor: 'rgba(255, 255, 255, 0.0)',
-};
-
-let userActivityOption: EChartsOption = {
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b}: {c} ({d}%)',
-    backgroundColor: 'rgba(50, 50, 50, 0.7)',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    textStyle: {
-      color: '#fff',
-    },
-  },
-  legend: {
-    orient: 'vertical',
-    left: 'left',
-    itemGap: 15,  // 增加图例项间距
-    textStyle: {
-      fontSize: 12,
-      color: '#666', // 设置图例字体颜色
-    },
-  },
-  series: [
-    {
-      type: 'pie',
-      radius: '50%',
-      data: [
-        { value: 31.3, name: '活跃' },
-        { value: 61.1, name: '非活跃' },
-        { value: 1.6, name: '其他' },
-        { value: 6.0, name: '注销或封禁' },
-      ],
-      itemStyle: {
-        borderRadius: 5, // 为每个扇区添加圆角
-      },
-      label: {
-        show: true,
-        position: 'outside', // 标签放在扇区外侧
-        formatter: '{b}: {d}%', // 显示名称和百分比
-        fontSize: 12,
-        color: '#666',
-      },
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: 'rgba(0, 0, 0, 0.5)',
-          borderWidth: 2,
-          borderColor: '#fff', // 强调时的边框颜色
-        },
-      },
-    },
-  ],
-  backgroundColor: 'rgba(255, 255, 255, 0.0)', // 保持透明背景
-};
 
 let getOperatingSystem = (): string => {
   const userAgent = navigator.userAgent;
@@ -323,18 +96,205 @@ let getOperatingSystem = (): string => {
   }
 }
 
+let clearCharts = () => {
+  if (visitedChart) {
+    echarts.dispose(visitedChart);  // 销毁第一个图表实例
+    visitedChart = null;  // 清除引用
+  }
+
+  if (incomeChart) {
+    echarts.dispose(incomeChart);  // 销毁第二个图表实例
+    incomeChart = null;  // 清除引用
+  }
+}
 
 let reloadCharts = () => {
   if (visitedChartDOM.value && incomeChartDOM.value) {
     // 初始化第一个图表
     visitedChart = echarts.init(visitedChartDOM.value, themeStore.enableDarkMode ? 'dark' : null);
-    visitedChart.setOption(visitedChartOption);
+    visitedChart.setOption({
+      color: {
+        type: 'linear',
+        x: 0,
+        y: 0,
+        x2: 0,
+        y2: 1,
+        colorStops: [
+          {
+            offset: 0,
+            color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
+          },
+          {
+            offset: 1,
+            color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
+          },
+        ],
+        global: false,
+      },
+      tooltip: {
+        trigger: 'axis',
+        formatter: '{b}: {c}',
+        backgroundColor: 'rgba(50, 50, 50, 0.7)',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        textStyle: {
+          color: '#fff',
+        },
+      },
+      grid: {
+        top: '10px', // 调整顶部间距
+        left: '10px', // 调整左侧间距
+        right: '10px', // 调整右侧间距
+        bottom: '10px', // 调整底部间距
+        containLabel: true, // 确保标签显示完整
+      },
+      xAxis: {
+        type: 'category',
+        data: getLast7DaysWeekdays(),
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+        axisLabel: {
+          fontSize: 12,
+        },
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+        axisLabel: {
+          fontSize: 12,
+        },
+        splitLine: {
+          lineStyle: {
+            type: 'dashed',
+          },
+        },
+      },
+      series: [
+        {
+          name: '访问次数',
+          data: apiAccessCount.value,
+          type: 'line',
+          smooth: true,
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
+                },
+                {
+                  offset: 1,
+                  color: 'rgba(255, 255, 255, 0)',
+                },
+              ],
+            },
+          },
+          lineStyle: {
+            width: 2,
+          },
+          symbol: 'circle',
+          symbolSize: 6,
+        },
+      ],
+      backgroundColor: 'rgba(255, 255, 255, 0.0)',
+    } as EChartsOption);
     // 初始化第二个
     incomeChart = echarts.init(incomeChartDOM.value, themeStore.enableDarkMode ? 'dark' : null);
-    incomeChart.setOption(incomeChartOptions)
-    // 初始化第三个
-    activityChart = echarts.init(userActivityDOM.value, themeStore.enableDarkMode ? 'dark' : null);
-    activityChart.setOption(userActivityOption);
+    incomeChart.setOption({
+      color: {
+        type: 'linear',
+        x: 0,
+        y: 0,
+        x2: 0,
+        y2: 1,
+        colorStops: [
+          {
+            offset: 0,
+            color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
+          },
+          {
+            offset: 1,
+            color: computed(() => themeStore.getTheme.selfOverride.common?.primaryColor).value as string,
+          },
+        ],
+        global: false,
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+        formatter: '{b}: {c} ' + appInfoStore.appCommonConfig.currency,
+        backgroundColor: 'rgba(50, 50, 50, 0.7)',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        textStyle: {
+          color: '#fff',
+        },
+      },
+      grid: {
+        top: '10px', // 调整顶部间距
+        left: '10px', // 调整左侧间距
+        right: '10px', // 调整右侧间距
+        bottom: '10px', // 调整底部间距
+        containLabel: true, // 确保标签显示完整
+      },
+      xAxis: {
+        type: 'category',
+        data: getLast7DaysWeekdays(),
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+        axisLabel: {
+          fontSize: 12,
+        },
+        axisTick: {
+          alignWithLabel: true,
+        },
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+        axisLabel: {
+          fontSize: 12,
+        },
+        splitLine: {
+          lineStyle: {
+            type: 'dashed',
+          },
+        },
+      },
+      series: [
+        {
+          name: '收入',
+          type: 'bar',
+          barWidth: '50%',
+          data: incomeCount.value,
+          itemStyle: {
+            borderRadius: [4, 4, 0, 0], // 柱状图圆角
+          },
+        },
+      ],
+      backgroundColor: 'rgba(255, 255, 255, 0.0)',
+    } as EChartsOption)
   }
 }
 

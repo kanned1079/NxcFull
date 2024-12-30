@@ -32,6 +32,32 @@ export default {
             orderMgr: '訂單管理',
             keyMgr: '密鑰管理',
             incomeText: '昨日收入 / 當月收入',
+            userCard: {
+                title: '用戶概覽',
+                allRegisteredUsers: '總註冊用戶',
+                activeUsers: '活躍用戶',
+                inactiveUsers: '非活躍用戶',
+                blockedUsers :'封禁或註銷'
+            },
+            general: {
+                title: '一般',
+                localTime: '瀏覽器時間',
+                osType: '操作系統類型',
+                appName: '應用名稱',
+                appUrl: '應用網址',
+                currency: '貨幣單位',
+                allowRegister: '允許註冊'
+            },
+            system: {
+                title: '系統配置',
+                serverTime: '',
+                gatewayStatus: '網關狀態',
+                dbStatus: '數據庫狀態',
+                redisStatus: 'Redis狀態',
+                etcdStatus: 'Etcd狀態',
+                serverOsType: '服務器操作系統類型',
+
+            }
         },
         docMgr: {
             docId: '#',
@@ -543,5 +569,14 @@ export default {
         perPage20: '20 條數據/頁',
         perPage50: '50 條數據/頁',
         perPage100: '100 條數據/頁',
+    },
+    week: {
+        monday: '週一',
+        tuesday: '週二',
+        wednesday: '週三',
+        thursday: '週四',
+        friday: '週五',
+        saturday: '週六',
+        sunday: '週日'
     }
 }

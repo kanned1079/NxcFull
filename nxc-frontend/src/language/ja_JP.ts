@@ -32,6 +32,16 @@ export default {
             orderMgr: '注文管理',
             keyMgr: 'キー管理',
             incomeText: '昨日の収入 / 当月の収入',
+            userCard: {
+                title: '用戶概覽',
+                allRegisteredUsers: '總註冊用戶',
+                activeUsers: '活躍用戶',
+                inactiveUsers: '非活躍用戶',
+                blockedUsers :'封禁或註銷'
+            },
+            general: {
+                title: '',
+            }
         },
         docMgr: {
             docId: '#',
@@ -489,5 +499,14 @@ export default {
         perPage20: '20件のデータ/ページ',
         perPage50: '50件のデータ/ページ',
         perPage100: '100件のデータ/ページ',
+    },
+    week: {
+        monday: '月曜日',
+        tuesday: '火曜日',
+        wednesday: '水曜日',
+        thursday: '木曜日',
+        friday: '金曜日',
+        saturday: '土曜日',
+        sunday: '日曜日'
     }
 }
