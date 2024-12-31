@@ -1,0 +1,99 @@
+.App {
+    margin: 50px;
+    justify-items: center;
+}
+
+.comment-part {
+    width: 70%;
+}
+
+.root {
+    color: skyblue;
+    font-size: 1.5rem;
+}
+
+.commentRoot {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
+    margin-top: 15px;
+}
+
+.l-content {
+    flex: 1;
+    align-content: center;
+}
+
+.r-content {
+    flex: 9;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: skyblue;
+    border-radius: 50%;
+}
+
+.func-part {
+    display: flex;
+    flex-direction: row;
+}
+
+.right-gap {
+    margin-right: 15px !important;
+}
+
+p {
+    margin: 0 !important;
+}
+
+.my-push-comment-root {
+    display: flex;
+    flex-direction: row;
+    margin-top: 30px;
+    height: 30px;
+}
+
+.input-text {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.submit-btn {
+    background-color: seagreen;
+    border: #fff 0;
+    color: white;
+    border-radius: 3px;
+    width: 80px;
+    transition: ease 500ms;
+}
+
+.submit-btn:hover {
+    opacity: 0.7;
+}
+
+.top-header {
+    display: flex;
+    flex-direction: row;
+}
+
+.transparent-btn {
+    background-color: rgba(0,0,0,0.0);
+    border: #fff 0;
+    margin-right: 10px;
+    opacity: 0.7;
+    transition: ease 500ms;
+}
+
+.transparent-btn:hover {
+    opacity: 0.5;
+}
+
+.delete-btn {
+    background-color: rgba(0,0,0,0.0);
+    border: #fff 0;
+    opacity: 0.7;
+    text-decoration: underline;
+}
