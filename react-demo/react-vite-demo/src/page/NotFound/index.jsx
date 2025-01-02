@@ -1,6 +1,5 @@
 import React, {useEffect} from "react"
 import ReactDOM from 'react-dom/client';
-import styles from "./index.module.less"
 import {Link, useNavigate} from "react-router-dom";
 
 function NotFound() {

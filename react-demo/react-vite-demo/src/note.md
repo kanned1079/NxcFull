@@ -418,34 +418,3 @@ const router = createBrowserRouter([
     }
 ])
 ```
-
-#### 两种路由模式
-```jsx
-import {
-    createBrowserRouter, 
-    createHashRouter
-} from "react-router-dom";
-```
-
-## useMemo 
-类似于`computed计算属性`
-```jsx
-let result1 = useMemo(() => {
-    // 返回计算后的结果
-    return getFib(count1)
-}, [count1])
-```
-
-## React.memo
-### React默认渲染机制
-子跟着父一起渲染
-### 作用
-- 允许组件在Props没有改变的情况下跳过染React组件默认的渲染机制:只要父组件重新渲染子组件就会重新染
-```jsx
-const MemoSon = memo(function Son () {
-    console.log('MemoSon渲染了')
-    return (
-        <div>MemoSon</div>
-    )
-})
-```

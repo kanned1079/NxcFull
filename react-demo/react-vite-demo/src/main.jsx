@@ -1,5 +1,4 @@
 // 項目的入口 整個項目從這裡開始運行
-import Memo from './page/Memo';
 // 運行必須要的兩個包
 import React from 'react';
 import ReactDOM from 'react-dom/client';
