@@ -1,6 +1,5 @@
 // 項目的根組件
 import "./App.css"
-import CommentItem from "./CommentItem";
 
 import React, {useEffect, useState} from "react";
 import axios from "axios";
@@ -25,11 +24,12 @@ function App() {
     return (
         <div className="App">
             {comments.map((comment) => (
-                <CommentItem
+                <div
                     key={comment.id}
-                    comment={comment.comment}
-                    id={comment.id}>
-                </CommentItem>
+                    style={{marginTop: "5px"}}
+                >
+                    <p>{comment.comment}</p>
+                </div>
             ))}
         </div>
     );
