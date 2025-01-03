@@ -73,7 +73,7 @@ const changeUser = () => {
     }
 ```
 
-### `Perops` && `TypeScripts`
+### `Perops` & `TypeScripts`
 
 ```tsx
 interface MyProps {
@@ -126,5 +126,33 @@ interface MyProps {
 ```tsx
 {/* 调用 */}
 <button onClick={() => {props.onSetUser?.('kanna', 22)}}>调用方法</button>
+```
+
+#### `useRef` & `TypeScripts`
+
+```jsx
+function App() {
+    const inputDomRef = useRef<HTMLInputElement>(null)	// 应用dom元素
+    const intervalId = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
+    useEffect(() => {
+        inputDomRef.current?.focus()
+        intervalId.current = setInterval(() => {
+            console.log('定时器')
+        }, 1000)
+
+        return () => {
+            clearInterval(intervalId.current)
+        }
+
+    }, []);
+
+    return (
+        <>
+            <h2>This is app.</h2>
+            <input type="text" ref={inputDomRef} />
+            <button onClick={() => clearInterval(intervalId.current)}>stop interval</button>
+        </>
+    )
+}
 ```
 
