@@ -14,7 +14,8 @@
 
 #### `react-redux`
 用来链接`Redux`和`React组件`的中间件
-![react-redux.png](./img/react-redux.png)
+![react-redux.png](
+./img/react-redux.png)
 
 ### 搭建环境
 #### 创建React项目
@@ -418,3 +419,218 @@ const router = createBrowserRouter([
     }
 ])
 ```
+
+### React.memo的props比较机制
+
+- **机制：** 在使用`props`缓存组件之后 React会对每一个prop只用`Object.is`比较老值和新值 返回true表示没有变化
+
+1. prop 是简单类型
+
+```jsx
+Object.is(3, 3) => true
+```
+
+1. prop是引用类型( `{}` / `[]` ) 因为父组件在重新渲染的时候 实际上形成的是一个新的数组引用
+
+```jsx
+Object.is([], []) = > false
+```
+
+- 那么怎么保持引用稳定 使用`useMemo`
+
+```jsx
+const myLists2 = useMemo(() => {
+        return [1, 2, 3]
+    }, [])
+```
+
+### `useCallback`
+
+- **作用：** 在组件多次重新渲染的时候缓存函数
+
+```jsx
+import {memo, useCallback, useState} from "react"
+
+const MyInput = memo(function MyInput (props) {
+    console.log('子组件渲染了')
+    return <input type="text" onChange={(e) => props.onChange(e.target.value)} />
+})
+
+const App = () => {
+    const [count, setCount] = useState(0)
+    const handleChange = useCallback((value) => console.log(value), [])
+    return (
+        <div>
+            <MyInput onChange={handleChange} />
+            <button onClick={() => setCount(count + 1)}>{count}</button>
+        </div>
+    )
+}
+
+export default App
+```
+
+### `forwardRef`
+
+- **作用：** 在父组件取子组件中的dom元素
+
+```
+const MyInput2 = forwardRef((props, ref) => {
+    return <input type="text" ref={ref}/>
+})
+
+const App = () => {
+    const inputRef = useRef(null)
+    const showRef = () => {
+        console.log(inputRef)
+        inputRef.current.focus()
+    }
+    return (
+        <>
+            <MyInput2 ref={inputRef}/>
+            <button onClick={showRef}>focus</button>
+        </>
+    )
+}
+```
+
+### `useInperativeHandle`
+
+- **作用：** 通过ref暴露自组件中的方法
+
+```jsx
+const MyInput2 = forwardRef((props, ref) => {
+    const inputRef = useRef(null)
+    const handleFocus = () => { // 注意focus是在子组件中的
+        inputRef.current.focus()
+    }
+    // 暴露函数给父组件调用
+    useImperativeHandle(ref, () => {
+        return {
+            handleFocus,
+        }
+    })
+    return <input type="text" ref={inputRef}/>
+})
+
+```
+
+
+
+### 类组件编写React
+
+```jsx
+class Counter extends Component {
+    // 状态
+    state = {
+        count: 0,
+    }
+    // 事件回调修改状态
+    setCount = () => {
+        this.setState({
+            count: this.state.count + 1,
+        })
+    }
+    // 模版
+    render() {
+        return (
+            <button onClick={this.setCount}>{this.state.count}</button>
+        )
+    }
+}
+```
+
+### 类组件的声明周期函数
+
+- **概念：** 组件从创建到销毁的 **各个阶段自动执行的函数** 就是生命周期函数
+
+![lifecycle.png](./img/lifecycle.png)
+
+1. `componentDidMount` 组件挂载完毕自动执行 *异步获取数据*
+2. `componentWillUnmount` 组件卸载时自动执行 *清理副作用* 
+
+```jsx
+componentDidMount() {
+        console.log('组件挂载')
+         this.intervalId = setInterval(() => {
+            console.log('定时器输出')
+        }, 200)
+    }
+    componentWillUnmount() {
+        console.log('组件卸载')
+        clearInterval(this.intervalId)
+    }
+```
+
+#### 传递数据
+
+```jsx
+<button onClick={() => this.props.onGetMsg(666)}>传递数据到父组件</button>
+```
+
+
+
+### ZUSTAND 状态管理
+
+- 同步和异步
+
+```jsx
+const useStore = create((set) => {
+    return {
+        // 状态数据
+        count: 0,
+        channelList: [],
+        // 修改数据的方法
+        inc: () => {	// 同步修改
+            set((state) => ({count: state.count + 1}))  // 基于原数据进行修改
+        },
+        incd: () => {	// 同步修改
+            set({count: 100})   // 不需要原数据
+        },
+        handleFetchChannels: async () => {	// 异步修改
+            let {data} = await axios.get('https://geek.itheima.net/v1_0/channels')
+            console.log(data)
+            if (data.message === 'OK')
+                set({channelList: data.data.channels})	// 异步请求后调用set即可
+        }
+    }
+})
+```
+
+#### 拆分多个
+
+```jsx
+// 拆分
+const createCounterStore = (set) => {
+    return {
+        count: 0,
+        inc: () => {
+            set((state) => ({count: state.count + 1}))  // 基于原数据进行修改
+        },
+        incd: () => {
+            set({count: 100})   // 不需要原数据
+        },
+    }
+}
+
+const createChannelStore = (set) => {
+    return {
+        channelList: [],
+        handleFetchChannels: async () => {
+            let {data} = await axios.get('https://geek.itheima.net/v1_0/channels')
+            console.log(data)
+            if (data.message === 'OK')
+                set({channelList: data.data.channels})
+        }
+    }
+}
+
+// 组合创建store
+const useStore = create((...a) => {
+    return {
+        ...createCounterStore(...a),
+        ...createChannelStore(...a),
+    }
+})
+```
+
