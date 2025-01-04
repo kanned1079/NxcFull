@@ -1,31 +1,45 @@
 import {StateCreator} from "zustand";
-import type {ConfigProviderProps, ButtonProps, ThemeConfig} from "antd";
+import {ConfigProviderProps, ButtonProps, ThemeConfig, theme} from "antd";
+
 
 interface ThemeState {
-    theme: 'light' | 'dark';
-    toggleTheme: () => void;
-    glacierBlue?: ConfigProviderProps
+    isMenuFolded: boolean;  // 桌面模式下左侧菜单是否折叠
+    setIsMenuFolded: (fold: boolean) => void    // 控制折叠的方法
+    isShowMobileMenu: boolean;  // 手机模式下是否显示左侧菜单
+    setIsShowMobileMenu: (fold: boolean) => void
+    // darkModeEnabled: boolean;
+    // theme: 'light' | 'dark';
+    // toggleTheme?: () => void;
+    glacierBlue?: ConfigProviderProps;
 }
 
 const useThemeSlice: StateCreator<ThemeState, [], [], ThemeState> = (set) => ({
-    theme: 'light',
+    isMenuFolded: false,
+    setIsMenuFolded: (fold: boolean) => set(() => ({isMenuFolded: fold as boolean})),
+    isShowMobileMenu: false,
+    setIsShowMobileMenu: (fold: boolean) => set(() => ({isShowMobileMenu: fold as boolean})),
+    // darkModeEnabled: true,
+    // theme: 'light',
     glacierBlue: {  // 主题配置 冰川蓝
         theme: {
+            // 根据darkModeEnabled来选择
+            // 浅色 theme.defaultAlgorithm
+            // 深色 theme.darkAlgorithm
+            algorithm: theme.defaultAlgorithm,
             token: {
-              colorPrimary: ''
+              colorPrimary: '#6390b9'
             },
             components: {
                 Button: {
-                },
+                    primary: '#00b96b',
+                } as ButtonProps,
                 Drawer: {
 
                 }
             },
-        }
+        } as ThemeConfig,
     },
-    toggleTheme: () => set((state: ThemeState) => ({
-        theme: state.theme = 'dark'
-    }))
+
 })
 
 export {

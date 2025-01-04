@@ -293,14 +293,15 @@ let updateDocumentShow = async (row: DocumentItem) => {
 let getAllDocumentList = async () => {
   try {
     // animated.value = false
+
     let {data} = await instance.get('/api/admin/v1/document', {
       params: {
         page: dataSize.value.page,
         size: dataSize.value.pageSize,
       }
     })
+    console.log(data)
     if (data.code === 200) {
-      console.log(data.documents)
       documentItemList.value = []
       data.documents.forEach((doc: DocumentItem) => documentItemList.value.push(doc))
       pageCount.value = data.page_count as number
