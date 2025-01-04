@@ -1,6 +1,5 @@
 import {useRef, useEffect} from "react";
 
-
 function App() {
     const inputDomRef = useRef<HTMLInputElement>(null)
     const intervalId = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
@@ -24,7 +23,5 @@ function App() {
         </>
     )
 }
-
-
 
 export default App
