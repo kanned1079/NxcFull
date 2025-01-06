@@ -36,16 +36,14 @@ export interface AppCommonConfig {
 }
 
 const useAppInfosStore = defineStore('appInfosStore', () => {
-    const themeStore = useThemeStore();
-
-    const registerPageConfig = reactive<RegisterPageConfig>({
-        app_name: 'Nxc Cloud International',
+    const registerPageConfig = ref<RegisterPageConfig>({
+        app_name: 'Nxc Cloud International1',
         app_sub_name: '全球站点',
         app_description: '全球站点',
         app_url: 'http://localhost:5173',
-        email_whitelist_suffix: false,
-        is_email_verify: true,
+        email_whitelist_suffix: true,
         email_gmail_limit_enable: false,
+        is_email_verify: false,
         is_invite_force: true,
         is_recaptcha: false,
         logo: 'logo.svg',
@@ -79,17 +77,18 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
             })
             if (data.code == 200) {
                 console.log(data)
-                appCommonConfig.value.app_name = data.config.app_name
-                appCommonConfig.value.app_sub_name = data.config.app_sub_name
-                appCommonConfig.value.app_description = data.config.app_description
-                appCommonConfig.value.app_url = data.config.app_url
-                appCommonConfig.value.logo = data.config.logo_url
-
-                appCommonConfig.value.frontend_theme = data.config.frontend_theme
-                appCommonConfig.value.frontend_background_url = data.config.frontend_background_url
-                appCommonConfig.value.currency = data.config.currency
-                appCommonConfig.value.currency_symbol = data.config.currency_symbol
-                appCommonConfig.value.stop_register = data.config.stop_register
+                Object.assign(appCommonConfig.value, data.config)
+                // appCommonConfig.value.app_name = data.config.app_name
+                // appCommonConfig.value.app_sub_name = data.config.app_sub_name
+                // appCommonConfig.value.app_description = data.config.app_description
+                // appCommonConfig.value.app_url = data.config.app_url
+                // appCommonConfig.value.logo = data.config.logo_url
+                //
+                // appCommonConfig.value.frontend_theme = data.config.frontend_theme
+                // appCommonConfig.value.frontend_background_url = data.config.frontend_background_url
+                // appCommonConfig.value.currency = data.config.currency
+                // appCommonConfig.value.currency_symbol = data.config.currency_symbol
+                // appCommonConfig.value.stop_register = data.config.stop_register
 
             }
         } catch (err: any) {
@@ -98,9 +97,9 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
     }
 
     const getRegisterPageConfig = async () => {
-
-
+        console.log('獲取註冊頁面配置')
     }
+
     return {
         registerPageConfig,
         appCommonConfig,
@@ -109,7 +108,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         getRegisterPageConfig
     };
 }, {
-    persist: true,
+    persist: false,
 });
 
 export default useAppInfosStore;

@@ -27,7 +27,7 @@ onMounted(() => {
   // 监听深色模式的变化
   console.log(isDark.value)
   themeStore.enableDarkMode = isDark.value
-
+  console.info('App', appInfosStore.registerPageConfig)
 });
 
 watch(isDark, (val: boolean) => {

@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
@@ -98,13 +99,98 @@ import (
 //	}, nil
 //}
 
+//func (s *UserService) Register(ctx context.Context, req *pb.UserRegisterRequest) (*pb.UserRegisterResponse, error) {
+//	// 获取邀请用户的邀请码
+//	var inviteCode = req.InviteUserId // 这是另一个用户的邀请码
+//
+//	// 根据邀请码查询对应的用户 ID
+//	var inviteUserId int64
+//	err := dao.Db.Model(model.User{}). // 指定查询的表
+//						Where("invite_code = ?", inviteCode). // 条件：邀请码匹配
+//						Select("id").                         // 选择需要的字段
+//						Scan(&inviteUserId).Error             // 执行查询并绑定结果到 inviteUserId
+//
+//	if err != nil || inviteUserId == 0 {
+//		// 如果查询失败或者没有找到记录，将 inviteUserId 设置为空字符串
+//		inviteUserId = 0
+//	}
+//
+//	// 初始化用户信息模型
+//	var newUserInfo model.User = model.User{
+//		Email:        req.Email,                           // 设置用户的邮箱
+//		InviteUserID: strconv.FormatInt(inviteUserId, 10), // 如果 inviteUserId 为 0，则转换为空字符串
+//		Status:       true,
+//	}
+//
+//	// 初始化认证信息模型
+//	var newUserAuth model.Auth = model.Auth{
+//		Email:    req.Email,    // 设置认证邮箱
+//		Password: req.Password, // 设置认证密码
+//	}
+//
+//	// 开启事务，确保用户注册和认证数据的一致性
+//	err = dao.Db.Transaction(func(tx *gorm.DB) error {
+//		// 插入用户信息到数据库
+//		if result := tx.Create(&newUserInfo); result.Error != nil {
+//			return result.Error // 如果插入失败，则回滚事务
+//		}
+//
+//		// 插入认证信息到数据库
+//		if result := tx.Create(&newUserAuth); result.Error != nil {
+//			return result.Error // 如果插入失败，则回滚事务
+//		}
+//
+//		// 如果所有插入操作成功，则提交事务
+//		return nil
+//	})
+//
+//	// 检查事务执行结果
+//	if err != nil {
+//		// 如果事务失败，返回错误信息
+//		return &pb.UserRegisterResponse{
+//			Code:         http.StatusInternalServerError, // HTTP 状态码：500
+//			Msg:          "注册失败，事务回滚",                    // 错误提示信息
+//			IsRegistered: false,                          // 标记注册状态为失败
+//		}, nil
+//	}
+//
+//	// 如果事务成功，返回成功响应
+//	return &pb.UserRegisterResponse{
+//		Code:         http.StatusOK, // HTTP 状态码：200
+//		Msg:          "注册成功",        // 成功提示信息
+//		IsRegistered: true,          // 标记注册状态为成功
+//	}, nil
+//}
+
 func (s *UserService) Register(ctx context.Context, req *pb.UserRegisterRequest) (*pb.UserRegisterResponse, error) {
+	// 检查邮箱是否已被注册
+	var existingUser model.User
+	err := dao.Db.Model(model.User{}).
+		Where("email = ?", req.Email).
+		First(&existingUser).Error
+
+	// 如果查询到已有用户，返回 409 错误
+	if err == nil {
+		return &pb.UserRegisterResponse{
+			Code:         http.StatusConflict, // HTTP 状态码：409
+			Msg:          "邮箱已被注册",            // 错误提示信息
+			IsRegistered: false,               // 标记注册状态为失败
+		}, nil
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		// 如果查询出错，返回 500 错误
+		return &pb.UserRegisterResponse{
+			Code:         http.StatusInternalServerError, // HTTP 状态码：500
+			Msg:          "检查邮箱失败",                       // 错误提示信息
+			IsRegistered: false,                          // 标记注册状态为失败
+		}, nil
+	}
+
 	// 获取邀请用户的邀请码
 	var inviteCode = req.InviteUserId // 这是另一个用户的邀请码
 
 	// 根据邀请码查询对应的用户 ID
 	var inviteUserId int64
-	err := dao.Db.Model(model.User{}). // 指定查询的表
+	err = dao.Db.Model(model.User{}). // 指定查询的表
 						Where("invite_code = ?", inviteCode). // 条件：邀请码匹配
 						Select("id").                         // 选择需要的字段
 						Scan(&inviteUserId).Error             // 执行查询并绑定结果到 inviteUserId

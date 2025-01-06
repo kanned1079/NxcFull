@@ -509,3 +509,7 @@ func HandleGetWelcomeConfig(context *gin.Context) {
 		"config": config,
 	})
 }
+
+//func GetRegisterEnvRuntime(context *gin.Context) {
+//
+//}

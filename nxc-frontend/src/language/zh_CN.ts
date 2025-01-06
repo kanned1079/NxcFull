@@ -159,6 +159,7 @@ export default {
         reg: '立即註冊',
         otherMethods: '或使用其他方式繼續',
         github: '以Github帳戶繼續',
+        microsoft: '以Microsoft帳戶繼續',
         apple: '以Apple帳戶繼續',
         google: '以Google帳戶繼續',
         backHomePage: '回到首頁',

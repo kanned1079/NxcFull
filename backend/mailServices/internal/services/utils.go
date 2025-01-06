@@ -10,6 +10,7 @@ import (
 	"mailServices/internal/model"
 	"mailServices/internal/smtp"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -32,6 +33,11 @@ const CodeLength = 6
 //
 //	return rendered.String(), nil
 //}
+
+type SendMailConfigCache struct {
+	Config     *sync.Map
+	LastUpdate *time.Time
+}
 
 // GetConfigFromDB 从数据库获取所有相关的邮件配置项
 func GetConfigFromDB() (model.SMTPConfig, error) {

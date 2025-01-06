@@ -119,7 +119,6 @@ func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request 
 }
 
 func (s *SettingServices) GetRegisterEnvConfig(ctx context.Context, request *pb.GetRegisterEnvConfigRequest) (*pb.GetRegisterEnvConfigResponse, error) {
-
 	//  string app_name = 3;
 	//  string app_sub_name = 4;
 	//  string app_description = 5;

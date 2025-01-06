@@ -1,5 +1,5 @@
 import {StateCreator} from "zustand";
-import {ConfigProviderProps, ButtonProps, ThemeConfig, theme} from "antd";
+import {ButtonProps, ConfigProviderProps, type MappingAlgorithm, theme, ThemeConfig} from "antd";
 
 
 interface ThemeState {
@@ -11,6 +11,7 @@ interface ThemeState {
     // theme: 'light' | 'dark';
     // toggleTheme?: () => void;
     glacierBlue?: ConfigProviderProps;
+    setTheme: (algorithm: MappingAlgorithm) => void
 }
 
 const useThemeSlice: StateCreator<ThemeState, [], [], ThemeState> = (set) => ({
@@ -27,18 +28,24 @@ const useThemeSlice: StateCreator<ThemeState, [], [], ThemeState> = (set) => ({
             // 深色 theme.darkAlgorithm
             algorithm: theme.defaultAlgorithm,
             token: {
-              colorPrimary: '#6390b9'
+                colorPrimary: '#6390b9'
             },
             components: {
                 Button: {
                     primary: '#00b96b',
                 } as ButtonProps,
-                Drawer: {
-
-                }
+                Drawer: {}
             },
         } as ThemeConfig,
     },
+    setTheme: (newAlgorithm: MappingAlgorithm) => set(state => ({
+        glacierBlue: {
+            ...state.glacierBlue,
+            theme: {
+                algorithm: newAlgorithm
+            }
+        }
+    }))
 
 })
 
