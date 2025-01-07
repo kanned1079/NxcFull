@@ -89,7 +89,6 @@ let handleEnter = (link: string) => {
   console.log(link)
   switch (link) {
     case 'about-us': {
-
       break
     }
     case 'pricing': {
@@ -134,7 +133,7 @@ export default {
   <div class="root">
     <div class="left-content">
       <span>
-          <img :src="appInfoStore.appCommonConfig.logo" alt="SVG Image">
+          <img :src="appInfoStore.appCommonConfig.logo" alt="icon">
       </span>
       <p class="name">{{ appInfoStore.appCommonConfig.app_name }}</p>
       <n-button v-if="!collapse" size="large" style="margin-right: 40px" color="#277aa8" text >

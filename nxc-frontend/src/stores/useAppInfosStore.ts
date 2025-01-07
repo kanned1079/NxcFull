@@ -43,7 +43,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         app_url: 'http://localhost:5173',
         email_whitelist_suffix: true,
         email_gmail_limit_enable: true,
-        is_email_verify: false,
+        is_email_verify: true,
         is_invite_force: true,
         is_recaptcha: false,
         logo: 'logo.svg',

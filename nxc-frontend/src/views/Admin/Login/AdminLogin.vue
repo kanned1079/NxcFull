@@ -1,23 +1,26 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref, h} from 'vue'
 import {useRouter} from 'vue-router'
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
-import {type FormInst, type FormRules, type InputProps, NButton, NIcon,  type NotificationType} from 'naive-ui'
-import {useMessage, useNotification} from 'naive-ui'
+import {
+  type FormInst,
+  type FormRules,
+  NButton,
+  NIcon,
+  type NotificationType,
+  useMessage,
+  useNotification
+} from 'naive-ui'
 import {encodeToBase64} from '@/utils/encryptor'
 import instance from "@/axios";
-import {ChevronBackOutline as BackIcon} from "@vicons/ionicons5"
 import {
+  ChevronBackOutline as BackIcon,
   ChevronBackOutline as backIcon,
-  LogInOutline as loginIcon,
-  LogoGithub as githubIcon,
-  LogoMicrosoft as microsoftIcon,
-  ReloadOutline as reloadIcon,
-  Home as homeIcon,
-} from '@vicons/ionicons5'
+  LogInOutline as loginIcon
+} from "@vicons/ionicons5"
 
 const {t} = useI18n()
 const notification = useNotification()
@@ -188,6 +191,7 @@ let backgroundStyle = computed(() => {
 let showStartupNotification = () => {
   notification.create({
     title: '提示',
+    duration: 60000,
     description: '此页面是管理员页面，只有管理员才能访问，如果您没有管理员权限或意外来到此处，请点击下面的链接返回主页。',
     content: () => {
       return h('div', [
@@ -196,7 +200,7 @@ let showStartupNotification = () => {
             {
               text: true,
               type: 'primary',
-              style: { textDecoration: 'underline' },
+              style: {textDecoration: 'underline'},
               onClick: () => {
                 // 路由跳转
                 window.location.replace('/'); // 使用 window.location.replace() 进行页面跳转
@@ -253,34 +257,38 @@ export default {
                 class="layer-up"
                 :embedded="true"
                 :bordered="false"
-                content-style="padding: 30px 35px 45px 35px; text-align: center;"
+                content-style="padding: 30px 35px 40px 35px; text-align: center;"
             >
               <div style="display: flex; justify-content: flex-start; margin-bottom: 30px;">
                 <n-button
-                  type="primary"
-                  icon-placement="left"
-                  text
-                  @click="router.push({path: '/'})"
+                    type="primary"
+                    icon-placement="left"
+                    text
+                    @click="router.push({path: '/'})"
                 >
                   返回首页
                   <template #icon>
-                    <n-icon><BackIcon /></n-icon>
+                    <n-icon>
+                      <BackIcon/>
+                    </n-icon>
                   </template>
                 </n-button>
               </div>
               <p class="title">{{ appInfoStore.appCommonConfig.app_name }}</p>
               <p class="sub-title">登陆到管理中心</p>
-              <div class="inp">
+              <div class="inp" style="margin-top: 40px">
                 <n-form
                     ref="userFormInstance"
                     :model="userFormData"
                     :rules="rules"
                     size="large"
                     style="width: 100%"
-                    :show-label="false"
+                    :show-label="true"
                     :show-feedback="false"
+                    label-placement="top"
+                    label-align="left"
                 >
-                  <n-form-item path="username">
+                  <n-form-item path="username" label="管理员邮箱地址">
                     <n-input
                         v-model:value="userFormData.username"
                         type="text"
@@ -289,7 +297,7 @@ export default {
                         :bordered="true"
                     />
                   </n-form-item>
-                  <n-form-item path="password" style="margin-top: 20px">
+                  <n-form-item path="password" style="margin-top: 20px" label="密码">
                     <n-input
                         v-model:value="userFormData.password"
                         type="password"
@@ -297,10 +305,6 @@ export default {
                         :bordered="true"
                     />
                   </n-form-item>
-<!--                  <n-divider style="margin: 10px 0 10px 0 !important;">-->
-<!--                    <p style="opacity: 0.2">·</p>-->
-<!--                  </n-divider>-->
-
                   <n-form-item>
                     <n-button
                         secondary
@@ -312,54 +316,74 @@ export default {
                     >
                       登入
                       <template #icon>
-                        <n-icon><loginIcon/></n-icon>
+                        <n-icon>
+                          <loginIcon/>
+                        </n-icon>
                       </template>
                     </n-button>
                   </n-form-item>
                 </n-form>
 
+                <div style="text-align: right; margin-top: 40px">
+                  <n-button
+                    text
+                    type="primary"
+                    >忘记密码 ></n-button>
+                </div>
 
+<!--                <n-divider style="margin: 30px 0 30px 0 !important;">-->
+<!--                  <p style="opacity: 0.2">·</p>-->
+<!--                </n-divider>-->
 
-<!--                <p style="opacity: 0.9">{{ appInfoStore.appCommonConfig.app_description }}</p>-->
+<!--                <div style="text-align: center">-->
 
-<!--                <div>-->
-<!--                  <n-h3>提示</n-h3>-->
-<!--                  <p style="font-size: 1rem">此页面是管理员页面，只有管理员才能访问。如果您没有管理员权限或意外来到此处，请点击-->
-<!--                    <n-button-->
-<!--                        text-->
-<!--                        type="primary"-->
-<!--                        style="text-decoration: underline"-->
-<!--                        @click="router.replace('/')"-->
-<!--                    >-->
-<!--                      这里-->
-<!--                    </n-button>-->
-<!--                    返回主页。-->
-<!--                  </p>-->
+<!--                  <span style="width: 40px">-->
+<!--                    <img style="width: 40px" :src="appInfoStore.appCommonConfig.logo" alt="SVG Image">-->
+<!--                  </span>-->
+<!--                  <h4 style="text-align: center">{{ appInfoStore.appCommonConfig.app_sub_name }}</h4>-->
 <!--                </div>-->
 
+
+                <!--                <p style="opacity: 0.9">{{ appInfoStore.appCommonConfig.app_description }}</p>-->
+
+                <!--                <div>-->
+                <!--                  <n-h3>提示</n-h3>-->
+                <!--                  <p style="font-size: 1rem">此页面是管理员页面，只有管理员才能访问。如果您没有管理员权限或意外来到此处，请点击-->
+                <!--                    <n-button-->
+                <!--                        text-->
+                <!--                        type="primary"-->
+                <!--                        style="text-decoration: underline"-->
+                <!--                        @click="router.replace('/')"-->
+                <!--                    >-->
+                <!--                      这里-->
+                <!--                    </n-button>-->
+                <!--                    返回主页。-->
+                <!--                  </p>-->
+                <!--                </div>-->
+
               </div>
 
             </n-card>
-            <n-card
-                class="layer-down"
-                :bordered="false"
-                :embedded="true"
-                content-style="padding: 0"
-            >
-              <div class="layer-down-inner">
-                <n-button
-                    tertiary
-                    type="default"
-                    class="reset-pwd-btn"
-                    @click="handleForgetPassword"
-                >
-                  忘记密码
-<!--                  <template #icon>-->
-<!--                    <n-icon size="14"><reloadIcon /></n-icon>-->
-<!--                  </template>-->
-                </n-button>
-              </div>
-            </n-card>
+<!--            <n-card-->
+<!--                class="layer-down"-->
+<!--                :bordered="false"-->
+<!--                :embedded="true"-->
+<!--                content-style="padding: 0"-->
+<!--            >-->
+<!--              <div class="layer-down-inner">-->
+<!--                <n-button-->
+<!--                    tertiary-->
+<!--                    type="default"-->
+<!--                    class="reset-pwd-btn"-->
+<!--                    @click="handleForgetPassword"-->
+<!--                >-->
+<!--                  忘记密码-->
+<!--                  &lt;!&ndash;                  <template #icon>&ndash;&gt;-->
+<!--                  &lt;!&ndash;                    <n-icon size="14"><reloadIcon /></n-icon>&ndash;&gt;-->
+<!--                  &lt;!&ndash;                  </template>&ndash;&gt;-->
+<!--                </n-button>-->
+<!--              </div>-->
+<!--            </n-card>-->
           </div>
         </transition>
       </n-flex>
@@ -403,7 +427,7 @@ export default {
   width: 480px;
   border: 0;
   backdrop-filter: blur(4px);
-  border-radius: 3px 3px 0 0;
+  //border-radius: 3px 3px 0 0;
 
   .title {
     font-size: 2rem;

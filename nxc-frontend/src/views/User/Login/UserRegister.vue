@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onMounted, ref} from "vue";
+import {computed, h, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
 import type {FormInst, FormItemRule, FormRules} from 'naive-ui'
 import {useMessage, useNotification} from "naive-ui";
-import {ChevronBackOutline as backIcon, InformationCircle as infoIcon} from "@vicons/ionicons5";
+import {ChevronBackOutline as backIcon, LogInOutline as loginIcon} from "@vicons/ionicons5";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {handleFinalRegister, handleSendVerifyCode, handleVerifyCode} from "@/api/user/register";
 
@@ -261,7 +261,7 @@ let showFailReasons = () => {
       // 使用 div 来渲染多个错误信息
       return h('div', [
         _failReasons.map((reason: string, index: number) => {
-          return h('p', { key: index }, `${index + 1}: ${reason}`); // 渲染每个错误信息
+          return h('p', {key: index}, `${index + 1} ${reason}`); // 渲染每个错误信息
         }),
       ]);
     },
@@ -396,6 +396,7 @@ export default {
               :show-label="false"
               :show-feedback="false"
               size="large"
+              autofocus
           >
             <!-- 邮箱输入框 -->
             <n-form-item path="user.email" class="btn-bottom-gap">
@@ -433,10 +434,9 @@ export default {
             </n-form-item>
 
 
-
-<!--            <n-form-item>-->
-<!--              <n-input/>-->
-<!--            </n-form-item>-->
+            <!--            <n-form-item>-->
+            <!--              <n-input/>-->
+            <!--            </n-form-item>-->
 
 
             <!-- 密码输入框 -->
@@ -454,7 +454,7 @@ export default {
                       text
                       style="text-decoration: underline"
                   >
-                     複雜度要求
+                    複雜度要求
                   </n-button>
                 </n-tag>
               </template>
@@ -465,7 +465,6 @@ export default {
                 path="user.password"
                 class="btn-bottom-gap"
             >
-
               <n-input
                   type="password"
                   showPasswordOn="click"
@@ -521,6 +520,11 @@ export default {
               </n-button>
             </n-form-item>
 
+            <div style="display: flex; flex-direction: row; justify-content: center">
+              <n-divider style="width: 98%; margin: 0 !important;">
+                <p style="opacity: 0.2">{{ appInfosStore.appCommonConfig.app_sub_name }}</p>
+              </n-divider>
+            </div>
             <!-- 注册按钮 -->
             <n-form-item>
               <n-button
@@ -532,9 +536,15 @@ export default {
                   :disabled="!regBtnEnabled"
               >
                 {{ t('userRegister.reg') }}
+                <template #icon>
+                  <n-icon>
+                    <loginIcon/>
+                  </n-icon>
+                </template>
               </n-button>
             </n-form-item>
           </n-form>
+
         </n-card>
       </transition>
     </div>
@@ -713,7 +723,7 @@ export default {
     }
 
     .login-btn {
-      margin-top: 50px;
+      margin-top: 30px;
       width: 100%;
       height: 45px;
       color: white;
