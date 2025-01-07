@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import {useI18n} from "vue-i18n";
+import {computed, onMounted, ref} from "vue";
+import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
-import { useMessage } from "naive-ui";
-import type { FormInst, FormItemInst, FormItemRule, FormRules } from 'naive-ui'
-import { ChevronBackOutline as backIcon } from "@vicons/ionicons5";
+import type {FormInst, FormItemRule, FormRules} from 'naive-ui'
+import {useMessage, useNotification} from "naive-ui";
+import {ChevronBackOutline as backIcon, InformationCircle as infoIcon} from "@vicons/ionicons5";
 import useAppInfosStore from "@/stores/useAppInfosStore";
-import { handleSendVerifyCode, handleVerifyCode, handleFinalRegister } from "@/api/user/register";
+import {handleFinalRegister, handleSendVerifyCode, handleVerifyCode} from "@/api/user/register";
 
-const { t } = useI18n();
+const {t} = useI18n();
 const appInfosStore = useAppInfosStore();
 const themeStore = useThemeStore();
 const message = useMessage();
+const notification = useNotification();
 const router = useRouter();
 
-const formRef = ref<FormInst | null>(null);
+const registerFormRef = ref<FormInst | null>(null);
 
 let verifyCodePassed = ref<boolean>(false);
 let animated = ref<{ leftAnimated: boolean; rightAnimated: boolean }>({
@@ -24,20 +25,20 @@ let animated = ref<{ leftAnimated: boolean; rightAnimated: boolean }>({
 });
 let bgColor = computed(() =>
     themeStore.enableDarkMode
-        ? { backgroundColor: "rgba(40, 41, 41, 1)" }
-        : { backgroundColor: "#fff" }
+        ? {backgroundColor: "rgba(40, 41, 41, 1)"}
+        : {backgroundColor: "#fff"}
 );
 let coverBgColor = computed(() =>
     themeStore.enableDarkMode
-        ? { backgroundColor: "rgba(40, 40, 40, 0.2)" }
-        : { backgroundColor: "rgba(255, 255, 255, 0.0)" }
+        ? {backgroundColor: "rgba(40, 40, 40, 0.2)"}
+        : {backgroundColor: "rgba(255, 255, 255, 0.0)"}
 );
 let placeholderBgColor = computed(() =>
     themeStore.enableDarkMode
         ? {}
-        : { backgroundColor: "#f2fafd", height: "45px" }
+        : {backgroundColor: "#f2fafd",}
 );
-let textLeftColor = computed(() => (themeStore.enableDarkMode ? { color: "#fff" } : {}));
+let textLeftColor = computed(() => (themeStore.enableDarkMode ? {color: "#fff"} : {}));
 
 let agreementChecked = ref<boolean>(false); // 同意按钮是否被选中
 let enableRegister = ref<boolean>(true); // 由检查逻辑控制
@@ -56,73 +57,143 @@ let formValue = ref({
   },
 });
 
+let failReasons = ref<string[]>([]);
+
+// 邮箱格式验证
+let validateEmail = (email: string): boolean => {
+  const emailRegex = /^[0-9a-zA-Z_.-]+@[0-9a-zA-Z_.-]+(\.[a-zA-Z]+){1,2}$/;
+
+  // 检查邮箱格式是否符合正则
+  if (!emailRegex.test(email)) {
+    failReasons.value.push("邮箱格式不正确");
+    return false;
+  }
+
+  const [localPart, domain] = email.split("@");
+  const isGmail = domain.toLowerCase() === "gmail.com";
+  const isGooglemail = domain.toLowerCase() === "googlemail.com";
+
+  // 如果是 Gmail 或 Googlemail，且开启了 Gmail 限制
+  if ((isGmail || isGooglemail) && appInfosStore.registerPageConfig.email_gmail_limit_enable) {
+
+    // 不允许使用 Gmail 的多别名功能（含 "+"）
+    if (localPart.includes("+")) {
+      failReasons.value.push('不允许使用 Gmail 多别名功能');
+      return false;
+    }
+    // 如果本地部分包含 .，但去掉 . 后本地部分与原本不一致
+    const normalizedLocalPart = localPart.replace(/\./g, "");
+    if (normalizedLocalPart !== localPart) {
+      failReasons.value.push('Gmail 地址不允许包含 "."');
+      return false;
+    }
+    // 本地部分必须是小写
+    if (localPart !== localPart.toLowerCase()) {
+      failReasons.value.push('Gmail 地址的本地部分必须全部小写');
+      return false;
+    }
+    // 如果是 googlemail.com，则直接不允许
+    if (isGooglemail) {
+      failReasons.value.push('不支持使用 Googlemail 地址');
+      return false;
+    }
+  }
+
+  // 如果所有检查都通过，返回 true
+  return true;
+};
+
 // 表单验证规则
 let rules: FormRules = {
   user: {
     email: {
       required: true,
-      message: "邮箱不能为空",
-      type: "email",
-      trigger: "blur",
-      validator: async (rule: FormItemRule, value: string) => {
-        if (!value) {
-          return new Error("请输入邮箱");
-        }
-
-        // 调用 validateEmail 函数进行验证
-        const isValid = validateEmail(value);
-        if (!isValid) {
-          return new Error("邮箱格式不正确");
-        }
-
-        return true; // 验证通过
-      },
+      trigger: 'blur',
+      validator: () => validateEmail(formValue.value.user.email) ? true : new Error('Form failed due to invalid email address')
     },
     verify_code: {
       required: appInfosStore.registerPageConfig.is_email_verify,
-      message: "验证码不能为空",
-      trigger: "blur",
-      validator: async (rule: FormItemRule, value: string) => {
+      message: "Verification code cannot be empty",
+      trigger: ['blur', 'input'],
+      validator: (rule: FormItemRule, value: string) => {
         if (!appInfosStore.registerPageConfig.is_email_verify) {
-          return true; // 不需要验证码时直接通过
+          return true; // Skip verification if not needed
         }
         if (!value) {
-          return new Error("请输入验证码");
+          failReasons.value.push('請輸入驗證碼'); // 繁體中文
+          return new Error('Verification code is required');
         }
         const codeRegex = /^\d{6}$/;
         if (!codeRegex.test(value)) {
-          return new Error("验证码格式不正确");
-        }
-
-        return true; // 验证通过
-      },
-    },
-    password: {
-      required: true,
-      message: "密码不能为空",
-      trigger: "blur",
-      validator: async (rule: FormItemRule, value: string) => {
-        if (!value) {
-          return new Error("请输入密码");
-        }
-        // 校验密码长度
-        if (value.length < 6) {
-          return new Error("密码长度不能少于6位");
+          failReasons.value.push('驗證碼格式不正確'); // 繁體中文
+          return new Error('Invalid verification code format');
         }
         return true;
       },
     },
-    password_confirmation: {
+    password: {
       required: true,
-      message: "请确认密码",
-      trigger: "blur",
-      validator: async (rule: FormItemRule, value: string) => {
+      trigger: 'blur',
+      validator: (rule: FormItemRule, value: string) => {
+        // Check if password is empty
         if (!value) {
-          return new Error("请输入确认密码");
+          failReasons.value.push('請輸入密碼'); // 繁體中文
+          return new Error('Password cannot be empty');
         }
-        // 校验与密码是否一致
+
+        // Check password length
+        if (value.length < 12) {
+          failReasons.value.push('密碼長度必須大於或等於12位'); // 繁體中文
+          message.error('Password length must be at least 12 characters');
+          return new Error("Password length is less than 12 characters");
+        }
+
+        // Check if password contains at least 3 character types
+        const hasUpperCase = /[A-Z]/.test(value);  // Uppercase letter
+        const hasLowerCase = /[a-z]/.test(value);  // Lowercase letter
+        const hasNumber = /\d/.test(value);        // Number
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);  // Special character
+
+        const typeCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
+
+        // Check if password meets at least 3 types
+        if (typeCount < 3) {
+          failReasons.value.push('密碼必須包含大寫字母、小寫字母、數字、特殊符號中的至少三種'); // 繁體中文
+          message.error('Password must contain at least three types of characters: uppercase, lowercase, digits, or special characters');
+          return new Error("Password must contain at least three types of characters: uppercase, lowercase, digits, or special characters");
+        }
+
+        return true;
+      }
+    },
+    password_confirmation: [
+      {
+        required: true,
+        message: "Please confirm your password",
+        trigger: 'blur',
+        validator(rule: FormItemRule, value: string) {
+          let isValid = formValue.value.user.password === value && value.trim() !== ''
+          if (!isValid) {
+            failReasons.value.push('兩次輸入的密碼不匹配')
+            return new Error("Password confirmation does not match");
+          } else return true
+        },
+      }
+    ],
+    password_confirmation_bak: {
+      required: true,
+      trigger: ['blur', 'input'],
+      validator(rule: FormItemRule, value: string) {
+        if (!value) {
+          failReasons.value.push('請輸入確認密碼'); // 繁體中文
+          message.error('Please enter the confirmation password');
+          return new Error("Please enter the confirmation password");
+        }
+        // Check if confirmation matches original password
         if (value !== formValue.value.user.password) {
-          return new Error("两次密码输入不一致");
+          failReasons.value.push('密碼不一致'); // 繁體中文
+          message.error('Passwords do not match');
+          return new Error("Passwords do not match");
         }
         return true;
       },
@@ -133,34 +204,6 @@ let rules: FormRules = {
   },
 };
 
-// 邮箱格式验证
-let validateEmail = (email: string): boolean => {
-  const emailRegex = /^[0-9a-zA-Z_.-]+@[0-9a-zA-Z_.-]+(\.[a-zA-Z]+){1,2}$/;
-  if (!emailRegex.test(email)) {
-    message.error("邮箱格式不正确");
-    return false;
-  }
-  const [localPart, domain] = email.split("@");
-  const isGmail = domain.toLowerCase() === "gmail.com";
-  const isGooglemail = domain.toLowerCase() === "googlemail.com";
-
-  if ((isGmail || isGooglemail) && appInfosStore.registerPageConfig.email_gmail_limit_enable) {
-    if (localPart.includes("+")) {
-      return false;
-    }
-    const normalizedLocalPart = localPart.replace(/\./g, "");
-    if (normalizedLocalPart !== localPart) {
-      return false;
-    }
-    if (localPart !== localPart.toLowerCase()) {
-      return false;
-    }
-    if (isGooglemail) {
-      return false;
-    }
-  }
-  return true;
-};
 
 // 发送邮箱验证码
 let sendVerifyCode = async () => {
@@ -180,13 +223,13 @@ let sendVerifyCode = async () => {
 };
 
 // 验证验证码
-let verifyCode = async () => {
+let callVerifyCode = async () => {
   let data = await handleVerifyCode(formValue.value.user.email.trim(), formValue.value.user.verify_code.trim());
-  if (data && data.code === 200 && data.passed) {
+  if (data && data.code === 200) {
     verifyCodePassed.value = data.passed as boolean;
-    console.log("验证码正确");
   } else {
-    message.error("验证码错误");
+    message.error("验证码错误或已過期，請重試或獲取新驗證碼。");
+    verifyCodePassed.value = false;
   }
 };
 
@@ -200,7 +243,7 @@ let handleRegister = async () => {
   if (data.code === 200 && data.is_registered) {
     message.success(t("userRegister.regSuccess"));
     setTimeout(async () => {
-      await router.push({ path: "/login" });
+      await router.push({path: "/login"});
     }, 1000);
   } else if (data.code === 409) {
     message.error("该邮箱已经被注册");
@@ -210,6 +253,43 @@ let handleRegister = async () => {
 };
 
 // 按钮点击次数限制
+
+let showFailReasons = () => {
+  let _failReasons = failReasons.value
+  notification.create({
+    title: '檢查表單', // 通知标题
+    duration: 10000,
+    description: () => {
+      // 使用 div 来渲染多个错误信息
+      return h('div', [
+        _failReasons.map((reason: string, index: number) => {
+          return h('p', { key: index }, `${index + 1}: ${reason}`); // 渲染每个错误信息
+        }),
+      ]);
+    },
+    // meta: new Date().toLocaleString(), // 可以加入时间戳或其他额外信息
+    onClose: () => {
+      // 关闭通知时的回调
+      console.log('Fail reasons notification closed');
+    },
+  });
+};
+
+let registerClick = async () => {
+  failReasons.value = []
+  await registerFormRef.value?.validate((errors) => {
+    if (errors) return showFailReasons()
+  })
+
+  appInfosStore.registerPageConfig.is_email_verify && await callVerifyCode();
+  if (appInfosStore.registerPageConfig.is_email_verify && !verifyCodePassed.value) {
+    message.error(t("userRegister.verifyCodeErr"));
+    return;
+  }
+  await handleRegister();
+
+}
+
 let handleValidateClick = async () => {
   clickedCount.value += 1;
   if (clickedCount.value === 5) {
@@ -221,14 +301,20 @@ let handleValidateClick = async () => {
     return;
   }
 
-  if (!formRef.value) {
+  if (!registerFormRef.value) {
     message.error("Form reference is not defined");
     return;
   }
 
   try {
     // 验证表单
-    await formRef.value.validate();
+    await registerFormRef.value?.validate((errors) => {
+      if (errors) {
+        message.error('form unfilled')
+      } else {
+        message.success('pass')
+      }
+    });
 
     // 验证邮箱
     if (appInfosStore.registerPageConfig.is_email_verify && !verifyCodePassed.value) {
@@ -306,20 +392,19 @@ export default {
           <p class="login-title">{{ t('userRegister.newAccount') }}</p>
 
           <n-form
-              ref="formRef"
+              ref="registerFormRef"
               :model="formValue"
               :rules="rules"
+              :show-label="false"
+              :show-feedback="false"
+              size="large"
           >
             <!-- 邮箱输入框 -->
-            <n-form-item
-                path="user.email"
-                :show-feedback="false"
-            >
+            <n-form-item path="user.email" class="btn-bottom-gap">
               <n-input
                   v-model:value="formValue.user.email"
                   :placeholder="t('userRegister.email')"
-                  size="large"
-                  :bordered="false"
+                  :bordered="true"
                   :style="placeholderBgColor"
               />
             </n-form-item>
@@ -329,13 +414,12 @@ export default {
                 path="user.verify_code"
                 :show-feedback="false"
                 v-if="appInfosStore.registerPageConfig.is_email_verify"
+                class="btn-bottom-gap"
             >
               <n-input
                   v-model:value.number="formValue.user.verify_code"
                   :placeholder="t('userRegister.verifyCode')"
-                  size="large"
-                  class="input-general"
-                  :bordered="false"
+                  :bordered="true"
                   :style="placeholderBgColor"
               />
               <n-button
@@ -344,24 +428,52 @@ export default {
                   type="primary"
                   @click="sendVerifyCode"
                   style="margin-left: 12px;"
-                  size="large"
               >
                 {{ t('userRegister.sendVerifyCode') }}
                 {{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
               </n-button>
             </n-form-item>
 
+
+
+<!--            <n-form-item>-->
+<!--              <n-input/>-->
+<!--            </n-form-item>-->
+
+
             <!-- 密码输入框 -->
+
+            <n-popover :show-arrow="false" trigger="hover" placement="top">
+              <template #trigger>
+                <n-tag
+                    :bordered="false"
+                    :checked="false"
+                    style="font-size: 0.9rem !important; opacity: 0.8; background-color: rgba(0,0,0,0.0)"
+                >
+                  * 密碼需要符合
+                  <n-button
+                      type="primary"
+                      text
+                      style="text-decoration: underline"
+                  >
+                     複雜度要求
+                  </n-button>
+                </n-tag>
+              </template>
+              1. 需要使用大寫字母、小寫字母、數字、特殊符號中的三種及以上<br>
+              2. 長度10位以上
+            </n-popover>
             <n-form-item
                 path="user.password"
-                :show-feedback="false"
+                class="btn-bottom-gap"
             >
+
               <n-input
                   type="password"
+                  showPasswordOn="click"
                   v-model:value="formValue.user.password"
                   :placeholder="t('userRegister.pwd')"
-                  size="large"
-                  :bordered="false"
+                  :bordered="true"
                   :style="placeholderBgColor"
               />
             </n-form-item>
@@ -369,15 +481,14 @@ export default {
             <!-- 确认密码输入框 -->
             <n-form-item
                 path="user.password_confirmation"
-                :show-feedback="false"
+                class="btn-bottom-gap"
             >
               <n-input
                   type="password"
+                  showPasswordOn="click"
                   v-model:value="formValue.user.password_confirmation"
                   :placeholder="t('userRegister.pwdAgain')"
-                  size="large"
-                  class="input-general"
-                  :bordered="false"
+                  :bordered="true"
                   :style="placeholderBgColor"
               />
             </n-form-item>
@@ -387,19 +498,20 @@ export default {
                 path="user.invite_user_id"
                 :show-feedback="false"
                 v-if="appInfosStore.registerPageConfig.is_invite_force"
+                class="btn-bottom-gap"
             >
               <n-input
                   v-model:value.number="formValue.user.invite_user_id"
                   :placeholder="t('userRegister.inviteCode')"
-                  size="large"
-                  class="input-general"
-                  :bordered="false"
+                  :bordered="true"
                   :style="placeholderBgColor"
               />
             </n-form-item>
 
             <!-- 用户协议 -->
-            <n-form-item>
+            <n-form-item
+                class="btn-bottom-gap"
+            >
               <n-checkbox v-model:checked="agreementChecked"></n-checkbox>
               <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">{{ t('userRegister.agreement') }}</p>
               <n-button
@@ -418,7 +530,7 @@ export default {
                   type="primary"
                   class="login-btn"
                   size="large"
-                  @click="handleValidateClick"
+                  @click="registerClick"
                   :disabled="!regBtnEnabled"
               >
                 {{ t('userRegister.reg') }}
@@ -576,7 +688,15 @@ export default {
     display: flex;
     background-color: rgba(218, 144, 144, 0.0);
     //background-color: #66afe9;
-    width: 75%;
+    width: 65%;
+
+    .btn-bottom-gap {
+      margin-bottom: 30px;
+    }
+
+    .pwd-complex-hint {
+      margin: 0;
+    }
 
     .back {
       //background-color: #31739f;
@@ -590,7 +710,7 @@ export default {
     .login-title {
       font-size: 2rem;
       font-weight: 500;
-      margin-bottom: 10px;
+      margin-bottom: 40px;
       opacity: 0.9;
     }
 

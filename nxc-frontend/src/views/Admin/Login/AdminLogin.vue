@@ -5,11 +5,19 @@ import {useRouter} from 'vue-router'
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
-import type {NotificationType} from 'naive-ui'
-import {useNotification} from 'naive-ui'
-import { useMessage } from 'naive-ui'
-import {hashPassword, encodeToBase64} from '@/utils/encryptor'
+import {type FormInst, type FormRules, type InputProps, NButton, NIcon,  type NotificationType} from 'naive-ui'
+import {useMessage, useNotification} from 'naive-ui'
+import {encodeToBase64} from '@/utils/encryptor'
 import instance from "@/axios";
+import {ChevronBackOutline as BackIcon} from "@vicons/ionicons5"
+import {
+  ChevronBackOutline as backIcon,
+  LogInOutline as loginIcon,
+  LogoGithub as githubIcon,
+  LogoMicrosoft as microsoftIcon,
+  ReloadOutline as reloadIcon,
+  Home as homeIcon,
+} from '@vicons/ionicons5'
 
 const {t} = useI18n()
 const notification = useNotification()
@@ -37,12 +45,31 @@ let notifyPass = (type: NotificationType) => {
   })
 }
 
+interface AdminForm {
+  username: string,
+  password: string,
+}
+
 const userInfoStore = useUserInfoStore();
 const router = useRouter();
-let username = ref<string>('')
-let password = ref<string>('')
-let usernameInputStatus = ref()
-let passwordInputStatus = ref()
+let userFormInstance = ref<FormInst | null>(null)
+let userFormData = ref<AdminForm>({
+  username: '',
+  password: '',
+})
+const rules: FormRules = {
+  username: {
+    required: true,
+    type: "email",
+    trigger: ["blur", "change"],
+  },
+  password: {
+    required: true,
+    type: "string",
+    trigger: ["blur", "change"],
+  }
+}
+
 let enableLogin = ref<boolean>(true)
 
 
@@ -64,7 +91,7 @@ interface UserData {
   last_login_ip: string
 }
 
-let bindUserInfo =  (data: DataWithAuth) => {
+let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.isAuthed = data.isAuthed
   let {user_data} = data
 
@@ -82,23 +109,26 @@ let bindUserInfo =  (data: DataWithAuth) => {
   console.log('admin/login: ', userInfoStore.thisUser.isAdmin)
 }
 
-let setInputStatus = (status: boolean) => {
-  return !status?'error':null
+let handleLoginClick = async (e: MouseEvent) => {
+  e.preventDefault()
+  await userFormInstance.value?.validate((errors) => {
+    if (errors) {
+      message.error('表单验证不通过')
+    } else {
+      submitLogin()
+    }
+  })
+
 }
 
-let handleLogin = async () => {
-  if (username.value === '' || password.value === '') {
-    notifyErr('error', '不能为空')
-    return
-  }
+let submitLogin = async () => {
   enableLogin.value = false
-  console.log('管理员密码hash: ', hashPassword(password.value))
+  console.log('登陆信息', userFormData.value)
   try {
     // let hashedPwd =  hashPassword(password.value.trim())
-    let { data } = await instance.post('http://localhost:8081/api/admin/v1/login', {
-      email: username.value,
-
-      password: encodeToBase64(password.value.trim()),
+    let {data} = await instance.post('http://localhost:8081/api/admin/v1/login', {
+      email: userFormData.value.username,
+      password: encodeToBase64(userFormData.value.password),
       role: 'admin', // 限制权限
     })
     console.log(data)
@@ -110,7 +140,7 @@ let handleLogin = async () => {
       notifyPass('success');
       bindUserInfo(data)
       console.log(userInfoStore.thisUser)
-      await router.push({ path: '/admin/dashboard/summary' });
+      await router.push({path: '/admin/dashboard/summary'});
     } else {
       enableLogin.value = true
       switch (data.msg) {
@@ -124,8 +154,7 @@ let handleLogin = async () => {
         }
       }
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error)
   }
 }
@@ -156,6 +185,32 @@ let backgroundStyle = computed(() => {
   return baseStyle;
 });
 
+let showStartupNotification = () => {
+  notification.create({
+    title: '提示',
+    description: '此页面是管理员页面，只有管理员才能访问，如果您没有管理员权限或意外来到此处，请点击下面的链接返回主页。',
+    content: () => {
+      return h('div', [
+        h(
+            NButton,
+            {
+              text: true,
+              type: 'primary',
+              style: { textDecoration: 'underline' },
+              onClick: () => {
+                // 路由跳转
+                window.location.replace('/'); // 使用 window.location.replace() 进行页面跳转
+              },
+            },
+            () => '返回主页' // 使用函数插槽渲染按钮文本
+        ),
+      ]);
+    },
+    // meta: new Date().toLocaleString(),
+    onClose: () => {
+    },
+  });
+};
 
 onMounted(() => {
   console.log('AdminLogin挂载')
@@ -166,9 +221,10 @@ onMounted(() => {
 
   if (JSON.parse(sessionStorage.getItem('isAuthed') as string)) {
     console.log('to dashboard')
-    router.push({path:'/admin/dashboard/summary'})
+    router.push({path: '/admin/dashboard/summary'})
   }
   animated.value = true
+  showStartupNotification()
 
 })
 
@@ -192,61 +248,119 @@ export default {
     >
       <n-flex justify="center" :vertical="true" align="center">
         <transition name="slide-fade">
-          <n-card
-              v-if="animated"
-              class="layer-up"
-              :embedded="true"
-              hoverable
-              :bordered="false"
-              style="text-align: center"
-              content-style="padding: 40px"
-          >
-            <p class="title">{{ appInfoStore.appCommonConfig.app_name }}</p>
-            <p class="sub-title">登陆到管理中心</p>
-            <div class="inp">
-              <n-input
-                  secondary
-                  v-model:value="username"
-                  type="text"
-                  placeholder="邮箱"
-                  size="large"
-                  style="opacity: 0.8"
-                  :bordered="true"
-                  :status="usernameInputStatus"
-                  @blur="!username ? (usernameInputStatus = 'error') : null"
-              />
-              <n-input
-                  v-model:value="password"
-                  type="password"
-                  placeholder="密码"
-                  size="large"
-                  style="margin-top: 20px; opacity: 0.8"
-                  :bordered="true"
-                  :status="passwordInputStatus"
-                  @blur="!password ? (passwordInputStatus = 'error') : null"
-              />
-            </div>
-            <n-button
-                secondary
-                type="info"
-                class="login-btn"
-                size="large"
-                @click="handleLogin"
-                :disabled="!enableLogin"
+          <div v-if="animated" class="card-all-root">
+            <n-card
+                class="layer-up"
+                :embedded="true"
+                :bordered="false"
+                content-style="padding: 30px 35px 45px 35px; text-align: center;"
             >
-              登入
-            </n-button>
-            <n-button
-                strong
-                tertiary
-                type="warning"
-                size="large"
-                class="login-btn"
-                @click="handleForgetPassword"
+              <div style="display: flex; justify-content: flex-start; margin-bottom: 30px;">
+                <n-button
+                  type="primary"
+                  icon-placement="left"
+                  text
+                  @click="router.push({path: '/'})"
+                >
+                  返回首页
+                  <template #icon>
+                    <n-icon><BackIcon /></n-icon>
+                  </template>
+                </n-button>
+              </div>
+              <p class="title">{{ appInfoStore.appCommonConfig.app_name }}</p>
+              <p class="sub-title">登陆到管理中心</p>
+              <div class="inp">
+                <n-form
+                    ref="userFormInstance"
+                    :model="userFormData"
+                    :rules="rules"
+                    size="large"
+                    style="width: 100%"
+                    :show-label="false"
+                    :show-feedback="false"
+                >
+                  <n-form-item path="username">
+                    <n-input
+                        v-model:value="userFormData.username"
+                        type="text"
+                        placeholder="邮箱"
+                        style="opacity: 1"
+                        :bordered="true"
+                    />
+                  </n-form-item>
+                  <n-form-item path="password" style="margin-top: 20px">
+                    <n-input
+                        v-model:value="userFormData.password"
+                        type="password"
+                        placeholder="密码"
+                        :bordered="true"
+                    />
+                  </n-form-item>
+<!--                  <n-divider style="margin: 10px 0 10px 0 !important;">-->
+<!--                    <p style="opacity: 0.2">·</p>-->
+<!--                  </n-divider>-->
+
+                  <n-form-item>
+                    <n-button
+                        secondary
+                        type="info"
+                        class="login-btn"
+                        @click="handleLoginClick"
+                        :disabled="!enableLogin"
+                        icon-placement="left"
+                    >
+                      登入
+                      <template #icon>
+                        <n-icon><loginIcon/></n-icon>
+                      </template>
+                    </n-button>
+                  </n-form-item>
+                </n-form>
+
+
+
+<!--                <p style="opacity: 0.9">{{ appInfoStore.appCommonConfig.app_description }}</p>-->
+
+<!--                <div>-->
+<!--                  <n-h3>提示</n-h3>-->
+<!--                  <p style="font-size: 1rem">此页面是管理员页面，只有管理员才能访问。如果您没有管理员权限或意外来到此处，请点击-->
+<!--                    <n-button-->
+<!--                        text-->
+<!--                        type="primary"-->
+<!--                        style="text-decoration: underline"-->
+<!--                        @click="router.replace('/')"-->
+<!--                    >-->
+<!--                      这里-->
+<!--                    </n-button>-->
+<!--                    返回主页。-->
+<!--                  </p>-->
+<!--                </div>-->
+
+              </div>
+
+            </n-card>
+            <n-card
+                class="layer-down"
+                :bordered="false"
+                :embedded="true"
+                content-style="padding: 0"
             >
-              忘记密码
-            </n-button>
-          </n-card>
+              <div class="layer-down-inner">
+                <n-button
+                    tertiary
+                    type="default"
+                    class="reset-pwd-btn"
+                    @click="handleForgetPassword"
+                >
+                  忘记密码
+<!--                  <template #icon>-->
+<!--                    <n-icon size="14"><reloadIcon /></n-icon>-->
+<!--                  </template>-->
+                </n-button>
+              </div>
+            </n-card>
+          </div>
         </transition>
       </n-flex>
     </div>
@@ -288,19 +402,20 @@ export default {
   z-index: 1000;
   width: 480px;
   border: 0;
-  padding-bottom: 20px;
   backdrop-filter: blur(4px);
+  border-radius: 3px 3px 0 0;
+
   .title {
-    font-size: 30px;
+    font-size: 2rem;
     opacity: 1;
   }
+
   .sub-title {
     font-size: 13px;
     opacity: 0.7;
   }
 
   .inp {
-
     margin-top: 30px;
     text-align: left;
     width: 100%;
@@ -312,9 +427,40 @@ export default {
   }
 }
 
+@media (max-width: 768px) {
+  .layer-up {
+    width: 360px;
+
+    .title {
+      font-size: 1.3rem;
+      opacity: 1;
+    }
+  }
+}
+
 .layer-down {
-  background-color: #2c3e50;
-  width: 480px;
-  height: 40px;
+  padding: 0;
+  border-radius: 0 0 3px 3px;
+  opacity: 0.9;
+
+}
+
+.card-all-root {
+  transition: ease 300ms;
+  border-radius: 3px;
+
+  .layer-down-inner {
+    text-align: center;
+
+    .reset-pwd-btn {
+      height: 52px;
+      width: 100%;
+      border-radius: 0 0 3px 3px;
+    }
+  }
+}
+
+.card-all-root:hover {
+  box-shadow: 3px 3px 10px rgba(25, 25, 25, 0.2);
 }
 </style>

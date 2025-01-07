@@ -6,7 +6,7 @@ import instance from "@/axios";
 export const handleSendVerifyCode = async (email: string) => {
     try {
         let {data} = await authInstance.post('/api/user/v1/mail/register/get', {
-            email: formValue.value.user.email
+            email: email,
         })
         return data
     } catch (error) {

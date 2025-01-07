@@ -42,7 +42,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         app_description: '全球站点',
         app_url: 'http://localhost:5173',
         email_whitelist_suffix: true,
-        email_gmail_limit_enable: false,
+        email_gmail_limit_enable: true,
         is_email_verify: false,
         is_invite_force: true,
         is_recaptcha: false,

@@ -49,8 +49,6 @@ let handleGetConfig = async () => {
   }
 }
 
-
-
 let showSnowFall = ref<boolean>(false)
 
 onBeforeMount(() => {
