@@ -438,11 +438,11 @@ export default {
           <div style="display: flex; flex-direction: row; margin-bottom: 20px; align-items: center">
             <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">{{ t('userProfile.faAuthStatus') }}</p>
             <div
-                :style="twoFAEnabled?{backgroundColor: '#86c166'}:{backgroundColor: 'rgba(25,25,25,0.5)'}"
+                :style="twoFAEnabled?{backgroundColor: '#86c166'}:{backgroundColor: themeStore.enableDarkMode?'rgba(225, 225, 225, 0.8)':'rgba(25,25,25,0.5)'}"
                 style="width: 6px; height: 6px; border-radius: 50%; margin-right: 5px"
             ></div>
             <p v-if="twoFAEnabled" style="color: #86c166">{{ t('userProfile.faEnabled') }}</p>
-            <p v-else style="color: rgba(25,25,25,0.5)">{{ t('userProfile.faNotEnabled') }}</p>
+            <p v-else :style="{color: themeStore.enableDarkMode?'rgba(225, 225, 225, 0.8)':'rgba(25,25,25,0.5)'}">{{ t('userProfile.faNotEnabled') }}</p>
           </div>
           <n-button
               secondary

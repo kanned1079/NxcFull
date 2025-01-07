@@ -311,7 +311,7 @@ export default {
 
 <template>
 <!--  <SnowFall :show="showRibbon"></SnowFall>-->
-<!--  <ColoredRibbon :show="showRibbon"></ColoredRibbon>-->
+  <ColoredRibbon :show="showRibbon"></ColoredRibbon>
   <ColoredRibbon :show="topUpIsFinishedSuccess"></ColoredRibbon>
   <div style="padding: 20px 20px 15px 20px">
     <n-card
