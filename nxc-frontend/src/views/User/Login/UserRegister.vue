@@ -144,7 +144,6 @@ let rules: FormRules = {
         // Check password length
         if (value.length < 12) {
           failReasons.value.push('密碼長度必須大於或等於12位'); // 繁體中文
-          message.error('Password length must be at least 12 characters');
           return new Error("Password length is less than 12 characters");
         }
 
@@ -159,7 +158,6 @@ let rules: FormRules = {
         // Check if password meets at least 3 types
         if (typeCount < 3) {
           failReasons.value.push('密碼必須包含大寫字母、小寫字母、數字、特殊符號中的至少三種'); // 繁體中文
-          message.error('Password must contain at least three types of characters: uppercase, lowercase, digits, or special characters');
           return new Error("Password must contain at least three types of characters: uppercase, lowercase, digits, or special characters");
         }
 
