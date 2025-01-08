@@ -22,6 +22,7 @@ type Site struct {
 	SubscribeURL   int    `json:"subscribe_url"`
 	TosURL         string `json:"tos_url"`
 	StopRegister   bool   `json:"stop_register"`
+	InviteRequire  bool   `json:"invite_require"`
 	TrialTime      int    `json:"trial_time"`
 	TrialSubscribe string `json:"trial_subscribe"`
 	Currency       string `json:"currency"`
@@ -34,6 +35,7 @@ type Security struct {
 	SecurePath            string `json:"secure_path"`
 	EmailWhitelistEnable  bool   `json:"email_whitelist_enable"`
 	RecaptchaEnable       bool   `json:"recaptcha_enable"`
+	RecaptchaSiteKey      string `json:"recaptcha_site_key"`
 	IPRegisterLimitEnable bool   `json:"ip_register_limit_enable"`
 	IPRegisterLimitTimes  int    `json:"ip_register_limit_times"`
 	IPRegisterLockTime    int    `json:"ip_register_lock_time"`

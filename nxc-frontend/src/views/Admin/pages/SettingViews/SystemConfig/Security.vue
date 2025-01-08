@@ -36,6 +36,7 @@ type SecurityModel =
     | "secure_path"
     | "email_whitelist_enable"
     | "recaptcha_enable"
+    | "recaptcha_site_key"
     | "ip_register_limit_enable"
     | "ip_register_limit_times"
     | "ip_register_lock_time";
@@ -86,6 +87,13 @@ let securitySettingsData: SecuritySetting[] = [
     description: "开启后将会使用Google reCAPTCHA防止机器人。",
     type: "switch",
     modelValue: "recaptcha_enable"
+  },
+  {
+    title: 'hCaptcha SiteKey',
+    description: '该SiteKey用于请求hCaptcha服务器来标识网站编号',
+    type: "input",
+    placeholder: 'a3ca066c-0ea0-42fe-bcd2-23f4ab48d528',
+    modelValue: 'recaptcha_site_key',
   },
   {
     title: "IP注册限制",

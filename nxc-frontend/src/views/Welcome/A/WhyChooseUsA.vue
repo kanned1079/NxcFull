@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import SnowFall from "@/views/utils/SnowFall.vue";
-import {useI18n} from "vue-i18n";
+// import {useI18n} from "vue-i18n";
 import {ref, onMounted, onBeforeMount} from "vue"
 import HeaderA from "@/views/Welcome/A/HeaderA.vue";
 import ContentA from "@/views/Welcome/A/ContentA.vue";
 import FooterA from "@/views/Welcome/A/FooterA.vue";
-import instance from "@/axios/authInstance"
+// import instance from "@/axios/authInstance"
+import {handleFetchWelcomeInfo} from "@/api/common/env";
 
-const {t} = useI18n()
+// const {t} = useI18n()
 
 let getConfigSuccess = ref<boolean>(false)
 
@@ -33,26 +34,18 @@ let settings = ref<WelcomeSettings>({
   page_suffix: '',
 })
 
-let handleGetConfig = async () => {
-  try {
-    let {data} = await instance.get('/api/app/v1/welcome', {
-      params: {
-        lang: 'en',
-      }
-    })
+let callHandleGetConfig = async () => {
+    let data = await handleFetchWelcomeInfo('en')
     if (data.code === 200) {
       getConfigSuccess.value = true
       Object.assign(settings.value, data.config)
     }
-  } catch (err: any) {
-    console.log(err + '')
-  }
 }
 
 let showSnowFall = ref<boolean>(false)
 
 onBeforeMount(() => {
-  handleGetConfig()
+  callHandleGetConfig()
 })
 
 onMounted(() => {

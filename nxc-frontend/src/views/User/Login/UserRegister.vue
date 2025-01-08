@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref} from "vue";
+import VueHcaptcha from '@hcaptcha/vue3-hcaptcha';
+import {computed, h, onBeforeMount, onMounted, onUnmounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import type {FormInst, FormItemRule, FormRules} from 'naive-ui'
 import {useMessage, useNotification} from "naive-ui";
 import {ChevronBackOutline as backIcon, LogInOutline as loginIcon} from "@vicons/ionicons5";
-import useAppInfosStore from "@/stores/useAppInfosStore";
 import {handleFinalRegister, handleSendVerifyCode, handleVerifyCode} from "@/api/user/register";
+import {handleFetchRegisterConfig} from "@/api/common/env"
 
 const {t} = useI18n();
 const appInfosStore = useAppInfosStore();
@@ -16,8 +18,51 @@ const message = useMessage();
 const notification = useNotification();
 const router = useRouter();
 
-const registerFormRef = ref<FormInst | null>(null);
+let hCaptchaVerified = ref<boolean>(false);
+let hCaptchaExpired = ref<boolean>(false);
+let hCaptchaToken = ref<string>('')
+let hCaptchaEKey = ref<string>('')
+let hCaptchaErr = ref<string>('')
 
+const onVerify = (tokenStr?: string, eKey?: string) => {
+  hCaptchaVerified.value = true // 通过认证
+  hCaptchaToken.value = tokenStr || ''
+  hCaptchaEKey.value = eKey || ''
+  message.success('验证通过')
+  console.log(hCaptchaToken.value, hCaptchaEKey.value)
+}
+
+const onExpire = () => {
+  hCaptchaVerified.value = true // 没有通过认证
+  hCaptchaExpired.value = true  // 标记验证过期
+  message.error('已过期')
+}
+
+const onChallengeExpire = () => {
+  hCaptchaVerified.value = true // 没有通过认证
+  hCaptchaExpired.value = true  // 标记验证过期
+  message.error('验证超时')
+}
+
+const onError = (err: any) => {
+  hCaptchaVerified.value = true // 没有通过认证
+  hCaptchaExpired.value = true  // 标记验证过期
+  hCaptchaErr.value = `Error: ${err}`
+  message.error(hCaptchaErr.value)
+}
+
+const calculateContentStyle = () => {
+  return window.innerWidth > 768
+      ? "display: flex; justify-content: center; flex-direction: column; align-items: center; height: 100%"
+      : "display: flex; justify-content: center; flex-direction: column; align-items: center;";
+}
+
+const formContentStyle = ref<string>('')
+const reCalculateContentStyle = () => {
+  formContentStyle.value = calculateContentStyle()
+}
+
+const registerFormRef = ref<FormInst | null>(null);
 let verifyCodePassed = ref<boolean>(false);
 let animated = ref<{ leftAnimated: boolean; rightAnimated: boolean }>({
   leftAnimated: false,
@@ -41,8 +86,15 @@ let placeholderBgColor = computed(() =>
 let textLeftColor = computed(() => (themeStore.enableDarkMode ? {color: "#fff"} : {}));
 
 let agreementChecked = ref<boolean>(false); // 同意按钮是否被选中
-let enableRegister = ref<boolean>(true); // 由检查逻辑控制
-let regBtnEnabled = computed(() => agreementChecked.value && enableRegister.value);
+let enableRegister = ref<boolean>(false); // 由检查逻辑控制
+// let regBtnEnabled = computed(() => agreementChecked.value && enableRegister.value && !appInfosStore.registerPageConfig.stop_register);
+let regBtnEnabled = computed(() =>
+    agreementChecked.value &&
+    enableRegister.value &&
+    !appInfosStore.registerPageConfig.stop_register &&
+    (!appInfosStore.registerPageConfig.recaptcha_enable || hCaptchaVerified.value)
+);
+console.log(appInfosStore.registerPageConfig.recaptcha_enable, hCaptchaVerified.value)
 let clickedCount = ref<number>(0); // 注册按钮点击次数
 let enableSendCode = ref<boolean>(true);
 let waitSendMail = ref<number>(0);
@@ -112,11 +164,11 @@ let rules: FormRules = {
       validator: () => validateEmail(formValue.value.user.email) ? true : new Error('Form failed due to invalid email address')
     },
     verify_code: {
-      required: appInfosStore.registerPageConfig.is_email_verify,
+      required: appInfosStore.registerPageConfig.email_verify,
       message: "Verification code cannot be empty",
       trigger: ['blur', 'input'],
       validator: (rule: FormItemRule, value: string) => {
-        if (!appInfosStore.registerPageConfig.is_email_verify) {
+        if (!appInfosStore.registerPageConfig.email_verify) {
           return true; // Skip verification if not needed
         }
         if (!value) {
@@ -197,11 +249,20 @@ let rules: FormRules = {
       },
     },
     invite_user_id: {
-      required: false,
+      required: appInfosStore.registerPageConfig.invite_require,
+      trigger: 'blur',
+      validator(rule: FormItemRule, value: string) {
+        console.log(value)
+        let isValid = appInfosStore.registerPageConfig.invite_require && value !== ''
+        if (isValid) return true
+        else {
+          failReasons.value.push('邀请码是必填的')
+          return new Error('You must be invited')
+        }
+      }
     },
   },
 };
-
 
 // 发送邮箱验证码
 let sendVerifyCode = async () => {
@@ -279,53 +340,14 @@ let registerClick = async () => {
     if (errors) return showFailReasons()
   })
 
-  appInfosStore.registerPageConfig.is_email_verify && await callVerifyCode();
-  if (appInfosStore.registerPageConfig.is_email_verify && !verifyCodePassed.value) {
+  appInfosStore.registerPageConfig.email_verify && await callVerifyCode();
+  if (appInfosStore.registerPageConfig.email_verify && !verifyCodePassed.value) {
     message.error(t("userRegister.verifyCodeErr"));
     return;
   }
   await handleRegister();
 
 }
-
-let handleValidateClick = async () => {
-  clickedCount.value += 1;
-  if (clickedCount.value === 5) {
-    enableRegister.value = false;
-    setTimeout(() => {
-      enableRegister.value = true;
-      clickedCount.value = 0;
-    }, 60000);
-    return;
-  }
-
-  if (!registerFormRef.value) {
-    message.error("Form reference is not defined");
-    return;
-  }
-
-  try {
-    // 验证表单
-    await registerFormRef.value?.validate((errors) => {
-      if (errors) {
-        message.error('form unfilled')
-      } else {
-        message.success('pass')
-      }
-    });
-
-    // 验证邮箱
-    if (appInfosStore.registerPageConfig.is_email_verify && !verifyCodePassed.value) {
-      message.error(t("userRegister.verifyCodeErr"));
-      return;
-    }
-
-    // 执行注册逻辑
-    await handleRegister();
-  } catch (errors) {
-    message.error("表单验证未通过:" + errors);
-  }
-};
 
 // 开始等待验证码倒计时
 let startWait = (sec: number) => {
@@ -341,15 +363,29 @@ let startWait = (sec: number) => {
   }, 1000);
 };
 
+onBeforeMount(async () => {
+  let isFetchSuccess = await handleFetchRegisterConfig('en')
+  if (isFetchSuccess) {
+    enableRegister.value = true
+  } else {
+    message.error('配置获取失败请尝试刷新')
+    enableRegister.value = false
+  }
+})
+
 onMounted(async () => {
   const queryParams = new URLSearchParams(window.location.search);
   const code = queryParams.get("code");
   code ? (formValue.value.user.invite_user_id = code) : null;
 
+  formContentStyle.value = calculateContentStyle()
+  window.addEventListener('resize', reCalculateContentStyle)
+
   setTimeout(() => (animated.value.leftAnimated = true), 100);
   setTimeout(() => (animated.value.rightAnimated = true), 150);
-  console.log("邮箱验证", appInfosStore.registerPageConfig);
 });
+
+onUnmounted(() => window.removeEventListener('resize', reCalculateContentStyle))
 </script>
 
 <script lang="ts">
@@ -372,7 +408,6 @@ export default {
           <p :style="textLeftColor" class="sub">{{ appInfosStore.appCommonConfig.app_description }}</p>
         </div>
       </transition>
-
     </div>
     <div class="r-content" :style="bgColor">
       <div class="r-content-color-cover"></div>
@@ -380,23 +415,43 @@ export default {
       <div class="r-content-color2"></div>
       <div class="r-content-color3"></div>
       <transition name="slide-register-fade">
+        <n-scrollbar
+            style="height: 100vh"
+            :content-style="formContentStyle"
+        >
         <n-card v-if="animated.rightAnimated" class="login-card" :embedded="false" :bordered="false">
-          <n-button class="back" text :bordered="false" @click="router.replace({path: '/welcome'})">
-            <n-icon style="margin-right: 5px" size="20">
-              <backIcon/>
-            </n-icon>
+          <n-button class="back" text :bordered="false" @click="router.replace({path: '/welcome'})" icon-placement="left">
+            <template #icon>
+              <n-icon style="margin-right: 5px" size="20">
+                <backIcon/>
+              </n-icon>
+            </template>
             {{ t('userRegister.backHomePage') }}
           </n-button>
           <p class="login-title">{{ t('userRegister.newAccount') }}</p>
 
+          <n-alert
+              type="warning"
+              title="停止注册"
+              v-if="appInfosStore.registerPageConfig.stop_register"
+              style="margin-bottom: 50px;"
+          >
+            <n-p style="font-size: 1rem">
+              抱歉，目前注册功能已暂停。如有需要，请稍后再试，或联系我们的支持团队获取更多信息。感谢您的理解与支持！
+            </n-p>
+            <n-p style="opacity: 0.6; font-weight: bold">by {{ appInfosStore.appCommonConfig.app_name }}</n-p>
+          </n-alert>
+
           <n-form
+              v-if="!appInfosStore.registerPageConfig.stop_register"
               ref="registerFormRef"
               :model="formValue"
               :rules="rules"
               :show-label="false"
               :show-feedback="false"
-              size="large"
+              size="medium"
               autofocus
+              :disabled="appInfosStore.registerPageConfig.stop_register"
           >
             <!-- 邮箱输入框 -->
             <n-form-item path="user.email" class="btn-bottom-gap">
@@ -412,7 +467,7 @@ export default {
             <n-form-item
                 path="user.verify_code"
                 :show-feedback="false"
-                v-if="appInfosStore.registerPageConfig.is_email_verify"
+                v-if="appInfosStore.registerPageConfig.email_verify"
                 class="btn-bottom-gap"
             >
               <n-input
@@ -433,14 +488,7 @@ export default {
               </n-button>
             </n-form-item>
 
-
-            <!--            <n-form-item>-->
-            <!--              <n-input/>-->
-            <!--            </n-form-item>-->
-
-
             <!-- 密码输入框 -->
-
             <n-popover :show-arrow="false" trigger="hover" placement="top">
               <template #trigger>
                 <n-tag
@@ -493,8 +541,6 @@ export default {
             <!-- 邀请码输入框 -->
             <n-form-item
                 path="user.invite_user_id"
-                :show-feedback="false"
-                v-if="appInfosStore.registerPageConfig.is_invite_force"
                 class="btn-bottom-gap"
             >
               <n-input
@@ -520,6 +566,18 @@ export default {
               </n-button>
             </n-form-item>
 
+            <div v-if="appInfosStore.registerPageConfig.recaptcha_enable">
+              <vue-hcaptcha
+                  :sitekey="appInfosStore.registerPageConfig.recaptcha_site_key || ''"
+                  :theme="themeStore.enableDarkMode?'dark':null"
+                  @verify="onVerify"
+                  @expired="onExpire"
+                  @challenge-expired="onChallengeExpire"
+                  @error="onError"
+              >
+              </vue-hcaptcha>
+            </div>
+
 
             <!-- 注册按钮 -->
             <n-form-item>
@@ -541,21 +599,19 @@ export default {
             </n-form-item>
           </n-form>
 
-          <div style="display: flex; flex-direction: row; justify-content: center; margin: 30px 0;">
+          <div class="bottom-hint-root">
+            <div v-if="appInfosStore.registerPageConfig.stop_register" style="height: 50px"></div>
             <n-divider style="width: 98%; margin: 0 !important;">
-              <p style="opacity: 0.2">{{ appInfosStore.appCommonConfig.app_sub_name }}</p>
+              <p style="opacity: 0.2">·</p>
             </n-divider>
-
-
+<!--            <div style="margin: 50px 0 5px 0">-->
+<!--              <img style="width: 45px" :src="appInfosStore.appCommonConfig.logo_url" alt="icon">-->
+<!--            </div>-->
+            <div style="font-size: 1rem; opacity: 0.8; margin-top: 20px">{{ appInfosStore.appCommonConfig.app_name }} 版权所有</div>
+            <div style="opacity: 0.4; margin-top: 10px">该网站受hCaptcha保护和验证，请遵守当地法律。</div>
           </div>
-
-          <div style="display: flex; flex-direction: row; justify-content: center; margin: 30px 0; width: 70%;">
-
-            <p style="opacity: 0.6;">This site is protected by reCAPTCHA Enterprise and the Google Privacy Policy and Terms of Service apply.</p>
-
-          </div>
-
         </n-card>
+        </n-scrollbar>
       </transition>
     </div>
   </div>
@@ -747,6 +803,16 @@ export default {
       transform: translateX(0) translateY(-3px);
     }
 
+    .bottom-hint-root {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      margin: 30px 0 ;
+    }
+
     .other-login-method {
       width: 100%;
       height: 45px;
@@ -789,9 +855,9 @@ export default {
   }
 }
 
-@media (max-width: 900px) {
-  .r-content {
-    //background: linear-gradient(to right, rgb(217, 167, 199), rgb(255, 252, 220));
+@media (min-width: 768px) {
+  .sc {
+    height: 100vh;
   }
 }
 

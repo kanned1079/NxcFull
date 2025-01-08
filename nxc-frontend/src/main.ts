@@ -4,7 +4,8 @@ import 'vfonts/Lato.css'
 import 'vfonts/FiraCode.css'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-import useAppInfosStore from "@/stores/useAppInfosStore";
+// import useAppInfosStore from "@/stores/useAppInfosStore";
+import {handleFetchRootRuntimeEnvConfig} from "@/api/common/env"
 
 // 语言国际化
 import { createI18n } from 'vue-i18n';
@@ -58,9 +59,11 @@ app.use(router)
 
 const initApp = async () => {
     console.log('挂载app')
-    const appInfoStore = useAppInfosStore(pinia)
-    await appInfoStore.getCommonConfig()
-
+    // const appInfoStore = useAppInfosStore(pinia)
+    // await appInfoStore.getCommonConfig()
+    let pullRootConfigSuccess = await handleFetchRootRuntimeEnvConfig()
+    if (pullRootConfigSuccess) console.log('根配置获取成功')
+    else console.log('根配置获取失败')
     // setupAdminRoutes(appInfoStore.appCommonConfig.currency)
 
 

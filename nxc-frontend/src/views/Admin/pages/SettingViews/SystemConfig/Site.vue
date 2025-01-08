@@ -34,6 +34,7 @@ type SiteModel =
     | "subscribe_url"
     | "tos_url"
     | "stop_register"
+    | "invite_require"
     | "trial_subscribe"
     | "trial_time"
     | "currency"
@@ -108,6 +109,12 @@ let appSettings: AppSetting[] = [
     title: "停止新用户注册",
     shallow: "开启后任何人都将无法进行注册。",
     model: "stop_register",
+    type: "switch"
+  },
+  {
+    title: "强制邀请",
+    shallow: "开启后当新用户注册时必需填写邀请码。",
+    model: "invite_require",
     type: "switch"
   },
   {

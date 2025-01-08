@@ -13,6 +13,7 @@ interface SiteSettings {
     subscribe_url: string;
     tos_url: string;
     stop_register: boolean;
+    invite_require: boolean;
     trial_time: number;
     trial_subscribe: number;
     currency: string;
@@ -27,6 +28,7 @@ interface SecuritySettings {
     secure_path: string;
     email_whitelist_enable: boolean;
     recaptcha_enable: boolean;
+    recaptcha_site_key: string;
     ip_register_limit_enable: boolean;
     ip_register_limit_times: number;
     ip_register_lock_time: number;
@@ -117,6 +119,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             subscribe_url: '',      // 订阅URL
             tos_url: '',            // 用户条款TOS
             stop_register: false,   // 停止新用户注册
+            invite_require: false,  // 邀请码必填
             trial_time: 6,          // 试用时间
             trial_subscribe: 1,    // 注册试用
             currency: '',           // 货币单位
@@ -129,6 +132,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             secure_path: '/admin',              // 后台路径
             email_whitelist_enable: false,      // 邮箱后缀白名单
             recaptcha_enable: false,            // 启用Google reCAPTCHA
+            recaptcha_site_key: '',
             ip_register_limit_enable: false,    // IP注册限制
             ip_register_limit_times: 5,         // 显示次数
             ip_register_lock_time: 120,         // 惩罚时间

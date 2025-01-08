@@ -133,7 +133,7 @@ export default {
   <div class="root">
     <div class="left-content">
       <span>
-          <img :src="appInfoStore.appCommonConfig.logo" alt="icon">
+          <img :src="appInfoStore.appCommonConfig.logo_url" alt="icon">
       </span>
       <p class="name">{{ appInfoStore.appCommonConfig.app_name }}</p>
       <n-button v-if="!collapse" size="large" style="margin-right: 40px" color="#277aa8" text >

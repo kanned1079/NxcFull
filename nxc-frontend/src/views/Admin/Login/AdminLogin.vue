@@ -147,14 +147,12 @@ let submitLogin = async () => {
     } else {
       enableLogin.value = true
       switch (data.msg) {
-        case 'incorrect_password': {
-          notifyErr('error', '密码不正确')
-          break
-        }
-        case 'user_not_exist': {
-          notifyErr('error', '用户不存在 请注册')
-          break
-        }
+        case 'incorrect_password':
+          return notifyErr('error', '密码不正确')
+
+        case 'user_not_exist':
+          return notifyErr('error', '用户不存在 请注册')
+
       }
     }
   } catch (error) {
@@ -174,7 +172,7 @@ let noticeInfo = () => {
 let backgroundStyle = computed(() => {
   const baseStyle = {
     backgroundSize: 'cover', // 或者 'contain'，根据需要调整
-    backgroundColor: themeStore.enableDarkMode?'#252525':'#e3e5e7',
+    backgroundColor: themeStore.enableDarkMode ? '#252525' : '#e3e5e7',
     backgroundImage: `url(${appInfoStore.appCommonConfig.frontend_background_url})`,
   };
 
