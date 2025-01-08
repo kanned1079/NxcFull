@@ -99,6 +99,17 @@ let clickedCount = ref<number>(0); // 注册按钮点击次数
 let enableSendCode = ref<boolean>(true);
 let waitSendMail = ref<number>(0);
 
+let autoCompleteEmailSuffixOptions = computed(() => {
+  return ['@outlook.com', '@gmail.com', '@hotmail.com', '@yahoo.com', '@msn.com', '@163.com'].map((suffix) => {
+    const prefix = formValue.value.user.email.split('@')[0]
+    return {
+      label: prefix + suffix,
+      value: prefix + suffix
+    }
+  })
+})
+let getShow = (value: string) => value.endsWith('@');
+
 let formValue = ref({
   user: {
     email: "",
@@ -419,198 +430,211 @@ export default {
             style="height: 100vh"
             :content-style="formContentStyle"
         >
-        <n-card v-if="animated.rightAnimated" class="login-card" :embedded="false" :bordered="false">
-          <n-button class="back" text :bordered="false" @click="router.replace({path: '/welcome'})" icon-placement="left">
-            <template #icon>
-              <n-icon style="margin-right: 5px" size="20">
-                <backIcon/>
-              </n-icon>
-            </template>
-            {{ t('userRegister.backHomePage') }}
-          </n-button>
-          <p class="login-title">{{ t('userRegister.newAccount') }}</p>
-
-          <n-alert
-              type="warning"
-              title="停止注册"
-              v-if="appInfosStore.registerPageConfig.stop_register"
-              style="margin-bottom: 50px;"
-          >
-            <n-p style="font-size: 1rem">
-              抱歉，目前注册功能已暂停。如有需要，请稍后再试，或联系我们的支持团队获取更多信息。感谢您的理解与支持！
-            </n-p>
-            <n-p style="opacity: 0.6; font-weight: bold">by {{ appInfosStore.appCommonConfig.app_name }}</n-p>
-          </n-alert>
-
-          <n-form
-              v-if="!appInfosStore.registerPageConfig.stop_register"
-              ref="registerFormRef"
-              :model="formValue"
-              :rules="rules"
-              :show-label="false"
-              :show-feedback="false"
-              size="medium"
-              autofocus
-              :disabled="appInfosStore.registerPageConfig.stop_register"
-          >
-            <!-- 邮箱输入框 -->
-            <n-form-item path="user.email" class="btn-bottom-gap">
-              <n-input
-                  v-model:value="formValue.user.email"
-                  :placeholder="t('userRegister.email')"
-                  :bordered="true"
-                  :style="placeholderBgColor"
-              />
-            </n-form-item>
-
-            <!-- 验证码输入框 -->
-            <n-form-item
-                path="user.verify_code"
-                :show-feedback="false"
-                v-if="appInfosStore.registerPageConfig.email_verify"
-                class="btn-bottom-gap"
-            >
-              <n-input
-                  v-model:value.number="formValue.user.verify_code"
-                  :placeholder="t('userRegister.verifyCode')"
-                  :bordered="true"
-                  :style="placeholderBgColor"
-              />
-              <n-button
-                  :disabled="!enableSendCode"
-                  secondary
-                  type="primary"
-                  @click="sendVerifyCode"
-                  style="margin-left: 12px;"
-              >
-                {{ t('userRegister.sendVerifyCode') }}
-                {{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
-              </n-button>
-            </n-form-item>
-
-            <!-- 密码输入框 -->
-            <n-popover :show-arrow="false" trigger="hover" placement="top">
-              <template #trigger>
-                <n-tag
-                    :bordered="false"
-                    :checked="false"
-                    style="font-size: 0.9rem !important; opacity: 0.8; background-color: rgba(0,0,0,0.0)"
-                >
-                  * 密碼需要符合
-                  <n-button
-                      type="primary"
-                      text
-                      style="text-decoration: underline"
-                  >
-                    複雜度要求
-                  </n-button>
-                </n-tag>
+          <n-card v-if="animated.rightAnimated" class="login-card" :embedded="false" :bordered="false">
+            <n-button class="back" text :bordered="false" @click="router.replace({path: '/welcome'})"
+                      icon-placement="left">
+              <template #icon>
+                <n-icon style="margin-right: 5px" size="20">
+                  <backIcon/>
+                </n-icon>
               </template>
-              1. 需要使用大寫字母、小寫字母、數字、特殊符號中的三種及以上<br>
-              2. 長度10位以上
-            </n-popover>
-            <n-form-item
-                path="user.password"
-                class="btn-bottom-gap"
-            >
-              <n-input
-                  type="password"
-                  showPasswordOn="click"
-                  v-model:value="formValue.user.password"
-                  :placeholder="t('userRegister.pwd')"
-                  :bordered="true"
-                  :style="placeholderBgColor"
-              />
-            </n-form-item>
+              {{ t('userRegister.backHomePage') }}
+            </n-button>
+            <p class="login-title">{{ t('userRegister.newAccount') }}</p>
 
-            <!-- 确认密码输入框 -->
-            <n-form-item
-                path="user.password_confirmation"
-                class="btn-bottom-gap"
+            <n-alert
+                type="warning"
+                title="停止注册"
+                v-if="appInfosStore.registerPageConfig.stop_register"
+                style="margin-bottom: 50px;"
             >
-              <n-input
-                  type="password"
-                  showPasswordOn="click"
-                  v-model:value="formValue.user.password_confirmation"
-                  :placeholder="t('userRegister.pwdAgain')"
-                  :bordered="true"
-                  :style="placeholderBgColor"
-              />
-            </n-form-item>
+              <n-p style="font-size: 1rem">
+                抱歉，目前注册功能已暂停。如有需要，请稍后再试，或联系我们的支持团队获取更多信息。感谢您的理解与支持！
+              </n-p>
+              <n-p style="opacity: 0.6; font-weight: bold">by {{ appInfosStore.appCommonConfig.app_name }}</n-p>
+            </n-alert>
 
-            <!-- 邀请码输入框 -->
-            <n-form-item
-                path="user.invite_user_id"
-                class="btn-bottom-gap"
+            <n-form
+                v-if="!appInfosStore.registerPageConfig.stop_register"
+                ref="registerFormRef"
+                :model="formValue"
+                :rules="rules"
+                :show-label="false"
+                :show-feedback="false"
+                size="medium"
+                autofocus
+                :disabled="appInfosStore.registerPageConfig.stop_register"
             >
-              <n-input
-                  v-model:value.number="formValue.user.invite_user_id"
-                  :placeholder="t('userRegister.inviteCode')"
-                  :bordered="true"
-                  :style="placeholderBgColor"
-              />
-            </n-form-item>
+              <!-- 邮箱输入框 -->
+              <n-form-item path="user.email" class="btn-bottom-gap">
+                <!--              <n-input-->
+                <!--                  v-model:value="formValue.user.email"-->
+                <!--                  :placeholder="t('userRegister.email')"-->
+                <!--                  :bordered="true"-->
+                <!--                  :style="placeholderBgColor"-->
+                <!--              />-->
+                <n-auto-complete
+                    clearable
+                    :append="false"
+                    :get-show="getShow"
+                    v-model:value="formValue.user.email"
+                    :placeholder="t('userRegister.email')"
+                    :options="autoCompleteEmailSuffixOptions"
+                    :input-props="{autocomplete: 'disabled'}"
+                ></n-auto-complete>
+              </n-form-item>
 
-            <!-- 用户协议 -->
-            <n-form-item
-                class="btn-bottom-gap"
-            >
-              <n-checkbox v-model:checked="agreementChecked"></n-checkbox>
-              <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">{{ t('userRegister.agreement') }}</p>
-              <n-button
-                  text
-                  type="primary"
-                  style="font-weight: bold; opacity: 0.9; margin-left: 3px"
+              <!-- 验证码输入框 -->
+              <n-form-item
+                  path="user.verify_code"
+                  :show-feedback="false"
+                  v-if="appInfosStore.registerPageConfig.email_verify"
+                  class="btn-bottom-gap"
               >
-                {{ t('userRegister.terminalUserAgreement') }}
-              </n-button>
-            </n-form-item>
+                <n-input
+                    v-model:value.number="formValue.user.verify_code"
+                    :placeholder="t('userRegister.verifyCode')"
+                    :bordered="true"
+                    :style="placeholderBgColor"
+                />
+                <n-button
+                    :disabled="!enableSendCode"
+                    secondary
+                    type="primary"
+                    @click="sendVerifyCode"
+                    style="margin-left: 12px;"
+                >
+                  {{ t('userRegister.sendVerifyCode') }}
+                  {{ waitSendMail !== 0 ? ` (${waitSendMail})` : '' }}
+                </n-button>
+              </n-form-item>
 
-            <div v-if="appInfosStore.registerPageConfig.recaptcha_enable">
-              <vue-hcaptcha
-                  :sitekey="appInfosStore.registerPageConfig.recaptcha_site_key || ''"
-                  :theme="themeStore.enableDarkMode?'dark':null"
-                  @verify="onVerify"
-                  @expired="onExpire"
-                  @challenge-expired="onChallengeExpire"
-                  @error="onError"
-              >
-              </vue-hcaptcha>
-            </div>
-
-
-            <!-- 注册按钮 -->
-            <n-form-item>
-              <n-button
-                  :bordered="false"
-                  type="primary"
-                  class="login-btn"
-                  size="large"
-                  @click="registerClick"
-                  :disabled="!regBtnEnabled"
-              >
-                {{ t('userRegister.reg') }}
-                <template #icon>
-                  <n-icon>
-                    <loginIcon/>
-                  </n-icon>
+              <!-- 密码输入框 -->
+              <n-popover :show-arrow="false" trigger="hover" placement="top">
+                <template #trigger>
+                  <n-tag
+                      :bordered="false"
+                      :checked="false"
+                      style="font-size: 0.9rem !important; opacity: 0.8; background-color: rgba(0,0,0,0.0)"
+                  >
+                    * 密碼需要符合
+                    <n-button
+                        type="primary"
+                        text
+                        style="text-decoration: underline"
+                    >
+                      複雜度要求
+                    </n-button>
+                  </n-tag>
                 </template>
-              </n-button>
-            </n-form-item>
-          </n-form>
+                1. 需要使用大寫字母、小寫字母、數字、特殊符號中的三種及以上<br>
+                2. 長度10位以上
+              </n-popover>
+              <n-form-item
+                  path="user.password"
+                  class="btn-bottom-gap"
+              >
+                <n-input
+                    type="password"
+                    showPasswordOn="click"
+                    v-model:value="formValue.user.password"
+                    :placeholder="t('userRegister.pwd')"
+                    :bordered="true"
+                    :style="placeholderBgColor"
+                />
+              </n-form-item>
 
-          <div class="bottom-hint-root">
-            <div v-if="appInfosStore.registerPageConfig.stop_register" style="height: 50px"></div>
-            <n-divider style="width: 98%; margin: 0 !important;">
-              <p style="opacity: 0.2">·</p>
-            </n-divider>
-<!--            <div style="margin: 50px 0 5px 0">-->
-<!--              <img style="width: 45px" :src="appInfosStore.appCommonConfig.logo_url" alt="icon">-->
-<!--            </div>-->
-            <div style="font-size: 1rem; opacity: 0.8; margin-top: 20px">{{ appInfosStore.appCommonConfig.app_name }} 版权所有</div>
-            <div style="opacity: 0.4; margin-top: 10px">该网站受hCaptcha保护和验证，请遵守当地法律。</div>
-          </div>
-        </n-card>
+              <!-- 确认密码输入框 -->
+              <n-form-item
+                  path="user.password_confirmation"
+                  class="btn-bottom-gap"
+              >
+                <n-input
+                    type="password"
+                    showPasswordOn="click"
+                    v-model:value="formValue.user.password_confirmation"
+                    :placeholder="t('userRegister.pwdAgain')"
+                    :bordered="true"
+                    :style="placeholderBgColor"
+                />
+              </n-form-item>
+
+              <!-- 邀请码输入框 -->
+              <n-form-item
+                  path="user.invite_user_id"
+                  class="btn-bottom-gap"
+              >
+                <n-input
+                    clearable
+                    v-model:value.number="formValue.user.invite_user_id"
+                    :placeholder="t('userRegister.inviteCode')"
+                    :bordered="true"
+                    :style="placeholderBgColor"
+                />
+              </n-form-item>
+
+              <!-- 用户协议 -->
+              <n-form-item
+                  class="btn-bottom-gap"
+              >
+                <n-checkbox v-model:checked="agreementChecked"></n-checkbox>
+                <p style="font-weight: bold; opacity: 0.8; margin-left: 8px">{{ t('userRegister.agreement') }}</p>
+                <n-button
+                    text
+                    type="primary"
+                    style="font-weight: bold; opacity: 0.9; margin-left: 3px"
+                >
+                  {{ t('userRegister.terminalUserAgreement') }}
+                </n-button>
+              </n-form-item>
+
+              <div v-if="appInfosStore.registerPageConfig.recaptcha_enable">
+                <vue-hcaptcha
+                    :sitekey="appInfosStore.registerPageConfig.recaptcha_site_key || ''"
+                    :theme="themeStore.enableDarkMode?'dark':null"
+                    @verify="onVerify"
+                    @expired="onExpire"
+                    @challenge-expired="onChallengeExpire"
+                    @error="onError"
+                >
+                </vue-hcaptcha>
+              </div>
+
+
+              <!-- 注册按钮 -->
+              <n-form-item>
+                <n-button
+                    :bordered="false"
+                    type="primary"
+                    class="login-btn"
+                    size="large"
+                    @click="registerClick"
+                    :disabled="!regBtnEnabled"
+                >
+                  {{ t('userRegister.reg') }}
+                  <template #icon>
+                    <n-icon>
+                      <loginIcon/>
+                    </n-icon>
+                  </template>
+                </n-button>
+              </n-form-item>
+            </n-form>
+
+            <div class="bottom-hint-root">
+              <div v-if="appInfosStore.registerPageConfig.stop_register" style="height: 50px"></div>
+              <n-divider style="width: 98%; margin: 0 !important;">
+                <p style="opacity: 0.2">·</p>
+              </n-divider>
+              <!--            <div style="margin: 50px 0 5px 0">-->
+              <!--              <img style="width: 45px" :src="appInfosStore.appCommonConfig.logo_url" alt="icon">-->
+              <!--            </div>-->
+              <div style="font-size: 1rem; opacity: 0.8; margin-top: 20px">{{ appInfosStore.appCommonConfig.app_name }}
+                版权所有
+              </div>
+              <div style="opacity: 0.4; margin-top: 10px">该网站受hCaptcha保护和验证，请遵守当地法律。</div>
+            </div>
+          </n-card>
         </n-scrollbar>
       </transition>
     </div>
@@ -810,7 +834,7 @@ export default {
       justify-content: center;
       align-items: center;
       text-align: center;
-      margin: 30px 0 ;
+      margin: 30px 0;
     }
 
     .other-login-method {

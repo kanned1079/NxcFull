@@ -289,6 +289,7 @@ export default {
                 >
                   <n-form-item path="username" label="管理员邮箱地址">
                     <n-input
+                        clearable
                         v-model:value="userFormData.username"
                         type="text"
                         placeholder="邮箱"
@@ -300,6 +301,7 @@ export default {
                     <n-input
                         v-model:value="userFormData.password"
                         type="password"
+                        showPasswordOn="click"
                         placeholder="密码"
                         :bordered="true"
                     />

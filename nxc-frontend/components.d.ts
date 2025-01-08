@@ -13,6 +13,7 @@ declare module 'vue' {
     CommonLogo: typeof import('./src/components/CommonLogo.vue')['default']
     DashBoard: typeof import('./src/components/DashBoard.vue')['default']
     NAlert: typeof import('naive-ui')['NAlert']
+    NAutoComplete: typeof import('naive-ui')['NAutoComplete']
     NBadge: typeof import('naive-ui')['NBadge']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']

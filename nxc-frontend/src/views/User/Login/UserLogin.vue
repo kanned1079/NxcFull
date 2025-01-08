@@ -83,6 +83,11 @@ let rules: FormRules = {
     },
     two_fa_code: {
       required: false,
+      trigger: ['input', 'blur'],
+      validator: () => {
+        let code = formValue.value.user.two_fa_code.trim();
+        return code === '' || code.length === 6;
+      }
     }
   }
 }
@@ -296,6 +301,7 @@ export default {
           >
             <n-form-item path="user.email">
               <n-input
+                  clearable
                   :style="placeholderBgColor"
                   :bordered="true"
                   type="text"
@@ -309,6 +315,7 @@ export default {
                   :style="placeholderBgColor"
                   :bordered="true"
                   type="password"
+                  showPasswordOn="click"
                   class="password"
                   :placeholder="t('userLogin.password')"
                   v-model:value="formValue.user.password"
