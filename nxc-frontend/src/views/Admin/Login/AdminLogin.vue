@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onMounted, ref, h} from 'vue'
+import {computed, h, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -326,22 +326,23 @@ export default {
 
                 <div style="text-align: right; margin-top: 40px">
                   <n-button
-                    text
-                    type="primary"
-                    >忘记密码 ></n-button>
+                      text
+                      type="primary"
+                  >忘记密码 >
+                  </n-button>
                 </div>
 
-<!--                <n-divider style="margin: 30px 0 30px 0 !important;">-->
-<!--                  <p style="opacity: 0.2">·</p>-->
-<!--                </n-divider>-->
+                <!--                <n-divider style="margin: 30px 0 30px 0 !important;">-->
+                <!--                  <p style="opacity: 0.2">·</p>-->
+                <!--                </n-divider>-->
 
-<!--                <div style="text-align: center">-->
+                <!--                <div style="text-align: center">-->
 
-<!--                  <span style="width: 40px">-->
-<!--                    <img style="width: 40px" :src="appInfoStore.appCommonConfig.logo" alt="SVG Image">-->
-<!--                  </span>-->
-<!--                  <h4 style="text-align: center">{{ appInfoStore.appCommonConfig.app_sub_name }}</h4>-->
-<!--                </div>-->
+                <!--                  <span style="width: 40px">-->
+                <!--                    <img style="width: 40px" :src="appInfoStore.appCommonConfig.logo" alt="SVG Image">-->
+                <!--                  </span>-->
+                <!--                  <h4 style="text-align: center">{{ appInfoStore.appCommonConfig.app_sub_name }}</h4>-->
+                <!--                </div>-->
 
 
                 <!--                <p style="opacity: 0.9">{{ appInfoStore.appCommonConfig.app_description }}</p>-->
@@ -364,26 +365,26 @@ export default {
               </div>
 
             </n-card>
-<!--            <n-card-->
-<!--                class="layer-down"-->
-<!--                :bordered="false"-->
-<!--                :embedded="true"-->
-<!--                content-style="padding: 0"-->
-<!--            >-->
-<!--              <div class="layer-down-inner">-->
-<!--                <n-button-->
-<!--                    tertiary-->
-<!--                    type="default"-->
-<!--                    class="reset-pwd-btn"-->
-<!--                    @click="handleForgetPassword"-->
-<!--                >-->
-<!--                  忘记密码-->
-<!--                  &lt;!&ndash;                  <template #icon>&ndash;&gt;-->
-<!--                  &lt;!&ndash;                    <n-icon size="14"><reloadIcon /></n-icon>&ndash;&gt;-->
-<!--                  &lt;!&ndash;                  </template>&ndash;&gt;-->
-<!--                </n-button>-->
-<!--              </div>-->
-<!--            </n-card>-->
+            <!--            <n-card-->
+            <!--                class="layer-down"-->
+            <!--                :bordered="false"-->
+            <!--                :embedded="true"-->
+            <!--                content-style="padding: 0"-->
+            <!--            >-->
+            <!--              <div class="layer-down-inner">-->
+            <!--                <n-button-->
+            <!--                    tertiary-->
+            <!--                    type="default"-->
+            <!--                    class="reset-pwd-btn"-->
+            <!--                    @click="handleForgetPassword"-->
+            <!--                >-->
+            <!--                  忘记密码-->
+            <!--                  &lt;!&ndash;                  <template #icon>&ndash;&gt;-->
+            <!--                  &lt;!&ndash;                    <n-icon size="14"><reloadIcon /></n-icon>&ndash;&gt;-->
+            <!--                  &lt;!&ndash;                  </template>&ndash;&gt;-->
+            <!--                </n-button>-->
+            <!--              </div>-->
+            <!--            </n-card>-->
           </div>
         </transition>
       </n-flex>
