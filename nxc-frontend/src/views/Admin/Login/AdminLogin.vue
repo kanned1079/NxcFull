@@ -174,6 +174,7 @@ let noticeInfo = () => {
 let backgroundStyle = computed(() => {
   const baseStyle = {
     backgroundSize: 'cover', // 或者 'contain'，根据需要调整
+    backgroundColor: themeStore.enableDarkMode?'#252525':'#e3e5e7',
     backgroundImage: `url(${appInfoStore.appCommonConfig.frontend_background_url})`,
   };
 

@@ -520,11 +520,7 @@ export default {
               </n-button>
             </n-form-item>
 
-            <div style="display: flex; flex-direction: row; justify-content: center">
-              <n-divider style="width: 98%; margin: 0 !important;">
-                <p style="opacity: 0.2">{{ appInfosStore.appCommonConfig.app_sub_name }}</p>
-              </n-divider>
-            </div>
+
             <!-- 注册按钮 -->
             <n-form-item>
               <n-button
@@ -544,6 +540,20 @@ export default {
               </n-button>
             </n-form-item>
           </n-form>
+
+          <div style="display: flex; flex-direction: row; justify-content: center; margin: 30px 0;">
+            <n-divider style="width: 98%; margin: 0 !important;">
+              <p style="opacity: 0.2">{{ appInfosStore.appCommonConfig.app_sub_name }}</p>
+            </n-divider>
+
+
+          </div>
+
+          <div style="display: flex; flex-direction: row; justify-content: center; margin: 30px 0; width: 70%;">
+
+            <p style="opacity: 0.6;">This site is protected by reCAPTCHA Enterprise and the Google Privacy Policy and Terms of Service apply.</p>
+
+          </div>
 
         </n-card>
       </transition>
