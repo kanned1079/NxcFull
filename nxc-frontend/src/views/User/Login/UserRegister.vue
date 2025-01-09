@@ -81,7 +81,8 @@ let coverBgColor = computed(() =>
 let placeholderBgColor = computed(() =>
     themeStore.enableDarkMode
         ? {}
-        : {backgroundColor: "#f2fafd",}
+        // : {backgroundColor: "#f2fafd",}
+: {}
 );
 let textLeftColor = computed(() => (themeStore.enableDarkMode ? {color: "#fff"} : {}));
 
@@ -263,15 +264,13 @@ let rules: FormRules = {
       required: appInfosStore.registerPageConfig.invite_require,
       trigger: 'blur',
       validator(rule: FormItemRule, value: string) {
-        console.log(value)
-        let isValid = appInfosStore.registerPageConfig.invite_require && value !== ''
-        if (isValid) return true
-        else {
-          failReasons.value.push('邀请码是必填的')
-          return new Error('You must be invited')
+        if (!appInfosStore.registerPageConfig.invite_require || value.trim() !== '') {
+          return true;
         }
+        failReasons.value.push('邀请码是必填的');
+        return new Error('You must be invited');
       }
-    },
+    }
   },
 };
 
@@ -481,6 +480,7 @@ export default {
                     :placeholder="t('userRegister.email')"
                     :options="autoCompleteEmailSuffixOptions"
                     :input-props="{autocomplete: 'disabled'}"
+                    :style="placeholderBgColor"
                 ></n-auto-complete>
               </n-form-item>
 

@@ -380,23 +380,23 @@ export default {
             </n-icon>
             {{ t('userLogin.apple') }}&nbsp;
           </n-button>
-          <n-button :bordered="false" class="other-login-method google" type="primary">
-            <n-icon style="margin-right: 10px;" size="25">
-              <googleIcon/>
-            </n-icon>
-            {{ t('userLogin.google') }}
-          </n-button>
-          <n-button
-              :bordered="false"
-              class="other-login-method microsoft"
-              type="primary"
-              size="large"
-          >
-            <n-icon style="margin-right: 10px;" size="23">
-              <microsoftIcon/>
-            </n-icon>
-            {{ t('userLogin.microsoft') }}
-          </n-button>
+<!--          <n-button :bordered="false" class="other-login-method google" type="primary">-->
+<!--            <n-icon style="margin-right: 10px;" size="25">-->
+<!--              <googleIcon/>-->
+<!--            </n-icon>-->
+<!--            {{ t('userLogin.google') }}-->
+<!--          </n-button>-->
+<!--          <n-button-->
+<!--              :bordered="false"-->
+<!--              class="other-login-method microsoft"-->
+<!--              type="primary"-->
+<!--              size="large"-->
+<!--          >-->
+<!--            <n-icon style="margin-right: 10px;" size="23">-->
+<!--              <microsoftIcon/>-->
+<!--            </n-icon>-->
+<!--            {{ t('userLogin.microsoft') }}-->
+<!--          </n-button>-->
         </n-card>
       </transition>
       <!--      <n-card class="login-card" :embedded="false" :bordered="false">-->

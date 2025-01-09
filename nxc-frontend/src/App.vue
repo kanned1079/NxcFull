@@ -8,13 +8,23 @@ import {type NConfigProvider} from 'naive-ui'
 const themeStore = useThemeStore();
 const appInfosStore = useAppInfosStore()
 
-const handleResize = () => {
-  // console.log('宽度小于768', window.innerWidth < 768)
-  themeStore.menuCollapsed = window.innerWidth < 768;
+const handleResize = () => themeStore.menuCollapsed = window.innerWidth < 768;
 
-};
+// const handleToggleDarkMode = (event.ma)
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+  if (event.matches) themeStore.enableDarkMode = true
+  else themeStore.enableDarkMode = false
+});
 
 let isDark = computed(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
+
+
+
+// watch(isDark, (val: boolean) => {
+//   console.log('主题变化了')
+//   themeStore.enableDarkMode = true
+// })
 
 onMounted(() => {
   handleResize(); // 初始时根据当前宽度设置状
@@ -25,25 +35,15 @@ onMounted(() => {
   // 从总设置中获取主题并应用
   themeStore.setThemeFromSetting()
   // 监听深色模式的变化
-  console.log(isDark.value)
-  themeStore.enableDarkMode = isDark.value
+  // console.log(isDark.value)
+  themeStore.enableDarkMode = isDark.value;
   console.info('App', appInfosStore.registerPageConfig)
+
 });
 
-watch(isDark, (val: boolean) => {
-  themeStore.enableDarkMode = val
-})
-
-
-
 onBeforeMount(() => {
-  // appInfosStore.getCommonConfig()
   themeStore.setThemeFromSetting()
 })
-
-// onMounted(() => {
-//   themeStore.setThemeFromSetting()
-// })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize); // 组件卸载时移除监听器
@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 <!--<div style="scrollbar-width: none">-->
   <n-config-provider
       :theme="themeStore.getMainTheme"
-      :theme-overrides="toRaw(themeStore.getTheme.selfOverride)"
+      :theme-overrides="themeStore.getTheme.selfOverride"
   >
 
     <!--    <n-theme-editor>-->
