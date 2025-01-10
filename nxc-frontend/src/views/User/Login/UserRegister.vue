@@ -28,27 +28,27 @@ const onVerify = (tokenStr?: string, eKey?: string) => {
   hCaptchaVerified.value = true // 通过认证
   hCaptchaToken.value = tokenStr || ''
   hCaptchaEKey.value = eKey || ''
-  message.success('验证通过')
+  message.success(t('userRegister.hCaptcha.passed'))
   console.log(hCaptchaToken.value, hCaptchaEKey.value)
 }
 
 const onExpire = () => {
   hCaptchaVerified.value = true // 没有通过认证
   hCaptchaExpired.value = true  // 标记验证过期
-  message.error('已过期')
+  message.warning(t('userRegister.hCaptcha.expired'))
 }
 
 const onChallengeExpire = () => {
   hCaptchaVerified.value = true // 没有通过认证
   hCaptchaExpired.value = true  // 标记验证过期
-  message.error('验证超时')
+  message.warning(t('userRegister.hCaptcha.challengeExpired'))
 }
 
 const onError = (err: any) => {
   hCaptchaVerified.value = true // 没有通过认证
   hCaptchaExpired.value = true  // 标记验证过期
   hCaptchaErr.value = `Error: ${err}`
-  message.error(hCaptchaErr.value)
+  message.error(t('userRegister.hCaptcha.err') + hCaptchaErr.value)
 }
 
 const calculateContentStyle = () => {
@@ -95,7 +95,7 @@ let regBtnEnabled = computed(() =>
     !appInfosStore.registerPageConfig.stop_register &&
     (!appInfosStore.registerPageConfig.recaptcha_enable || hCaptchaVerified.value)
 );
-console.log(appInfosStore.registerPageConfig.recaptcha_enable, hCaptchaVerified.value)
+// console.log(appInfosStore.registerPageConfig.recaptcha_enable, hCaptchaVerified.value)
 let clickedCount = ref<number>(0); // 注册按钮点击次数
 let enableSendCode = ref<boolean>(true);
 let waitSendMail = ref<number>(0);
@@ -129,7 +129,7 @@ let validateEmail = (email: string): boolean => {
 
   // 检查邮箱格式是否符合正则
   if (!emailRegex.test(email)) {
-    failReasons.value.push("邮箱格式不正确");
+    failReasons.value.push(t('userRegister.form.emailFormatErr'));
     return false;
   }
 
@@ -142,23 +142,23 @@ let validateEmail = (email: string): boolean => {
 
     // 不允许使用 Gmail 的多别名功能（含 "+"）
     if (localPart.includes("+")) {
-      failReasons.value.push('不允许使用 Gmail 多别名功能');
+      failReasons.value.push(t('userRegister.form.gmailLimitErr'));
       return false;
     }
     // 如果本地部分包含 .，但去掉 . 后本地部分与原本不一致
     const normalizedLocalPart = localPart.replace(/\./g, "");
     if (normalizedLocalPart !== localPart) {
-      failReasons.value.push('Gmail 地址不允许包含 "."');
+      failReasons.value.push(t('userRegister.form.gmailDotNotAllowed'));
       return false;
     }
     // 本地部分必须是小写
     if (localPart !== localPart.toLowerCase()) {
-      failReasons.value.push('Gmail 地址的本地部分必须全部小写');
+      failReasons.value.push(t('userRegister.form.gmailPartLowerForced'));
       return false;
     }
     // 如果是 googlemail.com，则直接不允许
     if (isGooglemail) {
-      failReasons.value.push('不支持使用 Googlemail 地址');
+      failReasons.value.push(t('userRegister.form.googlemailNotAllowed'));
       return false;
     }
   }
@@ -184,12 +184,12 @@ let rules: FormRules = {
           return true; // Skip verification if not needed
         }
         if (!value) {
-          failReasons.value.push('請輸入驗證碼'); // 繁體中文
+          failReasons.value.push(t('userRegister.form.verifyCodeRequire')); // 繁體中文
           return new Error('Verification code is required');
         }
         const codeRegex = /^\d{6}$/;
         if (!codeRegex.test(value)) {
-          failReasons.value.push('驗證碼格式不正確'); // 繁體中文
+          failReasons.value.push(t('userRegister.form.verifyCodeFormatErr')); // 繁體中文
           return new Error('Invalid verification code format');
         }
         return true;
@@ -201,13 +201,13 @@ let rules: FormRules = {
       validator: (rule: FormItemRule, value: string) => {
         // Check if password is empty
         if (!value) {
-          failReasons.value.push('請輸入密碼'); // 繁體中文
+          failReasons.value.push(t('userRegister.form.passwordRequire')); // 繁體中文
           return new Error('Password cannot be empty');
         }
 
         // Check password length
-        if (value.length < 12) {
-          failReasons.value.push('密碼長度必須大於或等於12位'); // 繁體中文
+        if (value.length < 10) {
+          failReasons.value.push(t('userRegister.form.passwordLengthRequire')); // 繁體中文
           return new Error("Password length is less than 12 characters");
         }
 
@@ -221,7 +221,7 @@ let rules: FormRules = {
 
         // Check if password meets at least 3 types
         if (typeCount < 3) {
-          failReasons.value.push('密碼必須包含大寫字母、小寫字母、數字、特殊符號中的至少三種'); // 繁體中文
+          failReasons.value.push(t('userRegister.form.passwordComplexRequire')); // 繁體中文
           return new Error("Password must contain at least three types of characters: uppercase, lowercase, digits, or special characters");
         }
 
@@ -234,32 +234,18 @@ let rules: FormRules = {
         message: "Please confirm your password",
         trigger: 'blur',
         validator(rule: FormItemRule, value: string) {
+          if (value === '') {
+            failReasons.value.push(t('userRegister.form.passwordAgainRequire'))
+            return new Error("Password confirmation require");
+          }
           let isValid = formValue.value.user.password === value && value.trim() !== ''
           if (!isValid) {
-            failReasons.value.push('兩次輸入的密碼不匹配')
+            failReasons.value.push(t('userRegister.form.passwordAgainNotMatch'))
             return new Error("Password confirmation does not match");
           } else return true
         },
       }
     ],
-    password_confirmation_bak: {
-      required: true,
-      trigger: ['blur', 'input'],
-      validator(rule: FormItemRule, value: string) {
-        if (!value) {
-          failReasons.value.push('請輸入確認密碼'); // 繁體中文
-          message.error('Please enter the confirmation password');
-          return new Error("Please enter the confirmation password");
-        }
-        // Check if confirmation matches original password
-        if (value !== formValue.value.user.password) {
-          failReasons.value.push('密碼不一致'); // 繁體中文
-          message.error('Passwords do not match');
-          return new Error("Passwords do not match");
-        }
-        return true;
-      },
-    },
     invite_user_id: {
       required: appInfosStore.registerPageConfig.invite_require,
       trigger: 'blur',
@@ -267,7 +253,7 @@ let rules: FormRules = {
         if (!appInfosStore.registerPageConfig.invite_require || value.trim() !== '') {
           return true;
         }
-        failReasons.value.push('邀请码是必填的');
+        failReasons.value.push(t('userRegister.form.inviteCodeRequire'));
         return new Error('You must be invited');
       }
     }
@@ -297,7 +283,7 @@ let callVerifyCode = async () => {
   if (data && data.code === 200) {
     verifyCodePassed.value = data.passed as boolean;
   } else {
-    message.error("验证码错误或已過期，請重試或獲取新驗證碼。");
+    message.error(t('userRegister.verifyCodeExpireErr'));
     verifyCodePassed.value = false;
   }
 };
@@ -315,7 +301,7 @@ let handleRegister = async () => {
       await router.push({path: "/login"});
     }, 1000);
   } else if (data.code === 409) {
-    message.error("该邮箱已经被注册");
+    message.error(t('userRegister.thisMailAlreadyExist'));
   } else {
     message.error(t("userRegister.regFailure") + data.msg);
   }
@@ -326,7 +312,7 @@ let handleRegister = async () => {
 let showFailReasons = () => {
   let _failReasons = failReasons.value
   notification.create({
-    title: '檢查表單', // 通知标题
+    title: computed(()=> t("userRegister.form.checkForm")).value, // 通知标题
     duration: 10000,
     description: () => {
       // 使用 div 来渲染多个错误信息
@@ -371,14 +357,16 @@ let startWait = (sec: number) => {
       enableSendCode.value = true;
     }
   }, 1000);
-};
+}
+
+let turn2UserAgreement = () => window.open(appInfosStore.registerPageConfig.tos_url, "_blank")
 
 onBeforeMount(async () => {
   let isFetchSuccess = await handleFetchRegisterConfig('en')
   if (isFetchSuccess) {
     enableRegister.value = true
   } else {
-    message.error('配置获取失败请尝试刷新')
+    message.error(t('userRegister.pageConfigFetchFailure'))
     enableRegister.value = false
   }
 })
@@ -448,7 +436,7 @@ export default {
                 style="margin-bottom: 50px;"
             >
               <n-p style="font-size: 1rem">
-                抱歉，目前注册功能已暂停。如有需要，请稍后再试，或联系我们的支持团队获取更多信息。感谢您的理解与支持！
+                {{ t('userRegister.stopRegisterHint') }}
               </n-p>
               <n-p style="opacity: 0.6; font-weight: bold">by {{ appInfosStore.appCommonConfig.app_name }}</n-p>
             </n-alert>
@@ -517,18 +505,18 @@ export default {
                       :checked="false"
                       style="font-size: 0.9rem !important; opacity: 0.8; background-color: rgba(0,0,0,0.0)"
                   >
-                    * 密碼需要符合
+                    {{ t('userRegister.passwordComplexRequirePart1') }}
                     <n-button
                         type="primary"
                         text
                         style="text-decoration: underline"
                     >
-                      複雜度要求
+                      {{ t('userRegister.passwordComplexRequirePart2') }}
                     </n-button>
                   </n-tag>
                 </template>
-                1. 需要使用大寫字母、小寫字母、數字、特殊符號中的三種及以上<br>
-                2. 長度10位以上
+                {{ t('userRegister.passwordComplexHint1') }}<br>
+                {{ t('userRegister.passwordComplexHint2') }}
               </n-popover>
               <n-form-item
                   path="user.password"
@@ -583,6 +571,7 @@ export default {
                     text
                     type="primary"
                     style="font-weight: bold; opacity: 0.9; margin-left: 3px"
+                    @click="turn2UserAgreement"
                 >
                   {{ t('userRegister.terminalUserAgreement') }}
                 </n-button>
@@ -630,9 +619,9 @@ export default {
               <!--              <img style="width: 45px" :src="appInfosStore.appCommonConfig.logo_url" alt="icon">-->
               <!--            </div>-->
               <div style="font-size: 1rem; opacity: 0.8; margin-top: 20px">{{ appInfosStore.appCommonConfig.app_name }}
-                版权所有
+                {{ t('userRegister.allRightsReserved') }}
               </div>
-              <div style="opacity: 0.4; margin-top: 10px">该网站受hCaptcha保护和验证，请遵守当地法律。</div>
+              <div style="opacity: 0.4; margin-top: 10px"> {{ t('userRegister.securityAndLaws') }}</div>
             </div>
           </n-card>
         </n-scrollbar>

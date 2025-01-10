@@ -73,12 +73,12 @@ let rules: FormRules = {
     email: {
       required: true,
       type: 'email',
-      message: '邮件地址是必填的',
+      message: 'Email Address is required.',
       trigger: ['blur', 'input'],
     },
     password: {
       required: true,
-      message: '你还没有输入密码',
+      message: 'You haven\'t fill in password.',
       trigger: 'blur'
     },
     two_fa_code: {
@@ -94,7 +94,7 @@ let rules: FormRules = {
 
 let notifyErr = (type: NotificationType, msg: string) => {
   notification[type]({
-    content: '登陆失败',
+    content: computed(() => t('userLogin.loginFailure')).value,
     meta: msg,
     duration: 2500,
     keepAliveOnHover: true
@@ -103,7 +103,7 @@ let notifyErr = (type: NotificationType, msg: string) => {
 
 let notifyPass = (type: NotificationType) => {
   notification[type]({
-    content: '验证通过',
+    content: computed(() => t('userLogin.authPass')).value,
     // meta: '1111',
     duration: 2500,
     keepAliveOnHover: true
@@ -133,7 +133,6 @@ interface UserData {
 }
 
 let bindUserInfo = (data: DataWithAuth) => {
-  console.log('绑定数据', data)
   userInfoStore.isAuthed = data.isAuthed
   let {user_data} = data
 
@@ -147,11 +146,9 @@ let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.thisUser.balance = user_data.balance
   userInfoStore.thisUser.lastLogin = user_data.last_login ? user_data.last_login.toString() : ''
   userInfoStore.thisUser.lastLoginIp = user_data.last_login_ip
-  console.log('绑定结束')
 }
 
 let callLogin = async () => {
-  console.log('用户数据')
   console.log(formValue.value.user.email, formValue.value.user.password)
   try {
     // let hashedPwd = await hashPassword(formValue.value.user.password)
@@ -169,10 +166,7 @@ let callLogin = async () => {
       sessionStorage.setItem('token', data.token)
       // sessionStorage.setItem('isAuthed', JSON.stringify(true))
       notifyPass('success');
-      console.log('绑定用户数据到pinia')
       bindUserInfo(data)
-      console.log("结束")
-      console.log('跳转到用户仪表板')
       await router.push({path: '/dashboard'});
     } else {
       enableLogin.value = true
@@ -211,7 +205,7 @@ let loginClick = async () => {
   }
   await loginFormRef.value?.validate((errors) =>{
     if (errors) { // 表单验证不通过
-      message.error('表单不完整')
+      message.error(t('userLogin.checkForm'))
     } else {
       // message.info('ok11111')
       callLogin() // 表单验证完成后提交登陆请求
@@ -219,40 +213,12 @@ let loginClick = async () => {
   })
 }
 
-// let handleValidateClick = () => {
-//   enableLogin.value = false
-//   clickedCount.value += 1
-//   console.log('clickedCount: ', clickedCount.value)
-//   if (clickedCount.value == 5) {
-//     enableLogin.value = false
-//     setTimeout(() => {
-//       enableLogin.value = true
-//       clickedCount.value = 0
-//     }, 60000)
-//     return
-//   }
-//   if (formValue.value.user.email === '' || formValue.value.user.password === '') {
-//     notifyErr('error', '邮箱或密码不能为空')
-//     return
-//   }
-//   console.log('验证完成 调用登录')
-//   handleLogin()
-//   // if (formValue.value.user.password === '') {
-//   //   notifyErr('error', '密码不能为空')
-//   //   return false
-//   // }
-// }
-
 onMounted(() => {
-  console.log('挂载普通用户登录')
   setTimeout(() => animated.value.leftAnimated = true, 100)
   setTimeout(() => animated.value.rightAnimated = true, 150)
 })
 
-
-
 </script>
-
 
 <script lang="ts">
 export default {
@@ -329,7 +295,7 @@ export default {
                   class="password"
                   maxlength="6"
                   show-count
-                  :placeholder="'如果您启用了两步验证（2FA）'"
+                  :placeholder="t('userLogin.if2FaEnabledHint')"
                   v-model:value="formValue.user.two_fa_code"
               />
             </n-form-item>
@@ -374,130 +340,20 @@ export default {
             </n-icon>
             {{ t('userLogin.github') }}
           </n-button>
-          <n-button :bordered="false" class="other-login-method apple" type="primary">
+          <n-button
+              :bordered="false"
+              class="other-login-method apple"
+              type="primary"
+              @click=" "
+              size="large"
+          >
             <n-icon style="margin-right: 10px;" size="25">
               <appleIcon/>
             </n-icon>
             {{ t('userLogin.apple') }}&nbsp;
           </n-button>
-<!--          <n-button :bordered="false" class="other-login-method google" type="primary">-->
-<!--            <n-icon style="margin-right: 10px;" size="25">-->
-<!--              <googleIcon/>-->
-<!--            </n-icon>-->
-<!--            {{ t('userLogin.google') }}-->
-<!--          </n-button>-->
-<!--          <n-button-->
-<!--              :bordered="false"-->
-<!--              class="other-login-method microsoft"-->
-<!--              type="primary"-->
-<!--              size="large"-->
-<!--          >-->
-<!--            <n-icon style="margin-right: 10px;" size="23">-->
-<!--              <microsoftIcon/>-->
-<!--            </n-icon>-->
-<!--            {{ t('userLogin.microsoft') }}-->
-<!--          </n-button>-->
         </n-card>
       </transition>
-      <!--      <n-card class="login-card" :embedded="false" :bordered="false">-->
-      <!--        <n-button class="back" text :bordered="false" @click="router.back()">-->
-      <!--          <n-icon style="margin-right: 5px" size="20">-->
-      <!--            <backIcon/>-->
-      <!--          </n-icon>-->
-      <!--          {{ t('userLogin.backHomePage') }}-->
-      <!--        </n-button>-->
-      <!--        <p class="login-title">{{ t('userLogin.loginToContinue') }}</p>-->
-      <!--        <n-input-->
-      <!--            size="large"-->
-      <!--            :style="placeholderBgColor"-->
-      <!--            :bordered="false"-->
-      <!--            type="text"-->
-      <!--            class="username"-->
-      <!--            :placeholder="t('userLogin.email')" v-model:value="formValue.user.email"-->
-      <!--        ></n-input>-->
-      <!--        <n-input-->
-      <!--            size="large"-->
-      <!--            :style="placeholderBgColor"-->
-      <!--            :bordered="false"-->
-      <!--            type="password"-->
-      <!--            class="password"-->
-      <!--            :placeholder="t('userLogin.password')"-->
-      <!--            v-model:value="formValue.user.password"-->
-      <!--        ></n-input>-->
-
-      <!--        <n-input-->
-      <!--            size="large"-->
-      <!--            type="text"-->
-      <!--            :style="placeholderBgColor"-->
-      <!--            :bordered="false"-->
-      <!--            class="password"-->
-      <!--            maxlength="6"-->
-      <!--            show-count-->
-      <!--            :placeholder="'如果您启用了两步验证（2FA）'"-->
-      <!--            v-model:value="formValue.user.two_fa_code"-->
-      <!--        ></n-input>-->
-      <!--        <div class="no-account">-->
-      <!--          <p class="no-account-prefix">{{ t('userLogin.haveNoAccount') }}</p>-->
-      <!--          <n-button-->
-      <!--              class="no-account-btn"-->
-      <!--              text-->
-      <!--              @click="router.push({path: '/register'})">{{-->
-      <!--              t('userLogin.reg')-->
-      <!--            }}-->
-      <!--          </n-button>-->
-      <!--        </div>-->
-      <!--        <n-button-->
-      <!--            :bordered="false"-->
-      <!--            type="primary"-->
-      <!--            class="login-btn"-->
-      <!--            size="large"-->
-      <!--            @click="handleValidateClick"-->
-      <!--            :disabled="!enableLogin"-->
-      <!--        >-->
-      <!--          <n-icon style="margin-right: 10px" size="25">-->
-      <!--            <loginIcon/>-->
-      <!--          </n-icon>-->
-      <!--          {{ t('userLogin.login') }}-->
-      <!--        </n-button>-->
-      <!--        <n-divider>-->
-      <!--          <p style="opacity: 0.5;  font-weight: 400; font-size: 0.8rem">{{ t('userLogin.otherMethods') }}</p>-->
-      <!--        </n-divider>-->
-      <!--        <n-button-->
-      <!--            :bordered="false"-->
-      <!--            class="other-login-method github"-->
-      <!--            type="primary"-->
-      <!--            @click=" "-->
-      <!--            size="large"-->
-      <!--        >-->
-      <!--          <n-icon style="margin-right: 10px;" size="25">-->
-      <!--            <githubIcon/>-->
-      <!--          </n-icon>-->
-      <!--          {{ t('userLogin.github') }}-->
-      <!--        </n-button>-->
-      <!--        &lt;!&ndash;        <n-button :bordered="false" class="other-login-method apple" type="primary">&ndash;&gt;-->
-      <!--        &lt;!&ndash;          <n-icon style="margin-right: 10px;" size="25">&ndash;&gt;-->
-      <!--        &lt;!&ndash;            <appleIcon/>&ndash;&gt;-->
-      <!--        &lt;!&ndash;          </n-icon>&ndash;&gt;-->
-      <!--        &lt;!&ndash;          {{ t('userLogin.apple') }}&nbsp;&ndash;&gt;-->
-      <!--        &lt;!&ndash;        </n-button>&ndash;&gt;-->
-      <!--        &lt;!&ndash;        <n-button :bordered="false" class="other-login-method google" type="primary">&ndash;&gt;-->
-      <!--        &lt;!&ndash;          <n-icon style="margin-right: 10px;" size="25">&ndash;&gt;-->
-      <!--        &lt;!&ndash;            <googleIcon/>&ndash;&gt;-->
-      <!--        &lt;!&ndash;          </n-icon>&ndash;&gt;-->
-      <!--        &lt;!&ndash;          {{ t('userLogin.google') }}&ndash;&gt;-->
-      <!--        &lt;!&ndash;        </n-button>&ndash;&gt;-->
-      <!--        <n-button-->
-      <!--            :bordered="false"-->
-      <!--            class="other-login-method microsoft"-->
-      <!--            type="primary"-->
-      <!--            size="large"-->
-      <!--        >-->
-      <!--          <n-icon style="margin-right: 10px;" size="23">-->
-      <!--            <microsoftIcon/>-->
-      <!--          </n-icon>-->
-      <!--          {{ t('userLogin.microsoft') }}-->
-      <!--        </n-button>-->
-      <!--      </n-card>-->
     </div>
   </div>
 </template>

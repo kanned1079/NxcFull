@@ -149,7 +149,12 @@ export default {
         failure: '失敗',
         unknowErr: '不明なエラー',
         verifyCodeErr: '検証コードが間違っています',
-
+        passwordComplexRequirePart1: '',
+        passwordComplexRequirePart2: '',
+        form: {
+            passwordComplexRequirePart1: '',
+            passwordComplexRequirePart2: '',
+        }
     },
     userSummary: {
         myPlan: '私のサブスクリプション',

@@ -1,28 +1,34 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onMounted, ref, computed} from "vue";
+import {computed, h, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
-import type {FormInst, FormRules, NotificationType} from 'naive-ui'
+import type {FormInst, FormItemRule, FormRules, NotificationType} from 'naive-ui'
 import {NIcon, useMessage, useNotification} from 'naive-ui'
 import {
-  Wallet as walletIcon,
   ChevronForwardOutline as toRightIcon,
   InformationCircle as infoIcon,
+  Wallet as walletIcon,
 } from "@vicons/ionicons5"
 // import {encodeToBase64, hashPassword} from "@/utils/encryptor";
 import {
-  handleCancelSetup2FA, handleGet2FAStatus,
+  handleCancelSetup2FA,
+  handleDeleteMyAccount,
+  handleDisable2FA,
+  handleGet2FAStatus,
   handleSetup2FA,
   handleTest2FA,
   saveNewPassword,
-  verifyOldPassword,
-  handleDisable2FA,
-  handleDeleteMyAccount
+  verifyOldPassword
 } from "@/api/user/profile";
 // import instance from "@/axios";
+
+const notification = useNotification()
+const themeStore = useThemeStore();
+const userInfoStore = useUserInfoStore();
+const appInfosStore = useAppInfosStore();
 
 // import {handleTest2FA, handleCancelSetup2FA, handleSetup2FA, handleGet2FAStatus, verifyOldPassword, saveNewPassword} from "@/api/user/profile";
 
@@ -34,16 +40,12 @@ interface ModelType {
 
 let confirmDeleteAccountEmailInput = ref<string>('')
 let loadingDeleteSpin = ref<boolean>(false)
-
 const message = useMessage()
-
 let animated = ref<boolean>(false)
-
 let showDeleteMyModal = ref<boolean>(false)
-
 const {t} = useI18n()
 const router = useRouter()
-const formRef = ref<FormInst | null>(null)
+const updatePwdForm = ref<FormInst | null>(null)
 // const message = useMessage()
 const modelRef = ref<ModelType>({
   old_password: '',
@@ -51,26 +53,99 @@ const modelRef = ref<ModelType>({
   new_password_again: ''
 })
 
+let failReasons = ref<string[]>([]);
+
 const rules: FormRules = {
   old_password: {
-    required: false,
-    trigger: "blur"
+    required: true,
+    trigger: 'blur',
+    validator(rule: FormItemRule, value: string) {
+      if (value) return true
+      else {
+        failReasons.value.push(t('userProfile.resetPassword.previousPasswordRequire'))
+        return new Error('Please input previous password first')
+      }
+    }
   },
   new_password: {
-    required: false,
-    trigger: "blur"
+    required: true,
+    trigger: 'blur',
+    validator(rule: FormItemRule, value: string) {
+      let newPassword = value.trim()
+      // 檢查密碼是否為空
+      if (!newPassword) {
+        failReasons.value.push(t('userProfile.resetPassword.passwordRequire')); // 繁體中文
+        return new Error('Password cannot be empty');
+      }
+
+      // 檢查新密碼是否與舊密碼相同
+      if (modelRef.value.old_password === newPassword) {
+        failReasons.value.push(t('userProfile.resetPassword.passwordConflict')); // 繁體中文
+        return new Error('New password must be different from previous password');
+      }
+
+      // Check password length
+      if (newPassword.length < 10) {
+        failReasons.value.push(t('userProfile.resetPassword.passwordLengthRequire')); // 繁體中文
+        return new Error("Password length is less than 12 characters");
+      }
+
+      // Check if password contains at least 3 character types
+      const hasUpperCase = /[A-Z]/.test(newPassword);  // Uppercase letter
+      const hasLowerCase = /[a-z]/.test(newPassword);  // Lowercase letter
+      const hasNumber = /\d/.test(newPassword);        // Number
+      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);  // Special character
+
+      const typeCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
+
+      // Check if password meets at least 3 types
+      if (typeCount < 3) {
+        failReasons.value.push(t('userProfile.resetPassword.passwordComplexRequire')); // 繁體中文
+        return new Error("Password must contain at least three types of characters: uppercase, lowercase, digits, or special characters");
+      }
+
+      return true;
+    }
   },
   new_password_again: {
-    required: false,
-    trigger: "blur"
+    required: true,
+    trigger: 'blur',
+    validator: (rule: FormItemRule, value: string) => {
+      let newPasswordAgain = value.trim()
+      if (!newPasswordAgain) {
+        failReasons.value.push(t('userProfile.resetPassword.passwordAgainRequire'))
+        return new Error('Please input new password again')
+      }
+      if (newPasswordAgain !== modelRef.value.new_password) {
+        failReasons.value.push(t('userProfile.resetPassword.passwordAgainNotMatch'))
+        return new Error('Password not match')
+      }
+      return true
+    }
   },
 }
 
+let showFailReasons = () => {
+  let _failReasons = failReasons.value
+  notification.create({
+    title: computed(() => t("userRegister.form.checkForm")).value, // 通知标题
+    duration: 10000,
+    description: () => {
+      // 使用 div 来渲染多个错误信息
+      return h('div', [
+        _failReasons.map((reason: string, index: number) => {
+          return h('p', {key: index}, `${index + 1} ${reason}`); // 渲染每个错误信息
+        }),
+      ]);
+    },
+    // meta: new Date().toLocaleString(), // 可以加入时间戳或其他额外信息
+    onClose: () => {
+      // 关闭通知时的回调
+      console.log('Fail reasons notification closed');
+    },
+  });
+};
 
-const notification = useNotification()
-const themeStore = useThemeStore();
-const userInfoStore = useUserInfoStore();
-const appInfosStore = useAppInfosStore();
 
 let notify = (type: NotificationType, title: string, meta?: string) => {
   notification[type]({
@@ -81,70 +156,27 @@ let notify = (type: NotificationType, title: string, meta?: string) => {
   })
 }
 
-// verifyOldPassword 验证旧密码是否正确
-// let verifyOldPassword = async (): Promise<boolean> => {
-//   try {
-//     let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/verify', {
-//       email: userInfoStore.thisUser.email,
-//       // old_password: hashPassword(modelRef.value.old_password.trim() as string)
-//       old_password: encodeToBase64(modelRef.value.old_password.trim() as string)
-//     });
-//     if (data.code === 200) {
-//       return data.verified as boolean;
-//     } else {
-//       notify('error', t('userProfile.oldPwdVerifiedFailure'), data.msg)
-//       console.log(data);
-//       return false;
-//     }
-//   } catch (error: any) {
-//     notify('error', t('userProfile.oldPwdVerifiedFailure'), error.toString())
-//     console.log(error.toString());
-//     return false;
-//   }
-// }
-
-// saveNewPassword 保存新的密码
-let callSaveNewPassword = async () => {
-  if (modelRef.value.old_password.trim() !== '') {
-    if (modelRef.value.new_password.trim() !== '' && modelRef.value.new_password_again.trim() !== '') {
-      if (modelRef.value.new_password.trim() === modelRef.value.new_password_again.trim()) {
-        console.log('验证ok');
-        // if (await verifyOldPassword()) { // 等待验证旧密码的结果
-          if (await verifyOldPassword(userInfoStore.thisUser.email, modelRef.value.old_password.trim())) { // 等待验证旧密码的结果
-          // try {
-          //   let hashedNewPassword = await hashPassword(modelRef.value.new_password.trim() as string)
-          //   let {data} = await instance.post('http://localhost:8081/api/user/v1/auth/passcode/update', {
-          //     email: userInfoStore.thisUser.email,
-          //     // new_password: hashPassword(modelRef.value.new_password)
-          //     new_password: hashedNewPassword
-          //   });
-          //   let hashedNewPassword = await hashPassword(modelRef.value.new_password.trim() as string)
-            let data = await saveNewPassword(userInfoStore.thisUser.email, modelRef.value.new_password.trim())
-            if (data.code === 200 && data.updated as boolean) {
-              modelRef.value.old_password = ''
-              modelRef.value.new_password = ''
-              modelRef.value.new_password_again = ''
-              notify('success', t('userProfile.alertSuccess'), t('userProfile.alertSuccessSub'))
-            }
-          // } catch (error: any) {
-          //   notify('error', t('userProfile.alertFailure'), error.toString())
-          // }
-        } else {
-          console.log('旧密码验证失败');
-        }
-      } else {
-        notify('error', t('userProfile.pwdNotMatch'))
-        console.log('两次输入密码不一致');
-      }
+let saveNewPasswordClick = async (e: MouseEvent) => {
+  e.preventDefault()
+  failReasons.value = []
+  await updatePwdForm.value?.validate((errors) => {
+    if (errors) return showFailReasons()
+  })
+  if (await verifyOldPassword(userInfoStore.thisUser.email, modelRef.value.old_password.trim())) { // 等待验证旧密码的结果
+    let data = await saveNewPassword(userInfoStore.thisUser.email, modelRef.value.new_password.trim())
+    if (data.code === 200 && data.updated as boolean) {
+      modelRef.value.old_password = ''
+      modelRef.value.new_password = ''
+      modelRef.value.new_password_again = ''
+      notify('success', t('userProfile.alertSuccess'), t('userProfile.alertSuccessSub'))
     } else {
-      console.log('新密码格式错误');
-      notify('error', t('userProfile.errorPwdFormat'))
-
+      message.error( t('userProfile.resetPassword.updatePasswordFailure') + data.msg || '')
     }
   } else {
-    console.log('旧密码不能为空');
-    notify('error', t('userProfile.oldPwdNotNull'))
+    message.error(t('userProfile.resetPassword.previousPasswordVerifiedFailure'))
   }
+
+
 }
 
 let url = ref<string>('')
@@ -158,12 +190,14 @@ let callHandleSetup2FA = async () => {
   //     email: userInfoStore.thisUser.email,
   //   })
   let data = await handleSetup2FA(userInfoStore.thisUser.id, userInfoStore.thisUser.email)
-    if (data.code === 200) {
-      console.log(data)
-      url.value = data.url
-      showModal.value = true
-      handleCalTime()
-    }
+  if (data.code === 200) {
+    console.log(data)
+    url.value = data.url
+    showModal.value = true
+    handleCalTime()
+  } else {
+    message.error('err: ' + data.msg || '')
+  }
   // } catch (error: any) {
   //   console.log(error)
   // }
@@ -173,66 +207,37 @@ let twoFaCode = ref<string>('')
 
 // handleTest2FA 测试2FA可用性 如果可用则写入进数据库
 let callHandleTest2FA = async () => {
-  // try {
-  //   let {data} = await instance.post('/api/user/v1/auth/2fa/setup/test', {
-  //     id: userInfoStore.thisUser.id,
-  //     email: userInfoStore.thisUser.email,
-  //     two_fa_code: twoFaCode.value.trim(),
-  //   })
   let data = await handleTest2FA(userInfoStore.thisUser.id, userInfoStore.thisUser.email, twoFaCode.value.trim())
-    if (data.code === 200) {
-      console.log('绑定2fa成功', data)
-      showModal.value = false
-      message.success('绑定两步验证成功')
-      await callHandleGet2FAStatus()
-    } else {
-      message.error(data.msg)
-    }
-  // } catch (error: any) {
-  //   console.log(error)
-  // }
+  if (data.code === 200) {
+    console.log('绑定2fa成功', data)
+    showModal.value = false
+    message.success('绑定两步验证成功')
+    await callHandleGet2FAStatus()
+  } else {
+    message.error(data.msg)
+  }
 }
 
 // handleCancelSetup2FA 删除redis中的新建临时2FA数据
 let callHandleCancelSetup2FA = async () => {
-  // try {
-  //   let {data} = await instance.delete('/api/user/v1/auth/2fa/setup/cancel', {
-  //     params: {
-  //       // id: userInfoStore.thisUser.id,
-  //       email: userInfoStore.thisUser.email,
-  //     }
-  //   })
   let data = await handleCancelSetup2FA(userInfoStore.thisUser.email)
-    if (data.code === 200) {
-      console.log('取消2fa成功', data)
-      message.info('已取消')
-    }
-    showModal.value = false
-  // } catch (error: any) {
-  //   console.log(error)
-  //   message.info('错误' + error)
-  // }
+  if (data.code === 200) {
+    message.info(t('userProfile.disable2FaCancelled'))
+  } else {
+    message.error(t('userProfile.unknownErr') + data.msg || '')
+  }
+  showModal.value = false
 }
 
 let twoFAEnabled = ref<boolean>(false)
 // handleGet2FAStatus 测试2FA可用性 如果可用则写入进数据库
 let callHandleGet2FAStatus = async () => {
-  // try {
-  //   let {data} = await instance.get('/api/user/v1/auth/2fa/status', {
-  //     params: {
-  //       id: userInfoStore.thisUser.id,
-  //     }
-  //   })
   let data = await handleGet2FAStatus(userInfoStore.thisUser.id)
-    if (data.code === 200) {
-      twoFAEnabled.value = data.enabled as boolean
-    } else {
-      message.error(data.msg)
-    }
-  // } catch (error: any) {
-  //   message.info('错误' + error)
-  //   console.log(error)
-  // }
+  if (data.code === 200) {
+    twoFAEnabled.value = data.enabled as boolean
+  } else {
+    message.error(data.msg)
+  }
 }
 
 let leftTime = ref<number>(0)
@@ -258,25 +263,15 @@ let handleCalTime = () => {
 }
 
 let callHandleDisable2FA = async () => {
-  // try {
-  //   let {data} = await instance.delete('/api/user/v1/auth/2fa/disable', {
-  //     params: {
-  //       // id: userInfoStore.thisUser.id,
-  //       email: userInfoStore.thisUser.email,
-  //     }
-  //   })
   let data = await handleDisable2FA(userInfoStore.thisUser.email)
-    if (data.code === 200) {
-      console.log('关闭2fa成功', data)
-      message.info('已关闭2fa验证')
-      // 再次查询2fa状态
-      // await handleGet2FAStatus()
-      await callHandleGet2FAStatus()
-    }
-  // } catch (error: any) {
-  //   console.log(error)
-  //   message.info('错误' + error)
-  // }
+  if (data.code === 200) {
+    message.info(t('userProfile.closed2FaHint'))
+    // 再次查询2fa状态
+    // await handleGet2FAStatus()
+    await callHandleGet2FAStatus()
+  } else {
+    message.error(data.msg || '')
+  }
 }
 
 let handleClickToTopUp = () => {
@@ -287,31 +282,20 @@ let handleClickToTopUp = () => {
 }
 
 let callHandleDeleteMyAccount = async () => {
-  // try {
-  //   let {data} = await instance.delete('/api/user/v1/user/delete', {
-  //     params: {
-  //       user_id: userInfoStore.thisUser.id,
-  //       confirmed: true,
-  //     },
-  //   })
   let data = await handleDeleteMyAccount(userInfoStore.thisUser.id, true)
-    if (data.code === 200 && data.deleted) {
-      message.success(computed(() => t('userProfile.deletedSuccessMsg')).value)
-      setTimeout(() => {
-        userInfoStore.logout()
-      }, 1200)
-    } else {
-      message.error(computed(() => t('userProfile.deleteErrOccur')).value + ' ' + data.msg || '')
-    }
-  // } catch (err: any) {
-  //   console.log(err + '')
-  // }
+  if (data.code === 200 && data.deleted) {
+    message.success(computed(() => t('userProfile.deletedSuccessMsg')).value)
+    setTimeout(() => {
+      userInfoStore.logout()
+    }, 1200)
+  } else {
+    message.error(computed(() => t('userProfile.deleteErrOccur')).value + ' ' + data.msg || '')
+  }
 }
 
 let isEmailCurrent = computed(() => confirmDeleteAccountEmailInput.value === userInfoStore.thisUser.email)
 
 let confirmedDelete = () => {
-  console.log('确认删除')
   loadingDeleteSpin.value = true
   setTimeout(() => {
     loadingDeleteSpin.value = false
@@ -322,14 +306,13 @@ let confirmedDelete = () => {
 }
 
 onMounted(async () => {
-  console.log('挂载个人中心')
   themeStore.menuSelected = 'user-profile'
   themeStore.userPath = '/dashboard/profile'
 
   //
   let isUpdated = await userInfoStore.updateUserInfo()
   console.log(isUpdated)
-  !isUpdated ? notify('error', '失败', '个人信息更新失败以下当前数据可能不是最新的') : null
+  !isUpdated ? notify('error', t('userProfile.failure'), t('userProfile.notLatestHint')) : null
   // await handleGet2FAStatus()
   await callHandleGet2FAStatus()
 
@@ -385,23 +368,50 @@ export default {
       >
         <n-p class="title">{{ t('userProfile.alertPwd') }}</n-p>
         <div class="form">
-          <n-form ref="formRef" :rules="rules" :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})">
-            <n-form-item path="old_password" :label="t('userProfile.oldPwd')">
-              <n-input type="password" v-model:value="modelRef.old_password" @keydown.enter.prevent
-                       :placeholder="t('userProfile.oldPwdSub')"/>
+          <n-form
+              ref="updatePwdForm"
+              :model="modelRef"
+              :rules="rules"
+              :style="themeStore.menuCollapsed?({width: '100%'}):({width: '60%'})"
+              :show-feedback="false"
+              :show-require-mark="true"
+          >
+            <n-form-item path="old_password" :label="t('userProfile.oldPwd')" class="form-item">
+              <n-input
+                  type="password"
+                  showPasswordOn="click"
+                  v-model:value="modelRef.old_password"
+                  @keydown.enter.prevent
+                  :placeholder="t('userProfile.oldPwdSub')"/>
             </n-form-item>
-            <n-form-item path="new_password" :label="t('userProfile.newPwd')">
-              <n-input type="password" v-model:value="modelRef.new_password" @keydown.enter.prevent
-                       :placeholder="t('userProfile.newPwdSub')"/>
+            <n-form-item path="new_password" :label="t('userProfile.newPwd')" class="form-item">
+              <n-input
+                  type="password"
+                  showPasswordOn="click"
+                  v-model:value="modelRef.new_password"
+                  @keydown.enter.prevent
+                  :placeholder="t('userProfile.newPwdSub')"/>
             </n-form-item>
-            <n-form-item path="new_password_again" :label="t('userProfile.newPwdAgain')">
-              <n-input type="password" v-model:value="modelRef.new_password_again" @keydown.enter.prevent
-                       :placeholder="t('userProfile.newPwdAgainSub')"/>
+            <n-form-item path="new_password_again" :label="t('userProfile.newPwdAgain')" class="form-item">
+              <n-input
+                  type="password"
+                  showPasswordOn="click"
+                  v-model:value="modelRef.new_password_again"
+                  @keydown.enter.prevent
+                  :placeholder="t('userProfile.newPwdAgainSub')"/>
+            </n-form-item>
+            <n-form-item>
+              <n-button
+                  class="alert-btn"
+                  type="primary"
+                  secondary
+                  @click="saveNewPasswordClick"
+                  :bordered="false">
+                {{ t('userProfile.saveBtn') }}
+              </n-button>
             </n-form-item>
           </n-form>
-          <n-button class="alert-btn" type="primary" secondary @click="callSaveNewPassword" :bordered="false">
-            {{ t('userProfile.saveBtn') }}
-          </n-button>
+
         </div>
       </n-card>
 
@@ -420,7 +430,6 @@ export default {
             </n-form-item>
           </n-form>
         </div>
-
       </n-card>
 
       <n-card
@@ -436,13 +445,15 @@ export default {
         </n-alert>
         <div class="form">
           <div style="display: flex; flex-direction: row; margin-bottom: 20px; align-items: center">
-            <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">{{ t('userProfile.faAuthStatus') }}</p>
+            <p style="font-size: 0.9rem; font-weight: 500; margin-right: 10px; opacity: 0.9;">
+              {{ t('userProfile.faAuthStatus') }}</p>
             <div
                 :style="twoFAEnabled?{backgroundColor: '#86c166'}:{backgroundColor: themeStore.enableDarkMode?'rgba(225, 225, 225, 0.8)':'rgba(25,25,25,0.5)'}"
                 style="width: 6px; height: 6px; border-radius: 50%; margin-right: 5px"
             ></div>
             <p v-if="twoFAEnabled" style="color: #86c166">{{ t('userProfile.faEnabled') }}</p>
-            <p v-else :style="{color: themeStore.enableDarkMode?'rgba(225, 225, 225, 0.8)':'rgba(25,25,25,0.5)'}">{{ t('userProfile.faNotEnabled') }}</p>
+            <p v-else :style="{color: themeStore.enableDarkMode?'rgba(225, 225, 225, 0.8)':'rgba(25,25,25,0.5)'}">
+              {{ t('userProfile.faNotEnabled') }}</p>
           </div>
           <n-button
               secondary
@@ -463,9 +474,7 @@ export default {
           >
             {{ t('userProfile.disable2Fa') }}
           </n-button>
-
         </div>
-
       </n-card>
 
       <n-card
@@ -508,23 +517,16 @@ export default {
         <n-icon style="margin-right: 5px" size="23">
           <infoIcon/>
         </n-icon>
-        注销账号
+        {{ t('userProfile.deleteMyAccountModal.title') }}
       </div>
     </template>
 
     <div class="delete-my-modal-header">
       <div class="delete-my-modal-header-inner">
         <n-ul>
-          <n-li>
-            账号注销是一个不可逆的操作。一旦您确认删除，您将永久性地失去该账号的访问权限，这意味着您将无法再登录，且与此账号相关的所有数据，包括但不限于您的个人信息、历史记录、收藏内容、购买记录等都将全部无法访问。
-          </n-li>
-          <n-li>
-            如果您在我们的平台上有正在进行的业务，如未完成的订单、正在参与的活动、订阅服务等，这些都将随着账号删除而终止或取消，可能会给您带来相应的损失。同时，您与其他用户之间通过本平台建立的联系、互动信息等也都将不复存在。
-          </n-li>
-          <n-li>
-            请再次确认您的决定，如果您还有任何疑虑或问题，欢迎联系我们的客服，我们将竭诚为您解答。若您仍然希望删除账号，请点击
-            “确认删除” 按钮。
-          </n-li>
+          <n-li>{{ t('userProfile.deleteMyAccountModal.contentLine1') }}</n-li>
+          <n-li>{{ t('userProfile.deleteMyAccountModal.contentLine2') }}</n-li>
+          <n-li>{{ t('userProfile.deleteMyAccountModal.contentLine3') }}</n-li>
         </n-ul>
       </div>
     </div>
@@ -533,9 +535,9 @@ export default {
       <div class="delete-my-modal-body">
         <div class="delete-my-modal-body-title">
           <p style="font-size: 1rem; font-weight: 600; margin-right: 4px">*</p>
-          <p class="delete-my-modal-body-title-hex1">{{ '输入 "' }}</p>
+          <p class="delete-my-modal-body-title-hex1">{{ t('userProfile.deleteMyAccountModal.inputHint1') }}</p>
           <p class="delete-my-modal-body-title-hex">{{ userInfoStore.thisUser.email }}</p>
-          <p class="delete-my-modal-body-title-hex2">{{ '" 以继续。' }}</p>
+          <p class="delete-my-modal-body-title-hex2">{{ t('userProfile.deleteMyAccountModal.inputHint2') }}</p>
         </div>
 
         <n-input
@@ -543,15 +545,7 @@ export default {
             v-model:value="confirmDeleteAccountEmailInput"
             :placeholder="''"
             size="medium"
-        >
-
-          <!--        oncut="return false"-->
-          <!--        oncopy="return false"-->
-          <!--        onpaste="return false"-->
-
-        </n-input>
-
-
+        />
         <n-button
             type="error"
             secondary
@@ -559,7 +553,7 @@ export default {
             :disabled="!isEmailCurrent"
             @click="confirmedDelete"
         >
-          确认删除
+          {{ t('userProfile.deleteMyAccountModal.confirmDelete') }}
         </n-button>
 
 
@@ -707,10 +701,13 @@ export default {
 
     .form {
       margin: 20px;
+      .form-item {
+        margin-top: 20px;
+      }
     }
 
     .alert-btn {
-      width: 100px;
+      width: auto;
     }
 
     //@media screen and (min-width: 769px) {
