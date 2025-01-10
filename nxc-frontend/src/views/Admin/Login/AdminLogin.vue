@@ -53,7 +53,7 @@ interface AdminForm {
   password: string,
 }
 
-const userInfoStore = useUserInfoStore();
+                                 const userInfoStore = useUserInfoStore();
 const router = useRouter();
 let userFormInstance = ref<FormInst | null>(null)
 let userFormData = ref<AdminForm>({
@@ -190,7 +190,7 @@ let backgroundStyle = computed(() => {
 let showStartupNotification = () => {
   notification.create({
     title: '提示',
-    duration: 60000,
+    duration: 10000,
     description: '此页面是管理员页面，只有管理员才能访问，如果您没有管理员权限或意外来到此处，请点击下面的链接返回主页。',
     content: () => {
       return h('div', [
