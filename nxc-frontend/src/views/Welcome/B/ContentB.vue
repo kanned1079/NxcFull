@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {onBeforeUnmount, onMounted, ref} from "vue";
-import TreeFront from "./assets/TreeFront.svg";
-import TreeMedium from "./assets/TreeMedium.svg";
-import Sun from "./assets/Sun.svg";
-import {
-  FileTrayFullOutline as mgrIcon,
-  GlobeOutline as safeIcon,
-  LockClosedOutline as lockIcon,
-  SparklesOutline as fastIcon,
-} from "@vicons/ionicons5";
 
 const {t} = useI18n();
 
@@ -65,9 +56,9 @@ let onScrollFunction = () => {
     const isScrollingDown = scrollTop > lastScrollTop;
     lastScrollTop = scrollTop;
     if (!isScrolledToTarget && isScrollingDown && lay2Ref.value) {
-      lay2Ref.value.scrollIntoView({ behavior: "smooth" });
+      lay2Ref.value.scrollIntoView({behavior: "smooth"});
       isScrolledToTarget = true;
-    } else if (isScrolledToTarget &&!isScrollingDown) {
+    } else if (isScrolledToTarget && !isScrollingDown) {
       // 添加反向滚动的处理逻辑，例如重置状态变量或执行其他操作
       isScrolledToTarget = false;
     }

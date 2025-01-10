@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {ref, reactive, onMounted} from "vue";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import {useRouter} from "vue-router";
 
@@ -34,14 +33,16 @@ export default {
           size="large"
           type="primary"
           @click="router.push({path: '/login'})"
-      >登录</n-button>
+      >登录
+      </n-button>
       <n-button
           secondary
           color="#277aa8"
           size="large"
           type="primary"
           @click="router.push({path: '/register'})"
-      >注册新账号</n-button>
+      >注册新账号
+      </n-button>
     </div>
   </div>
 </template>
@@ -64,18 +65,21 @@ export default {
     flex-direction: row;
     align-items: center;
     // 新增以下样式
+
     span {
       display: flex;
       align-items: center;
       margin-right: 10px;
+
       img {
         width: 30px;
 
       }
     }
+
     .name {
       font-size: 1.5rem;
-      margin-right:100px;
+      margin-right: 100px;
       color: #277aa8;
     }
   }

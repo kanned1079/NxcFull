@@ -310,7 +310,8 @@ export default {
   <div style="padding: 20px 20px 0 20px">
     <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">
       <n-button secondary type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>
-      <n-button secondary type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试</n-button>
+      <n-button secondary type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试
+      </n-button>
     </n-card>
   </div>
 
@@ -349,7 +350,6 @@ export default {
   </transition>
 
 
-
   <n-modal
       title="新建通知"
       v-model:show="showModal"
@@ -383,9 +383,9 @@ export default {
 
 
     <!--          pass-->
-<!--    <template #footer>-->
-<!--      尾部-->
-<!--    </template>-->
+    <!--    <template #footer>-->
+    <!--      尾部-->
+    <!--    </template>-->
   </n-modal>
 </template>
 
@@ -398,6 +398,7 @@ export default {
     margin-top: 10px;
   }
 }
+
 .root {
   padding: 0 20px 20px 20px;
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SnowFall from "@/views/utils/SnowFall.vue";
 // import {useI18n} from "vue-i18n";
-import {ref, onMounted, onBeforeMount} from "vue"
+import {onBeforeMount, onMounted, ref} from "vue"
 import HeaderA from "@/views/Welcome/A/HeaderA.vue";
 import ContentA from "@/views/Welcome/A/ContentA.vue";
 import FooterA from "@/views/Welcome/A/FooterA.vue";
@@ -35,11 +35,11 @@ let settings = ref<WelcomeSettings>({
 })
 
 let callHandleGetConfig = async () => {
-    let data = await handleFetchWelcomeInfo('en')
-    if (data.code === 200) {
-      getConfigSuccess.value = true
-      Object.assign(settings.value, data.config)
-    }
+  let data = await handleFetchWelcomeInfo('en')
+  if (data.code === 200) {
+    getConfigSuccess.value = true
+    Object.assign(settings.value, data.config)
+  }
 }
 
 let showSnowFall = ref<boolean>(false)
@@ -50,8 +50,8 @@ onBeforeMount(() => {
 
 onMounted(() => {
   setTimeout(() => {
-      showSnowFall.value = true
-  } ,1000)
+    showSnowFall.value = true
+  }, 1000)
 })
 </script>
 
@@ -66,19 +66,20 @@ export default {
   <n-space vertical size="large" style="scrollbar-width: none">
 
     <n-layout style="scrollbar-width: none">
-      <n-layout-header style="position: fixed; top: 0; left: 0; right: 0; z-index: 2000; background-color: rgba(0,0,0,0)">
-<!--        <HeaderA/>-->
+      <n-layout-header
+          style="position: fixed; top: 0; left: 0; right: 0; z-index: 2000; background-color: rgba(0,0,0,0)">
+        <!--        <HeaderA/>-->
         <HeaderA style="z-index: 16000"></HeaderA>
       </n-layout-header>
-      <n-layout-content content-style="padding: 0px;" >
-<!--        <ContentA/>-->
+      <n-layout-content content-style="padding: 0px;">
+        <!--        <ContentA/>-->
         <ContentA
             :app_sub_description="settings.app_sub_description"
             :why_choose_us_hint="settings.why_choose_us_hint"
         ></ContentA>
       </n-layout-content>
       <n-layout-footer>
-<!--        <FooterA/>-->
+        <!--        <FooterA/>-->
         <FooterA
             v-if="getConfigSuccess"
             :bilibili_official_link="settings.bilibili_official_link"

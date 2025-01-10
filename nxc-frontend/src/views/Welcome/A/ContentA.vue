@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onBeforeUnmount, onMounted, ref, onBeforeMount} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import TreeFront from "./assets/TreeFront.svg";
 import TreeMedium from "./assets/TreeMedium.svg";
 import Sun from "./assets/Sun.svg";
 import {useRouter} from "vue-router";
-import instance from "@/axios/authInstance"
 
 import {
   ChevronForward as userIcon,
@@ -210,7 +209,7 @@ export default {
               <p class="app-name">{{ appInfosStore.appCommonConfig.app_name }}</p>
             </div>
             <p class="desc">
-<!--              {{ t('welcome.A.welcomeToSub') }}-->
+              <!--              {{ t('welcome.A.welcomeToSub') }}-->
               {{ props.app_sub_description }}
             </p>
             <n-button
@@ -233,7 +232,7 @@ export default {
       <div class="lay-2" ref="lay2Ref">
         <div class="why-us-head">
           <p class="why-us-title">{{ t('welcome.A.whyUs') }}</p>
-<!--          <p class="why-us-title">{{ settings.why_choose_us_hint }}</p>-->
+          <!--          <p class="why-us-title">{{ settings.why_choose_us_hint }}</p>-->
           <p class="why-us-sub">
             {{ props.why_choose_us_hint }}
           </p>

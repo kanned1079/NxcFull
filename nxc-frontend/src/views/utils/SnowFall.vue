@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
 import * as confetti from 'canvas-confetti';
 
 // Props

@@ -250,7 +250,7 @@ export default {
         <n-td>{{ item.price.toFixed(2) }}</n-td>
       </n-tr>
     </n-table>
-    <n-h3>总价 {{getTotalPrice.toFixed(2)}}</n-h3>
+    <n-h3>总价 {{ getTotalPrice.toFixed(2) }}</n-h3>
   </div>
 
 

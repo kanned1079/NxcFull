@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
-import {NButton, NTag, NPopover, useMessage, NIcon} from "naive-ui"
+import {NButton, NIcon, NPopover, NTag, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {formatDate} from "@/utils/timeFormat";
 import instance from "@/axios";
 import {useRouter} from "vue-router";
-import {
-  ChevronDownOutline as downIcon,
-  PauseOutline as closeOrderIcon,
-  CheckmarkDoneOutline as passOrderIcon,
-} from "@vicons/ionicons5"
 // import {
 //   ChevronForwardOutline as toRight,
 //   CheckmarkOutline as checkIcon,
 //   SaveOutline as saveIcon,
 // } from "@vicons/ionicons5"
-import {RefreshOutline as refreshIcon, Search as searchIcon} from '@vicons/ionicons5'
+import {RefreshOutline as refreshIcon, Search as searchIcon,} from "@vicons/ionicons5"
 import {handleGetAllActivationLog} from "@/api/admin/activation";
 
 interface ActivateRecord {
@@ -200,7 +195,7 @@ const columns = [
                     showDetails(row);  // 触发点击事件
                   },
                 },
-                { default: () => computed(() => t('adminViews.activation.showKey')).value },
+                {default: () => computed(() => t('adminViews.activation.showKey')).value},
             ),
             default: () => {
               const elements = [];
@@ -358,12 +353,12 @@ export default {
 
 <template>
   <div class="root-header">
-<!--    <n-card-->
-<!--        hoverable-->
-<!--        :embedded="true"-->
-<!--        :bordered="false"-->
-<!--        :title="t('adminViews.activation.activateLog')"-->
-<!--    ></n-card>-->
+    <!--    <n-card-->
+    <!--        hoverable-->
+    <!--        :embedded="true"-->
+    <!--        :bordered="false"-->
+    <!--        :title="t('adminViews.activation.activateLog')"-->
+    <!--    ></n-card>-->
     <n-card
         hoverable
         :bordered="false"

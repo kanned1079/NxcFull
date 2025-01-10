@@ -82,7 +82,7 @@ let placeholderBgColor = computed(() =>
     themeStore.enableDarkMode
         ? {}
         // : {backgroundColor: "#f2fafd",}
-: {}
+        : {}
 );
 let textLeftColor = computed(() => (themeStore.enableDarkMode ? {color: "#fff"} : {}));
 
@@ -312,7 +312,7 @@ let handleRegister = async () => {
 let showFailReasons = () => {
   let _failReasons = failReasons.value
   notification.create({
-    title: computed(()=> t("userRegister.form.checkForm")).value, // 通知标题
+    title: computed(() => t("userRegister.form.checkForm")).value, // 通知标题
     duration: 10000,
     description: () => {
       // 使用 div 来渲染多个错误信息

@@ -2,17 +2,14 @@
 import Site from "@/views/Admin/pages/SettingViews/SystemConfig/Site.vue";
 import Security from "@/views/Admin/pages/SettingViews/SystemConfig/Security.vue";
 import Personalization from "@/views/Admin/pages/SettingViews/SystemConfig/Personalization.vue";
-import NodesConfig from "@/views/Admin/pages/SettingViews/SystemConfig/BackendConfig.vue";
+import BackendConfig from "@/views/Admin/pages/SettingViews/SystemConfig/BackendConfig.vue";
 import SendMail from "@/views/Admin/pages/SettingViews/SystemConfig/SendMail.vue";
 import WeApp from "@/views/Admin/pages/SettingViews/SystemConfig/WeApp.vue"
 import Notice from "@/views/Admin/pages/SettingViews/SystemConfig/Notice.vue"
-import BackendConfig from "@/views/Admin/pages/SettingViews/SystemConfig/BackendConfig.vue"
-import {ref} from "vue"
+import {onBeforeMount, onMounted, ref} from "vue"
 import useThemeStore from "@/stores/useThemeStore";
 import Subscribe from "@/views/Admin/pages/SettingViews/SystemConfig/Invite.vue";
 import useSettingStore from "@/stores/useSettingStore";
-import {onBeforeMount, onMounted} from "vue";
-import instance from "@/axios";
 
 let animated = ref<boolean>(false)
 
@@ -80,7 +77,6 @@ export default {
       </n-card>
     </div>
   </transition>
-
 
 
   <!--  <div style="display: flex; flex-direction: column; max-height: 100vh; overflow-y: auto;">-->

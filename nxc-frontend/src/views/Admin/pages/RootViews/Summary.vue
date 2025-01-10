@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import {onMounted, onBeforeMount, ref} from "vue";
+import {onBeforeMount, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import Settings from '@/views/Admin/pages/RootViews/dashboard/Settings.vue'
 import useThemeStore from "@/stores/useThemeStore";
-import Income from '@/views/Admin/pages/RootViews/dashboard/Income.vue'
 import IncomeChart from "@/views/Admin/pages/RootViews/dashboard/IncomeChart.vue";
 import instance from "@/axios";
 import {ChevronForwardOutline as toRightIcon,} from "@vicons/ionicons5"
@@ -35,7 +34,6 @@ let checkIsUserHaveOpenTickets = async () => {
     console.log(error)
   }
 }
-
 
 
 onBeforeMount(async () => {
@@ -87,7 +85,6 @@ export default {
       </n-collapse-transition>
 
 
-
       <div class="setting-panel">
         <Settings></Settings>
       </div>
@@ -121,6 +118,7 @@ export default {
     justify-content: center;
   }
 }
+
 //.n-card {
 //  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
 //  border: 0;

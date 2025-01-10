@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, toRaw, onBeforeUnmount, onBeforeMount, watch, computed} from 'vue';
+import {computed, onBeforeMount, onBeforeUnmount, onMounted} from 'vue';
 import {RouterView} from 'vue-router';
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -18,7 +18,6 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (ev
 });
 
 let isDark = computed(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
-
 
 
 // watch(isDark, (val: boolean) => {
@@ -55,7 +54,7 @@ onBeforeUnmount(() => {
 
 <template>
 
-<!--<div style="scrollbar-width: none">-->
+  <!--<div style="scrollbar-width: none">-->
   <n-config-provider
       :theme="themeStore.getMainTheme"
       :theme-overrides="themeStore.getTheme.selfOverride"
@@ -73,7 +72,7 @@ onBeforeUnmount(() => {
 
 
   </n-config-provider>
-<!--</div>-->
+  <!--</div>-->
 
 
 </template>
@@ -93,6 +92,7 @@ onBeforeUnmount(() => {
   transform: translateY(10px);
   opacity: 0;
 }
+
 .slide-fade-leave-to {
   //transform: translateY(10px);
   opacity: 0;

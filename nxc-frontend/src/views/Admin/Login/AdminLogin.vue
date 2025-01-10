@@ -53,7 +53,7 @@ interface AdminForm {
   password: string,
 }
 
-                                 const userInfoStore = useUserInfoStore();
+const userInfoStore = useUserInfoStore();
 const router = useRouter();
 let userFormInstance = ref<FormInst | null>(null)
 let userFormData = ref<AdminForm>({

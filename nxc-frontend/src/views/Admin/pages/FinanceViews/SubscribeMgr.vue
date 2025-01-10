@@ -187,7 +187,7 @@ let submitNewPlan = async () => {
     })
     if (data.code === 200) {
       notify('success', '成功', '成功添加新的订阅')
-      let {page_count, success} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       if (success) {
         pageCount.value = page_count as number
       } else {
@@ -252,7 +252,6 @@ let notify = (type: NotificationType, title: string, meta?: string) => {
     keepAliveOnHover: true
   })
 }
-
 
 
 const columns = [
@@ -372,7 +371,7 @@ let updatePlan = async () => {
     if (data.code === 200) {
       notify('success', '成功', '修改订阅成功')
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      let {page_count, success} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       // pageCount.value = page_count as number
       if (success) {
         pageCount.value = page_count as number
@@ -410,7 +409,7 @@ let handleDelete = async (planId: number) => {
     if (data.code === 200) {
       notify('success', '成功', '删除成功')
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize) ? animated.value = true : setTimeout(() => animated.value = true, 3000)
-      let {page_count, success} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       // pageCount.value = page_count as number
       if (success) {
         pageCount.value = page_count as number
@@ -435,7 +434,7 @@ let updateRowIsSale = async (id: number, val: boolean) => {
     if (data.code === 200) {
       notify('success', '更新成功')
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       pageCount.value = page_count as number
     } else {
       notify('error', '更新失败')
@@ -456,7 +455,7 @@ let updateRowRenew = async (id: number, val: boolean) => {
     if (data.code === 200) {
       notify('success', '更新成功')
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+      let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       pageCount.value = page_count as number
     } else {
       notify('error', '更新失败')
@@ -470,9 +469,9 @@ let updateRowRenew = async (id: number, val: boolean) => {
 let reloadPlanList = async () => {
   // let data = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
   // data?animated.value = true:message.error('Fetch failure.');
-  let {page_count, success} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+  let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
   pageCount.value = page_count as number
-  success?animated.value = true:setTimeout(() => animated.value = true, 2000)
+  success ? animated.value = true : setTimeout(() => animated.value = true, 2000)
 }
 
 
@@ -484,7 +483,7 @@ onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
   await getAllGroups()
   // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-  let {page_count} =  await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+  let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
   pageCount.value = page_count as number
 
   animated.value = true

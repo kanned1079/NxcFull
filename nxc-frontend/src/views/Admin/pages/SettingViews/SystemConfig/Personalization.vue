@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, reactive} from 'vue'
+import {reactive} from 'vue'
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
 
@@ -40,24 +40,24 @@ const options = [
   },
 
 
-    /*
-    *  case 'darkBlueDay': {
-                return darkBlueDay.value;
-            }
-            case 'milkGreenDay': {
-                return milkGreenDay.value;
-            }
-            case 'biliPink': {
-                return biliPink.value;
-            }
-            case 'bambooGreen': {
-                return bambooGreen.value;
-            }
-            case 'mistyPine': {
-                return mistyPine.value;
-            }
-            case 'glacierBlue': {
-    * */
+  /*
+  *  case 'darkBlueDay': {
+              return darkBlueDay.value;
+          }
+          case 'milkGreenDay': {
+              return milkGreenDay.value;
+          }
+          case 'biliPink': {
+              return biliPink.value;
+          }
+          case 'bambooGreen': {
+              return bambooGreen.value;
+          }
+          case 'mistyPine': {
+              return mistyPine.value;
+          }
+          case 'glacierBlue': {
+  * */
 ]
 
 const themeSettings = reactive({

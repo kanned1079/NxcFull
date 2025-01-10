@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {ref, defineProps} from "vue";
+import {defineProps, ref} from "vue";
 
 const props = defineProps(['updateData', 'pageCount', 'size', 'page'])
 // let pageCount = ref(10)
 
-let dataSize = ref<{pageSize: number, page: number}>({
+let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: props.size,
   page: props.page,
 })

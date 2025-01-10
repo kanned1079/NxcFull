@@ -2,12 +2,13 @@
 import {computed, h, onMounted, ref} from "vue"
 import {useI18n} from "vue-i18n";
 import {
+  CheckmarkDoneOutline as passOrderIcon,
   ChevronDownOutline as downIcon,
   PauseOutline as closeOrderIcon,
-  CheckmarkDoneOutline as passOrderIcon,
+  RefreshOutline as refreshIcon,
+  Search as searchIcon,
 } from "@vicons/ionicons5"
-import {RefreshOutline as refreshIcon, Search as searchIcon} from '@vicons/ionicons5'
-import {NButton, NDropdown, NTag, NIcon, useMessage} from "naive-ui";
+import {NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
 import instance from "@/axios";
 import {formatDate} from "@/utils/timeFormat";
 import renderIcon from "@/utils/iconFormator";
@@ -57,7 +58,6 @@ let searchForm = ref<{
   email: '',
   sort: 'DESC',   // 默认按照created_at降序排序
 })
-
 
 
 let pageCount = ref(10)
@@ -251,7 +251,7 @@ const columns = [
                   console.log('取消订单', row.user_id, row.order_id);
                   handleManualCancelOrder(row.order_id, row.user_id);
                 } else if (key === 'approve') {
-                  console.log('通过订单', row.user_id, row.order_id );
+                  console.log('通过订单', row.user_id, row.order_id);
                   handleManualPassOrder(row.order_id, row.user_id);
                 }
               },
@@ -401,7 +401,7 @@ let getAllGroups = async () => {
       console.log('获取到的权限组列表', data)
       privilegeGroupList.value = []
       // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
-      data.group_list.forEach((group: PrivilegeGroup)=> privilegeGroupList.value.push(group))
+      data.group_list.forEach((group: PrivilegeGroup) => privilegeGroupList.value.push(group))
     } else {
       message.error(data.msg || 'Error fetch.')
     }

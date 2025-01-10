@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {defineComponent} from 'vue'
 // import useThemeStore from "@/stores/useThemeStore"
 import useSettingStore from "@/stores/useSettingStore";
 
@@ -82,7 +81,6 @@ let settingsData: BackendSetting[] = [
     modelValue: "page_suffix"
   }
 ];
-
 
 
 </script>

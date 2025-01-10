@@ -228,7 +228,7 @@ export default {
                   style="margin-right: 10px"
                   :type="!isKeyExpired(item.expiration_date_stamp) ?'success':'error'"
               >
-<!--                {{item.is_active ? t('userKeys.active') : t('userKeys.inActive') }}-->
+                <!--                {{item.is_active ? t('userKeys.active') : t('userKeys.inActive') }}-->
                 {{ !isKeyExpired(item.expiration_date_stamp) ? t('userKeys.active') : t('userKeys.inActive') }}
               </n-tag>
               <n-tag

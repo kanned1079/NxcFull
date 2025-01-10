@@ -16,7 +16,7 @@ import {
 } from "@vicons/ionicons5"
 // import instance from "@/axios";
 import useUserInfoStore from "@/stores/useUserInfoStore";
-import {verifyTicket, saveOrder} from "@/api/user/settlement";
+import {saveOrder, verifyTicket} from "@/api/user/settlement";
 
 const {t} = useI18n();
 const notification = useNotification()
@@ -176,19 +176,19 @@ let callSaveOrder = async () => {
   //     coupon_id: couponInfo.value.id || null,
   //     period: period.value || 'month',
   //   })
-    let data = await saveOrder(plan.id, userInfoStore.thisUser.id, couponInfo.value.id, period.value || 'month')
-    if (data.code === 200) {
-      console.log('订单创建成功')
-      // Object.assign(data, paymentStore.confirmOrder)
-      // paymentStore.confirmOrder = data
-      paymentStore.submittedOrderId = data.order_id as string   // 仅保存订单号
-      console.log('选择支付方式')
-      // 执行异步
-      setTimeout(async () => {
-        await router.push({path: '/dashboard/purchase/confirm'})
-      }, 500) // 延迟500ms
+  let data = await saveOrder(plan.id, userInfoStore.thisUser.id, couponInfo.value.id, period.value || 'month')
+  if (data.code === 200) {
+    console.log('订单创建成功')
+    // Object.assign(data, paymentStore.confirmOrder)
+    // paymentStore.confirmOrder = data
+    paymentStore.submittedOrderId = data.order_id as string   // 仅保存订单号
+    console.log('选择支付方式')
+    // 执行异步
+    setTimeout(async () => {
+      await router.push({path: '/dashboard/purchase/confirm'})
+    }, 500) // 延迟500ms
 
-    }
+  }
   // } catch (error: any) {
   //   console.log(error)
   //   message.error(error)

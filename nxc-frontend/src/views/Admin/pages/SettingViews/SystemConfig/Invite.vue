@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
+
 const themeStore = useThemeStore()
 const settingStore = useSettingStore()
 let handok = () => {
@@ -22,9 +23,9 @@ export default {
 <template>
 
   <n-card class="root" :embedded="true" title="支付和返利" :bordered="false">
-<!--    <n-alert title="Warning 警告" type="warning" style="margin-bottom: 30px" :bordered="false">-->
-<!--      如果你更改了本页配置，需要对队列服务进行重启。&nbsp;另外本页配置优先级高于.env中邮件配置。-->
-<!--    </n-alert>-->
+    <!--    <n-alert title="Warning 警告" type="warning" style="margin-bottom: 30px" :bordered="false">-->
+    <!--      如果你更改了本页配置，需要对队列服务进行重启。&nbsp;另外本页配置优先级高于.env中邮件配置。-->
+    <!--    </n-alert>-->
 
     <div class="item">
         <span class="l-content">

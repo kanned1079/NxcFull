@@ -57,12 +57,12 @@ let sendTestMail = async () => {
       dialog.success({
         title: '成功',
         content: () =>
-            h('div', {style: {  marginTop: '15px'}}, [
-              h('p', {style: {  marginBottom: '5px'}}, `收信地址: ${userInfoStore.thisUser.email}`),
-              h('p', {style: {  marginBottom: '5px'}}, `发信服务器: ${info.host}`),
-              h('p', {style: {  marginBottom: '5px'}}, `发信端口: ${info.port}`),
-              h('p', {style: {  marginBottom: '5px'}}, `发信加密方式: ${info.use_ssl ? 'SSL' : 'TLS'}`),
-              h('p', {style: {  marginBottom: '5px'}}, `发信用户名: ${info.username}`),
+            h('div', {style: {marginTop: '15px'}}, [
+              h('p', {style: {marginBottom: '5px'}}, `收信地址: ${userInfoStore.thisUser.email}`),
+              h('p', {style: {marginBottom: '5px'}}, `发信服务器: ${info.host}`),
+              h('p', {style: {marginBottom: '5px'}}, `发信端口: ${info.port}`),
+              h('p', {style: {marginBottom: '5px'}}, `发信加密方式: ${info.use_ssl ? 'SSL' : 'TLS'}`),
+              h('p', {style: {marginBottom: '5px'}}, `发信用户名: ${info.username}`),
             ])
       });
     } else {

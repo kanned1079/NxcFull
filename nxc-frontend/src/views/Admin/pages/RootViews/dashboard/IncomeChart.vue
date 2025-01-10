@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 // TODO 待实现全球化
-import Income from "@/views/Admin/pages/RootViews/dashboard/Income.vue"
-import {ref, onMounted, onUnmounted, onBeforeMount, onBeforeUpdate, computed, watch, toRaw} from "vue"
+import {computed, onBeforeMount, onBeforeUpdate, onMounted, onUnmounted, ref, watch} from "vue"
 import * as echarts from 'echarts';
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
@@ -30,8 +29,8 @@ let getAppOverview = async () => {
       // console.log(data)
       data.api_access_count_history.forEach((item: number) => apiAccessCount.value.unshift(item))
       data.income_count_history.forEach((item: number) => incomeCount.value.unshift(item))
-      yesterdayIncome.value = data.income_yesterday?data.income_yesterday:0.00
-      monthIncome.value = data.income_this_month?data.income_this_month:0.00
+      yesterdayIncome.value = data.income_yesterday ? data.income_yesterday : 0.00
+      monthIncome.value = data.income_this_month ? data.income_this_month : 0.00
       // console.log('a:', yesterdayIncome.value, monthIncome.value)
     }
   } catch (error) {
@@ -344,7 +343,7 @@ let generalInfo = ref<{ name: string; data: string }[]>([
   },
   {
     name: '允许用户注册',
-    data: computed(() => !appInfoStore.appCommonConfig.stop_register?'是':'否').value,
+    data: computed(() => !appInfoStore.appCommonConfig.stop_register ? '是' : '否').value,
   },
 ])
 
@@ -422,150 +421,153 @@ export default {
 </script>
 
 <template>
-    <div class="root">
-      <n-card
-          class="income-part-root"
-          hoverable
-          :embedded="true"
-          :bordered="false"
-          content-style="padding: 0;"
+  <div class="root">
+    <n-card
+        class="income-part-root"
+        hoverable
+        :embedded="true"
+        :bordered="false"
+        content-style="padding: 0;"
+    >
+      <n-flex
+          style="justify-content: space-between;"
       >
-        <n-flex
-            style="justify-content: space-between;"
+        <div
+            style="padding: 20px"
         >
-          <div
-              style="padding: 20px"
+          <n-statistic
+              :label="t('adminViews.summary.incomeText')"
+              tabular-nums
           >
-            <n-statistic
-                :label="t('adminViews.summary.incomeText')"
-                tabular-nums
-            >
-              <n-number-animation
-                  ref="numberAnimationInstRef"
-                  :precision="2"
-                  :from="0"
-                  :to="yesterdayIncome"
-              />
-              /
-              <n-number-animation
-                  ref="numberAnimationInstRef"
-                  :precision="2"
-                  :from="0"
-                  :to="monthIncome"
-              />
-              <template #suffix>
-                {{ appInfoStore.appCommonConfig.currency }}
-              </template>
-            </n-statistic>
-          </div>
-          <div style="opacity: 0.05; padding: 5px 20px 0 0">
-            <n-icon size="50"><incomeIcon/></n-icon>
-          </div>
-        </n-flex>
-      </n-card>
+            <n-number-animation
+                ref="numberAnimationInstRef"
+                :precision="2"
+                :from="0"
+                :to="yesterdayIncome"
+            />
+            /
+            <n-number-animation
+                ref="numberAnimationInstRef"
+                :precision="2"
+                :from="0"
+                :to="monthIncome"
+            />
+            <template #suffix>
+              {{ appInfoStore.appCommonConfig.currency }}
+            </template>
+          </n-statistic>
+        </div>
+        <div style="opacity: 0.05; padding: 5px 20px 0 0">
+          <n-icon size="50">
+            <incomeIcon/>
+          </n-icon>
+        </div>
+      </n-flex>
+    </n-card>
 
-<!--      <Income :yesterday-income="yesterdayIncome" :this-month-income="monthIncome"></Income>-->
-      <div>
-        <n-grid cols="1 s:2" responsive="screen" :x-gap="15" :y-gap="15">
-          <n-grid-item>
-            <n-card class="user-count-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0" title="用户概览">
-              <n-table
-                  :bordered="false"
-                  :bottom-bordered="false"
-                  style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
-              >
-                <n-tr style=" margin-left: 200px" v-for="(item, index) in usersInfo" :key="index">
-                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.name }}</n-td>
-                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.data }}</n-td>
-                </n-tr>
-              </n-table>
-            </n-card>
-            <n-card
-                title="最近一周API接口访问次数"
-                hoverable class="card1" :embedded="true" :bordered="false">
-              <div class="visited" style="height: 280px" ref="visitedChartDOM"></div>
-            </n-card>
-            <n-card
-                title="最近一周收入金额"
-                hoverable class="card2" :embedded="true" :bordered="false">
-              <div class="internal" style="height: 280px" ref="incomeChartDOM"></div>
-            </n-card>
-<!--            <n-card-->
-<!--                title="活跃用户占比"-->
-<!--                hoverable class="card3" :embedded="true" :bordered="false">-->
-<!--              <div class="internal" style="height: 360px" ref="userActivityDOM"></div>-->
-<!--            </n-card>-->
-          </n-grid-item>
-          <n-grid-item>
-            <n-card
-                class="r-card"
-                hoverable
-                :embedded="true"
+    <!--      <Income :yesterday-income="yesterdayIncome" :this-month-income="monthIncome"></Income>-->
+    <div>
+      <n-grid cols="1 s:2" responsive="screen" :x-gap="15" :y-gap="15">
+        <n-grid-item>
+          <n-card class="user-count-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0"
+                  title="用户概览">
+            <n-table
                 :bordered="false"
-                content-style="padding: 0"
-                title="一般"
+                :bottom-bordered="false"
+                style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
             >
-              <n-table
-                  :bordered="false"
-                  :bottom-bordered="false"
-                  style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
-              >
-                <n-tr
-                    style=" margin-left: 200px"
-                    v-for="(item, index) in generalInfo"
-                    :key="index"
-                >
-                  <n-td
-                      style="background-color: rgba(0,0,0,0.0);"
-                  >
-                    {{ item.name }}
-                  </n-td>
-                  <n-td
-                      style="background-color: rgba(0,0,0,0.0);"
-                  >
-                    {{ item.data }}
-                  </n-td>
-                </n-tr>
-              </n-table>
-            </n-card>
-
-            <n-card
-                style="margin-top: 10px"
-                class="r-card"
-                hoverable
-                :embedded="true"
+              <n-tr style=" margin-left: 200px" v-for="(item, index) in usersInfo" :key="index">
+                <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.name }}</n-td>
+                <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.data }}</n-td>
+              </n-tr>
+            </n-table>
+          </n-card>
+          <n-card
+              title="最近一周API接口访问次数"
+              hoverable class="card1" :embedded="true" :bordered="false">
+            <div class="visited" style="height: 280px" ref="visitedChartDOM"></div>
+          </n-card>
+          <n-card
+              title="最近一周收入金额"
+              hoverable class="card2" :embedded="true" :bordered="false">
+            <div class="internal" style="height: 280px" ref="incomeChartDOM"></div>
+          </n-card>
+          <!--            <n-card-->
+          <!--                title="活跃用户占比"-->
+          <!--                hoverable class="card3" :embedded="true" :bordered="false">-->
+          <!--              <div class="internal" style="height: 360px" ref="userActivityDOM"></div>-->
+          <!--            </n-card>-->
+        </n-grid-item>
+        <n-grid-item>
+          <n-card
+              class="r-card"
+              hoverable
+              :embedded="true"
+              :bordered="false"
+              content-style="padding: 0"
+              title="一般"
+          >
+            <n-table
                 :bordered="false"
-                content-style="padding: 0"
-                title="系统配置"
+                :bottom-bordered="false"
+                style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
             >
-              <n-table
-                  :bordered="false"
-                  :bottom-bordered="false"
-                  style="background-color: rgba(0,0,0,0.0); padding: 0 15px 10px 15px"
+              <n-tr
+                  style=" margin-left: 200px"
+                  v-for="(item, index) in generalInfo"
+                  :key="index"
               >
-                <n-tr
-                    style=" margin-left: 200px"
-                    v-for="(item, index) in serverInfo"
-                    :key="index"
+                <n-td
+                    style="background-color: rgba(0,0,0,0.0);"
                 >
-                  <n-td
-                      style="background-color: rgba(0,0,0,0.0);"
-                  >
-                    {{ item.name }}
-                  </n-td>
-                  <n-td
-                      style="background-color: rgba(0,0,0,0.0);"
-                  >
-                    {{ item.data }}
-                  </n-td>
-                </n-tr>
-              </n-table>
+                  {{ item.name }}
+                </n-td>
+                <n-td
+                    style="background-color: rgba(0,0,0,0.0);"
+                >
+                  {{ item.data }}
+                </n-td>
+              </n-tr>
+            </n-table>
+          </n-card>
 
-            </n-card>
-          </n-grid-item>
-        </n-grid>
-      </div>
+          <n-card
+              style="margin-top: 10px"
+              class="r-card"
+              hoverable
+              :embedded="true"
+              :bordered="false"
+              content-style="padding: 0"
+              title="系统配置"
+          >
+            <n-table
+                :bordered="false"
+                :bottom-bordered="false"
+                style="background-color: rgba(0,0,0,0.0); padding: 0 15px 10px 15px"
+            >
+              <n-tr
+                  style=" margin-left: 200px"
+                  v-for="(item, index) in serverInfo"
+                  :key="index"
+              >
+                <n-td
+                    style="background-color: rgba(0,0,0,0.0);"
+                >
+                  {{ item.name }}
+                </n-td>
+                <n-td
+                    style="background-color: rgba(0,0,0,0.0);"
+                >
+                  {{ item.data }}
+                </n-td>
+              </n-tr>
+            </n-table>
+
+          </n-card>
+        </n-grid-item>
+      </n-grid>
     </div>
+  </div>
 </template>
 
 <style scoped>
@@ -573,6 +575,7 @@ export default {
   padding: 15px 20px 20px 20px;
   display: flex;
   flex-direction: column;
+
   .income-part-root {
     display: flex;
     flex-direction: row;

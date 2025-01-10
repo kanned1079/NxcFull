@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import {defineComponent} from 'vue'
-import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
+
 const settingStore = useSettingStore();
 // const themeStore = useThemeStore()
 
@@ -71,59 +70,59 @@ export default {
     </span>
     </div>
 
-<!--    <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">Windows</p>-->
-<!--            <p class="shallow">Windows端版本号及下载地址。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--      <span class="r-content">-->
-<!--          <n-input-->
-<!--              type="text"-->
-<!--              placeholder="https://xxxx.com/xxx.exe"-->
-<!--              size="large"-->
-<!--              v-model:value="settingStore.settings.my_app.win_download"-->
-<!--              @blur="settingStore.saveOption('my_app', 'win_download', settingStore.settings.my_app.win_download)"-->
-<!--          />-->
-<!--        </span>-->
-<!--    </div>-->
-<!---->
-<!--    <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">macOS</p>-->
-<!--            <p class="shallow">macOS端版本号及下载地址</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--      <span class="r-content">-->
-<!--          <n-input-->
-<!--              type="text"-->
-<!--              placeholder="https://xxxx.com/xxx.dmg"-->
-<!--              size="large"-->
-<!--              v-model:value="settingStore.settings.my_app.osx_download"-->
-<!--              @blur="settingStore.saveOption('my_app', 'osx_download', settingStore.settings.my_app.osx_download)"-->
-<!--          />-->
-<!--        </span>-->
-<!--    </div>-->
+    <!--    <div class="item">-->
+    <!--        <span class="l-content">-->
+    <!--          <div class="describe">-->
+    <!--            <p class="title">Windows</p>-->
+    <!--            <p class="shallow">Windows端版本号及下载地址。</p>-->
+    <!--          </div>-->
+    <!--        </span>-->
+    <!--      <span class="r-content">-->
+    <!--          <n-input-->
+    <!--              type="text"-->
+    <!--              placeholder="https://xxxx.com/xxx.exe"-->
+    <!--              size="large"-->
+    <!--              v-model:value="settingStore.settings.my_app.win_download"-->
+    <!--              @blur="settingStore.saveOption('my_app', 'win_download', settingStore.settings.my_app.win_download)"-->
+    <!--          />-->
+    <!--        </span>-->
+    <!--    </div>-->
+    <!---->
+    <!--    <div class="item">-->
+    <!--        <span class="l-content">-->
+    <!--          <div class="describe">-->
+    <!--            <p class="title">macOS</p>-->
+    <!--            <p class="shallow">macOS端版本号及下载地址</p>-->
+    <!--          </div>-->
+    <!--        </span>-->
+    <!--      <span class="r-content">-->
+    <!--          <n-input-->
+    <!--              type="text"-->
+    <!--              placeholder="https://xxxx.com/xxx.dmg"-->
+    <!--              size="large"-->
+    <!--              v-model:value="settingStore.settings.my_app.osx_download"-->
+    <!--              @blur="settingStore.saveOption('my_app', 'osx_download', settingStore.settings.my_app.osx_download)"-->
+    <!--          />-->
+    <!--        </span>-->
+    <!--    </div>-->
 
-<!--    <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">Android</p>-->
-<!--            <p class="shallow">Android端版本号及下载地址</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--      <span class="r-content">-->
-<!--          <n-input-->
-<!--              type="text"-->
-<!--              placeholder="https://xxxx.com/xxx.apk"-->
-<!--              size="large"-->
-<!--              v-model:value="settingStore.settings.my_app.android_download"-->
-<!--              @blur="settingStore.saveOption('my_app', 'android_download', settingStore.settings.my_app.android_download)"-->
-<!--          />-->
-<!--        </span>-->
-<!--    </div>-->
+    <!--    <div class="item">-->
+    <!--        <span class="l-content">-->
+    <!--          <div class="describe">-->
+    <!--            <p class="title">Android</p>-->
+    <!--            <p class="shallow">Android端版本号及下载地址</p>-->
+    <!--          </div>-->
+    <!--        </span>-->
+    <!--      <span class="r-content">-->
+    <!--          <n-input-->
+    <!--              type="text"-->
+    <!--              placeholder="https://xxxx.com/xxx.apk"-->
+    <!--              size="large"-->
+    <!--              v-model:value="settingStore.settings.my_app.android_download"-->
+    <!--              @blur="settingStore.saveOption('my_app', 'android_download', settingStore.settings.my_app.android_download)"-->
+    <!--          />-->
+    <!--        </span>-->
+    <!--    </div>-->
 
   </n-card>
 </template>
@@ -132,31 +131,36 @@ export default {
 .root {
   min-width: 900px;
 
-    .item {
-      height: 50px;
-      display: flex;
-      margin-bottom: 30px;
-      .l-content {
-        flex: 1;
-        .describe {
-          .title {
-            font-weight: bold;
-          }
-          .shallow {
-            margin-top: 5px;
-            opacity: 0.5;
-          }
+  .item {
+    height: 50px;
+    display: flex;
+    margin-bottom: 30px;
+
+    .l-content {
+      flex: 1;
+
+      .describe {
+        .title {
+          font-weight: bold;
         }
-      }
-      .r-content {
-        margin-left: 30px;
-        flex: 0.8;
-        justify-content: center;
-        line-height: 50px;
+
+        .shallow {
+          margin-top: 5px;
+          opacity: 0.5;
+        }
       }
     }
 
+    .r-content {
+      margin-left: 30px;
+      flex: 0.8;
+      justify-content: center;
+      line-height: 50px;
+    }
+  }
+
 }
+
 //.n-card {
 //  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
 //  border: 0;

@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
-import {NButton, NTag, NPopover, useMessage} from "naive-ui"
+import {NButton, NPopover, NTag, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {formatDate} from "@/utils/timeFormat";
 import instance from "@/axios";
 import {useRouter} from "vue-router";
-import {
-  ChevronForwardOutline as toRight,
-  CheckmarkOutline as checkIcon,
-  SaveOutline as saveIcon,
-} from "@vicons/ionicons5"
-import {RefreshOutline as refreshIcon, Search as searchIcon} from '@vicons/ionicons5'
 import {handleGetAllActivationLog} from "@/api/admin/activation";
 
 interface ActivateRecord {
@@ -182,7 +176,7 @@ const columns = [
                     showDetails(row);  // 触发点击事件
                   },
                 },
-                { default: () => '显示密钥' }
+                {default: () => '显示密钥'}
             ),
             default: () => {
               const elements = [];
@@ -259,7 +253,8 @@ const columns = [
 ];
 
 let callGetAllActivateLog = async () => {
-  let data = await handleGetAllActivationLog(dataSize.value.page, dataSize.value.pageSize)
+  // TODO: fix fetch keys
+  // let data = await handleGetAllActivationLog(dataSize.value.page, dataSize.value.pageSize)
   if (data.code === 200) {
     activateRecordList.value = []
     data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
@@ -267,7 +262,6 @@ let callGetAllActivateLog = async () => {
     animated.value = true
   }
 }
-
 
 
 let handleUnbindById = async (row: ActivateRecord) => {

@@ -7,11 +7,7 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import {formatDate} from "@/utils/timeFormat";
 import instance from "@/axios";
 import {useRouter} from "vue-router";
-import {
-  ChevronForwardOutline as toRight,
-  CheckmarkOutline as checkIcon,
-  SaveOutline as saveIcon,
-} from "@vicons/ionicons5"
+import {ChevronForwardOutline as toRight,} from "@vicons/ionicons5"
 import {handleGetAllMyActivateLog, handleUnbindById} from "@/api/user/record"
 
 interface ActivateRecord {
@@ -207,9 +203,9 @@ let callHandleGetAllMyActivateLog = async () => {
   )
   if (data.code === 200) {
     activateRecordList.value = []
-      data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
-      pageCount.value = data.page_count
-      animated.value = true
+    data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
+    pageCount.value = data.page_count
+    animated.value = true
   }
 }
 
@@ -388,23 +384,24 @@ export default {
             style="text-decoration: underline"
             @click="!enableAlterRemark?enableAlterRemark=true:handleCommitNewRemark()"
         >
-          <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; margin-left: 10px;">
-            <p>{{ !enableAlterRemark?t('userActivation.alterRemark'):t('userActivation.commitRemark') }}</p>
+          <div
+              style="display: flex; flex-direction: row; align-items: center; justify-content: center; margin-left: 10px;">
+            <p>{{ !enableAlterRemark ? t('userActivation.alterRemark') : t('userActivation.commitRemark') }}</p>
 
           </div>
         </n-button>
       </div>
-        <n-input
-            :rows="2"
-            type="textarea"
-            size="large"
-            :disabled="!enableAlterRemark"
-            :placeholder="'在這裡設置備注信息'"
-            v-model:value.trim="currentRecord.remark"
-            :bordered="true"
-            style="margin-top: 5px"
-        >
-        </n-input>
+      <n-input
+          :rows="2"
+          type="textarea"
+          size="large"
+          :disabled="!enableAlterRemark"
+          :placeholder="'在這裡設置備注信息'"
+          v-model:value.trim="currentRecord.remark"
+          :bordered="true"
+          style="margin-top: 5px"
+      >
+      </n-input>
     </div>
 
     <template #footer>
@@ -461,7 +458,7 @@ export default {
     justify-content: flex-start;
     align-items: baseline;
   }
-  
+
   .details-item-content-remark {
     font-size: 1rem;
     font-weight: 400;

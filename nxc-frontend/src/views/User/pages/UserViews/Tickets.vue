@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref, onBeforeMount} from "vue"
+import {computed, h, onBeforeMount, onMounted, ref} from "vue"
 import {type FormInst, NButton, NTag, useMessage} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
-import instance from "@/axios/index"
 import {formatDate} from "@/utils/timeFormat";
-import {getAllMyTickets, closeTicket, commitNewTicket} from "@/api/user/tickets";
+import {closeTicket, commitNewTicket, getAllMyTickets} from "@/api/user/tickets";
 
 interface Ticket {
   subject: string
@@ -101,7 +100,6 @@ let urgencyOptions = [
 ]
 
 
-
 let newTicket = ref<Ticket>({
   subject: '',
   urgency: null,
@@ -119,12 +117,12 @@ let cancelCreateNewTicket = () => {
 
 let callCloseTicket = async (ticket_id: number) => {
   let data = await closeTicket(userInfoStore.thisUser.id, ticket_id)
-      if (data.code === 200 && data.closed) {
-      message.success(computed(() => t('userTickets.ticketCloseSuccess')).value)
-      await callGetAllMyTickets()
-    } else {
-      message.error(computed(() => t('userTickets.ticketCloseFailure')).value + data.msg as string || '')
-    }
+  if (data.code === 200 && data.closed) {
+    message.success(computed(() => t('userTickets.ticketCloseSuccess')).value)
+    await callGetAllMyTickets()
+  } else {
+    message.error(computed(() => t('userTickets.ticketCloseFailure')).value + data.msg as string || '')
+  }
 }
 
 // let closeTicket = async (ticket_id: number) => {
@@ -147,7 +145,6 @@ let callCloseTicket = async (ticket_id: number) => {
 // }
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------x
-
 
 
 let callGetAllMyTickets = async () => {
@@ -203,7 +200,6 @@ let callCommitNewTicket = async () => {
 //   }
 //
 // }
-
 
 
 // 点击打开工单后 单独打开一个聊天窗口
@@ -308,7 +304,7 @@ onMounted(async () => {
 
 <script lang="ts">
 export default {
-name: 'Tickets',
+  name: 'Tickets',
 }
 
 </script>

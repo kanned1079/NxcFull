@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import GoodInfo from "@/views/User/pages/PurchaseViews/Parts/GoodInfo.vue";
 import OrderInfo from "@/views/User/pages/PurchaseViews/Parts/OrderInfo.vue";
-import {BookOutline as docIcon, ChevronForwardOutline as nextIcon, BagHandleOutline as toPayIcon} from "@vicons/ionicons5"
+import {
+  BagHandleOutline as toPayIcon,
+  BookOutline as docIcon,
+  ChevronForwardOutline as nextIcon
+} from "@vicons/ionicons5"
 import {computed, onMounted, ref} from "vue"
 import {useRouter} from "vue-router";
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -127,7 +131,7 @@ export default {
                   <toPayIcon/>
                 </n-icon>
                 <!--              去支付-->
-                   {{ t('orderDetail.toPay') }} 
+                {{ t('orderDetail.toPay') }}
                 <n-icon style="margin-left: 5px" size="16">
                   <nextIcon/>
                 </n-icon>

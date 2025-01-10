@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, h} from "vue"
+import {computed, h, onMounted, ref} from "vue"
 import {useI18n} from "vue-i18n";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -267,9 +267,9 @@ let getAllTicket = async () => {
       ticketList.value = []
       pendingTicketList.value = []
       data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
-      pageCountAll.value = data.finished_page_count?data.finished_page_count:1
+      pageCountAll.value = data.finished_page_count ? data.finished_page_count : 1
       data.pending_tickets.forEach((ticket: TicketItem) => pendingTicketList.value.push(ticket))
-      pageCountPending.value = data.pending_page_count?data.pending_page_count:1
+      pageCountPending.value = data.pending_page_count ? data.pending_page_count : 1
       animated.value = true
     }
   } catch (error: any) {

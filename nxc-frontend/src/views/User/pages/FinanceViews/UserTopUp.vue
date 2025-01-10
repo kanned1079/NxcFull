@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ColoredRibbon from "@/views/utils/ColoredRibbon.vue"
-import SnowFall from "@/views/utils/SnowFall.vue";
-import {computed, onMounted, onBeforeUnmount, ref} from "vue"
+import {computed, onBeforeUnmount, onMounted, ref} from "vue"
 import {useRouter} from "vue-router";
 import {type MenuOption, useMessage} from "naive-ui"
 import {useI18n} from "vue-i18n";
@@ -12,6 +11,7 @@ import renderIcon from "@/utils/iconFormator";
 import {
   Add as addIcon,
   CashOutline as cashIcon,
+  CheckmarkCircle as scannedIcon,
   CheckmarkOutline as checkIcon,
   ChevronForwardOutline as toRight,
   ChevronForwardOutline as toRightIcon,
@@ -20,7 +20,6 @@ import {
   LogoAlipay,
   LogoApple,
   LogoWechat,
-  CheckmarkCircle as scannedIcon,
 } from "@vicons/ionicons5"
 import instance from '@/axios/index'
 
@@ -243,38 +242,38 @@ let startQueryTopUpOrderStatusLoop = () => {
       }
       case 408: {
         // message.error('未付款交易超时关闭')
-        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+        clearInterval(queryLoopIntervalId.value ? queryLoopIntervalId.value : undefined)
         break
       }
       case 200: {
         // showQrCodeModal.value = false
         topUpIsFinishedSuccess.value = true
         message.success('交易成功')
-        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+        clearInterval(queryLoopIntervalId.value ? queryLoopIntervalId.value : undefined)
 
         setTimeout(async () => {
-         let updated = await userInfoStore.updateUserInfo();
-         if (updated) {
-           console.log("用户信息更新成功")
-           setTimeout(async () => {
-             await router.push({
-               path: "/dashboard/profile",
-             })
-           }, 3000)
-         } else {
-           message.warning('用户信息可能更新有延迟')
-         }
+          let updated = await userInfoStore.updateUserInfo();
+          if (updated) {
+            console.log("用户信息更新成功")
+            setTimeout(async () => {
+              await router.push({
+                path: "/dashboard/profile",
+              })
+            }, 3000)
+          } else {
+            message.warning('用户信息可能更新有延迟')
+          }
         }, 1000)
         break
       }
       case 401: {
         message.info('交易完成，不可退款')
-        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+        clearInterval(queryLoopIntervalId.value ? queryLoopIntervalId.value : undefined)
         break
       }
       case 500: {
         message.error('更新用户余额失败，请联系客服')
-        clearInterval(queryLoopIntervalId.value? queryLoopIntervalId.value: undefined)
+        clearInterval(queryLoopIntervalId.value ? queryLoopIntervalId.value : undefined)
         break
       }
 
@@ -298,7 +297,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  clearInterval(queryLoopIntervalId.value?queryLoopIntervalId.value:undefined)
+  clearInterval(queryLoopIntervalId.value ? queryLoopIntervalId.value : undefined)
 })
 
 </script>
@@ -310,7 +309,7 @@ export default {
 </script>
 
 <template>
-<!--  <SnowFall :show="showRibbon"></SnowFall>-->
+  <!--  <SnowFall :show="showRibbon"></SnowFall>-->
   <ColoredRibbon :show="showRibbon"></ColoredRibbon>
   <ColoredRibbon :show="topUpIsFinishedSuccess"></ColoredRibbon>
   <div style="padding: 20px 20px 15px 20px">
@@ -438,7 +437,7 @@ export default {
                 class="r-part-card"
             >
               <n-h3 class="r-part-title">
-<!--                您的金额-->
+                <!--                您的金额-->
                 {{ t('userTopUp.yourAmount') }}
               </n-h3>
 
@@ -535,7 +534,7 @@ export default {
           />
           <template #icon>
             <n-icon color="#66c18c">
-              <scannedIcon />
+              <scannedIcon/>
             </n-icon>
           </template>
           <template #description>
@@ -575,16 +574,16 @@ export default {
       </div>
 
     </div>
-<!--    <div style="width: 100%; display: flex; flex-direction: column; margin-top: 20px">-->
-<!--      <n-button-->
-<!--          type="success"-->
-<!--          secondary-->
-<!--          :bordered="false"-->
-<!--          @click="checkPaymentResult"-->
-<!--      >-->
-<!--        我已完成支付-->
-<!--      </n-button>-->
-<!--    </div>-->
+    <!--    <div style="width: 100%; display: flex; flex-direction: column; margin-top: 20px">-->
+    <!--      <n-button-->
+    <!--          type="success"-->
+    <!--          secondary-->
+    <!--          :bordered="false"-->
+    <!--          @click="checkPaymentResult"-->
+    <!--      >-->
+    <!--        我已完成支付-->
+    <!--      </n-button>-->
+    <!--    </div>-->
 
     <template #footer v-if="!topUpIsFinishedSuccess">
       <div style="width: 100%; display: flex; flex-direction: row; justify-content: flex-end; margin-top: 10px">

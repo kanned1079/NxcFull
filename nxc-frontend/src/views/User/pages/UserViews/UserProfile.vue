@@ -170,7 +170,7 @@ let saveNewPasswordClick = async (e: MouseEvent) => {
       modelRef.value.new_password_again = ''
       notify('success', t('userProfile.alertSuccess'), t('userProfile.alertSuccessSub'))
     } else {
-      message.error( t('userProfile.resetPassword.updatePasswordFailure') + data.msg || '')
+      message.error(t('userProfile.resetPassword.updatePasswordFailure') + data.msg || '')
     }
   } else {
     message.error(t('userProfile.resetPassword.previousPasswordVerifiedFailure'))
@@ -701,6 +701,7 @@ export default {
 
     .form {
       margin: 20px;
+
       .form-item {
         margin-top: 20px;
       }

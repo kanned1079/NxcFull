@@ -147,7 +147,6 @@ onMounted(async () => {
   setTimeout(async () => await callCheckIsUserHaveOpenTickets(), 500)
 
 
-
   // animated.value = true
 
   setTimeout(() => animated.value = true, 300)

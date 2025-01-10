@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import FormSuffix from "@/views/utils/FormSuffix.vue";
 import {useI18n} from "vue-i18n";
-import {onMounted, ref, h, computed} from "vue";
+import {computed, h, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
 import type {FormInst} from 'naive-ui'
@@ -14,7 +14,6 @@ const {t} = useI18n();
 // const apiAddrStore = useApiAddrStore();
 
 
-
 const themeStore = useThemeStore()
 // const noticesStore = useNoticesStore()
 const message = useMessage()
@@ -24,7 +23,7 @@ let animated = ref<boolean>(false)
 const formRef = ref<FormInst | null>(null)
 
 let pageCount = ref(10)
-let dataSize = ref<{pageSize: number, page: number}>({
+let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
@@ -103,7 +102,7 @@ let showLoading = ref<boolean>(false)
 // 显示表单
 let showModal = ref(false)
 let range = ref<[number, number]>([1183135260000, Date.now()])
-let plans = ref<{label: string, value: number}[]>([])
+let plans = ref<{ label: string, value: number }[]>([])
 
 // 订阅计划的键值
 let getPlanKV = async () => {
@@ -112,12 +111,12 @@ let getPlanKV = async () => {
     let {data} = await instance.get('http://localhost:8081/api/admin/v1/plan/kv')
     if (data.code === 200) {
       console.log(data)
-      data.plans.forEach((item: {id: number, name: string}) =>  plans.value.push({
+      data.plans.forEach((item: { id: number, name: string }) => plans.value.push({
         label: item.name,
         value: item.id,
       }))
     }
-  }catch (error) {
+  } catch (error) {
     console.log(error)
   }
 
@@ -387,7 +386,6 @@ export default {
 
     </div>
   </transition>
-
 
 
   <n-modal

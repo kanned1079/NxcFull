@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, onMounted, ref, computed} from "vue";
+import {computed, onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useMessage} from "naive-ui";
@@ -84,9 +84,9 @@ export default {
 </script>
 
 <template>
-    <n-p style="font-size: 1.2rem; margin: 20px 0 0 25px; font-weight: 550; opacity: 0.7">
-      {{ t('newPurchase.headerPlaceholder') }}
-    </n-p>
+  <n-p style="font-size: 1.2rem; margin: 20px 0 0 25px; font-weight: 550; opacity: 0.7">
+    {{ t('newPurchase.headerPlaceholder') }}
+  </n-p>
   <transition name="slide-fade">
     <div v-if="animated" style="padding: 20px">
       <n-grid cols="1 s:1 m:2 l:3" responsive="screen" x-gap="20px" y-gap="20px">

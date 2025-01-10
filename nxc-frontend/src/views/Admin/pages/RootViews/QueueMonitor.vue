@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, reactive, ref, onBeforeMount} from 'vue'
+import {onBeforeMount, onMounted, onUnmounted, reactive, ref} from 'vue'
 import type {NumberAnimationInst} from 'naive-ui'
 import useThemeStore from "@/stores/useThemeStore";
 import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
+
 const apiAddrStore = useApiAddrStore();
 
 let animated = ref<boolean>(false)
@@ -237,8 +238,6 @@ export default {
     </div>
 
   </transition>
-
-
 
 
 </template>

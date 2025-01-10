@@ -45,7 +45,9 @@ export default {
           </n-statistic>
         </div>
         <div style="opacity: 0.05; padding: 5px 20px 0 0">
-          <n-icon size="50"><incomeIcon/></n-icon>
+          <n-icon size="50">
+            <incomeIcon/>
+          </n-icon>
         </div>
       </n-flex>
     </n-card>
@@ -58,10 +60,12 @@ export default {
   display: flex;
   flex-direction: row;
   margin-bottom: 15px;
+
   .l-content {
     flex: 3;
     background-color: #3a4754;
   }
+
   .r-content {
     flex: 1;
     background-color: #0e1b42;

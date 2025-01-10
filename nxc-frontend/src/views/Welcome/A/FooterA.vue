@@ -85,7 +85,7 @@ export default {
       </div>
     </div>
     <n-hr style="margin-bottom: 30px"></n-hr>
-<!--    <p class="code">{{ t('welcome.A.filingsCode', {code: '11223'}) }}</p>-->
+    <!--    <p class="code">{{ t('welcome.A.filingsCode', {code: '11223'}) }}</p>-->
     <p class="code">{{ props.filing_number }}</p>
     <p class="right-policy">{{ props.page_suffix }}</p>
   </div>

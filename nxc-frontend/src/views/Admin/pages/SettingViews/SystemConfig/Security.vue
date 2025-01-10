@@ -129,160 +129,159 @@ export default {
   <div class="root">
     <n-card :embedded="true" class="security-panel" title="安全设置" :bordered="false">
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">邮箱验证</p>-->
-<!--            <p class="shallow">开启后将会强制要求用户进行邮箱验证。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content to-right">-->
-<!--          <n-switch-->
-<!--              size="medium"-->
-<!--              v-model:value="settingStore.settings.security.email_verify"-->
-<!--              @update:value="settingStore.saveOption('security','email_verify', settingStore.settings.security.email_verify)"-->
-<!--          ></n-switch>-->
-<!--        </span>-->
-<!--      </div>-->
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">邮箱验证</p>-->
+      <!--            <p class="shallow">开启后将会强制要求用户进行邮箱验证。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content to-right">-->
+      <!--          <n-switch-->
+      <!--              size="medium"-->
+      <!--              v-model:value="settingStore.settings.security.email_verify"-->
+      <!--              @update:value="settingStore.saveOption('security','email_verify', settingStore.settings.security.email_verify)"-->
+      <!--          ></n-switch>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">禁止使用Gmail多别名</p>-->
-<!--            <p class="shallow">开启后Gmail多别名将无法注册。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content to-right">-->
-<!--          <n-switch-->
-<!--              size="medium"-->
-<!--              v-model:value="settingStore.settings.security.email_gmail_limit_enable"-->
-<!--              @update:value="settingStore.saveOption('security','email_gmail_limit_enable', settingStore.settings.security.email_gmail_limit_enable)"-->
-<!--          ></n-switch>-->
-<!--        </span>-->
-<!--      </div>-->
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">禁止使用Gmail多别名</p>-->
+      <!--            <p class="shallow">开启后Gmail多别名将无法注册。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content to-right">-->
+      <!--          <n-switch-->
+      <!--              size="medium"-->
+      <!--              v-model:value="settingStore.settings.security.email_gmail_limit_enable"-->
+      <!--              @update:value="settingStore.saveOption('security','email_gmail_limit_enable', settingStore.settings.security.email_gmail_limit_enable)"-->
+      <!--          ></n-switch>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">安全模式</p>-->
-<!--            <p class="shallow">开启后除了站点URL以外的绑定本站点的域名访问都将会被403。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content to-right">-->
-<!--          <n-switch-->
-<!--              size="medium"-->
-<!--              v-model:value="settingStore.settings.security.safe_mode_enable"-->
-<!--              @update:value="settingStore.saveOption('security','safe_mode_enable', settingStore.settings.security.safe_mode_enable)"-->
-<!--          ></n-switch>-->
-<!--        </span>-->
-<!--      </div>-->
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">安全模式</p>-->
+      <!--            <p class="shallow">开启后除了站点URL以外的绑定本站点的域名访问都将会被403。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content to-right">-->
+      <!--          <n-switch-->
+      <!--              size="medium"-->
+      <!--              v-model:value="settingStore.settings.security.safe_mode_enable"-->
+      <!--              @update:value="settingStore.saveOption('security','safe_mode_enable', settingStore.settings.security.safe_mode_enable)"-->
+      <!--          ></n-switch>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">后台路径</p>-->
-<!--            <p class="shallow">后台管理路径，修改后将会改变原有的admin路径。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content">-->
-<!--          <n-input-->
-<!--              size="large"-->
-<!--              placeholder="https://x.com/logo.jpeg"-->
-<!--              v-model:value="settingStore.settings.security.secure_path"-->
-<!--              @blur="settingStore.saveOption('security','secure_path', settingStore.settings.security.secure_path)"-->
-<!--          ></n-input>-->
-<!--        </span>-->
-<!--      </div>-->
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">后台路径</p>-->
+      <!--            <p class="shallow">后台管理路径，修改后将会改变原有的admin路径。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content">-->
+      <!--          <n-input-->
+      <!--              size="large"-->
+      <!--              placeholder="https://x.com/logo.jpeg"-->
+      <!--              v-model:value="settingStore.settings.security.secure_path"-->
+      <!--              @blur="settingStore.saveOption('security','secure_path', settingStore.settings.security.secure_path)"-->
+      <!--          ></n-input>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">邮箱后缀白名单</p>-->
-<!--            <p class="shallow">开启后在名单中的邮箱后缀才允许进行注册。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content to-right">-->
-<!--          <n-switch-->
-<!--              size="medium"-->
-<!--              v-model:value="settingStore.settings.security.email_whitelist_enable"-->
-<!--              @update:value="settingStore.saveOption('security','email_whitelist_enable', settingStore.settings.security.email_whitelist_enable)"-->
-<!--          ></n-switch>-->
-<!--        </span>-->
-<!--      </div>-->
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">邮箱后缀白名单</p>-->
+      <!--            <p class="shallow">开启后在名单中的邮箱后缀才允许进行注册。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content to-right">-->
+      <!--          <n-switch-->
+      <!--              size="medium"-->
+      <!--              v-model:value="settingStore.settings.security.email_whitelist_enable"-->
+      <!--              @update:value="settingStore.saveOption('security','email_whitelist_enable', settingStore.settings.security.email_whitelist_enable)"-->
+      <!--          ></n-switch>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">防机器人</p>-->
-<!--            <p class="shallow">开启后将会使用Google reCAPTCHA防止机器人。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content to-right">-->
-<!--          <n-switch-->
-<!--              size="medium"-->
-<!--              v-model:value="settingStore.settings.security.recaptcha_enable"-->
-<!--              @update:value="settingStore.saveOption('security','recaptcha_enable', settingStore.settings.security.recaptcha_enable)"-->
-<!--          ></n-switch>-->
-<!--        </span>-->
-<!--      </div>-->
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">防机器人</p>-->
+      <!--            <p class="shallow">开启后将会使用Google reCAPTCHA防止机器人。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content to-right">-->
+      <!--          <n-switch-->
+      <!--              size="medium"-->
+      <!--              v-model:value="settingStore.settings.security.recaptcha_enable"-->
+      <!--              @update:value="settingStore.saveOption('security','recaptcha_enable', settingStore.settings.security.recaptcha_enable)"-->
+      <!--          ></n-switch>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">IP注册限制</p>-->
-<!--            <p class="shallow">开启后如果IP注册账户达到规则要求将会被限制注册，请注意IP判断可能因为CDN或前置代理导致问题。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content to-right">-->
-<!--          <n-switch-->
-<!--              size="medium"-->
-<!--              v-model:value="settingStore.settings.security.ip_register_limit_enable"-->
-<!--              @update:value="settingStore.saveOption('security','ip_register_limit_enable', settingStore.settings.security.ip_register_limit_enable)"-->
-<!--          ></n-switch>-->
-<!--        </span>-->
-<!--      </div>-->
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">IP注册限制</p>-->
+      <!--            <p class="shallow">开启后如果IP注册账户达到规则要求将会被限制注册，请注意IP判断可能因为CDN或前置代理导致问题。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content to-right">-->
+      <!--          <n-switch-->
+      <!--              size="medium"-->
+      <!--              v-model:value="settingStore.settings.security.ip_register_limit_enable"-->
+      <!--              @update:value="settingStore.saveOption('security','ip_register_limit_enable', settingStore.settings.security.ip_register_limit_enable)"-->
+      <!--          ></n-switch>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">次数</p>-->
-<!--            <p class="shallow">达到注册次数后开启惩罚。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content">-->
-<!--          <n-input-number-->
-<!--              size="large"-->
-<!--              placeholder="请输入"-->
-<!--              v-model:value.number="settingStore.settings.security.ip_register_limit_times"-->
-<!--              @blur="settingStore.saveOption('security','ip_register_limit_times', settingStore.settings.security.ip_register_limit_times)"-->
-<!--          ></n-input-number>-->
-<!--        </span>-->
-<!--      </div>-->
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">次数</p>-->
+      <!--            <p class="shallow">达到注册次数后开启惩罚。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content">-->
+      <!--          <n-input-number-->
+      <!--              size="large"-->
+      <!--              placeholder="请输入"-->
+      <!--              v-model:value.number="settingStore.settings.security.ip_register_limit_times"-->
+      <!--              @blur="settingStore.saveOption('security','ip_register_limit_times', settingStore.settings.security.ip_register_limit_times)"-->
+      <!--          ></n-input-number>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
-<!--      <div class="item">-->
-<!--        <span class="l-content">-->
-<!--          <div class="describe">-->
-<!--            <p class="title">惩罚时间(分钟)</p>-->
-<!--            <p class="shallow">需要等待惩罚时间过后才可以再次注册。</p>-->
-<!--          </div>-->
-<!--        </span>-->
-<!--        <span class="r-content">-->
-<!--          <n-input-number-->
-<!--              size="large"-->
-<!--              placeholder="请输入"-->
-<!--              v-model:value.number="settingStore.settings.security.ip_register_lock_time"-->
-<!--              @blur="settingStore.saveOption('security','ip_register_lock_time', settingStore.settings.security.ip_register_lock_time)"-->
-<!--          ></n-input-number>-->
-<!--        </span>-->
-<!--      </div>-->
-
+      <!--      <div class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">惩罚时间(分钟)</p>-->
+      <!--            <p class="shallow">需要等待惩罚时间过后才可以再次注册。</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content">-->
+      <!--          <n-input-number-->
+      <!--              size="large"-->
+      <!--              placeholder="请输入"-->
+      <!--              v-model:value.number="settingStore.settings.security.ip_register_lock_time"-->
+      <!--              @blur="settingStore.saveOption('security','ip_register_lock_time', settingStore.settings.security.ip_register_lock_time)"-->
+      <!--          ></n-input-number>-->
+      <!--        </span>-->
+      <!--      </div>-->
 
 
       <div v-for="(item, index) in securitySettingsData" :key="index" class="item">
         <span class="l-content">
           <div class="describe">
-            <p class="title">{{item.title}}</p>
-            <p class="shallow">{{item.description}}</p>
+            <p class="title">{{ item.title }}</p>
+            <p class="shallow">{{ item.description }}</p>
           </div>
         </span>
         <span v-if="item.type === 'switch'" class="r-content to-right">
@@ -309,7 +308,6 @@ export default {
           ></n-input-number>
         </span>
       </div>
-
 
 
     </n-card>
@@ -351,6 +349,7 @@ export default {
     }
   }
 }
+
 .to-right {
   text-align: right;
 }

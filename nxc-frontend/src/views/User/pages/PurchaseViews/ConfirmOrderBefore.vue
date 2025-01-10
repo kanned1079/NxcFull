@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeMount } from "vue"
-import {NIcon} from "naive-ui";
-import GoodInfo from "@/views/User/pages/PurchaseViews/Parts/GoodInfo.vue";
-import OrderInfo from "@/views/User/pages/PurchaseViews/Parts/OrderInfo.vue";
+import {onBeforeMount, onMounted, ref} from "vue"
 
 let animated = ref<boolean>(false)
 let showSpin = ref<boolean>(false)

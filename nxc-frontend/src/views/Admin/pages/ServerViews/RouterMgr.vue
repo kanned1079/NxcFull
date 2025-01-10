@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import {defineComponent, onMounted} from 'vue'
+import {onMounted} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
+
 const themeStore = useThemeStore()
 
 let handleAddRouter = () => {
@@ -32,6 +33,7 @@ export default {
 .root {
   padding: 20px;
   min-width: 900px;
+
   .add-btn {
     margin-top: 10px;
   }

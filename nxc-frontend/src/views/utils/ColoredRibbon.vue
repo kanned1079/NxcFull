@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
 import * as confetti from 'canvas-confetti';
 
 // Props
@@ -34,7 +34,7 @@ const fireConfetti = () => {
 
   const count = 1600; // 基础粒子数量
   const defaults = {
-    origin: { y: 1.4 }, // 从页面底部发射
+    origin: {y: 1.4}, // 从页面底部发射
     gravity: 3, // 模拟自然重力
     scalar: 1.5,
     startVelocity: 3,

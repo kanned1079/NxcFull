@@ -14,8 +14,6 @@ import {
   LogInOutline as loginIcon,
   LogoApple as appleIcon,
   LogoGithub as githubIcon,
-  LogoGoogle as googleIcon,
-  LogoMicrosoft as microsoftIcon,
 } from '@vicons/ionicons5'
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import {encodeToBase64} from "@/utils/encryptor";
@@ -203,7 +201,7 @@ let loginClick = async () => {
     }, 60000)
     return
   }
-  await loginFormRef.value?.validate((errors) =>{
+  await loginFormRef.value?.validate((errors) => {
     if (errors) { // 表单验证不通过
       message.error(t('userLogin.checkForm'))
     } else {

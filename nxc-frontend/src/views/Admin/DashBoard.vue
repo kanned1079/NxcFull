@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
-import {RouterView, useRouter} from 'vue-router';
+import {RouterView} from 'vue-router';
 import CommonHeader from "@/components/CommonHeader.vue";
 import CommonAside from "@/components/CommonAside.vue";
 

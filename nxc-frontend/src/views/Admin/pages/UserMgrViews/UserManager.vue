@@ -148,12 +148,12 @@ const columns = [
     key: 'email',
     render(row: User) {
       return h('p', {
-        style: row.deleted_at?{
+        style: row.deleted_at ? {
           // textDecoration: 'line-through', // 如果 deleted_at 不为空，添加删除线
           // textDecorationThickness: 1,
           opacity: 1,
           color: '#787d7b',
-        }:null
+        } : null
       }, row.email); // 直接渲染邮箱地址
     }
   },
