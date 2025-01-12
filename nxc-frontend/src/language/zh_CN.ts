@@ -89,6 +89,9 @@ export default {
         },
         systemConfig: {
             site: {
+                common: {
+                  title: '站点',
+                },
                 appName: {
                     title: '站点名称',
                     shallow: '用于显示需要站点名称的地方。',
@@ -156,6 +159,9 @@ export default {
                 }
             },
             security: {
+                common: {
+                    title: '安全设置'
+                },
                 emailVerify: {
                     title: '邮箱验证',
                     description: '开启后将会强制要求用户进行邮箱验证。',
@@ -201,6 +207,137 @@ export default {
                     placeholder: '请输入',
                 },
             },
+            welcome: {
+                common: {
+                  title: '首页信息设置',
+                },
+                homeDescription: {
+                    title: '首页描述',
+                    description: '设置首页的简要描述内容。',
+                    placeholder: '请输入首页描述内容',
+                },
+                whyChooseUs: {
+                    title: '为什么选择我们',
+                    description: '设置关于为什么选择我们的描述。',
+                    placeholder: '请输入详细描述',
+                },
+                bilibiliLink: {
+                    title: 'Bilibili 官方链接',
+                    description: '设置 Bilibili 官方账号的链接地址。',
+                    placeholder: 'https://space.bilibili.com/xxxx',
+                },
+                youtubeLink: {
+                    title: 'YouTube 官方链接',
+                    description: '设置 YouTube 官方账号的链接地址。',
+                    placeholder: 'https://youtube.com/channel/xxxx',
+                },
+                instagramLink: {
+                    title: 'Instagram 官方链接',
+                    description: '设置 Instagram 官方账号的链接地址。',
+                    placeholder: 'https://instagram.com/xxxx',
+                },
+                wechatLink: {
+                    title: '微信公众账号链接',
+                    description: '设置微信公众账号的链接地址。',
+                    placeholder: '请输入微信公众链接',
+                },
+                filingNumber: {
+                    title: '备案号',
+                    description: '设置站点的备案号。',
+                    placeholder: '如：粤ICP备12345678号',
+                },
+                pageSuffix: {
+                    title: '站点后缀',
+                    description: '设置站点名称后缀，用于标题显示。',
+                    placeholder: '如：- 你的站点名称',
+                },
+            },
+            sendMail: {
+                common: {
+                    title: '邮件设置',
+                    warning: '如果您更改了本页面的配置，需要对队列服务及逆行重启。另外本页配置优先级高于.env中的邮件配置。',
+                    sendTestMailTitle: '发送测试邮件',
+                    sendTestMailShallow: '邮件将会发送到当前登录管理员的邮箱',
+                    sendTestMailTo: '发送测试邮件到',
+                },
+                smtpServerAddress: {
+                    title: 'SMTP 服务器地址',
+                    shallow: '由邮件服务商提供的服务地址',
+                    placeholder: '请输入服务器地址',
+                },
+                smtpServerPort: {
+                    title: 'SMTP 服务端口',
+                    shallow: '常见的端口有 25, 465, 587',
+                    placeholder: '请输入端口号',
+                },
+                smtpEncryption: {
+                    title: 'SMTP 加密方式',
+                    shallow: '465 端口加密方式一般为 SSL，587 端口加密方式一般为 TLS',
+                    placeholder: '请输入加密方式',
+                },
+                smtpAccount: {
+                    title: 'SMTP 账号',
+                    shallow: '由邮件服务商提供的账号',
+                    placeholder: '请输入账号',
+                },
+                smtpPassword: {
+                    title: 'SMTP 密码',
+                    shallow: '由邮件服务商提供的密码',
+                    placeholder: '请输入密码',
+                },
+                senderAddress: {
+                    title: '发件地址',
+                    shallow: '由邮件服务商提供的发件地址',
+                    placeholder: '请输入发件地址',
+                },
+                emailTemplate: {
+                    title: '邮件模版',
+                    shallow: '你可以在文档查看如何自定义邮件模板',
+                    placeholder: '请选择邮件模板',
+                },
+            },
+            notice: {
+                common: {
+                  title: '通知设置'
+                },
+                displayName: {
+                    title: '显示名称',
+                    shallow: '仅用于前端页面显示',
+                    placeholder: '通用通知接口1',
+                },
+                barkEndpoint: {
+                    title: 'Bark 接入点',
+                    shallow: 'Bark 服务器后端 API 地址',
+                    placeholder: 'https://<ip>:<port>/<secret-key>',
+                },
+                barkGroup: {
+                    title: 'Bark 群组',
+                    shallow: '客户端显示的群组名称',
+                    placeholder: 'web',
+                },
+            },
+            appDownload: {
+                common: {
+                  title: 'APP',
+                  hint: '用于自有客户端(APP)的版本管理及更新',
+                },
+                windows: {
+                    title: 'Windows',
+                    shallow: 'Windows 端版本号及下载地址。',
+                    placeholder: 'https://xxxx.com/xxx.exe',
+                },
+                macos: {
+                    title: 'macOS',
+                    shallow: 'macOS 端版本号及下载地址',
+                    placeholder: 'https://xxxx.com/xxx.dmg',
+                },
+                android: {
+                    title: 'Android',
+                    shallow: 'Android 端版本号及下载地址',
+                    placeholder: 'https://xxxx.com/xxx.apk',
+                },
+            },
+
 
         },
 

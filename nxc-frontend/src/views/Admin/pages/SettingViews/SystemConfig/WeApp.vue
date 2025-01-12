@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import useSettingStore from "@/stores/useSettingStore";
+import {useI18n} from "vue-i18n"
 
+const {t} = useI18n()
 const settingStore = useSettingStore();
 // const themeStore = useThemeStore()
 
@@ -17,26 +19,48 @@ interface AppSetting {
   placeholder?: string;
 }
 
-let appDownloadSettings: AppSetting[] = [
+// const appDownloadSettings: AppSetting[] = [
+//   {
+//     title: "Windows",
+//     shallow: "Windows 端版本号及下载地址。",
+//     model: "win_download",
+//     placeholder: "https://xxxx.com/xxx.exe"
+//   },
+//   {
+//     title: "macOS",
+//     shallow: "macOS 端版本号及下载地址",
+//     model: "osx_download",
+//     placeholder: "https://xxxx.com/xxx.dmg"
+//   },
+//   {
+//     title: "Android",
+//     shallow: "Android 端版本号及下载地址",
+//     model: "android_download",
+//     placeholder: "https://xxxx.com/xxx.apk"
+//   }
+// ]
+
+const appDownloadSettings: AppSetting[] = [
   {
-    title: "Windows",
-    shallow: "Windows 端版本号及下载地址。",
-    model: "win_download",
-    placeholder: "https://xxxx.com/xxx.exe"
+    title: 'adminViews.systemConfig.appDownload.windows.title',
+    shallow: 'adminViews.systemConfig.appDownload.windows.shallow',
+    placeholder: 'adminViews.systemConfig.appDownload.windows.placeholder',
+    model: 'win_download',
   },
   {
-    title: "macOS",
-    shallow: "macOS 端版本号及下载地址",
-    model: "osx_download",
-    placeholder: "https://xxxx.com/xxx.dmg"
+    title: 'adminViews.systemConfig.appDownload.macos.title',
+    shallow: 'adminViews.systemConfig.appDownload.macos.shallow',
+    placeholder: 'adminViews.systemConfig.appDownload.macos.placeholder',
+    model: 'osx_download',
   },
   {
-    title: "Android",
-    shallow: "Android 端版本号及下载地址",
-    model: "android_download",
-    placeholder: "https://xxxx.com/xxx.apk"
-  }
-]
+    title: 'adminViews.systemConfig.appDownload.android.title',
+    shallow: 'adminViews.systemConfig.appDownload.android.shallow',
+    placeholder: 'adminViews.systemConfig.appDownload.android.placeholder',
+    model: 'android_download',
+  },
+];
+
 
 </script>
 
@@ -47,81 +71,51 @@ export default {
 </script>
 
 <template>
-  <n-card :embedded="true" class="root" title="APP" :bordered="false">
+  <n-card
+      :embedded="true"
+      class="root"
+      :title="t('adminViews.systemConfig.appDownload.common.title')"
+      :bordered="false"
+  >
     <n-alert type="info" style="margin-bottom: 30px" :bordered="false">
-      用于自有客户端(APP)的版本管理及更新
+      {{ t('adminViews.systemConfig.appDownload.common.hint') }}
     </n-alert>
 
     <div v-for="setting in appDownloadSettings" :key="setting.title" class="item">
-    <span class="l-content">
-      <div class="describe">
-        <p class="title">{{ setting.title }}</p>
-        <p class="shallow">{{ setting.shallow }}</p>
-      </div>
-    </span>
+      <span class="l-content">
+        <div class="describe">
+          <p class="title">{{ t(setting.title) }}</p>
+          <p class="shallow">{{ t(setting.shallow) }}</p>
+        </div>
+     </span>
       <span class="r-content">
       <n-input
           type="text"
-          placeholder="{{ setting.placeholder }}"
+          :placeholder="t(setting.placeholder || '')"
           size="large"
           v-model:value="settingStore.settings.my_app[setting.model]"
           @blur="settingStore.saveOption('my_app', setting.model, settingStore.settings.my_app[setting.model])"
       />
-    </span>
+  </span>
     </div>
 
-    <!--    <div class="item">-->
-    <!--        <span class="l-content">-->
-    <!--          <div class="describe">-->
-    <!--            <p class="title">Windows</p>-->
-    <!--            <p class="shallow">Windows端版本号及下载地址。</p>-->
-    <!--          </div>-->
-    <!--        </span>-->
-    <!--      <span class="r-content">-->
-    <!--          <n-input-->
-    <!--              type="text"-->
-    <!--              placeholder="https://xxxx.com/xxx.exe"-->
-    <!--              size="large"-->
-    <!--              v-model:value="settingStore.settings.my_app.win_download"-->
-    <!--              @blur="settingStore.saveOption('my_app', 'win_download', settingStore.settings.my_app.win_download)"-->
-    <!--          />-->
-    <!--        </span>-->
-    <!--    </div>-->
-    <!---->
-    <!--    <div class="item">-->
-    <!--        <span class="l-content">-->
-    <!--          <div class="describe">-->
-    <!--            <p class="title">macOS</p>-->
-    <!--            <p class="shallow">macOS端版本号及下载地址</p>-->
-    <!--          </div>-->
-    <!--        </span>-->
-    <!--      <span class="r-content">-->
-    <!--          <n-input-->
-    <!--              type="text"-->
-    <!--              placeholder="https://xxxx.com/xxx.dmg"-->
-    <!--              size="large"-->
-    <!--              v-model:value="settingStore.settings.my_app.osx_download"-->
-    <!--              @blur="settingStore.saveOption('my_app', 'osx_download', settingStore.settings.my_app.osx_download)"-->
-    <!--          />-->
-    <!--        </span>-->
-    <!--    </div>-->
 
-    <!--    <div class="item">-->
-    <!--        <span class="l-content">-->
-    <!--          <div class="describe">-->
-    <!--            <p class="title">Android</p>-->
-    <!--            <p class="shallow">Android端版本号及下载地址</p>-->
-    <!--          </div>-->
-    <!--        </span>-->
+    <!--    <div v-for="setting in appDownloadSettings" :key="setting.title" class="item">-->
+    <!--    <span class="l-content">-->
+    <!--      <div class="describe">-->
+    <!--        <p class="title">{{ setting.title }}</p>-->
+    <!--        <p class="shallow">{{ setting.shallow }}</p>-->
+    <!--      </div>-->
+    <!--    </span>-->
     <!--      <span class="r-content">-->
-    <!--          <n-input-->
-    <!--              type="text"-->
-    <!--              placeholder="https://xxxx.com/xxx.apk"-->
-    <!--              size="large"-->
-    <!--              v-model:value="settingStore.settings.my_app.android_download"-->
-    <!--              @blur="settingStore.saveOption('my_app', 'android_download', settingStore.settings.my_app.android_download)"-->
-    <!--          />-->
-    <!--        </span>-->
+    <!--      <n-input-->
+    <!--          type="text"-->
+    <!--          placeholder="{{ setting.placeholder }}"-->
+    <!--          size="large"-->
+    <!--          v-model:value="settingStore.settings.my_app[setting.model]"-->
+    <!--          @blur="settingStore.saveOption('my_app', setting.model, settingStore.settings.my_app[setting.model])"-->
+    <!--      />-->
+    <!--    </span>-->
     <!--    </div>-->
 
   </n-card>

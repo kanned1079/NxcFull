@@ -198,7 +198,12 @@ export default {
 
 <template>
   <div class="root">
-    <n-card :embedded="true" class="security-panel" title="安全设置" :bordered="false">
+    <n-card
+        :embedded="true"
+        class="security-panel"
+        :title="t('adminViews.systemConfig.security.common.title')"
+        :bordered="false"
+    >
 
       <!--      <div class="item">-->
       <!--        <span class="l-content">-->

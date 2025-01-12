@@ -312,7 +312,12 @@ export default {
 
 <template>
   <div class="root">
-    <n-card :embedded="true" class="security-panel" title="站点" :bordered="false">
+    <n-card
+        :embedded="true"
+        class="security-panel"
+        :title="t('adminViews.systemConfig.site.common.title')"
+        :bordered="false"
+    >
       <div v-for="setting in appSettings" :key="setting.title" class="item">
   <span class="l-content">
     <div class="describe">
@@ -324,7 +329,7 @@ export default {
     <n-input
         v-model:value="settingStore.settings.site[setting.model]"
         type="text"
-        :placeholder="t(setting.placeholder)"
+        :placeholder="t(setting.placeholder || '')"
         size="large"
         @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
     />

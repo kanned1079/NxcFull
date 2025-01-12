@@ -2,16 +2,18 @@
 import {h, reactive, ref} from "vue"
 // import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
+// import useApiAddrStore from "@/stores/useApiAddrStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
+import {useI18n} from "vue-i18n"
 import instance from "@/axios/index";
 // import {makeNotify} from "@/utils/notify"
-import {HourglassOutline as waitIcon} from '@vicons/ionicons5'
+import {HourglassOutline as waitIcon, Flask as testIcon} from '@vicons/ionicons5'
 import {NIcon, type NotificationType, useDialog, useMessage, useNotification} from 'naive-ui'
 
+const {t} = useI18n()
 const notification = useNotification()
 const userInfoStore = useUserInfoStore()
-const apiAddrStore = useApiAddrStore();
+// const apiAddrStore = useApiAddrStore();
 // const themeStore = useThemeStore()
 const settingStore = useSettingStore()
 const message = useMessage()
@@ -41,19 +43,8 @@ let sendTestMail = async () => {
     show.value = false
     if (data.code === 200) {
       // makeNotify('success', '发送邮件成功', '请查收该管理员邮箱')
-      console.log(data)
+      // console.log(data)
       let {info} = data
-      // dialog.info({
-      //   title: '成功',
-      //   // content: `收信地址: ${userInfoStore.thisUser.email}\t\n
-      //   //           发信服务器: ${info.host}
-      //   //           发信端口: ${info.port}
-      //   //           发信加密方式: ${info.use_ssl ? 'SSL' : 'TLS'}
-      //   //           发信用户名: ${info.username}`,
-      //   content: () => {
-      //     h('div', {}, )
-      //   }
-      // })
       dialog.success({
         title: '成功',
         content: () =>
@@ -66,8 +57,7 @@ let sendTestMail = async () => {
             ])
       });
     } else {
-      makeNotify('error', '发送邮件失败', data.msg.toString())
-
+      makeNotify('error', '发送邮件失败', data.msg.toString() || '')
     }
   } catch (error) {
     console.log(error)
@@ -125,50 +115,104 @@ interface SmtpSetting {
   type: string;
 }
 
-let smtpSettings: SmtpSetting[] = [
+const smtpSettings: SmtpSetting[] = [
   {
-    title: "SMTP 服务器地址",
-    shallow: "由邮件服务商提供的服务地址",
-    model: "email_host",
-    type: "input"
+    title: 'adminViews.systemConfig.sendMail.smtpServerAddress.title',
+    shallow: 'adminViews.systemConfig.sendMail.smtpServerAddress.shallow',
+    placeholder: 'adminViews.systemConfig.sendMail.smtpServerAddress.placeholder',
+    model: 'email_host',
+    type: 'input',
   },
   {
-    title: "SMTP 服务端口",
-    shallow: "常见的端口有 25, 465, 587",
-    model: "email_port",
-    type: "input-number"
+    title: 'adminViews.systemConfig.sendMail.smtpServerPort.title',
+    shallow: 'adminViews.systemConfig.sendMail.smtpServerPort.shallow',
+    placeholder: 'adminViews.systemConfig.sendMail.smtpServerPort.placeholder',
+    model: 'email_port',
+    type: 'input-number',
   },
   {
-    title: "SMTP 加密方式",
-    shallow: "465 端口加密方式一般为 SSL，587 端口加密方式一般为 TLS",
-    model: "email_encryption",
-    type: "input"
+    title: 'adminViews.systemConfig.sendMail.smtpEncryption.title',
+    shallow: 'adminViews.systemConfig.sendMail.smtpEncryption.shallow',
+    placeholder: 'adminViews.systemConfig.sendMail.smtpEncryption.placeholder',
+    model: 'email_encryption',
+    type: 'input',
   },
   {
-    title: "SMTP 账号",
-    shallow: "由邮件服务商提供的账号",
-    model: "email_username",
-    type: "input"
+    title: 'adminViews.systemConfig.sendMail.smtpAccount.title',
+    shallow: 'adminViews.systemConfig.sendMail.smtpAccount.shallow',
+    placeholder: 'adminViews.systemConfig.sendMail.smtpAccount.placeholder',
+    model: 'email_username',
+    type: 'input',
   },
   {
-    title: "SMTP 密码",
-    shallow: "由邮件服务商提供的密码",
-    model: "email_password",
-    type: "input"
+    title: 'adminViews.systemConfig.sendMail.smtpPassword.title',
+    shallow: 'adminViews.systemConfig.sendMail.smtpPassword.shallow',
+    placeholder: 'adminViews.systemConfig.sendMail.smtpPassword.placeholder',
+    model: 'email_password',
+    type: 'input',
   },
   {
-    title: "发件地址",
-    shallow: "由邮件服务商提供的发件地址",
-    model: "email_from_address",
-    type: "input"
+    title: 'adminViews.systemConfig.sendMail.senderAddress.title',
+    shallow: 'adminViews.systemConfig.sendMail.senderAddress.shallow',
+    placeholder: 'adminViews.systemConfig.sendMail.senderAddress.placeholder',
+    model: 'email_from_address',
+    type: 'input',
   },
   {
-    title: "邮件模版",
-    shallow: "你可以在文档查看如何自定义邮件模板",
-    model: "email_template",
-    type: "select"
-  }
-]
+    title: 'adminViews.systemConfig.sendMail.emailTemplate.title',
+    shallow: 'adminViews.systemConfig.sendMail.emailTemplate.shallow',
+    placeholder: 'adminViews.systemConfig.sendMail.emailTemplate.placeholder',
+    model: 'email_template',
+    type: 'select',
+  },
+];
+
+
+
+// let smtpSettings: SmtpSetting[] = [
+//   {
+//     title: "SMTP 服务器地址",
+//     shallow: "由邮件服务商提供的服务地址",
+//     model: "email_host",
+//     type: "input"
+//   },
+//   {
+//     title: "SMTP 服务端口",
+//     shallow: "常见的端口有 25, 465, 587",
+//     model: "email_port",
+//     type: "input-number"
+//   },
+//   {
+//     title: "SMTP 加密方式",
+//     shallow: "465 端口加密方式一般为 SSL，587 端口加密方式一般为 TLS",
+//     model: "email_encryption",
+//     type: "input"
+//   },
+//   {
+//     title: "SMTP 账号",
+//     shallow: "由邮件服务商提供的账号",
+//     model: "email_username",
+//     type: "input"
+//   },
+//   {
+//     title: "SMTP 密码",
+//     shallow: "由邮件服务商提供的密码",
+//     model: "email_password",
+//     type: "input"
+//   },
+//   {
+//     title: "发件地址",
+//     shallow: "由邮件服务商提供的发件地址",
+//     model: "email_from_address",
+//     type: "input"
+//   },
+//   {
+//     title: "邮件模版",
+//     shallow: "你可以在文档查看如何自定义邮件模板",
+//     model: "email_template",
+//     type: "select"
+//   }
+// ]
 
 </script>
 
@@ -180,44 +224,84 @@ export default {
 
 <template>
 
-  <n-card class="root" :embedded="true" title="邮件设置" :bordered="false">
+  <n-card
+      class="root"
+      :embedded="true"
+      :title="t('adminViews.systemConfig.sendMail.common.title')"
+      :bordered="false"
+  >
     <n-alert type="warning" style="margin-bottom: 30px" :bordered="false">
-      如果你更改了本页配置，需要对队列服务进行重启。&nbsp;另外本页配置优先级高于.env中邮件配置。
+      {{ t('adminViews.systemConfig.sendMail.common.warning') }}
     </n-alert>
 
-
     <div v-for="setting in smtpSettings" :key="setting.title" class="item">
-    <span class="l-content">
-      <div class="describe">
-        <p class="title">{{ setting.title }}</p>
-        <p class="shallow">{{ setting.shallow }}</p>
-      </div>
-    </span>
-      <span class="r-content" v-if="setting.type === 'input'">
-      <n-input
-          size="large"
-          placeholder="请输入"
-          v-model:value="settingStore.settings.sendmail[setting.model]"
-          @blur="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
-      />
-    </span>
-      <span class="r-content" v-if="setting.type === 'input-number'">
-      <n-input-number
-          size="large"
-          placeholder="请输入"
-          v-model:value.number="settingStore.settings.sendmail[setting.model]"
-          @blur="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
-      />
-    </span>
-      <span class="r-content" v-if="setting.type === 'select'">
-      <n-select
-          size="large"
-          :options="options"
-          v-model:value="settingStore.settings.sendmail[setting.model]"
-          @update:value="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
-      />
-    </span>
+  <span class="l-content">
+    <div class="describe">
+      <p class="title">{{ t(setting.title) }}</p>
+      <p class="shallow">{{ t(setting.shallow) }}</p>
     </div>
+  </span>
+      <span class="r-content" v-if="setting.type === 'input'">
+    <n-input
+        size="large"
+        :placeholder="t(setting.placeholder || '')"
+        v-model:value="settingStore.settings.sendmail[setting.model]"
+        @blur="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
+    />
+  </span>
+      <span class="r-content" v-if="setting.type === 'input-number'">
+    <n-input-number
+        size="large"
+        :placeholder="t(setting.placeholder || '')"
+        v-model:value.number="settingStore.settings.sendmail[setting.model]"
+        @blur="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
+    />
+  </span>
+      <span class="r-content" v-if="setting.type === 'select'">
+    <n-select
+        size="large"
+        :options="options"
+        :placeholder="t(setting.placeholder || '')"
+        v-model:value="settingStore.settings.sendmail[setting.model]"
+        @update:value="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"
+    />
+  </span>
+    </div>
+
+
+
+    <!--    <div v-for="setting in smtpSettings" :key="setting.title" class="item">-->
+    <!--    <span class="l-content">-->
+    <!--      <div class="describe">-->
+    <!--        <p class="title">{{ setting.title }}</p>-->
+    <!--        <p class="shallow">{{ setting.shallow }}</p>-->
+    <!--      </div>-->
+    <!--    </span>-->
+    <!--      <span class="r-content" v-if="setting.type === 'input'">-->
+    <!--      <n-input-->
+    <!--          size="large"-->
+    <!--          placeholder="请输入"-->
+    <!--          v-model:value="settingStore.settings.sendmail[setting.model]"-->
+    <!--          @blur="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"-->
+    <!--      />-->
+    <!--    </span>-->
+    <!--      <span class="r-content" v-if="setting.type === 'input-number'">-->
+    <!--      <n-input-number-->
+    <!--          size="large"-->
+    <!--          placeholder="请输入"-->
+    <!--          v-model:value.number="settingStore.settings.sendmail[setting.model]"-->
+    <!--          @blur="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"-->
+    <!--      />-->
+    <!--    </span>-->
+    <!--      <span class="r-content" v-if="setting.type === 'select'">-->
+    <!--      <n-select-->
+    <!--          size="large"-->
+    <!--          :options="options"-->
+    <!--          v-model:value="settingStore.settings.sendmail[setting.model]"-->
+    <!--          @update:value="settingStore.saveOption('sendmail', setting.model, settingStore.settings.sendmail[setting.model])"-->
+    <!--      />-->
+    <!--    </span>-->
+    <!--    </div>-->
 
 
     <!--        <div class="item">-->
@@ -342,13 +426,20 @@ export default {
     <div class="item">
         <span class="l-content">
           <div class="describe">
-            <p class="title">发送测试邮件</p>
-            <p class="shallow">邮件将会发送到当前登陆用户邮箱</p>
+            <p class="title">{{ t('adminViews.systemConfig.sendMail.common.sendTestMailTitle') }}</p>
+            <p class="shallow">{{ t('adminViews.systemConfig.sendMail.common.sendTestMailShallow') }}</p>
           </div>
         </span>
       <span class="r-content to-right">
         <n-spin :show="show" :delay="100" size="small">
-        <n-button @click="sendTestMail" size="large" type="primary" :bordered="false">发送测试邮件</n-button>
+        <n-button @click="sendTestMail" size="large" type="primary" :bordered="false" icon-placement="left">
+          {{ t('adminViews.systemConfig.sendMail.common.sendTestMailTo') +' '+ userInfoStore.thisUser.email }}
+          <template #icon>
+            <n-icon size="16">
+               <testIcon />
+            </n-icon>
+          </template>
+        </n-button>
         </n-spin>
         </span>
     </div>

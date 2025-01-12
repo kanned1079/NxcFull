@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import useThemeStore from '@/stores/useThemeStore'
 import useSettingStore from "@/stores/useSettingStore";
+import {useI18n} from "vue-i18n"
 
+const {t} = useI18n()
 const themeStore = useThemeStore()
 const settingStore = useSettingStore()
 let handok = () => {
