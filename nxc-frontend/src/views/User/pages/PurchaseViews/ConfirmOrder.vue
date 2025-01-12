@@ -289,6 +289,7 @@ export default {
 <template>
   <!--  <div class="root" v-if="paymentStore.plan_id_selected != -1">-->
 
+<!--  TODO: 需要重新修改其间距大小为15px-->
   <ConfirmOrderBefore v-if="showLoading"></ConfirmOrderBefore>
 
   <transition name="slide-fade">

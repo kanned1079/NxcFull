@@ -3,7 +3,9 @@ import useThemeStore from "@/stores/useThemeStore";
 import useSettingStore from "@/stores/useSettingStore"
 import instance from "@/axios";
 import {onMounted, ref} from "vue";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 const themeStore = useThemeStore();
 const settingStore = useSettingStore();
 
@@ -49,101 +51,197 @@ interface AppSetting {
 }
 
 // appSettings 用于v-for渲染的数据
-let appSettings: AppSetting[] = [
+const appSettings: AppSetting[] = [
   {
-    title: "站点名称",
-    shallow: "用于显示需要站点名称的地方。",
-    model: "app_name",
-    type: "input",
-    placeholder: "站点名称"
+    title: 'adminViews.systemConfig.site.appName.title',
+    shallow: 'adminViews.systemConfig.site.appName.shallow',
+    model: 'app_name',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.appName.placeholder'
   },
   {
-    title: "站点副标题",
-    shallow: "一般显示在主要标题的下面。",
-    model: "app_sub_name",
-    type: "input",
-    placeholder: "副标题"
+    title: 'adminViews.systemConfig.site.appSubName.title',
+    shallow: 'adminViews.systemConfig.site.appSubName.shallow',
+    model: 'app_sub_name',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.appSubName.placeholder'
   },
   {
-    title: "站点描述",
-    shallow: "用于显示需要站点描述的地方。",
-    model: "app_description",
-    type: "input",
-    placeholder: "站点描述"
+    title: 'adminViews.systemConfig.site.appDescription.title',
+    shallow: 'adminViews.systemConfig.site.appDescription.shallow',
+    model: 'app_description',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.appDescription.placeholder'
   },
   {
-    title: "站点网址",
-    shallow: "当前网站最新网址，将会在邮件等需要用于网址处体现。",
-    model: "app_url",
-    type: "input",
-    placeholder: "站点网址"
+    title: 'adminViews.systemConfig.site.appUrl.title',
+    shallow: 'adminViews.systemConfig.site.appUrl.shallow',
+    model: 'app_url',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.appUrl.placeholder'
   },
   {
-    title: "强制 HTTPS",
-    shallow: "当站点没有使用 HTTPS，CDN 或反代开启强制 HTTPS 时需要开启。",
-    model: "force_https",
-    type: "switch"
+    title: 'adminViews.systemConfig.site.forceHttps.title',
+    shallow: 'adminViews.systemConfig.site.forceHttps.shallow',
+    model: 'force_https',
+    type: 'switch'
   },
   {
-    title: "LOGO",
-    shallow: "用于显示需要 LOGO 的地方。",
-    model: "logo_url",
-    type: "input",
-    placeholder: "logo 的 url 地址"
+    title: 'adminViews.systemConfig.site.logoUrl.title',
+    shallow: 'adminViews.systemConfig.site.logoUrl.shallow',
+    model: 'logo_url',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.logoUrl.placeholder'
   },
   {
-    title: "订阅 URL",
-    shallow: "用于订阅所使用，留空则为站点 URL。如需多个订阅 URL 随机获取请使用逗号进行分割。",
-    model: "subscribe_url",
-    type: "input",
-    placeholder: "订阅 url"
+    title: 'adminViews.systemConfig.site.subscribeUrl.title',
+    shallow: 'adminViews.systemConfig.site.subscribeUrl.shallow',
+    model: 'subscribe_url',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.subscribeUrl.placeholder'
   },
   {
-    title: "用户条款(TOS)URL",
-    shallow: "用于跳转到用户条款(TOS)",
-    model: "tos_url",
-    type: "input",
-    placeholder: "用户条款地址"
+    title: 'adminViews.systemConfig.site.tosUrl.title',
+    shallow: 'adminViews.systemConfig.site.tosUrl.shallow',
+    model: 'tos_url',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.tosUrl.placeholder'
   },
   {
-    title: "停止新用户注册",
-    shallow: "开启后任何人都将无法进行注册。",
-    model: "stop_register",
-    type: "switch"
+    title: 'adminViews.systemConfig.site.stopRegister.title',
+    shallow: 'adminViews.systemConfig.site.stopRegister.shallow',
+    model: 'stop_register',
+    type: 'switch'
   },
   {
-    title: "强制邀请",
-    shallow: "开启后当新用户注册时必需填写邀请码。",
-    model: "invite_require",
-    type: "switch"
+    title: 'adminViews.systemConfig.site.inviteRequire.title',
+    shallow: 'adminViews.systemConfig.site.inviteRequire.shallow',
+    model: 'invite_require',
+    type: 'switch'
   },
   {
-    title: "注册试用",
-    shallow: "选择需要试用的订阅，如果没有选项请先前往订阅管理添加。",
-    model: "trial_subscribe",
-    type: "select"
+    title: 'adminViews.systemConfig.site.trialSubscribe.title',
+    shallow: 'adminViews.systemConfig.site.trialSubscribe.shallow',
+    model: 'trial_subscribe',
+    type: 'select'
   },
   {
-    title: "试用时间(小时)",
-    shallow: "新用户注册时订阅试用事件。",
-    model: "trial_time",
-    type: "input-number"
+    title: 'adminViews.systemConfig.site.trialTime.title',
+    shallow: 'adminViews.systemConfig.site.trialTime.shallow',
+    model: 'trial_time',
+    type: 'input-number'
   },
   {
-    title: "货币单位",
-    shallow: "仅用于展示使用，更改后系统中所有的货币单位都将发生变更。",
-    model: "currency",
-    type: "input",
-    placeholder: "CNY"
+    title: 'adminViews.systemConfig.site.currency.title',
+    shallow: 'adminViews.systemConfig.site.currency.shallow',
+    model: 'currency',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.currency.placeholder'
   },
   {
-    title: "货币符号",
-    shallow: "仅用于展示使用，更改后系统中所有的货币单位都将发生变更。",
-    model: "currency_symbol",
-    type: "input",
-    placeholder: "¥"
+    title: 'adminViews.systemConfig.site.currencySymbol.title',
+    shallow: 'adminViews.systemConfig.site.currencySymbol.shallow',
+    model: 'currency_symbol',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.site.currencySymbol.placeholder'
   }
-]
+];
+
+// const appSettings: AppSetting[] = [
+//   {
+//     title: "adminViews.systemConfig.site.appName.title",
+//     shallow: "adminViews.systemConfig.site.appName.shallow",
+//     model: "app_name",
+//     type: "input",
+//     placeholder: "adminViews.systemConfig.site.appName.placeholder"
+//   },
+//   {
+//     title: "站点副标题",
+//     shallow: "一般显示在主要标题的下面。",
+//     model: "app_sub_name",
+//     type: "input",
+//     placeholder: "副标题"
+//   },
+//   {
+//     title: "站点描述",
+//     shallow: "用于显示需要站点描述的地方。",
+//     model: "app_description",
+//     type: "input",
+//     placeholder: "站点描述"
+//   },
+//   {
+//     title: "站点网址",
+//     shallow: "当前网站最新网址，将会在邮件等需要用于网址处体现。",
+//     model: "app_url",
+//     type: "input",
+//     placeholder: "站点网址"
+//   },
+//   {
+//     title: "强制 HTTPS",
+//     shallow: "当站点没有使用 HTTPS，CDN 或反代开启强制 HTTPS 时需要开启。",
+//     model: "force_https",
+//     type: "switch"
+//   },
+//   {
+//     title: "LOGO",
+//     shallow: "用于显示需要 LOGO 的地方。",
+//     model: "logo_url",
+//     type: "input",
+//     placeholder: "logo 的 url 地址"
+//   },
+//   {
+//     title: "订阅 URL",
+//     shallow: "用于订阅所使用，留空则为站点 URL。如需多个订阅 URL 随机获取请使用逗号进行分割。",
+//     model: "subscribe_url",
+//     type: "input",
+//     placeholder: "订阅 url"
+//   },
+//   {
+//     title: "用户条款(TOS)URL",
+//     shallow: "用于跳转到用户条款(TOS)",
+//     model: "tos_url",
+//     type: "input",
+//     placeholder: "用户条款地址"
+//   },
+//   {
+//     title: "停止新用户注册",
+//     shallow: "开启后任何人都将无法进行注册。",
+//     model: "stop_register",
+//     type: "switch"
+//   },
+//   {
+//     title: "强制邀请",
+//     shallow: "开启后当新用户注册时必需填写邀请码。",
+//     model: "invite_require",
+//     type: "switch"
+//   },
+//   {
+//     title: "注册试用",
+//     shallow: "选择需要试用的订阅，如果没有选项请先前往订阅管理添加。",
+//     model: "trial_subscribe",
+//     type: "select"
+//   },
+//   {
+//     title: "试用时间(小时)",
+//     shallow: "新用户注册时订阅试用事件。",
+//     model: "trial_time",
+//     type: "input-number"
+//   },
+//   {
+//     title: "货币单位",
+//     shallow: "仅用于展示使用，更改后系统中所有的货币单位都将发生变更。",
+//     model: "currency",
+//     type: "input",
+//     placeholder: "CNY"
+//   },
+//   {
+//     title: "货币符号",
+//     shallow: "仅用于展示使用，更改后系统中所有的货币单位都将发生变更。",
+//     model: "currency_symbol",
+//     type: "input",
+//     placeholder: "¥"
+//   }
+// ]
 
 let plans = [
   {
@@ -216,46 +314,88 @@ export default {
   <div class="root">
     <n-card :embedded="true" class="security-panel" title="站点" :bordered="false">
       <div v-for="setting in appSettings" :key="setting.title" class="item">
-        <span class="l-content">
-          <div class="describe">
-            <p class="title">{{ setting.title }}</p>
-            <p class="shallow">{{ setting.shallow }}</p>
-          </div>
-        </span>
+  <span class="l-content">
+    <div class="describe">
+      <p class="title">{{ t(setting.title) }}</p>
+      <p class="shallow">{{ t(setting.shallow) }}</p>
+    </div>
+  </span>
         <span class="r-content" v-if="setting.type === 'input'">
-          <n-input
-              v-model:value="settingStore.settings.site[setting.model]"
-              type="text"
-              :placeholder="`${setting.placeholder}`"
-              size="large"
-              @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
-          />
-        </span>
+    <n-input
+        v-model:value="settingStore.settings.site[setting.model]"
+        type="text"
+        :placeholder="t(setting.placeholder)"
+        size="large"
+        @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
+    />
+  </span>
         <span class="r-content" v-if="setting.type === 'switch'" style="text-align: right">
-          <n-switch
-              size="medium"
-              v-model:value="settingStore.settings.site[setting.model]"
-              @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
-          />
-        </span>
+    <n-switch
+        size="medium"
+        v-model:value="settingStore.settings.site[setting.model]"
+        @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
+    />
+  </span>
         <span class="r-content" v-if="setting.type === 'select'">
-          <n-select
-              v-model:value="settingStore.settings.site[setting.model]"
-              size="large"
-              :options="subscribe_list"
-              @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
-          />
-        </span>
+    <n-select
+        v-model:value="settingStore.settings.site[setting.model]"
+        size="large"
+        :options="subscribe_list"
+        @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
+    />
+  </span>
         <span class="r-content" v-if="setting.type === 'input-number'">
-          <n-input-number
-              v-model:value.number="settingStore.settings.site[setting.model]"
-              type="text"
-              placeholder="请输入"
-              size="large"
-              @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
-          />
-        </span>
+    <n-input-number
+        v-model:value.number="settingStore.settings.site[setting.model]"
+        type="text"
+        :placeholder="t('adminViews.systemConfig.site.inputNumberPlaceholder')"
+        size="large"
+        @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
+    />
+  </span>
       </div>
+
+      <!--      <div v-for="setting in appSettings" :key="setting.title" class="item">-->
+      <!--        <span class="l-content">-->
+      <!--          <div class="describe">-->
+      <!--            <p class="title">{{ setting.title }}</p>-->
+      <!--            <p class="shallow">{{ setting.shallow }}</p>-->
+      <!--          </div>-->
+      <!--        </span>-->
+      <!--        <span class="r-content" v-if="setting.type === 'input'">-->
+      <!--          <n-input-->
+      <!--              v-model:value="settingStore.settings.site[setting.model]"-->
+      <!--              type="text"-->
+      <!--              :placeholder="`${setting.placeholder}`"-->
+      <!--              size="large"-->
+      <!--              @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"-->
+      <!--          />-->
+      <!--        </span>-->
+      <!--        <span class="r-content" v-if="setting.type === 'switch'" style="text-align: right">-->
+      <!--          <n-switch-->
+      <!--              size="medium"-->
+      <!--              v-model:value="settingStore.settings.site[setting.model]"-->
+      <!--              @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"-->
+      <!--          />-->
+      <!--        </span>-->
+      <!--        <span class="r-content" v-if="setting.type === 'select'">-->
+      <!--          <n-select-->
+      <!--              v-model:value="settingStore.settings.site[setting.model]"-->
+      <!--              size="large"-->
+      <!--              :options="subscribe_list"-->
+      <!--              @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"-->
+      <!--          />-->
+      <!--        </span>-->
+      <!--        <span class="r-content" v-if="setting.type === 'input-number'">-->
+      <!--          <n-input-number-->
+      <!--              v-model:value.number="settingStore.settings.site[setting.model]"-->
+      <!--              type="text"-->
+      <!--              placeholder="请输入"-->
+      <!--              size="large"-->
+      <!--              @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"-->
+      <!--          />-->
+      <!--        </span>-->
+      <!--      </div>-->
 
 
       <!--      <div class="item">-->

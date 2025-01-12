@@ -24,6 +24,34 @@ export default {
         }
     },
     adminViews: {
+        login: {
+            card: {
+                back: '返回首页',
+                toAdminCenter: '登录到管理中心',
+                emailAddr:'管理员邮箱',
+                emailInputArea: {
+                    title: '管理员邮箱',
+                    placeholder: '邮箱地址',
+                },
+                passwordInputArea: {
+                    title: '管理员密码',
+                    placeholder: '密码',
+                },
+                login: '登入',
+                forgetPassword: '忘记密码',
+                formNotPassed: '表单验证不通过'
+            },
+            mention: {
+                title: '提示',
+                description: '此页面是管理员页面，只有管理员才能访问，如果您没有管理员权限或意外来到此处，请点击下面的链接返回主页。',
+            },
+            message: {
+                passwordErr: '密码不正确',
+                adminNotExist: '管理员不存在',
+                authPassed: '验证通过',
+                authFailure: '验证失败'
+            }
+        },
         summary: {
             systemConfig: '系統設置',
             paymentConfig: '支付設置',
@@ -59,6 +87,123 @@ export default {
 
             }
         },
+        systemConfig: {
+            site: {
+                appName: {
+                    title: '站点名称',
+                    shallow: '用于显示需要站点名称的地方。',
+                    placeholder: '站点名称'
+                },
+                appSubName: {
+                    title: '站点副标题',
+                    shallow: '一般显示在主要标题的下面。',
+                    placeholder: '副标题'
+                },
+                appDescription: {
+                    title: '站点描述',
+                    shallow: '用于显示需要站点描述的地方。',
+                    placeholder: '站点描述'
+                },
+                appUrl: {
+                    title: '站点网址',
+                    shallow: '当前网站最新网址，将会在邮件等需要用于网址处体现。',
+                    placeholder: '站点网址'
+                },
+                forceHttps: {
+                    title: '强制 HTTPS',
+                    shallow: '当站点没有使用 HTTPS，CDN 或反代开启强制 HTTPS 时需要开启。'
+                },
+                logoUrl: {
+                    title: 'LOGO',
+                    shallow: '用于显示需要 LOGO 的地方。',
+                    placeholder: 'logo 的 url 地址'
+                },
+                subscribeUrl: {
+                    title: '订阅 URL',
+                    shallow: '用于订阅所使用，留空则为站点 URL。如需多个订阅 URL 随机获取请使用逗号进行分割。',
+                    placeholder: '订阅 url'
+                },
+                tosUrl: {
+                    title: '用户条款(TOS)URL',
+                    shallow: '用于跳转到用户条款(TOS)',
+                    placeholder: '用户条款地址'
+                },
+                stopRegister: {
+                    title: '停止新用户注册',
+                    shallow: '开启后任何人都将无法进行注册。'
+                },
+                inviteRequire: {
+                    title: '强制邀请',
+                    shallow: '开启后当新用户注册时必需填写邀请码。'
+                },
+                trialSubscribe: {
+                    title: '注册试用',
+                    shallow: '选择需要试用的订阅，如果没有选项请先前往订阅管理添加。'
+                },
+                trialTime: {
+                    title: '试用时间(小时)',
+                    shallow: '新用户注册时订阅试用时间。'
+                },
+                currency: {
+                    title: '货币单位',
+                    shallow: '仅用于展示使用，更改后系统中所有的货币单位都将发生变更。',
+                    placeholder: 'CNY'
+                },
+                currencySymbol: {
+                    title: '货币符号',
+                    shallow: '仅用于展示使用，更改后系统中所有的货币单位都将发生变更。',
+                    placeholder: '¥'
+                }
+            },
+            security: {
+                emailVerify: {
+                    title: '邮箱验证',
+                    description: '开启后将会强制要求用户进行邮箱验证。',
+                },
+                gmailAlias: {
+                    title: '禁止使用Gmail多别名',
+                    description: '开启后Gmail多别名将无法注册。',
+                },
+                safeMode: {
+                    title: '安全模式',
+                    description: '开启后除了站点URL以外的绑定本站点的域名访问都将会被403。',
+                },
+                adminPath: {
+                    title: '后台路径',
+                    description: '后台管理路径，修改后将会改变原有的admin路径。',
+                    placeholder: 'https://x.com/logo.jpeg',
+                },
+                emailWhitelist: {
+                    title: '邮箱后缀白名单',
+                    description: '开启后在名单中的邮箱后缀才允许进行注册。',
+                },
+                recaptcha: {
+                    title: '防机器人',
+                    description: '开启后将会启用hCaptcha防止机器人。',
+                },
+                hCaptchaSiteKey: {
+                    title: 'hCaptcha SiteKey',
+                    description: '该SiteKey用于请求hCaptcha服务器来标识网站编号',
+                    placeholder: 'a3ca066c-0ea0-42fe-bcd2-23f4ab48d528',
+                },
+                ipRegisterLimit: {
+                    title: 'IP注册限制',
+                    description: '开启后如果IP注册账户达到规则要求将会被限制注册，请注意IP判断可能因为CDN或前置代理导致问题。',
+                },
+                registerTimes: {
+                    title: '次数',
+                    description: '达到注册次数后开启惩罚。',
+                    placeholder: '请输入',
+                },
+                lockTime: {
+                    title: '惩罚时间(分钟)',
+                    description: '需要等待惩罚时间过后才可以再次注册。',
+                    placeholder: '请输入',
+                },
+            },
+
+        },
+
         docMgr: {
             docId: '#',
             isShow: '是否顯示',

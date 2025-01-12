@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import useThemeStore from "@/stores/useThemeStore";
 import useSettingStore from "@/stores/useSettingStore";
+import {useI18n} from "vue-i18n"
 
+const {t} = useI18n()
 const themeStore = useThemeStore();
 const settingStore = useSettingStore();
 
@@ -52,70 +54,139 @@ interface SecuritySetting {
 
 let securitySettingsData: SecuritySetting[] = [
   {
-    title: "邮箱验证",
-    description: "开启后将会强制要求用户进行邮箱验证。",
-    type: "switch",
-    modelValue: "email_verify"
+    title: 'adminViews.systemConfig.security.emailVerify.title',
+    description: 'adminViews.systemConfig.security.emailVerify.description',
+    type: 'switch',
+    modelValue: 'email_verify',
   },
   {
-    title: "禁止使用Gmail多别名",
-    description: "开启后Gmail多别名将无法注册。",
-    type: "switch",
-    modelValue: "email_gmail_limit_enable"
+    title: 'adminViews.systemConfig.security.gmailAlias.title',
+    description: 'adminViews.systemConfig.security.gmailAlias.description',
+    type: 'switch',
+    modelValue: 'email_gmail_limit_enable',
   },
   {
-    title: "安全模式",
-    description: "开启后除了站点URL以外的绑定本站点的域名访问都将会被403。",
-    type: "switch",
-    modelValue: "safe_mode_enable"
+    title: 'adminViews.systemConfig.security.safeMode.title',
+    description: 'adminViews.systemConfig.security.safeMode.description',
+    type: 'switch',
+    modelValue: 'safe_mode_enable',
   },
   {
-    title: "后台路径",
-    description: "后台管理路径，修改后将会改变原有的admin路径。",
-    type: "input",
-    placeholder: "https://x.com/logo.jpeg",
-    modelValue: "secure_path"
+    title: 'adminViews.systemConfig.security.adminPath.title',
+    description: 'adminViews.systemConfig.security.adminPath.description',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.security.adminPath.placeholder',
+    modelValue: 'secure_path',
   },
   {
-    title: "邮箱后缀白名单",
-    description: "开启后在名单中的邮箱后缀才允许进行注册。",
-    type: "switch",
-    modelValue: "email_whitelist_enable"
+    title: 'adminViews.systemConfig.security.emailWhitelist.title',
+    description: 'adminViews.systemConfig.security.emailWhitelist.description',
+    type: 'switch',
+    modelValue: 'email_whitelist_enable',
   },
   {
-    title: "防机器人",
-    description: "开启后将会使用Google reCAPTCHA防止机器人。",
-    type: "switch",
-    modelValue: "recaptcha_enable"
+    title: 'adminViews.systemConfig.security.recaptcha.title',
+    description: 'adminViews.systemConfig.security.recaptcha.description',
+    type: 'switch',
+    modelValue: 'recaptcha_enable',
   },
   {
-    title: 'hCaptcha SiteKey',
-    description: '该SiteKey用于请求hCaptcha服务器来标识网站编号',
-    type: "input",
-    placeholder: 'a3ca066c-0ea0-42fe-bcd2-23f4ab48d528',
+    title: 'adminViews.systemConfig.security.hCaptchaSiteKey.title',
+    description: 'adminViews.systemConfig.security.hCaptchaSiteKey.description',
+    type: 'input',
+    placeholder: 'adminViews.systemConfig.security.hCaptchaSiteKey.placeholder',
     modelValue: 'recaptcha_site_key',
   },
   {
-    title: "IP注册限制",
-    description: "开启后如果IP注册账户达到规则要求将会被限制注册，请注意IP判断可能因为CDN或前置代理导致问题。",
-    type: "switch",
-    modelValue: "ip_register_limit_enable"
+    title: 'adminViews.systemConfig.security.ipRegisterLimit.title',
+    description: 'adminViews.systemConfig.security.ipRegisterLimit.description',
+    type: 'switch',
+    modelValue: 'ip_register_limit_enable',
   },
   {
-    title: "次数",
-    description: "达到注册次数后开启惩罚。",
-    type: "input-number",
-    placeholder: "请输入",
-    modelValue: "ip_register_limit_times"
+    title: 'adminViews.systemConfig.security.registerTimes.title',
+    description: 'adminViews.systemConfig.security.registerTimes.description',
+    type: 'input-number',
+    placeholder: 'adminViews.systemConfig.security.registerTimes.placeholder',
+    modelValue: 'ip_register_limit_times',
   },
   {
-    title: "惩罚时间(分钟)",
-    description: "需要等待惩罚时间过后才可以再次注册。",
-    type: "input-number",
-    placeholder: "请输入",
-    modelValue: "ip_register_lock_time"
-  }
-]
+    title: 'adminViews.systemConfig.security.lockTime.title',
+    description: 'adminViews.systemConfig.security.lockTime.description',
+    type: 'input-number',
+    placeholder: 'adminViews.systemConfig.security.lockTime.placeholder',
+    modelValue: 'ip_register_lock_time',
+  },
+];
+
+
+
+// let securitySettingsData: SecuritySetting[] = [
+//   {
+//     title: "邮箱验证",
+//     description: "开启后将会强制要求用户进行邮箱验证。",
+//     type: "switch",
+//     modelValue: "email_verify"
+//   },
+//   {
+//     title: "禁止使用Gmail多别名",
+//     description: "开启后Gmail多别名将无法注册。",
+//     type: "switch",
+//     modelValue: "email_gmail_limit_enable"
+//   },
+//   {
+//     title: "安全模式",
+//     description: "开启后除了站点URL以外的绑定本站点的域名访问都将会被403。",
+//     type: "switch",
+//     modelValue: "safe_mode_enable"
+//   },
+//   {
+//     title: "后台路径",
+//     description: "后台管理路径，修改后将会改变原有的admin路径。",
+//     type: "input",
+//     placeholder: "https://x.com/logo.jpeg",
+//     modelValue: "secure_path"
+//   },
+//   {
+//     title: "邮箱后缀白名单",
+//     description: "开启后在名单中的邮箱后缀才允许进行注册。",
+//     type: "switch",
+//     modelValue: "email_whitelist_enable"
+//   },
+//   {
+//     title: "防机器人",
+//     description: "开启后将会使用Google reCAPTCHA防止机器人。",
+//     type: "switch",
+//     modelValue: "recaptcha_enable"
+//   },
+//   {
+//     title: 'hCaptcha SiteKey',
+//     description: '该SiteKey用于请求hCaptcha服务器来标识网站编号',
+//     type: "input",
+//     placeholder: 'a3ca066c-0ea0-42fe-bcd2-23f4ab48d528',
+//     modelValue: 'recaptcha_site_key',
+//   },
+//   {
+//     title: "IP注册限制",
+//     description: "开启后如果IP注册账户达到规则要求将会被限制注册，请注意IP判断可能因为CDN或前置代理导致问题。",
+//     type: "switch",
+//     modelValue: "ip_register_limit_enable"
+//   },
+//   {
+//     title: "次数",
+//     description: "达到注册次数后开启惩罚。",
+//     type: "input-number",
+//     placeholder: "请输入",
+//     modelValue: "ip_register_limit_times"
+//   },
+//   {
+//     title: "惩罚时间(分钟)",
+//     description: "需要等待惩罚时间过后才可以再次注册。",
+//     type: "input-number",
+//     placeholder: "请输入",
+//     modelValue: "ip_register_lock_time"
+//   }
+// ]
 
 </script>
 
@@ -277,37 +348,70 @@ export default {
       <!--      </div>-->
 
 
+<!--      <div v-for="(item, index) in securitySettingsData" :key="index" class="item">-->
+<!--        <span class="l-content">-->
+<!--          <div class="describe">-->
+<!--            <p class="title">{{ item.title }}</p>-->
+<!--            <p class="shallow">{{ item.description }}</p>-->
+<!--          </div>-->
+<!--        </span>-->
+<!--        <span v-if="item.type === 'switch'" class="r-content to-right">-->
+<!--          <n-switch-->
+<!--              size="medium"-->
+<!--              v-model:value="settingStore.settings.security[item.modelValue]"-->
+<!--              @update:value="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"-->
+<!--          ></n-switch>-->
+<!--        </span>-->
+<!--        <span v-if="item.type === 'input'" class="r-content">-->
+<!--          <n-input-->
+<!--              size="large"-->
+<!--              :placeholder="item.placeholder"-->
+<!--              v-model:value="settingStore.settings.security[item.modelValue]"-->
+<!--              @blur="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"-->
+<!--          ></n-input>-->
+<!--        </span>-->
+<!--        <span v-if="item.type === 'input-number'" class="r-content">-->
+<!--          <n-input-number-->
+<!--              size="large"-->
+<!--              :placeholder="item.placeholder"-->
+<!--              v-model:value.number="settingStore.settings.security[item.modelValue]"-->
+<!--              @blur="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"-->
+<!--          ></n-input-number>-->
+<!--        </span>-->
+<!--      </div>-->
+
       <div v-for="(item, index) in securitySettingsData" :key="index" class="item">
-        <span class="l-content">
-          <div class="describe">
-            <p class="title">{{ item.title }}</p>
-            <p class="shallow">{{ item.description }}</p>
-          </div>
-        </span>
+  <span class="l-content">
+    <div class="describe">
+      <p class="title">{{ t(item.title) }}</p>
+      <p class="shallow">{{ t(item.description) }}</p>
+    </div>
+  </span>
         <span v-if="item.type === 'switch'" class="r-content to-right">
-          <n-switch
-              size="medium"
-              v-model:value="settingStore.settings.security[item.modelValue]"
-              @update:value="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"
-          ></n-switch>
-        </span>
+    <n-switch
+        size="medium"
+        v-model:value="settingStore.settings.security[item.modelValue]"
+        @update:value="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"
+    ></n-switch>
+  </span>
         <span v-if="item.type === 'input'" class="r-content">
-          <n-input
-              size="large"
-              :placeholder="item.placeholder"
-              v-model:value="settingStore.settings.security[item.modelValue]"
-              @blur="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"
-          ></n-input>
-        </span>
+    <n-input
+        size="large"
+        :placeholder="t(item.placeholder || '')"
+        v-model:value="settingStore.settings.security[item.modelValue]"
+        @blur="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"
+    ></n-input>
+  </span>
         <span v-if="item.type === 'input-number'" class="r-content">
-          <n-input-number
-              size="large"
-              :placeholder="item.placeholder"
-              v-model:value.number="settingStore.settings.security[item.modelValue]"
-              @blur="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"
-          ></n-input-number>
-        </span>
+    <n-input-number
+        size="large"
+        :placeholder="t(item.placeholder || '')"
+        v-model:value.number="settingStore.settings.security[item.modelValue]"
+        @blur="settingStore.saveOption('security', item.modelValue, settingStore.settings.security[item.modelValue])"
+    ></n-input-number>
+  </span>
       </div>
+
 
 
     </n-card>

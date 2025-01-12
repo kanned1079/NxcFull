@@ -32,7 +32,7 @@ let animated = ref<boolean>(false)
 
 let notifyErr = (type: NotificationType, msg: string) => {
   notification[type]({
-    content: '登陆失败',
+    content: computed(() => t('adminViews.login.card.authFailure')).value,
     meta: msg,
     duration: 2500,
     keepAliveOnHover: true
@@ -41,7 +41,7 @@ let notifyErr = (type: NotificationType, msg: string) => {
 
 let notifyPass = (type: NotificationType) => {
   notification[type]({
-    content: '验证通过',
+    content: computed(() => t('adminViews.login.card.authPassed')).value,
     // meta: '1111',
     duration: 2500,
     keepAliveOnHover: true
@@ -116,7 +116,7 @@ let handleLoginClick = async (e: MouseEvent) => {
   e.preventDefault()
   await userFormInstance.value?.validate((errors) => {
     if (errors) {
-      message.error('表单验证不通过')
+     return message.error(computed(() => t('adminViews.login.card.formNotPassed')).value)
     } else {
       submitLogin()
     }
@@ -148,10 +148,10 @@ let submitLogin = async () => {
       enableLogin.value = true
       switch (data.msg) {
         case 'incorrect_password':
-          return notifyErr('error', '密码不正确')
+          return notifyErr('error', computed(() => t('adminViews.login.message.passwordErr')).value)
 
         case 'user_not_exist':
-          return notifyErr('error', '用户不存在 请注册')
+          return notifyErr('error', computed(() => t('adminViews.login.message.adminNotExist')).value)
 
       }
     }
@@ -188,10 +188,13 @@ let backgroundStyle = computed(() => {
 });
 
 let showStartupNotification = () => {
+  let _title = computed(() => t('adminViews.login.mention.title'))
+  let _description = computed(() => t('adminViews.login.mention.description'))
+  let _toMainPage = computed(() => t('adminViews.login.card.back'))
   notification.create({
-    title: '提示',
+    title: _title.value,
     duration: 10000,
-    description: '此页面是管理员页面，只有管理员才能访问，如果您没有管理员权限或意外来到此处，请点击下面的链接返回主页。',
+    description: _description.value,
     content: () => {
       return h('div', [
         h(
@@ -205,7 +208,7 @@ let showStartupNotification = () => {
                 window.location.replace('/'); // 使用 window.location.replace() 进行页面跳转
               },
             },
-            () => '返回主页' // 使用函数插槽渲染按钮文本
+            () => _toMainPage.value // 使用函数插槽渲染按钮文本
         ),
       ]);
     },
@@ -265,7 +268,7 @@ export default {
                     text
                     @click="router.push({path: '/'})"
                 >
-                  返回首页
+                  {{ t('adminViews.login.card.back') }}
                   <template #icon>
                     <n-icon>
                       <BackIcon/>
@@ -274,7 +277,9 @@ export default {
                 </n-button>
               </div>
               <p class="title">{{ appInfoStore.appCommonConfig.app_name }}</p>
-              <p class="sub-title">登陆到管理中心</p>
+              <p class="sub-title">
+                {{ t('adminViews.login.card.toAdminCenter') }}
+              </p>
               <div class="inp" style="margin-top: 40px">
                 <n-form
                     ref="userFormInstance"
@@ -287,22 +292,22 @@ export default {
                     label-placement="top"
                     label-align="left"
                 >
-                  <n-form-item path="username" label="管理员邮箱地址">
+                  <n-form-item path="username" :label="t('adminViews.login.card.emailInputArea.title')">
                     <n-input
                         clearable
                         v-model:value="userFormData.username"
                         type="text"
-                        placeholder="邮箱"
+                        :placeholder="t('adminViews.login.card.emailInputArea.placeholder')"
                         style="opacity: 1"
                         :bordered="true"
                     />
                   </n-form-item>
-                  <n-form-item path="password" style="margin-top: 20px" label="密码">
+                  <n-form-item path="password" style="margin-top: 20px" :label="t('adminViews.login.card.passwordInputArea.title')">
                     <n-input
                         v-model:value="userFormData.password"
                         type="password"
                         showPasswordOn="click"
-                        placeholder="密码"
+                        :placeholder="t('adminViews.login.card.passwordInputArea.placeholder')"
                         :bordered="true"
                     />
                   </n-form-item>
@@ -315,7 +320,7 @@ export default {
                         :disabled="!enableLogin"
                         icon-placement="left"
                     >
-                      登入
+                      {{ t('adminViews.login.card.login') }}
                       <template #icon>
                         <n-icon>
                           <loginIcon/>
@@ -329,63 +334,12 @@ export default {
                   <n-button
                       text
                       type="primary"
-                  >忘记密码 >
+                  >
+                    {{ t('adminViews.login.card.forgetPassword') }}
                   </n-button>
                 </div>
-
-                <!--                <n-divider style="margin: 30px 0 30px 0 !important;">-->
-                <!--                  <p style="opacity: 0.2">·</p>-->
-                <!--                </n-divider>-->
-
-                <!--                <div style="text-align: center">-->
-
-                <!--                  <span style="width: 40px">-->
-                <!--                    <img style="width: 40px" :src="appInfoStore.appCommonConfig.logo" alt="SVG Image">-->
-                <!--                  </span>-->
-                <!--                  <h4 style="text-align: center">{{ appInfoStore.appCommonConfig.app_sub_name }}</h4>-->
-                <!--                </div>-->
-
-
-                <!--                <p style="opacity: 0.9">{{ appInfoStore.appCommonConfig.app_description }}</p>-->
-
-                <!--                <div>-->
-                <!--                  <n-h3>提示</n-h3>-->
-                <!--                  <p style="font-size: 1rem">此页面是管理员页面，只有管理员才能访问。如果您没有管理员权限或意外来到此处，请点击-->
-                <!--                    <n-button-->
-                <!--                        text-->
-                <!--                        type="primary"-->
-                <!--                        style="text-decoration: underline"-->
-                <!--                        @click="router.replace('/')"-->
-                <!--                    >-->
-                <!--                      这里-->
-                <!--                    </n-button>-->
-                <!--                    返回主页。-->
-                <!--                  </p>-->
-                <!--                </div>-->
-
               </div>
-
             </n-card>
-            <!--            <n-card-->
-            <!--                class="layer-down"-->
-            <!--                :bordered="false"-->
-            <!--                :embedded="true"-->
-            <!--                content-style="padding: 0"-->
-            <!--            >-->
-            <!--              <div class="layer-down-inner">-->
-            <!--                <n-button-->
-            <!--                    tertiary-->
-            <!--                    type="default"-->
-            <!--                    class="reset-pwd-btn"-->
-            <!--                    @click="handleForgetPassword"-->
-            <!--                >-->
-            <!--                  忘记密码-->
-            <!--                  &lt;!&ndash;                  <template #icon>&ndash;&gt;-->
-            <!--                  &lt;!&ndash;                    <n-icon size="14"><reloadIcon /></n-icon>&ndash;&gt;-->
-            <!--                  &lt;!&ndash;                  </template>&ndash;&gt;-->
-            <!--                </n-button>-->
-            <!--              </div>-->
-            <!--            </n-card>-->
           </div>
         </transition>
       </n-flex>
