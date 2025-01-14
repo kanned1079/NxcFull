@@ -8,6 +8,7 @@ import useThemeStore from "@/stores/useThemeStore";
 import {type DrawerPlacement, type FormInst, NButton, NSwitch, useMessage} from 'naive-ui'
 import instance from "@/axios/index";
 import {formatDate} from "@/utils/timeFormat";
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 const {t} = useI18n()
 // const apiAddrStore = useApiAddrStore();
@@ -31,25 +32,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
-
-let dataCountOptions = [
-  {
-    label: '10条数据/页',
-    value: 10,
-  },
-  {
-    label: '20条数据/页',
-    value: 20,
-  },
-  {
-    label: '50条数据/页',
-    value: 50,
-  },
-  {
-    label: '100条数据/页',
-    value: 100,
-  },
-]
 
 interface DocumentItem {
   id: number
@@ -373,22 +355,29 @@ export default {
         />
       </n-card>
 
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; getAllDocumentList()"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; getAllDocumentList()"
-        />
-      </div>
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="getAllDocumentList"
+      />
+
+<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="animated=false; getAllDocumentList()"-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="animated=false; dataSize.page = 1; getAllDocumentList()"-->
+<!--        />-->
+<!--      </div>-->
     </div>
   </transition>
 

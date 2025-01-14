@@ -9,6 +9,7 @@ import {NButton, NSwitch, NTag, useMessage} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import instance from "@/axios";
 import {formatTimestamp} from "@/utils/timeFormat"
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 const {t} = useI18n();
 // const apiAddrStore = useApiAddrStore();
@@ -28,24 +29,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   page: 1,
 })
 
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 // 从服务器拉取的优惠券列表
 interface Coupon {
@@ -366,23 +349,29 @@ export default {
 
       </n-card>
 
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="getAllCoupons"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="dataSize.page = 1; getAllCoupons()"
-        />
-      </div>
+<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="getAllCoupons"-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="dataSize.page = 1; getAllCoupons()"-->
+<!--        />-->
+<!--      </div>-->
 
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="getAllCoupons"
+      />
 
     </div>
   </transition>

@@ -6,7 +6,8 @@ import {type FormInst, NButton, NIcon, type NotificationType, useMessage, useNot
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import instance from "@/axios";
-import {BarChartOutlined, UserOutlined} from '@vicons/antd' // 引入所需圖標
+import {BarChartOutlined, UserOutlined} from '@vicons/antd'
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue"; // 引入所需圖標
 
 const {t} = useI18n()
 const message = useMessage()
@@ -285,22 +286,30 @@ export default {
           />
         </n-spin>
       </n-card>
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; getAllGroups() "
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; getAllGroups()"
-        />
-      </div>
+
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="getAllGroups"
+      />
+
+<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="animated=false; getAllGroups() "-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="animated=false; dataSize.page = 1; getAllGroups()"-->
+<!--        />-->
+<!--      </div>-->
     </div>
   </transition>
 
@@ -327,11 +336,6 @@ export default {
         <n-input v-model:value="newGroupName" placeholder="输入权限组名称"/>
       </n-form-item>
     </n-form>
-
-    <!--    <template #footer>-->
-    <!--      尾部-->
-    <!--    </template>-->
-
 
   </n-modal>
 </template>

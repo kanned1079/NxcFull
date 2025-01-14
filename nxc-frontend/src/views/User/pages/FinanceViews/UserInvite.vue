@@ -14,6 +14,7 @@ import {
 } from "@/api/user/invite";
 import {NButton, NIcon, NTag, useMessage} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 const {t} = useI18n();
 const userInfoStore = useUserInfoStore();
@@ -43,25 +44,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
-
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 const columns = [
   {
@@ -307,22 +289,28 @@ export default {
             />
           </n-card>
 
-          <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-            <n-pagination
-                size="medium"
-                v-model:page.number="dataSize.page"
-                :page-count="pageCount"
-                @update:page="animated=false; callHandleGetMyInvitedUserList()"
-            />
-            <n-select
-                style="width: 160px; margin-left: 20px"
-                v-model:value.number="dataSize.pageSize"
-                size="small"
-                :options="dataCountOptions"
-                :remote="true"
-                @update:value="animated=false; dataSize.page = 1; callHandleGetMyInvitedUserList()"
-            />
-          </div>
+          <DataTableSuffix
+              v-model:data-size="dataSize"
+              v-model:page-count="pageCount"
+              v-model:animated="animated"
+              :update-data="callHandleGetMyInvitedUserList"
+          />
+<!--          <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--            <n-pagination-->
+<!--                size="medium"-->
+<!--                v-model:page.number="dataSize.page"-->
+<!--                :page-count="pageCount"-->
+<!--                @update:page="animated=false; callHandleGetMyInvitedUserList()"-->
+<!--            />-->
+<!--            <n-select-->
+<!--                style="width: 160px; margin-left: 20px"-->
+<!--                v-model:value.number="dataSize.pageSize"-->
+<!--                size="small"-->
+<!--                :options="dataCountOptions"-->
+<!--                :remote="true"-->
+<!--                @update:value="animated=false; dataSize.page = 1; callHandleGetMyInvitedUserList()"-->
+<!--            />-->
+<!--          </div>-->
         </div>
       </transition>
 

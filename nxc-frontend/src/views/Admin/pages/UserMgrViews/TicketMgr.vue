@@ -7,6 +7,7 @@ import useThemeStore from "@/stores/useThemeStore";
 import {NButton, NTag, useMessage} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 import instance from "@/axios";
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 const {t} = useI18n()
 const message = useMessage()
@@ -36,24 +37,6 @@ let dataSizeAll = ref<{ pageSize: number, page: number }>({
   page: 1,
 })
 
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 let animated = ref<boolean>(false)
 
@@ -337,22 +320,29 @@ export default {
         />
       </n-card>
 
-      <div style="margin: 20px 0 40px 0; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSizePending.page"
-            :page-count="pageCountPending"
-            @update:page="animated=false; getAllTicket()"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSizePending.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSizePending.page = 1; getAllTicket()"
-        />
-      </div>
+<!--      <div style="margin: 20px 0 40px 0; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSizePending.page"-->
+<!--            :page-count="pageCountPending"-->
+<!--            @update:page="animated=false; getAllTicket()"-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSizePending.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="animated=false; dataSizePending.page = 1; getAllTicket()"-->
+<!--        />-->
+<!--      </div>-->
+
+      <DataTableSuffix
+          v-model:data-size="dataSizePending"
+          v-model:page-count="pageCountPending"
+          v-model:animated="animated"
+          :update-data="getAllTicket"
+      />
 
       <n-card
           style="margin-top: 20px"
@@ -373,22 +363,29 @@ export default {
         />
       </n-card>
 
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSizeAll.page"
-            :page-count="pageCountAll"
-            @update:page="animated=false; getAllTicket()"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSizeAll.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSizeAll.page = 1; getAllTicket()"
-        />
-      </div>
+<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSizeAll.page"-->
+<!--            :page-count="pageCountAll"-->
+<!--            @update:page="animated=false; getAllTicket()"-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSizeAll.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="animated=false; dataSizeAll.page = 1; getAllTicket()"-->
+<!--        />-->
+<!--      </div>-->
+
+      <DataTableSuffix
+          v-model:data-size="dataSizeAll"
+          v-model:page-count="pageCountAll"
+          v-model:animated="animated"
+          :update-data="getAllTicket"
+      />
 
     </div>
   </transition>

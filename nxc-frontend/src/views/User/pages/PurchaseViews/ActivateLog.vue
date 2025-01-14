@@ -9,6 +9,7 @@ import instance from "@/axios";
 import {useRouter} from "vue-router";
 import {ChevronForwardOutline as toRight,} from "@vicons/ionicons5"
 import {handleGetAllMyActivateLog, handleUnbindById} from "@/api/user/record"
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 interface ActivateRecord {
   id: number;
@@ -55,25 +56,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
-
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 let keyDetails = ref<{
   id: number;
@@ -325,22 +307,28 @@ export default {
             :scroll-x="1000"
         />
       </n-card>
-      <div style="margin-top: 15px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; callHandleGetAllMyActivateLog()"
-        />
-        <n-select
-            style="width: 200px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; callHandleGetAllMyActivateLog()"
-        />
-      </div>
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="callHandleGetAllMyActivateLog"
+      />
+<!--      <div style="margin-top: 15px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="animated=false; callHandleGetAllMyActivateLog()"-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 200px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="animated=false; dataSize.page = 1; callHandleGetAllMyActivateLog()"-->
+<!--        />-->
+<!--      </div>-->
     </div>
   </transition>
 

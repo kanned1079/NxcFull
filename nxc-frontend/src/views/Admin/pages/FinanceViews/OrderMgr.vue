@@ -12,6 +12,7 @@ import {NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
 import instance from "@/axios";
 import {formatDate} from "@/utils/timeFormat";
 import renderIcon from "@/utils/iconFormator";
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 interface Order {
   id: number
@@ -66,25 +67,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
-
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 // 获取状态颜色
 function getStatusColor(is_finished: boolean, is_success: boolean): string {
@@ -458,22 +440,28 @@ export default {
             :scroll-x="1100"
         />
       </n-card>
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; getAllOrders()"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; getAllOrders()"
-        />
-      </div>
+<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="animated=false; getAllOrders()"-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="animated=false; dataSize.page = 1; getAllOrders()"-->
+<!--        />-->
+<!--      </div>-->
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="getAllOrders"
+      />
     </div>
   </transition>
 

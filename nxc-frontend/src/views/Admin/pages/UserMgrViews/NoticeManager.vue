@@ -6,6 +6,7 @@ import instance from "@/axios";
 import {NButton, NSwitch, useMessage} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import {formatDate} from "@/utils/timeFormat"
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 // const apiAddrStore = useApiAddrStore();
 const {t} = useI18n()
@@ -330,22 +331,29 @@ export default {
         />
       </n-card>
 
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="getAllNotices() "
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="dataSize.page = 1; getAllNotices()"
-        />
-      </div>
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="getAllNotices"
+      />
+
+<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="getAllNotices() "-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="dataSize.page = 1; getAllNotices()"-->
+<!--        />-->
+<!--      </div>-->
     </div>
   </transition>
 

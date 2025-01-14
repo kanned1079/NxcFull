@@ -8,6 +8,7 @@ import useAppInfosStore from "@/stores/useAppInfosStore";
 import instance from "@/axios";
 import {formatDate} from "@/utils/timeFormat";
 import {hashPassword} from "@/utils/encryptor";
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 const {t} = useI18n()
 const appInfoStore = useAppInfosStore()
@@ -290,24 +291,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   page: 1,
 })
 
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 let searchEmail = ref<string>('')
 
@@ -447,22 +430,29 @@ export default {
         />
       </n-card>
 
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; getAllUsers()"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; getAllUsers()"
-        />
-      </div>
+<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="animated=false; getAllUsers()"-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="animated=false; dataSize.page = 1; getAllUsers()"-->
+<!--        />-->
+<!--      </div>-->
+
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="getAllUsers"
+      />
     </div>
   </transition>
 

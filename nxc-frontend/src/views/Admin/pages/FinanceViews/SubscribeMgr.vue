@@ -8,6 +8,7 @@ import usePaymentStore from "@/stores/usePaymentStore";
 import type {DrawerPlacement, FormInst, NotificationType} from 'naive-ui'
 import {NButton, NSwitch, NTag, useMessage, useNotification} from 'naive-ui'
 import instance from "@/axios";
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 // import {MdEditor} from "md-editor-v3";
 
 const {t} = useI18n();
@@ -27,25 +28,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
-
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 interface Plan {
   id: number | null
@@ -524,22 +506,29 @@ export default {
         />
       </n-card>
 
-      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; reloadPlanList()"
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; reloadPlanList()"
-        />
-      </div>
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="reloadPlanList"
+      />
+
+<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="animated=false; reloadPlanList()"-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="animated=false; dataSize.page = 1; reloadPlanList()"-->
+<!--        />-->
+<!--      </div>-->
 
       <n-drawer v-model:show="active" width="60%" :placement="placement">
         <n-drawer-content title="添加订阅">

@@ -12,6 +12,7 @@ import {
   CopyOutline as copyIcon,
   Key as keyIcon
 } from "@vicons/ionicons5"
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 const {t} = useI18n();
 const message = useMessage()
@@ -33,24 +34,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   page: 1,
 })
 
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 interface Key {
   order_id: number;
@@ -262,23 +245,30 @@ export default {
 
       </n-card>
 
-      <div v-if="myKeys.length >= 10 || dataSize.page !== 1"
-           style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="getAllMyKeys() "
-        />
-        <n-select
-            style="width: 160px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="dataSize.page = 1; getAllMyKeys()"
-        />
-      </div>
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="getAllMyKeys"
+      />
+
+<!--      <div v-if="myKeys.length >= 10 || dataSize.page !== 1"-->
+<!--           style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+<!--        <n-pagination-->
+<!--            size="medium"-->
+<!--            v-model:page.number="dataSize.page"-->
+<!--            :page-count="pageCount"-->
+<!--            @update:page="getAllMyKeys() "-->
+<!--        />-->
+<!--        <n-select-->
+<!--            style="width: 160px; margin-left: 20px"-->
+<!--            v-model:value.number="dataSize.pageSize"-->
+<!--            size="small"-->
+<!--            :options="dataCountOptions"-->
+<!--            :remote="true"-->
+<!--            @update:value="dataSize.page = 1; getAllMyKeys()"-->
+<!--        />-->
+<!--      </div>-->
     </div>
   </transition>
 

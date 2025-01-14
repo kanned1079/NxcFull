@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n"
 import Site from "@/views/Admin/pages/SettingViews/SystemConfig/Site.vue";
 import Security from "@/views/Admin/pages/SettingViews/SystemConfig/Security.vue";
 import Personalization from "@/views/Admin/pages/SettingViews/SystemConfig/Personalization.vue";
@@ -11,6 +12,7 @@ import useThemeStore from "@/stores/useThemeStore";
 import Subscribe from "@/views/Admin/pages/SettingViews/SystemConfig/Invite.vue";
 import useSettingStore from "@/stores/useSettingStore";
 
+const {t} = useI18n()
 let animated = ref<boolean>(false)
 
 const settingStore = useSettingStore()
@@ -47,30 +49,28 @@ export default {
     <div class="root" v-if="animated" style="margin: 20px">
       <n-card hoverable style="padding: 0" :bordered="false" :embedded="true">
         <n-tabs type="segment" animated>
-          <n-tab-pane name="chap1" tab="站点">
+          <n-tab-pane name="chap1" :tab="t('adminViews.systemConfig.site.common.title')">
             <Site></Site>
           </n-tab-pane>
-          <n-tab-pane name="chap2" tab="安全">
+          <n-tab-pane name="chap2" :tab="t('adminViews.systemConfig.security.common.title')">
             <Security></Security>
           </n-tab-pane>
-          <n-tab-pane name="chap3" tab="个性化">
+          <n-tab-pane name="chap3" :tab="t('adminViews.systemConfig.frontend.common.title')">
             <Personalization></Personalization>
           </n-tab-pane>
-          <n-tab-pane name="chap4" tab="支付和返利">
+          <n-tab-pane name="chap4" :tab="t('adminViews.systemConfig.inviteAndRebate.common.title')">
             <Subscribe></Subscribe>
           </n-tab-pane>
-          <n-tab-pane name="chap5" tab="欢迎页">
+          <n-tab-pane name="chap5" :tab="t('adminViews.systemConfig.welcome.common.title')">
             <BackendConfig></BackendConfig>
           </n-tab-pane>
-          <n-tab-pane name="chap6" tab="邮件">
-            <n-message-provider>
+          <n-tab-pane name="chap6" :tab="t('adminViews.systemConfig.sendMail.common.title')">
               <SendMail></SendMail>
-            </n-message-provider>
           </n-tab-pane>
-          <n-tab-pane name="chap7" tab="通知">
+          <n-tab-pane name="chap7" :tab="t('adminViews.systemConfig.notice.common.title')">
             <Notice></Notice>
           </n-tab-pane>
-          <n-tab-pane name="chap8" tab="APP">
+          <n-tab-pane name="chap8" :tab="t('adminViews.systemConfig.notice.common.title')">
             <WeApp></WeApp>
           </n-tab-pane>
         </n-tabs>

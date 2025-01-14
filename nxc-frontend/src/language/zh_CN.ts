@@ -234,11 +234,62 @@ export default {
                 },
             },
             frontend: {
-
+                common: {
+                    title: '个性化',
+                },
+                themePropColor: {
+                    default: '默认',
+                    darkBlueDay: '深蓝色',
+                    milkGreenDay: '奶绿色',
+                    bambooGreen: '若竹',
+                    mistyPine: '雾松',
+                    glacierBlue: '冰川蓝',
+                },
+                sidebarStyle: {
+                    title: '边栏风格',
+                    shallow: '设置侧边栏的颜色。',
+                },
+                headerStyle: {
+                    title: '头部风格',
+                    shallow: '设置顶部的颜色。',
+                },
+                themeColor: {
+                    title: '主题色',
+                    shallow: '设置整个网页的主题色。',
+                },
+                background: {
+                    title: '背景',
+                    shallow: '将会在后台登录页面进行展示。',
+                    placeholder: 'https://x.com/logo.jpeg',
+                },
+            },
+            inviteAndRebate: {
+                common: {
+                    title: '邀请和返利',
+                },
+                inviteRebateEnable: {
+                    title: '启用用户返利',
+                    description: '如果启用则在被邀请的用户充值时，按照下面设置的充值比例给予用户返利。',
+                },
+                inviteRebateRate: {
+                    title: '返利比例',
+                    description: '设置返利的金额比例。',
+                    placeholder: '请输入返利比例',
+                },
+                discountInfo: {
+                    title: '优惠信息',
+                    description: '设置优惠信息，它将会展示在充值页面顶部。',
+                    placeholder: '设置优惠信息',
+                },
+                inviteInfo: {
+                    title: '邀请信息',
+                    description: '设置邀请信息，它将会展示在用户邀请页面，用于显示返利比例。',
+                    placeholder: '设置返利信息',
+                },
             },
             welcome: {
                 common: {
-                  title: '首页信息设置',
+                  title: '首页信息',
                 },
                 homeDescription: {
                     title: '首页描述',
