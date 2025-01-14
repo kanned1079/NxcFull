@@ -87,6 +87,7 @@ interface NoticeSettings {
 }
 
 interface MyAppSettings {
+    download_enabled: boolean;
     win_download: string;
     osx_download: string;
     android_download: string;
@@ -137,7 +138,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             ip_register_limit_times: 5,         // 显示次数
             ip_register_lock_time: 120,         // 惩罚时间
         },
-        frontend:    {
+        frontend: {
             frontend_theme_sidebar: false,  // 边栏风格
             frontend_theme_header: false,   // 头部风格
             frontend_theme: 'bambooGreen',  // 主题色
@@ -182,6 +183,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             bark_group: '',     // Bark群组
         },
         my_app: {
+            download_enabled: false,
             win_download: '',       // windows端软件下载地址
             osx_download: '',       // osx端软件下载地址
             android_download: '',   // 安卓端软件下载地址
@@ -204,9 +206,9 @@ const useSettingStore = defineStore('SettingStore', () => {
     //     // console.log(JSON.stringify(settings))
     // }
 
-    let saveOption = async (category: string, key: string, value: any) => {
-        let apiAddrStore = useApiAddrStore()
-        console.log('保存单个键值到数据库', key, value)
+    const saveOption = async (category: string, key: string, value: any) => {
+        // let apiAddrStore = useApiAddrStore()
+        // console.log('保存单个键值到数据库', key, value)
         let {data} = await instance.put('http://localhost:8081/api/admin/v1/setting', {
             category,
             key,
@@ -216,14 +218,17 @@ const useSettingStore = defineStore('SettingStore', () => {
                 'Content-Type': 'application/json',
             }
         })
-        console.log('单个键值的返回结果', data)
+        console.log(data)
+        // if (data.code === 200) return true; return data.msg || ''
+        return data || false
+        // console.log('单个键值的返回结果', data)
     }
 
     let loadSetting = async () => {
         // let apiAddrStore = useApiAddrStore()
         try {
             console.log('从数据库读取配置')
-            let { data } = await instance.get('http://localhost:8081/api/admin/v1/setting')
+            let {data} = await instance.get('http://localhost:8081/api/admin/v1/setting')
             console.log(data)
             if (data.code == 200) {
                 Object.assign(settings, data.settings)

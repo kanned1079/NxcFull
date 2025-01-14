@@ -255,12 +255,12 @@ const columns = [
 let callGetAllActivateLog = async () => {
   // TODO: fix fetch keys
   // let data = await handleGetAllActivationLog(dataSize.value.page, dataSize.value.pageSize)
-  if (data.code === 200) {
-    activateRecordList.value = []
-    data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
-    pageCount.value = data.page_count
-    animated.value = true
-  }
+  // if (data.code === 200) {
+  //   activateRecordList.value = []
+  //   data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
+  //   pageCount.value = data.page_count
+  //   animated.value = true
+  // }
 }
 
 

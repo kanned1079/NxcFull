@@ -23,7 +23,7 @@ export const handleVerifyCode = async (email: string, verifyCode: string) => {
         })
         return data
     } catch (err: any) {
-        console.log(error)
+        console.log(err)
         return false
     }
 }

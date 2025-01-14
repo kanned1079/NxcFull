@@ -57,17 +57,10 @@ app.use(i18n)
 app.use(router)
 
 const initApp = async () => {
-    console.log('挂载app')
-    // const appInfoStore = useAppInfosStore(pinia)
-    // await appInfoStore.getCommonConfig()
-    let pullRootConfigSuccess = await handleFetchRootRuntimeEnvConfig()
-    if (pullRootConfigSuccess) console.log('根配置获取成功')
-    else console.log('根配置获取失败')
-    // setupAdminRoutes(appInfoStore.appCommonConfig.currency)
-
-
+    if (await handleFetchRootRuntimeEnvConfig()) console.log('pull root config success.')
+    else console.log('pull root config success.')
     app.mount('#app')
 }
 
 // app.mount('#app')
-await initApp()
+initApp()

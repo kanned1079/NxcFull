@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import useSettingStore from "@/stores/useSettingStore";
 import {useI18n} from "vue-i18n"
+import {useMessage} from "naive-ui"
 
 const {t} = useI18n()
 const settingStore = useSettingStore();
 // const themeStore = useThemeStore()
-
+const message = useMessage()
 
 type AppModel =
+    | "download_enabled"
     | "win_download"
     | "osx_download"
     | "android_download";
 
 interface AppSetting {
+  type: string
   title: string;
   shallow: string;
   model: AppModel;
@@ -42,18 +45,27 @@ interface AppSetting {
 
 const appDownloadSettings: AppSetting[] = [
   {
+    type: 'switch',
+    title: 'adminViews.systemConfig.appDownload.enabled.title',
+    shallow: 'adminViews.systemConfig.appDownload.enabled.shallow',
+    model: 'download_enabled'
+  },
+  {
+    type: 'input',
     title: 'adminViews.systemConfig.appDownload.windows.title',
     shallow: 'adminViews.systemConfig.appDownload.windows.shallow',
     placeholder: 'adminViews.systemConfig.appDownload.windows.placeholder',
     model: 'win_download',
   },
   {
+    type: 'input',
     title: 'adminViews.systemConfig.appDownload.macos.title',
     shallow: 'adminViews.systemConfig.appDownload.macos.shallow',
     placeholder: 'adminViews.systemConfig.appDownload.macos.placeholder',
     model: 'osx_download',
   },
   {
+    type: 'input',
     title: 'adminViews.systemConfig.appDownload.android.title',
     shallow: 'adminViews.systemConfig.appDownload.android.shallow',
     placeholder: 'adminViews.systemConfig.appDownload.android.placeholder',
@@ -61,6 +73,13 @@ const appDownloadSettings: AppSetting[] = [
   },
 ];
 
+const saveFiled = async (k: string, v: any) => {
+  let updateResponse = await settingStore.saveOption('site', k, v)
+  if (updateResponse.code === 200)
+    message.success(t('adminViews.systemConfig.common.success'))
+  else
+    message.error(t('adminViews.systemConfig.common.err') + updateResponse.msg || '')
+}
 
 </script>
 
@@ -88,13 +107,22 @@ export default {
           <p class="shallow">{{ t(setting.shallow) }}</p>
         </div>
      </span>
-      <span class="r-content">
+
+      <span v-if="setting.type === 'switch'" class="r-content to-right">
+      <n-switch
+          size="medium"
+          v-model:value="settingStore.settings.my_app[setting.model]"
+          @update:value="saveFiled(setting.model, settingStore.settings.my_app[setting.model])"
+      ></n-switch>
+      </span>
+
+      <span v-if="setting.type === 'input'" class="r-content">
       <n-input
           type="text"
           :placeholder="t(setting.placeholder || '')"
           size="large"
           v-model:value="settingStore.settings.my_app[setting.model]"
-          @blur="settingStore.saveOption('my_app', setting.model, settingStore.settings.my_app[setting.model])"
+          @blur="saveFiled(setting.model, settingStore.settings.my_app[setting.model])"
       />
   </span>
     </div>
@@ -153,6 +181,10 @@ export default {
     }
   }
 
+}
+
+.to-right {
+  text-align: right;
 }
 
 //.n-card {

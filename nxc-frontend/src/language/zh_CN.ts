@@ -6,10 +6,32 @@ export default {
         logout: '退出登陸',
     },
     commonAside: {
-        admin: {},
+        admin: {
+            dashboard: '儀表板',
+            queueMonit: '服務端監控',
+            settings: '設置',
+            systemConfig: '系統設置',
+            paymentConfig: '支付設置',
+            themeConfig: '主題設置',
+            server: '服務器',
+            privilege: '權限組管理',
+            finance: '財務',
+            subscription: '訂閱管理',
+            coupon: '優惠券管理',
+            order: '訂單管理',
+            activate: '激活紀錄',
+            key: '密鑰管理',
+            user: '用戶',
+            userMgr: '用戶管理',
+            notice: '公告管理',
+            ticket: '工單管理',
+            doc: '知識庫管理',
+
+        },
         user: {
             dashboard: '儀表板',
             document: '使用文檔',
+            app: 'APP下载',
             subscription: '訂閱',
             purchase: '購買訂閱',
             surplus: '我的密鑰',
@@ -88,6 +110,10 @@ export default {
             }
         },
         systemConfig: {
+            common: {
+              success: '更新配置成功',
+              err: '更新配置失敗 ',
+            },
             site: {
                 common: {
                   title: '站点',
@@ -207,6 +233,9 @@ export default {
                     placeholder: '请输入',
                 },
             },
+            frontend: {
+
+            },
             welcome: {
                 common: {
                   title: '首页信息设置',
@@ -259,6 +288,14 @@ export default {
                     sendTestMailTitle: '发送测试邮件',
                     sendTestMailShallow: '邮件将会发送到当前登录管理员的邮箱',
                     sendTestMailTo: '发送测试邮件到',
+                    sending: '發送郵件中',
+                    success: '成功',
+                    receiverAddr: '收信地址',
+                    senderHost: '發信服務器',
+                    senderPort: '發信端口',
+                    senderEncrypt: '發信加密方式',
+                    senderUsername: '發信用戶名',
+                    sendErr: '發送郵件失敗 ',
                 },
                 smtpServerAddress: {
                     title: 'SMTP 服务器地址',
@@ -321,9 +358,13 @@ export default {
                   title: 'APP',
                   hint: '用于自有客户端(APP)的版本管理及更新',
                 },
+                enabled: {
+                  title: '開放下載',
+                  shallow: '如果啟用則允許用戶訪問下載頁面',
+                },
                 windows: {
                     title: 'Windows',
-                    shallow: 'Windows 端版本号及下载地址。',
+                    shallow: 'Windows 端版本号及下载地址',
                     placeholder: 'https://xxxx.com/xxx.exe',
                 },
                 macos: {

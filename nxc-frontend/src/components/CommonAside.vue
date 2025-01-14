@@ -31,6 +31,7 @@ import {
   ShuffleOutline as routerIcon,
   TimeOutline as historyIcon,
   SpeedometerOutline as dashboardIcon,
+  CloudDownloadOutline as downloadIcon,
 } from '@vicons/ionicons5'
 
 const {t} = useI18n()
@@ -40,42 +41,42 @@ const userInfoStore = useUserInfoStore();
 const router = useRouter();
 
 // 管理员 ----------------------------------
-let MenuOption = [
+let MenuOption = ref([
   {
-    label: '仪表盘',
+    label: computed(() => t('commonAside.admin.dashboard')),
     key: 'dashboard',
     icon: renderIcon(dashboardIcon)
   },
   {
-    label: '服务端监控',
+    label: computed(() => t('commonAside.admin.queueMonit')),
     key: 'queue-monitor',
     icon: renderIcon(queueIcon)
   },
   {
-    label: '设置',
+    label: computed(() => t('commonAside.admin.settings')),
     key: 'pinball-1973',
     // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
       {
-        label: '系统配置',
+        label: computed(() => t('commonAside.admin.systemConfig')),
         key: 'system-config',
         icon: renderIcon(settingIcon),
       },
       {
-        label: '支付设置',
+        label: computed(() => t('commonAside.admin.paymentConfig')),
         key: 'payment-config',
         icon: renderIcon(paymentIcon),
       },
       {
-        label: '主题配置',
+        label: computed(() => t('commonAside.admin.themeConfig')),
         key: 'theme-config',
         icon: renderIcon(themeIcon),
       },
     ]
   },
   {
-    label: '服务器',
+    label: computed(() => t('commonAside.admin.server')),
     key: 'server',
     // icon: renderIcon(BookIcon),
     disabled: false,
@@ -86,7 +87,7 @@ let MenuOption = [
       //   icon: renderIcon(nodeIcon),
       // },
       {
-        label: '权限组管理',
+        label: computed(() => t('commonAside.admin.privilege')),
         key: 'privilege-group-mgr',
         icon: renderIcon(privilegeIcon),
       },
@@ -98,68 +99,67 @@ let MenuOption = [
     ]
   },
   {
-    label: '财务',
+    label: computed(() => t('commonAside.admin.finance')),
     key: 'finance',
     // icon: renderIcon(BookIcon),
     disabled: false,
     children: [
       {
-        label: '订阅管理',
+        label: computed(() => t('commonAside.admin.subscription')),
         key: 'subscription-manager',
         icon: renderIcon(subscriptionIcon),
       },
       {
-        label: '优惠券管理',
+        label: computed(() => t('commonAside.admin.coupon')),
         key: 'coupon-mgr',
         icon: renderIcon(ticketIcon),
       },
       {
-        label: '订单管理',
+        label: computed(() => t('commonAside.admin.order')),
         key: 'order-manager',
         icon: renderIcon(orderIcon),
       },
       {
-        label: '激活记录',
+        label: computed(() => t('commonAside.admin.activate')),
         key: 'activate-manager',
         icon: renderIcon(historyIcon),
       },
       {
-        label: '密鑰管理',
+        label: computed(() => t('commonAside.admin.key')),
         key: 'key-manager',
         icon: renderIcon(keyIcon),
       },
     ]
   },
   {
-    label: '用户',
+    label: computed(() => t('commonAside.admin.user')),
     key: 'users',
     // icon: renderIcon(BookIcon),
     disabled: false,
     children: [
       {
-        label: '用户管理',
+        label: computed(() => t('commonAside.admin.userMgr')),
         key: 'user-manager',
         icon: renderIcon(usersIcon),
       },
       {
-        label: '公告管理',
+        label: computed(() => t('commonAside.admin.notice')),
         key: 'notice-manager',
         icon: renderIcon(noticeIcon),
       },
       {
-        label: '工单管理',
+        label: computed(() => t('commonAside.admin.ticket')),
         key: 'ticket-mgr',
         icon: renderIcon(helpIcon),
       },
       {
-        label: '知识库管理',
+        label: computed(() => t('commonAside.admin.doc')),
         key: 'doc-manager',
         icon: renderIcon(knowledgeIcon),
       },
     ]
   },
-
-]
+])
 
 
 let adminUpdate = (key: string) => {
@@ -196,6 +196,11 @@ let UserMenuOption = ref([
     label: computed(() => t('commonAside.user.document')),
     key: 'user-doc',
     icon: renderIcon(manualIcon)
+  },
+  {
+    label: computed(() => t('commonAside.user.app')),
+    key: 'app-download',
+    icon: renderIcon(downloadIcon)
   },
   {
     label: computed(() => t('commonAside.user.subscription')),
@@ -268,54 +273,17 @@ let UserMenuOption = ref([
 let userUpdate = (key: string) => {
   themeStore.menuIsFlippActive = false
   switch (key) {
-    case 'user-dashboard': {
-      themeStore.menuSelected = 'user-dashboard'
-      router.push({path: '/dashboard/summary'})
-      break
-    }
-    case 'user-doc': {
-      themeStore.menuSelected = 'user-doc'
-      router.push({path: '/dashboard/document'})
-      break
-    }
-    case 'user-buy-plan': {
-      themeStore.menuSelected = 'user-buy-plan'
-      router.push({path: '/dashboard/purchase'})
-      break
-    }
-    case 'user-orders': {
-      router.push({path: '/dashboard/orders'})
-      break
-    }
-
-
-    case 'user-profile': {
-      // themeStore.menuSelected = 'user-profile'
-      router.push({path: '/dashboard/profile'})
-      break
-    }
-
-    case 'user-top-up': {
-      router.push({path: '/dashboard/topup'})
-      break
-    }
-
-    case 'user-tickets': {
-      router.push({path: '/dashboard/tickets'})
-      break
-    }
-    case 'user-keys': {
-      router.push({path: '/dashboard/keys'})
-      break
-    }
-    case 'user-invite': {
-      router.push({path: '/dashboard/invite'})
-      break
-    }
-    case 'user-activate-log': {
-      router.push({path: '/dashboard/log'})
-      break
-    }
+    case 'user-dashboard': return router.push({path: '/dashboard/summary'})
+    case 'user-doc': return router.push({path: '/dashboard/document'})
+    case 'app-download': return console.log('app')
+    case 'user-buy-plan': return router.push({path: '/dashboard/purchase'})
+    case 'user-orders': return router.push({path: '/dashboard/orders'})
+    case 'user-profile': return router.push({path: '/dashboard/profile'})
+    case 'user-top-up': return router.push({path: '/dashboard/topup'})
+    case 'user-tickets': return router.push({path: '/dashboard/tickets'})
+    case 'user-keys': return router.push({path: '/dashboard/keys'})
+    case 'user-invite': return router.push({path: '/dashboard/invite'})
+    case 'user-activate-log': return router.push({path: '/dashboard/log'})
   }
 }
 
@@ -330,8 +298,6 @@ export default {
 <template>
   <div class="root">
     <CommonLogo class="logo"></CommonLogo>
-
-
     <n-scrollbar style="max-height: calc(100vh - 52px)" :size="0">
       <n-menu
           v-if="userInfoStore.thisUser.isAdmin"
@@ -356,7 +322,6 @@ export default {
 
       />
     </n-scrollbar>
-
   </div>
 </template>
 

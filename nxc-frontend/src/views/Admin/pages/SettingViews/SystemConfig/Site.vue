@@ -4,8 +4,10 @@ import useSettingStore from "@/stores/useSettingStore"
 import instance from "@/axios";
 import {onMounted, ref} from "vue";
 import {useI18n} from "vue-i18n";
+import {useMessage} from "naive-ui";
 
 const {t} = useI18n()
+const message = useMessage()
 const themeStore = useThemeStore();
 const settingStore = useSettingStore();
 
@@ -147,101 +149,6 @@ const appSettings: AppSetting[] = [
   }
 ];
 
-// const appSettings: AppSetting[] = [
-//   {
-//     title: "adminViews.systemConfig.site.appName.title",
-//     shallow: "adminViews.systemConfig.site.appName.shallow",
-//     model: "app_name",
-//     type: "input",
-//     placeholder: "adminViews.systemConfig.site.appName.placeholder"
-//   },
-//   {
-//     title: "站点副标题",
-//     shallow: "一般显示在主要标题的下面。",
-//     model: "app_sub_name",
-//     type: "input",
-//     placeholder: "副标题"
-//   },
-//   {
-//     title: "站点描述",
-//     shallow: "用于显示需要站点描述的地方。",
-//     model: "app_description",
-//     type: "input",
-//     placeholder: "站点描述"
-//   },
-//   {
-//     title: "站点网址",
-//     shallow: "当前网站最新网址，将会在邮件等需要用于网址处体现。",
-//     model: "app_url",
-//     type: "input",
-//     placeholder: "站点网址"
-//   },
-//   {
-//     title: "强制 HTTPS",
-//     shallow: "当站点没有使用 HTTPS，CDN 或反代开启强制 HTTPS 时需要开启。",
-//     model: "force_https",
-//     type: "switch"
-//   },
-//   {
-//     title: "LOGO",
-//     shallow: "用于显示需要 LOGO 的地方。",
-//     model: "logo_url",
-//     type: "input",
-//     placeholder: "logo 的 url 地址"
-//   },
-//   {
-//     title: "订阅 URL",
-//     shallow: "用于订阅所使用，留空则为站点 URL。如需多个订阅 URL 随机获取请使用逗号进行分割。",
-//     model: "subscribe_url",
-//     type: "input",
-//     placeholder: "订阅 url"
-//   },
-//   {
-//     title: "用户条款(TOS)URL",
-//     shallow: "用于跳转到用户条款(TOS)",
-//     model: "tos_url",
-//     type: "input",
-//     placeholder: "用户条款地址"
-//   },
-//   {
-//     title: "停止新用户注册",
-//     shallow: "开启后任何人都将无法进行注册。",
-//     model: "stop_register",
-//     type: "switch"
-//   },
-//   {
-//     title: "强制邀请",
-//     shallow: "开启后当新用户注册时必需填写邀请码。",
-//     model: "invite_require",
-//     type: "switch"
-//   },
-//   {
-//     title: "注册试用",
-//     shallow: "选择需要试用的订阅，如果没有选项请先前往订阅管理添加。",
-//     model: "trial_subscribe",
-//     type: "select"
-//   },
-//   {
-//     title: "试用时间(小时)",
-//     shallow: "新用户注册时订阅试用事件。",
-//     model: "trial_time",
-//     type: "input-number"
-//   },
-//   {
-//     title: "货币单位",
-//     shallow: "仅用于展示使用，更改后系统中所有的货币单位都将发生变更。",
-//     model: "currency",
-//     type: "input",
-//     placeholder: "CNY"
-//   },
-//   {
-//     title: "货币符号",
-//     shallow: "仅用于展示使用，更改后系统中所有的货币单位都将发生变更。",
-//     model: "currency_symbol",
-//     type: "input",
-//     placeholder: "¥"
-//   }
-// ]
 
 let plans = [
   {
@@ -297,6 +204,14 @@ let getSubscribeList = async () => {
   }
 }
 
+const saveFiled = async (k: string, v: any) => {
+  let updateResponse = await settingStore.saveOption('site', k, v)
+  if (updateResponse.code === 200)
+    message.success(t('adminViews.systemConfig.common.success'))
+  else
+    message.error(t('adminViews.systemConfig.common.err') + updateResponse.msg || '')
+}
+
 onMounted(() => {
   getSubscribeList()
 
@@ -331,14 +246,14 @@ export default {
         type="text"
         :placeholder="t(setting.placeholder || '')"
         size="large"
-        @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
+        @blur="saveFiled(setting.model, settingStore.settings.site[setting.model])"
     />
   </span>
         <span class="r-content" v-if="setting.type === 'switch'" style="text-align: right">
     <n-switch
         size="medium"
         v-model:value="settingStore.settings.site[setting.model]"
-        @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
+        @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"
     />
   </span>
         <span class="r-content" v-if="setting.type === 'select'">
@@ -346,7 +261,7 @@ export default {
         v-model:value="settingStore.settings.site[setting.model]"
         size="large"
         :options="subscribe_list"
-        @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
+        @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"
     />
   </span>
         <span class="r-content" v-if="setting.type === 'input-number'">
@@ -355,7 +270,7 @@ export default {
         type="text"
         :placeholder="t('adminViews.systemConfig.site.inputNumberPlaceholder')"
         size="large"
-        @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"
+        @blur="saveFiled(setting.model, settingStore.settings.site[setting.model])"
     />
   </span>
       </div>
