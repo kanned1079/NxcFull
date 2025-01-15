@@ -16,7 +16,7 @@ import UserOrders from "@/views/User/pages/FinanceViews/UserOrders.vue";
 import ConfirmOrder from "@/views/User/pages/PurchaseViews/ConfirmOrder.vue";
 import PaymentResult from "@/views/User/pages/PurchaseViews/PaymentResult/PaymentResult.vue";
 import ChatDialog from "@/views/utils/ChatDialog.vue";
-import ActivateLog from "@/views/User/pages/PurchaseViews/ActivateLog.vue";
+import ActivateLog from "@/views/User/pages/UserViews/ActivateLog.vue";
 
 
 // WhyChooseUs页面

@@ -1,33 +1,43 @@
 import {type RouteRecordRaw} from 'vue-router';
-import DashBoard from "@/views/Admin/DashBoard.vue";
-import Summary from "@/views/Admin/pages/RootViews/Summary.vue";
-import QueueMonitor from "@/views/Admin/pages/RootViews/QueueMonitor.vue";
-import SystemConfig from "@/views/Admin/pages/SettingViews/SystemConfig.vue";
-import PaymentConfig from "@/views/Admin/pages/SettingViews/PaymentConfig.vue";
-import ThemeConfig from "@/views/Admin/pages/SettingViews/ThemeConfig.vue";
-import UserManager from "@/views/Admin/pages/UserMgrViews/UserManager.vue";
-import AdminLogin from "@/views/Admin/Login/AdminLogin.vue";
-import RouterMgr from "@/views/Admin/pages/ServerViews/RouterMgr.vue"
-import PrivilegeGroup from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue"
-import CouponMgr from "@/views/Admin/pages/FinanceViews/CouponMgr.vue";
-import NoticeManager from "@/views/Admin/pages/UserMgrViews/NoticeManager.vue";
-import SubscribeMgr from "@/views/Admin/pages/FinanceViews/SubscribeMgr.vue";
-import DocumentMgr from "@/views/Admin/pages/UserMgrViews/DocumentMgr.vue";
-import PrivilegeGroupMgr from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue";
-import TicketMgr from "@/views/Admin/pages/UserMgrViews/TicketMgr.vue";
-import OrderMgr from "@/views/Admin/pages/FinanceViews/OrderMgr.vue"
-import ActivationMgr from "@/views/Admin/pages/FinanceViews/ActivationMgr.vue";
-import keyMgr from "@/views/Admin/pages/FinanceViews/KeyMgr.vue";
-import useAppInfosStore from "@/stores/useAppInfosStore";
-import {useRouter} from "vue-router";
+// // import DashBoard from "@/views/Admin/DashBoard.vue";
+// import Summary from "@/views/Admin/pages/RootViews/Summary.vue";
+// import QueueMonitor from "@/views/Admin/pages/RootViews/QueueMonitor.vue";
+// import SystemConfig from "@/views/Admin/pages/SettingViews/SystemConfig.vue";
+// import PaymentConfig from "@/views/Admin/pages/SettingViews/PaymentConfig.vue";
+// import ThemeConfig from "@/views/Admin/pages/SettingViews/ThemeConfig.vue";
+// import UserManager from "@/views/Admin/pages/UserMgrViews/UserManager.vue";
+// // import AdminLogin from "@/views/Admin/Login/AdminLogin.vue";
+// import RouterMgr from "@/views/Admin/pages/ServerViews/RouterMgr.vue"
+// import PrivilegeGroup from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue"
+// import CouponMgr from "@/views/Admin/pages/FinanceViews/CouponMgr.vue";
+// import NoticeManager from "@/views/Admin/pages/UserMgrViews/NoticeManager.vue";
+// import SubscribeMgr from "@/views/Admin/pages/FinanceViews/SubscribeMgr.vue";
+// import DocumentMgr from "@/views/Admin/pages/UserMgrViews/DocumentMgr.vue";
+// // import PrivilegeGroupMgr from "@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue";
+// import TicketMgr from "@/views/Admin/pages/UserMgrViews/TicketMgr.vue";
+// import OrderMgr from "@/views/Admin/pages/FinanceViews/OrderMgr.vue"
+// import ActivationMgr from "@/views/Admin/pages/FinanceViews/ActivationMgr.vue";
+// import keyMgr from "@/views/Admin/pages/FinanceViews/KeyMgr.vue";
+// import useAppInfosStore from "@/stores/useAppInfosStore";
+// import {useRouter} from "vue-router";
 
 // const appInfo = useAppInfosStore();
 
 const adminRoutes: RouteRecordRaw[] = [
     {
+        path: '/admin/login/:path?',
+        name: 'admin-login',
+        // component: AdminLogin
+        component: () => import("@/views/Admin/Login/AdminLogin.vue")
+    },
+    {
+        path: '/admin',
+        redirect: '/admin/dashboard',
+    },
+    {
         path: '/admin/dashboard',
         name: 'admin-dashboard',
-        component: DashBoard,
+        component: () => import("@/views/Admin/DashBoard.vue"),
         meta: {
             requireAuth: true,
         },
@@ -35,223 +45,97 @@ const adminRoutes: RouteRecordRaw[] = [
             {
                 path: 'summary',
                 name: 'summary',
-                component: Summary,
+                component: () => import("@/views/Admin/pages/RootViews/Summary.vue"),
             },
             {
                 path: 'monitor',
                 name: 'monitor',
-                component: QueueMonitor
+                component: () => import("@/views/Admin/pages/RootViews/QueueMonitor.vue")
             },
             {
                 path: 'systemconfig',
                 name: 'system-config',
-                component: SystemConfig,
+                component: () => import("@/views/Admin/pages/SettingViews/SystemConfig.vue"),
             },
             {
                 path: 'payment',
                 name: 'payment',
-                component: PaymentConfig,
+                component: () => import("@/views/Admin/pages/SettingViews/PaymentConfig.vue"),
             },
             {
                 path: 'theme',
                 name: 'theme',
-                component: ThemeConfig,
+                component: () => import("@/views/Admin/pages/SettingViews/ThemeConfig.vue"),
             },
-            {
-                path: 'node',
-                name: 'node',
-                component: ThemeConfig,
-            },
+            // {
+            //     path: 'node',
+            //     name: 'node',
+            //     component: ThemeConfig,
+            // },
 
             // part4
             {
                 path: 'usermanager',
                 name: 'user-manager',
-                component: UserManager,
+                component: () => import("@/views/Admin/pages/UserMgrViews/UserManager.vue"),
             },
 
-            {
-                path: 'routermgr',
-                name: 'router-mgr',
-                component: RouterMgr
-            },
-            {
-                path: 'privilegegroup',
-                name: 'privilege-mgr',
-                component: PrivilegeGroup,
-            },
+            // {
+            //     path: 'routermgr',
+            //     name: 'router-mgr',
+            //     component: RouterMgr
+            // },
+            // {
+            //     path: 'privilegegroup',
+            //     name: 'privilege-mgr',
+            //     component: () => import("@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue"),
+            // },
             {
                 path: 'noticemanager',
                 name: 'notice-manager',
-                component: NoticeManager,
+                component: () => import("@/views/Admin/pages/UserMgrViews/NoticeManager.vue"),
             },
             {
                 path: 'subscribemanager',
                 name: 'subscription-manager',
-                component: SubscribeMgr,
+                component: () => import("@/views/Admin/pages/FinanceViews/SubscribeMgr.vue"),
             },
             {
                 path: 'document',
                 name: 'document-mgr',
-                component: DocumentMgr,
+                component: () => import("@/views/Admin/pages/UserMgrViews/DocumentMgr.vue"),
             },
             {
                 path: 'coupon',
                 name: 'coupon',
-                component: CouponMgr,
+                component: () => import("@/views/Admin/pages/FinanceViews/CouponMgr.vue"),
             },
             {
                 path: 'group',
                 name: 'privilege-group-mgr',
-                component: PrivilegeGroupMgr,
+                component: () => import("@/views/Admin/pages/ServerViews/PrivilegeGroupMgr.vue"),
             },
             {
                 path: 'ticket',
-                component: TicketMgr,
+                component: () => import("@/views/Admin/pages/UserMgrViews/TicketMgr.vue"),
             },
             {
                 path: 'order',
-                component: OrderMgr,
+                component: () => import("@/views/Admin/pages/FinanceViews/OrderMgr.vue"),
             },
             {
                 path: 'activation',
-                component: ActivationMgr,
+                component: () => import("@/views/Admin/pages/FinanceViews/ActivationMgr.vue"),
             },
             {
                 path: 'key',
-                component: keyMgr,
+                component: () => import("@/views/Admin/pages/FinanceViews/KeyMgr.vue"),
             }
 
         ]
     },
-    {
-        path: '/admin/login',
-        name: 'admin-login',
-        component: AdminLogin
-    },
-    {
-        path: '/admin',
-        redirect: '/admin/dashboard',
-    },
+
 ];
 
-// export function setupAdminRoutes(adminPath: string) {
-//     const router = useRouter();
-//     const adminRoutes: RouteRecordRaw[] = [
-//         {
-//             path: '/admin/dashboard',
-//             name: 'admin-dashboard',
-//             component: DashBoard,
-//             meta: {
-//                 requireAuth: true,
-//             },
-//             children: [
-//                 {
-//                     path: 'summary',
-//                     name: 'summary',
-//                     component: Summary,
-//                 },
-//                 {
-//                     path: 'monitor',
-//                     name: 'monitor',
-//                     component: QueueMonitor
-//                 },
-//                 {
-//                     path: 'systemconfig',
-//                     name: 'system-config',
-//                     component: SystemConfig,
-//                 },
-//                 {
-//                     path: 'payment',
-//                     name: 'payment',
-//                     component: PaymentConfig,
-//                 },
-//                 {
-//                     path: 'theme',
-//                     name: 'theme',
-//                     component: ThemeConfig,
-//                 },
-//                 {
-//                     path: 'node',
-//                     name: 'node',
-//                     component: ThemeConfig,
-//                 },
-//
-//                 // part4
-//                 {
-//                     path: 'usermanager',
-//                     name: 'user-manager',
-//                     component: UserManager,
-//                 },
-//
-//                 {
-//                     path: 'routermgr',
-//                     name: 'router-mgr',
-//                     component: RouterMgr
-//                 },
-//                 {
-//                     path: 'privilegegroup',
-//                     name: 'privilege-mgr',
-//                     component: PrivilegeGroup,
-//                 },
-//                 {
-//                     path: 'noticemanager',
-//                     name: 'notice-manager',
-//                     component: NoticeManager,
-//                 },
-//                 {
-//                     path: 'subscribemanager',
-//                     name: 'subscription-manager',
-//                     component: SubscribeMgr,
-//                 },
-//                 {
-//                     path: 'document',
-//                     name: 'document-mgr',
-//                     component: DocumentMgr,
-//                 },
-//                 {
-//                     path: 'coupon',
-//                     name: 'coupon',
-//                     component: CouponMgr,
-//                 },
-//                 {
-//                     path: 'group',
-//                     name: 'privilege-group-mgr',
-//                     component: PrivilegeGroupMgr,
-//                 },
-//                 {
-//                     path: 'ticket',
-//                     component: TicketMgr,
-//                 },
-//                 {
-//                     path: 'order',
-//                     component: OrderMgr,
-//                 },
-//                 {
-//                     path: 'activation',
-//                     component: ActivationMgr,
-//                 },
-//                 {
-//                     path: 'key',
-//                     component: keyMgr,
-//                 }
-//
-//             ]
-//         },
-//         {
-//             path: '/admin/login',
-//             name: 'admin-login',
-//             component: AdminLogin
-//         },
-//         {
-//             path: '/admin',
-//             redirect: '/admin/dashboard',
-//         },
-//     ];
-//     adminRoutes.forEach((route: RouteRecordRaw) => {
-//         router.addRoute(route);
-//
-//     });
-// }
 
 export default adminRoutes;

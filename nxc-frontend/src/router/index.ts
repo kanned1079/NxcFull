@@ -94,7 +94,8 @@ router.beforeEach((to, from, next) => {
         // 未登录用户处理逻辑
         if (to.path.startsWith('/admin')) {
             // 未登录用户访问 /admin，重定向到管理员登录页面
-            return to.path === '/admin/login' ? next() : next('/admin/login');
+            // return to.path === '/admin/login' ? next() : next('/admin/login');
+            return to.name === 'admin-login' ? next() : next('/admin/login');
         }
 
         // 允许未登录用户访问的路径

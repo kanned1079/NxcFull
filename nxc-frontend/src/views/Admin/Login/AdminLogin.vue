@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref} from 'vue'
-import {useRouter} from 'vue-router'
+import {computed, h, onMounted, onBeforeMount, ref} from 'vue'
+import {useRouter, useRoute} from 'vue-router'
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
@@ -55,6 +55,8 @@ interface AdminForm {
 
 const userInfoStore = useUserInfoStore();
 const router = useRouter();
+const route = useRoute();
+let sourcePath = route.params.path as string || ''
 let userFormInstance = ref<FormInst | null>(null)
 let userFormData = ref<AdminForm>({
   username: '',
@@ -217,6 +219,13 @@ let showStartupNotification = () => {
     },
   });
 };
+
+onBeforeMount(() => {
+  if (appInfoStore.appCommonConfig.secure_path !== sourcePath.trim()) {
+    message.error('请求参数不正确')
+    return router.replace("/")
+  } else message.success('请求参数正确')
+})
 
 onMounted(() => {
   console.log('AdminLogin挂载')
