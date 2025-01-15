@@ -64,7 +64,7 @@ func main() {
 	//wg.Wait()
 	go middleware.StartApiAccessCountCron()
 
-	go handler.StartLogFlushLog()
+	go handler.StartLogFlushLog(60)
 
 	routers.StartApiGateways()
 

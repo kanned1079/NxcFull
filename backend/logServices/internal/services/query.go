@@ -19,7 +19,7 @@ func (s *LogService) SaveApiAccessLog2Db(ctx context.Context, request *pb.SaveAp
 		apiLog := model.ApiLog{
 			Level:        logEntry.Level,
 			StatusCode:   logEntry.StatusCode,
-			RequestAt:    time.Unix(0, logEntry.RequestAt).UTC(), // 将 int64 转为 time.Time
+			RequestAt:    time.Unix(logEntry.RequestAt, 0).UTC(),
 			ResponseTime: logEntry.ResponseTime,
 			ClientIp:     logEntry.ClientIp,
 			Method:       logEntry.Method,

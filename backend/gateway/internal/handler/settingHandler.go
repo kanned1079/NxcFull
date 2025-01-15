@@ -3,7 +3,6 @@ package handler
 import (
 	sysContext "context"
 	"encoding/json"
-	logPb "gateway/internal/grpc/api/logs/proto"
 	orderPb "gateway/internal/grpc/api/order/proto"
 	pb "gateway/internal/grpc/api/settings/proto"
 	"github.com/gin-gonic/gin"
@@ -400,13 +399,6 @@ func HandleGetAppRuntimeEnv(context *gin.Context) {
 		})
 		return
 	}
-	var testLogs []*logPb.ApiLogEntry = make([]*logPb.ApiLogEntry, 2)
-	testLogs[0] = &logPb.ApiLogEntry{Level: "INFO", Path: "/api/user/v1/login"}
-	testLogs[1] = &logPb.ApiLogEntry{Level: "WARNING", Path: "/api/admin/v1/document"}
-	grpcClient.LogServiceClient.SaveApiAccessLog2Db(sysContext.Background(), &logPb.SaveApiAccessLog2DbRequest{
-		Logs: testLogs,
-	})
-
 	context.JSON(http.StatusOK, gin.H{
 		"code":   resp.Code,
 		"msg":    resp.Msg,

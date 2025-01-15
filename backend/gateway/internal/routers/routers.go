@@ -13,8 +13,8 @@ import (
 func StartApiGateways() {
 	router := gin.Default()
 
-	router.Use(middleware.AccessLoggerMiddleware()) // 統計API訪問紀錄 提交到日誌為服務
 	router.Use(middleware.ProtocolAllowance())      // 設置後端允許的請求方式和过OPTIONS预检
+	router.Use(middleware.AccessLoggerMiddleware()) // 統計API訪問紀錄 提交到日誌為服務
 	router.Use(middleware.APICountMiddleware())     // 對API訪問進行計數
 
 	publicRoutes := router.Group("/api")

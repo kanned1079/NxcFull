@@ -25,7 +25,7 @@ func AccessLoggerMiddleware() gin.HandlerFunc {
 		logEntry := &logPb.ApiLogEntry{                    // 使用指针创建实例
 			Level:        "INFO",
 			StatusCode:   int32(c.Writer.Status()),
-			RequestAt:    startTime.UnixNano(),
+			RequestAt:    startTime.Unix(),
 			ResponseTime: float32(duration),
 			ClientIp:     c.ClientIP(),
 			Method:       c.Request.Method,

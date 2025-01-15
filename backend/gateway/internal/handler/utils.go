@@ -77,8 +77,8 @@ func GetPage2SizeFromQuery(context *gin.Context) (err error, page int64, size in
 	return nil, page, size
 }
 
-func StartLogFlushLog() {
-	ticker := time.NewTicker(10 * time.Second)
+func StartLogFlushLog(ttl int) {
+	ticker := time.NewTicker(time.Second * time.Duration(ttl))
 	defer ticker.Stop()
 
 	for range ticker.C {
@@ -86,16 +86,17 @@ func StartLogFlushLog() {
 		logsToSend := middleware.LogBuffer
 		middleware.LogBuffer = nil
 		middleware.LogMutex.Unlock()
-
 		if len(logsToSend) == 0 {
 			continue
 		}
-
 		req := &logPb.SaveApiAccessLog2DbRequest{Logs: logsToSend}
 		//resp, err := client.SaveApiAccessLog2Db(context.Background(), req)
 		resp, err := grpcClient.LogServiceClient.SaveApiAccessLog2Db(sysContext.Background(), req)
 		if err != nil {
 			log.Printf("Failed to send logs: %v", err)
+		}
+		if resp.Code != http.StatusOK {
+			log.Printf("Failed to send logs: %v", resp.Msg)
 		} else {
 			log.Printf("Log service response: Code=%d, Msg=%s", resp.Code, resp.Msg)
 		}
