@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, onBeforeMount, ref} from 'vue'
-import {useRouter, useRoute} from 'vue-router'
+import {computed, h, onBeforeMount, onMounted, ref} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
@@ -56,7 +56,11 @@ interface AdminForm {
 const userInfoStore = useUserInfoStore();
 const router = useRouter();
 const route = useRoute();
-let sourcePath = route.params.path as string || ''
+// let sourcePath = route.params.path as string || ''
+let thisSecurePath = ref<string | null>(null)
+let rememberSecurePath = ref<boolean>(false)
+let showInputSecurePathModal = ref<boolean>(true)
+let checkSecureBtnDisabled = computed(() => !thisSecurePath.value)
 let userFormInstance = ref<FormInst | null>(null)
 let userFormData = ref<AdminForm>({
   username: '',
@@ -123,7 +127,6 @@ let handleLoginClick = async (e: MouseEvent) => {
       submitLogin()
     }
   })
-
 }
 
 let submitLogin = async () => {
@@ -220,17 +223,48 @@ let showStartupNotification = () => {
   });
 };
 
-onBeforeMount(() => {
-  if (appInfoStore.appCommonConfig.secure_path !== sourcePath.trim()) {
-    message.error('请求参数不正确')
-    return router.replace("/")
-  } else message.success('请求参数正确')
-})
+let checkSecurePath = () => {
+  if (
+      thisSecurePath.value
+      && thisSecurePath.value === appInfoStore.appCommonConfig.secure_path
+  ) {
+    showInputSecurePathModal.value = false
+    message.success('安全路径验证通过')
+    sessionStorage.setItem('secure_path', JSON.stringify(thisSecurePath.value))
+  } else {
+    message.error('安全路径不正确')
+  }
+}
 
+let changeRememberSecurePath = () => {
+  console.log('changeRememberSecurePath')
+  if (rememberSecurePath.value) {
+    message.info('为了保证后台管理的安全性，如果这不是您的私人电脑请不要勾选。')
+    localStorage.setItem('secure_path', JSON.stringify(thisSecurePath.value))
+  } else {
+    localStorage.removeItem('secure_path')
+  }
+}
+
+onBeforeMount(() => {
+  let path: string | null = null;
+  try {
+    // 优先从 sessionStorage 获取 secure_path，否则从 localStorage 获取
+    const rawPath = sessionStorage.getItem('secure_path') || localStorage.getItem('secure_path');
+    path = rawPath ? JSON.parse(rawPath) : null;
+  } catch (e: any) {
+    console.error('Error parsing secure_path:', e);
+    path = null;
+  }
+
+  if (path && path === appInfoStore.appCommonConfig.secure_path) {
+    thisSecurePath.value = path
+    showInputSecurePathModal.value = false;
+  }
+  if (localStorage.getItem('secure_path')) rememberSecurePath.value = true
+});
 onMounted(() => {
   console.log('AdminLogin挂载')
-  // userInfoStore.isAuthed = false
-  // sessionStorage.setItem('isAuthed', JSON.stringify(false))
   console.log('6666', JSON.parse(sessionStorage.getItem('isAuthed') as string))
   console.log('store.isAuthed: ', userInfoStore.isAuthed)
 
@@ -321,6 +355,11 @@ export default {
                     />
                   </n-form-item>
                   <n-form-item>
+                    <n-checkbox v-model:checked="rememberSecurePath" @change="changeRememberSecurePath">
+                      记住安全路径
+                    </n-checkbox>
+                  </n-form-item>
+                  <n-form-item>
                     <n-button
                         secondary
                         type="info"
@@ -337,6 +376,8 @@ export default {
                       </template>
                     </n-button>
                   </n-form-item>
+
+
                 </n-form>
 
                 <div style="text-align: right; margin-top: 40px">
@@ -352,6 +393,54 @@ export default {
           </div>
         </transition>
       </n-flex>
+
+      <n-modal
+          v-model:show="showInputSecurePathModal"
+          preset="card"
+          title="安全检查"
+          size="medium"
+          style="width: 400px"
+          :bordered="false"
+          :closable="false"
+          :mask-closable="false"
+      >
+        <n-p style="margin-top: 10px">
+          为保障系统安全，您需输入安全路径方可进入管理员登录页面。请在下方输入框中输入安全路径，成功验证安全路径后您可选择选择保存，以便后续快捷登录。
+        </n-p>
+        <n-form-item
+          label="安全路径"
+          :show-require-mark="true"
+          style="margin-top: 20px"
+          :show-feedback="false"
+          :rule="{trigger: ['blur', 'input'],validator:() => thisSecurePath!==''} as FormRules"
+        >
+          <n-input
+            placeholder="请输入安全路径"
+            v-model:value="thisSecurePath"
+          />
+        </n-form-item>
+
+        <n-form-item
+            :show-require-mark="true"
+        >
+          <n-button
+            type="primary"
+            secondary
+            :bordered="false"
+            style="width: 100%"
+            :disabled="checkSecureBtnDisabled"
+            @click="checkSecurePath"
+          >
+            检查
+          </n-button>
+        </n-form-item>
+
+
+<!--        <template #footer>-->
+<!--          <p style="font-weight: bold; opacity: 0.3">{{ appInfoStore.appCommonConfig.app_sub_name }}</p>-->
+<!--        </template>-->
+      </n-modal>
+
     </div>
   </div>
 </template>
