@@ -3,6 +3,7 @@ package handler
 import (
 	sysContext "context"
 	"encoding/json"
+	logPb "gateway/internal/grpc/api/logs/proto"
 	orderPb "gateway/internal/grpc/api/order/proto"
 	pb "gateway/internal/grpc/api/settings/proto"
 	"github.com/gin-gonic/gin"
@@ -399,30 +400,17 @@ func HandleGetAppRuntimeEnv(context *gin.Context) {
 		})
 		return
 	}
-	//app_name: string;
-	//app_sub_name: string;
-	//app_description: string;
-	//app_url: string;
-	//logo: string;
-	//user_bg: string;
-	//admin_bg: string;
-	//currency: string;
-	//currency_symbol: string;
-	//stop_register: boolean;
+	var testLogs []*logPb.ApiLogEntry = make([]*logPb.ApiLogEntry, 2)
+	testLogs[0] = &logPb.ApiLogEntry{Level: "INFO", Path: "/api/user/v1/login"}
+	testLogs[1] = &logPb.ApiLogEntry{Level: "WARNING", Path: "/api/admin/v1/document"}
+	grpcClient.LogServiceClient.SaveApiAccessLog2Db(sysContext.Background(), &logPb.SaveApiAccessLog2DbRequest{
+		Logs: testLogs,
+	})
+
 	context.JSON(http.StatusOK, gin.H{
 		"code":   resp.Code,
 		"msg":    resp.Msg,
 		"config": config,
-		//"app_name":        resp.AppName,
-		//"app_sub_name":    resp.AppSubName,
-		//"app_description": resp.AppDescription,
-		//"app_url":         resp.AppUrl,
-		//"logo":            resp.Logo,
-		//"user_bg":         resp.UserBg,
-		//"admin_bg":        resp.AdminBg,
-		//"currency":        resp.Currency,
-		//"currency_symbol": resp.CurrencySymbol,
-		//"stop_register":   resp.StopRegister,
 	})
 }
 

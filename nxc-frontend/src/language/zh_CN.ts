@@ -50,7 +50,7 @@ export default {
             card: {
                 back: '返回首页',
                 toAdminCenter: '登录到管理中心',
-                emailAddr:'管理员邮箱',
+                emailAddr: '管理员邮箱',
                 emailInputArea: {
                     title: '管理员邮箱',
                     placeholder: '邮箱地址',
@@ -111,12 +111,12 @@ export default {
         },
         systemConfig: {
             common: {
-              success: '更新配置成功',
-              err: '更新配置失敗 ',
+                success: '更新配置成功',
+                err: '更新配置失敗 ',
             },
             site: {
                 common: {
-                  title: '站点',
+                    title: '站点',
                 },
                 appName: {
                     title: '站点名称',
@@ -265,7 +265,7 @@ export default {
             },
             inviteAndRebate: {
                 common: {
-                    title: '邀请和返利',
+                    title: '支付和返利',
                 },
                 inviteRebateEnable: {
                     title: '启用用户返利',
@@ -289,7 +289,7 @@ export default {
             },
             welcome: {
                 common: {
-                  title: '首页信息',
+                    title: '首页信息',
                 },
                 homeDescription: {
                     title: '首页描述',
@@ -386,7 +386,7 @@ export default {
             },
             notice: {
                 common: {
-                  title: '通知设置'
+                    title: '通知设置'
                 },
                 displayName: {
                     title: '显示名称',
@@ -406,12 +406,12 @@ export default {
             },
             appDownload: {
                 common: {
-                  title: 'APP',
-                  hint: '用于自有客户端(APP)的版本管理及更新',
+                    title: 'APP',
+                    hint: '用于自有客户端(APP)的版本管理及更新',
                 },
                 enabled: {
-                  title: '開放下載',
-                  shallow: '如果啟用則允許用戶訪問下載頁面',
+                    title: '開放下載',
+                    shallow: '如果啟用則允許用戶訪問下載頁面',
                 },
                 windows: {
                     title: 'Windows',
@@ -429,10 +429,84 @@ export default {
                     placeholder: 'https://xxxx.com/xxx.apk',
                 },
             },
-
-
         },
-
+        payConfig: {
+            title: '支付設置',
+            attention: {
+                title: '注意事項',
+                point1: '务必先配置支付方式的信息再进行启用，这真的很重要。',
+                point2: '修改付款方式配置时，如果显示为"---"则代表该选项已经被设置且非空，如果需要重新修改直接输入新值保存即可。',
+                point3: '由于配置信息有三级缓存，如遇到失败时，可以在重启Redis*和order微服务*后再试。',
+                point4: '目前仅支持支付宝支付，但是您也可以先配置微信和ApplePay，等待项目进一步完善后可以在更新日志中查看是否支持。',
+            },
+            common: {
+                detail: '{method} 配置',
+                fillAttention: '為確保安全，不顯示詳細信息，重新填寫以創建或覆蓋已有配置。',
+                discountAmount: '優惠金額（可以在系统设置的 “支付和返利” 中设置用户提示信息）',
+                saveConfigBtnHint: '保存',
+                cancelBtnHint: '取消',
+                saveSuccess: '配置保存成功',
+                alterSuccess: '配置修改成功',
+                discountPlaceholder: '优惠金额（充值金额大于优惠金额时应用优惠）',
+                saveOrAlterFailure: '未知错误 ',
+            },
+            alipay: {
+                title: '支付寶',
+                config: {
+                    appId: '應用Id',
+                    appPublicKeyCertContent: '應用公鑰證書內容',
+                    appPrivateKey: '應用私鑰',
+                    alipayRootCert: '支付寶根證書',
+                    alipayPublicKeyCertContent: '支付寶公鑰證書內容',
+                }
+            },
+            wechat: {
+                title: '微信支付',
+                config: {
+                    mchId: '商戶Id',
+                    mchCertSerial: '商戶證書序列號',
+                    apiV3Key: 'API v3 Key',
+                    privateKey: '私鑰',
+                }
+            },
+            apple: {
+                title: 'Apple Pay',
+                config: {
+                    issuerId: 'Issuer Id',
+                    bundleId: 'Bundle Id',
+                    privateKeyId: 'Private Key Id',
+                    privateKeyContent: '私鑰內容',
+                }
+            },
+            addPaymentMethod: '添加支付方式',
+            enableBtnHint: '啟用',
+            disableBtnHint: '禁用',
+            setupPaymentMethod: '配置',
+        },
+        groupMgr: {
+            title: '權限組管理',
+            common: {
+                addNewGroup: '新建權限組',
+                alterGroupName: '修改權限組名稱',
+                addConfirmed: '確認添加',
+                alterConfirmed: '確認修改',
+                cancel: '取消',
+                addSuccess: '添加成功',
+                addFailure: '添加失敗',
+                alterSuccess: '修改權限組成功',
+                alterFailure: '修改權限組失敗',
+                delSuccess: '刪除成功',
+                delFailure: '刪除失敗',
+            },
+            groupId: '權限組ID',
+            groupName: '權限組名稱',
+            groupPlaceholder: '輸入權限組名稱',
+            userCount: '用戶數量',
+            planCount: '訂閱數量',
+            operate: '操作',
+            editBtnHint: '編輯',
+            deleteBtnHint: '刪除',
+        },
         docMgr: {
             docId: '#',
             isShow: '是否顯示',

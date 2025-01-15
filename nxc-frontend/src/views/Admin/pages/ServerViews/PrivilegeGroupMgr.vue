@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onMounted, ref} from 'vue'
-import {type FormInst, NButton, NIcon, type NotificationType, useMessage, useNotification} from "naive-ui";
+import {type FormInst, NButton, NIcon, type NotificationType, useMessage, useNotification, type DataTableColumns} from "naive-ui";
 
 import useThemeStore from "@/stores/useThemeStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
 import instance from "@/axios";
 import {BarChartOutlined, UserOutlined} from '@vicons/antd'
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue"; // 引入所需圖標
@@ -14,19 +13,24 @@ const message = useMessage()
 
 let modifyFunc = ref<string>('add')
 let modifyId = ref<number | null>(null)
-let pagination = ref({pageSize: 4})
-// let page = ref<number>(1)
 let pageCount = ref(10)
-
 let showLoading = ref<boolean>(false)
-
 let animated = ref<boolean>(false)
-
 let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
 
+const formRef = ref<FormInst | null>(null)
+const notification = useNotification();
+const themeStore = useThemeStore()
+
+interface PrivilegeGroup {
+  id: number
+  name: string
+  plan_count: number
+  user_count: number
+}
 
 interface GroupItem {
   id: number
@@ -42,12 +46,12 @@ interface GroupItem {
 const groupList = ref<GroupItem[]>([])
 
 // 定義表格列
-const columns = ref(
+const columns = computed(() =>
     [
-      {title: '權限組ID', key: 'id'},
-      {title: '組名稱', key: 'name'},
+      {title: t('adminViews.groupMgr.groupId'), key: 'id'},
+      {title: t('adminViews.groupMgr.groupName'), key: 'name'},
       {
-        title: '用戶數量',
+        title: t('adminViews.groupMgr.userCount'),
         key: 'user_count',
         render(row: GroupItem) {
           return h('div', {style: {display: 'flex', flexDirection: 'row',}}, [
@@ -57,7 +61,7 @@ const columns = ref(
         }
       },
       {
-        title: '計畫數量',
+        title: t('adminViews.groupMgr.planCount'),
         key: 'plan_count',
         render(row: GroupItem) {
           return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
@@ -67,7 +71,7 @@ const columns = ref(
         }
       },
       {
-        title: '操作',
+        title: t('adminViews.groupMgr.operate'),
         key: 'actions',
         fixed: 'right',
         render(row: GroupItem) {
@@ -77,19 +81,18 @@ const columns = ref(
               type: 'primary',
               secondary: true,
               onClick: () => editGroup(row)
-            }, {default: () => '編輯'}),
+            }, {default: () => t('adminViews.groupMgr.editBtnHint')}),
             h(NButton, {
               size: 'small',
               type: 'error',
               secondary: true,
               onClick: () => deleteGroup(row.id)
-            }, {default: () => '刪除'})
+            }, {default: () => t('adminViews.groupMgr.deleteBtnHint')})
           ])
         }
       }
     ]
 )
-
 
 // 編輯組操作
 const editGroup = (row: GroupItem) => {
@@ -103,29 +106,15 @@ const editGroup = (row: GroupItem) => {
 // 刪除組操作
 const deleteGroup = async (id: number) => {
   animated.value = false
-  message.warning(`刪除權限組：${id}`)
   let {data} = await instance.delete('http://localhost:8081/api/admin/v1/groups', {
     data: {
       id,
     }
   })
   if (data.code === 200) {
-    console.log('删除成功')
+    message.success(t('adminViews.groupMgr.common.delSuccess'))
     await getAllGroups()
   }
-}
-
-const formRef = ref<FormInst | null>(null)
-
-const notification = useNotification();
-const themeStore = useThemeStore()
-const apiAddrStore = useApiAddrStore()
-
-interface PrivilegeGroup {
-  id: number
-  name: string
-  plan_count: number
-  user_count: number
 }
 
 let showModal = ref(false)
@@ -163,15 +152,14 @@ let handleAddGroup = async () => {
 }
 
 let submitNewGroup = async () => {
-  console.log('添加权限组')
   try {
     let {data} = await instance.post('http://localhost:8081/api/admin/v1/groups', {
       group_name: newGroupName.value
     })
     if (data.code === 200) {
-      notify('success', '添加成功')
+      message.success(t('adminViews.groupMgr.common.addSuccess'))
     } else {
-      notify('error', '添加失败', data.error)
+      message.error(t('adminViews.groupMgr.common.addFailure') + data.msg || '')
     }
   } catch (error) {
     console.log(error)
@@ -196,7 +184,6 @@ let getAllGroups = async () => {
     if (data.code === 200) {
       groupList.value = []
       showLoading.value = false
-      console.log('获取到的权限组列表', data)
       data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
       pageCount.value = data.page_count
       // groupList.value = data.group_list
@@ -222,34 +209,13 @@ let submitUpdate = async () => {
     name: newGroupName.value,
   })
   if (data.code === 200) {
-    console.log('修改成功')
-    notify('success', '修改权限组成功')
+    message.success(t('adminViews.groupMgr.common.delSuccess'))
   } else {
-    notify('error', '修改权限组失败')
+    message.error(t('adminViews.groupMgr.common.delFailure'))
   }
 }
 
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
-
 onMounted(async () => {
-  console.log('挂载权限组管理')
   themeStore.contentPath = '/admin/dashboard/group'
   themeStore.menuSelected = 'privilege-group-mgr'
   await getAllGroups()
@@ -266,8 +232,8 @@ export default {
 
 <template>
   <div style="padding: 20px 20px 0 20px">
-    <n-card hoverable :embedded="true" title="权限组管理" :bordered="false">
-      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddGroup">添加权限组</n-button>
+    <n-card hoverable :embedded="true" :title="t('adminViews.groupMgr.title')" :bordered="false">
+      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddGroup">{{ t('adminViews.groupMgr.common.addNewGroup') }}</n-button>
     </n-card>
   </div>
 
@@ -294,31 +260,15 @@ export default {
           :update-data="getAllGroups"
       />
 
-<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="animated=false; getAllGroups() "-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 160px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="animated=false; dataSize.page = 1; getAllGroups()"-->
-<!--        />-->
-<!--      </div>-->
     </div>
   </transition>
 
   <n-modal
-      :title="modifyFunc==='add'?'新建权限组':'修改名称'"
+      :title="modifyFunc==='add'?t('adminViews.groupMgr.common.addNewGroup'):t('adminViews.groupMgr.common.alterGroupName')"
       v-model:show="showModal"
       preset="dialog"
-      :positive-text="modifyFunc==='add'?'确认添加':'确认修改'"
-      negative-text="算了"
+      :positive-text="modifyFunc==='add'?t('adminViews.groupMgr.common.addConfirmed'):t('adminViews.groupMgr.common.alterConfirmed')"
+      :negative-text="t('adminViews.groupMgr.common.cancel')"
       style="width: 480px; border: 0"
       @positive-click="submit"
       @negative-click="closeModal"
@@ -332,8 +282,8 @@ export default {
         :model="formValue"
         :rules="rules"
     >
-      <n-form-item label="权限组名称" path="privilege_group.name">
-        <n-input v-model:value="newGroupName" placeholder="输入权限组名称"/>
+      <n-form-item :label="t('adminViews.groupMgr.groupName')" path="privilege_group.name">
+        <n-input v-model:value="newGroupName" :placeholder="t('adminViews.groupMgr.groupPlaceholder')"/>
       </n-form-item>
     </n-form>
 

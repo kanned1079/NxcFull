@@ -1,12 +1,16 @@
 package handler
 
 import (
+	sysContext "context"
 	"errors"
+	logPb "gateway/internal/grpc/api/logs/proto"
+	"gateway/internal/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func failOnRpcError(err error, response interface{}) error {
@@ -71,4 +75,29 @@ func GetPage2SizeFromQuery(context *gin.Context) (err error, page int64, size in
 		return
 	}
 	return nil, page, size
+}
+
+func StartLogFlushLog() {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		middleware.LogMutex.Lock()
+		logsToSend := middleware.LogBuffer
+		middleware.LogBuffer = nil
+		middleware.LogMutex.Unlock()
+
+		if len(logsToSend) == 0 {
+			continue
+		}
+
+		req := &logPb.SaveApiAccessLog2DbRequest{Logs: logsToSend}
+		//resp, err := client.SaveApiAccessLog2Db(context.Background(), req)
+		resp, err := grpcClient.LogServiceClient.SaveApiAccessLog2Db(sysContext.Background(), req)
+		if err != nil {
+			log.Printf("Failed to send logs: %v", err)
+		} else {
+			log.Printf("Log service response: Code=%d, Msg=%s", resp.Code, resp.Msg)
+		}
+	}
 }

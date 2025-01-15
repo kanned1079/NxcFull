@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
-import {NButton, NIcon, NPopover, NTag, useMessage} from "naive-ui"
+import {NButton, NIcon, NPopover, NTag, useMessage, type DataTableColumns} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {formatDate} from "@/utils/timeFormat";
@@ -122,20 +122,20 @@ let showDetails = async (row: ActivateRecord) => {
   }
 }
 
-const columns = [
+const columns = computed<DataTableColumns<ActivateRecord>>(() => [
   {
-    title: computed(() => t('userActivation.id')).value,
+    title: t('userActivation.id'),
     key: 'id',
   },
   {
-    title: computed(() => t('userActivation.keyId')).value,
+    title: t('userActivation.keyId'),
     key: 'key_id',
     render(row: ActivateRecord) {
       return h('p', {}, {default: () => '# ' + row.key_id});
     }
   },
   {
-    title: computed(() => t('userActivation.isBind')).value,
+    title: t('userActivation.isBind'),
     key: 'is_bind',
     render(row: ActivateRecord) {
       return h(
@@ -143,23 +143,23 @@ const columns = [
           {
             size: 'small',
             bordered: false,
-            type: row.is_bind ? 'success' : 'error',
+            type: row.is_bind? 'success' : 'error',
           },
           {
-            default: () => row.is_bind ? t('userActivation.active') : t('userActivation.inactive')
+            default: () => row.is_bind? t('userActivation.active') : t('userActivation.inactive')
           });
     }
   },
   {
-    title: computed(() => t('userActivation.orderId')).value,
+    title: t('userActivation.orderId'),
     key: 'order_id',
   },
   {
-    title: computed(() => t('adminViews.activation.email')).value,
+    title: t('adminViews.activation.email'),
     key: 'email',
   },
   {
-    title: computed(() => t('adminViews.activation.key')).value,
+    title: t('adminViews.activation.key'),
     key: 'key',
     render(row: ActivateRecord) {
       return h(
@@ -180,27 +180,35 @@ const columns = [
                     textDecoration: 'none', // 默认不显示下划线
                     cursor: 'pointer',      // 鼠标悬浮时指针变为手型
                   },
-                  onMouseover(e: MouseEvent) {
-                    const target = e.target as HTMLElement; // 使用类型断言，告诉 TypeScript target 是 HTMLElement
+                  onMouseover: (e: MouseEvent) => {
+                    const target = e.target as HTMLElement;
                     target.style.textDecoration = 'underline';
                     target.style.fontWeight = 'bold';
                   },
-                  onMouseout(e: MouseEvent) {
+                  onMouseout: (e: MouseEvent) => {
                     const target = e.target as HTMLElement;
                     target.style.textDecoration = 'none';
                     target.style.fontWeight = 'normal';
-                    Object.assign(keyDetails.value, {id: 0, key: '', created_at: ''});
+                    try {
+                      Object.assign(keyDetails.value, {id: 0, key: '', created_at: ''});
+                    } catch (error) {
+                      console.error("Error assigning to keyDetails.value:", error);
+                    }
                   },
                   onClick: (e: MouseEvent) => {
-                    e.stopPropagation(); // 阻止事件冒泡
-                    showDetails(row);  // 触发点击事件
+                    e.stopPropagation();
+                    try {
+                      showDetails(row);
+                    } catch (error) {
+                      console.error("Error calling showDetails:", error);
+                    }
                   },
                 },
-                {default: () => computed(() => t('adminViews.activation.showKey')).value},
+                {default: () => t('adminViews.activation.showKey')},
             ),
             default: () => {
               const elements = [];
-              if (keyDetails.value.key !== "") {
+              if (keyDetails.value.key!== "") {
                 elements.push(h('p', {
                   style: {
                     textDecoration: 'underline',
@@ -212,42 +220,35 @@ const columns = [
               } else {
                 elements.push(h('p', null, t('adminViews.activation.click2getKey')));
               }
-              return h('div', {}, elements); // 返回包含条件渲染元素的 div
+              return h('div', {}, elements);
             },
           }
       );
     },
   },
   {
-    title: computed(() => t('userActivation.clientVersion')).value,
+    title: t('userActivation.clientVersion'),
     key: 'client_version',
     render(row: ActivateRecord) {
       return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.client_version});
     }
   },
   {
-    title: computed(() => t('userActivation.osType')).value,
+    title: t('userActivation.osType'),
     key: 'os_type',
     render(row: ActivateRecord) {
       return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.os_type});
     }
   },
   {
-    title: computed(() => t('userActivation.requestAt')).value,
+    title: t('userActivation.requestAt'),
     key: 'request_at',
     render(row: ActivateRecord) {
       return h('span', {}, {default: () => formatDate(row.request_at)});
     },
   },
-  // {
-  //   title: computed(() => t('userActivation.createdAt')).value,
-  //   key: 'created_at',
-  //   render(row: ActivateRecord) {
-  //     return h('span', {}, {default: () => formatDate(row.created_at)});
-  //   },
-  // },
   {
-    title: computed(() => t('userActivation.actions')).value,
+    title: t('userActivation.actions'),
     key: 'actions',
     fixed: 'right',
     render(row: ActivateRecord) {
@@ -259,7 +260,7 @@ const columns = [
           bordered: false,
           onClick: () => showDetails(row),
         }, {
-          default: () => computed(() => t('adminViews.activation.turn2keyPage')).value,
+          default: () => t('adminViews.activation.turn2keyPage'),
         }),
         // h(NButton, {
         //   size: 'small',
@@ -267,16 +268,16 @@ const columns = [
         //   type: 'warning',
         //   style: {marginLeft: '10px'},
         //   bordered: false,
-        //   disabled: !row.is_bind,
+        //   disabled:!row.is_bind,
         //   onClick: () => handleUnbindById(row),
         // }, {
-        //   default: () => computed(() => t('userActivation.cancelBind')).value,
+        //   default: () => t('userActivation.cancelBind'),
         // }),
       ]);
     },
 
   }
-];
+]);
 
 let callGetAllActivateLog = async () => {
   let data = await handleGetAllActivationLog(
@@ -400,22 +401,6 @@ export default {
             :scroll-x="1000"
         />
       </n-card>
-<!--      <div style="margin-top: 15px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="animated=false; callGetAllActivateLog()"-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 200px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="animated=false; dataSize.page = 1; callGetAllActivateLog()"-->
-<!--        />-->
-<!--      </div>-->
       <DataTableSuffix
           v-model:data-size="dataSize"
           v-model:page-count="pageCount"

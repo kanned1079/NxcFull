@@ -5,6 +5,7 @@ import (
 	"gateway/internal/config/remote"
 	"gateway/internal/dao"
 	"gateway/internal/etcd"
+	"gateway/internal/handler"
 	"gateway/internal/middleware"
 	"gateway/internal/routers"
 	"log"
@@ -62,6 +63,8 @@ func main() {
 	//
 	//wg.Wait()
 	go middleware.StartApiAccessCountCron()
+
+	go handler.StartLogFlushLog()
 
 	routers.StartApiGateways()
 

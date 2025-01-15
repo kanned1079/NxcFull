@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue"
-import {type FormInst, NButton, NTag, useMessage} from "naive-ui"
+import {type FormInst, NButton, NTag, useMessage, type DataTableColumns} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -125,27 +125,7 @@ let callCloseTicket = async (ticket_id: number) => {
   }
 }
 
-// let closeTicket = async (ticket_id: number) => {
-//   try {
-//     let {data} = await instance.delete('/api/user/v1/ticket', {
-//       params: {
-//         user_id: userInfoStore.thisUser.id,
-//         ticket_id,
-//       }
-//     })
-//     if (data.code === 200 && data.closed) {
-//       message.success(computed(() => t('userTickets.ticketCloseSuccess')).value)
-//       await callGetAllMyTickets()
-//     } else {
-//       message.error(computed(() => t('userTickets.ticketCloseFailure')).value + data.msg as string || '')
-//     }
-//   } catch (error: any) {
-//     console.log(error)
-//   }
-// }
-
 // -------------------------------------------------------------------------------------------------------------------------------------------------x
-
 
 let callGetAllMyTickets = async () => {
   animated.value = false
@@ -178,30 +158,6 @@ let callCommitNewTicket = async () => {
   }
 }
 
-// let getAllMyTickets = async () => {
-//   try {
-//     animated.value = false
-//     let {data} = await instance.get('/api/user/v1/ticket', {
-//       params: {
-//         user_id: userInfoStore.thisUser.id
-//       }
-//     })
-//     if (data.code === 200) {
-//       ticketList.value = []
-//       data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
-//       animated.value = true
-//     } else if (data.code === 404) {
-//       message.info(computed(() => t('userTickets.noTickets')).value)
-//     } else {
-//       message.error(data.msg || '' as string)
-//     }
-//   } catch (error: any) {
-//     message.error(error.toString)
-//   }
-//
-// }
-
-
 // 点击打开工单后 单独打开一个聊天窗口
 let openTicket = (ticket: TicketItem) => {
   message.info(`查看工单：${ticket.subject}`);
@@ -213,80 +169,116 @@ let openTicket = (ticket: TicketItem) => {
   chatDialogWindow ? chatDialogWindow.addEventListener('onload', () => {
     chatDialogWindow.postMessage({greeting: 'Hello from the parent window!'}, '*'); // * 表示接受来自任何来源的消息
   }) : message.error("Cannot open Dialog.")
-
 }
 
-
-// 定义表格的列
-const columns = ref([
-  {title: computed(() => t('userTickets.ticketId')).value, key: 'id'},
-  {title: computed(() => t('userTickets.ticketSubject')).value, key: 'subject'},
+const columns = computed<DataTableColumns<TicketItem>>(() => [
   {
-    title: computed(() => t('userTickets.ticketUrgency')).value, key: 'urgency', render(row: TicketItem) {
+    title: t('userTickets.ticketId'),
+    key: 'id',
+  },
+  {
+    title: computed(() => t('userTickets.ticketSubject')).value,
+    key: 'subject',
+  },
+  {
+    title: computed(() => t('userTickets.ticketUrgency')).value,
+    key: 'urgency',
+    render(row: TicketItem, rowIndex: number) {
       let level = '';
       switch (row.urgency) {
         case 1:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.low')).value
+          level = computed(() => t('userTickets.ticketUrgencyLevel.low')).value;
           break;
         case 2:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.med')).value
+          level = computed(() => t('userTickets.ticketUrgencyLevel.med')).value;
           break;
         case 3:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.high')).value
+          level = computed(() => t('userTickets.ticketUrgencyLevel.high')).value;
           break;
       }
-      return h(NTag, {
-        type: row.urgency === 3 ? 'error' : row.urgency === 2 ? 'warning' : 'success',
-        bordered: false,
-      }, {default: () => level});
-    }
+      return h(
+          NTag,
+          {
+            type: row.urgency === 3 ? 'error' : row.urgency === 2 ? 'warning' : 'success',
+            bordered: false,
+          },
+          { default: () => level }
+      );
+    },
   },
   {
-    title: computed(() => t('userTickets.ticketStatus')).value, key: 'status', render(row: TicketItem) {
-      return h(NTag, {
-        type: row.status !== 204 ? 'info' : 'default',
-        bordered: false,
-      }, {default: () => row.status !== 204 ? computed(() => t('userTickets.ticketActive')).value : computed(() => t('userTickets.ticketInActive')).value});
-    }
+    title: computed(() => t('userTickets.ticketStatus')).value,
+    key: 'status',
+    render(row: TicketItem, rowIndex: number) {
+      return h(
+          NTag,
+          {
+            type: row.status !== 204 ? 'info' : 'default',
+            bordered: false,
+          },
+          {
+            default: () =>
+                row.status !== 204
+                    ? computed(() => t('userTickets.ticketActive')).value
+                    : computed(() => t('userTickets.ticketInActive')).value,
+          }
+      );
+    },
   },
   {
-    title: computed(() => t('userTickets.ticketCreatedAt')), key: 'created_at', render(row: TicketItem) {
-      return formatDate(row.created_at)
-    }
+    title: computed(() => t('userTickets.ticketCreatedAt')).value,
+    key: 'created_at',
+    render(row: TicketItem, rowIndex: number) {
+      return formatDate(row.created_at);
+    },
   },
   {
-    title: computed(() => t('userTickets.lastResponse')), key: 'last_response', render(row: TicketItem) {
-      return row.last_reply ? formatDate(row.last_reply) : computed(() => t('userTickets.noReply')).value
-    }
+    title: computed(() => t('userTickets.lastResponse')).value,
+    key: 'last_response',
+    render(row: TicketItem, rowIndex: number) {
+      return row.last_reply
+          ? formatDate(row.last_reply)
+          : computed(() => t('userTickets.noReply')).value;
+    },
   },
   {
-    title: computed(() => t('userTickets.operate')).value, key: 'actions', fixed: 'right', render(row: TicketItem) {
-      return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
-        h(NButton, {
-          size: 'small',
-          type: 'primary',
-          secondary: true,
-          bordered: false,
-          disabled: false,
-          style: {marginLeft: '10px'},
-          onClick: () => openTicket(row)
-        }, {
-          default: () => computed(() => t('userTickets.checkTicket')).value
-        }),
-        h(NButton, {
-          size: 'small',
-          type: 'error',
-          secondary: true,
-          disabled: row.status === 204,
-          style: {marginLeft: '10px'},
-          onClick: () => callCloseTicket(row.id)
-        }, {
-          default: () => computed(() => t('userTickets.closeTicket')).value
-        })
-      ]);
-    }
-  }
-])
+    title: computed(() => t('userTickets.operate')).value,
+    key: 'actions',
+    fixed: 'right',
+    render(row: TicketItem, rowIndex: number) {
+      return h(
+          'div',
+          { style: { display: 'flex', flexDirection: 'row' } },
+          [
+            h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'primary',
+                  secondary: true,
+                  bordered: false,
+                  style: { marginLeft: '10px' },
+                  onClick: () => openTicket(row),
+                },
+                { default: () => computed(() => t('userTickets.checkTicket')).value }
+            ),
+            h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                  secondary: true,
+                  disabled: row.status === 204,
+                  style: { marginLeft: '10px' },
+                  onClick: () => callCloseTicket(row.id),
+                },
+                { default: () => computed(() => t('userTickets.closeTicket')).value }
+            ),
+          ]
+      );
+    },
+  },
+]);
 
 onBeforeMount(() => {
   themeStore.menuSelected = 'user-tickets'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
-import {NButton, NTag, useMessage} from "naive-ui"
+import {NButton, NTag, useMessage, type DataTableColumns} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {formatDate} from "@/utils/timeFormat";
@@ -85,20 +85,20 @@ let showDetails = async (row: ActivateRecord) => {
   }
 }
 
-const columns = [
+const columns = computed<DataTableColumns<ActivateRecord>>(() => [
   {
-    title: computed(() => t('userActivation.id')).value,
+    title: t('userActivation.id'),
     key: 'id',
   },
   {
-    title: computed(() => t('userActivation.keyId')).value,
+    title: t('userActivation.keyId'),
     key: 'key_id',
     render(row: ActivateRecord) {
       return h('p', {}, {default: () => '# ' + row.key_id});
     }
   },
   {
-    title: computed(() => t('userActivation.isBind')).value,
+    title: t('userActivation.isBind'),
     key: 'is_bind',
     render(row: ActivateRecord) {
       return h(
@@ -106,47 +106,40 @@ const columns = [
           {
             size: 'small',
             bordered: false,
-            type: row.is_bind ? 'success' : 'error',
+            type: row.is_bind? 'success' : 'error',
           },
           {
-            default: () => row.is_bind ? t('userActivation.active') : t('userActivation.inactive')
+            default: () => row.is_bind? t('userActivation.active') : t('userActivation.inactive')
           });
     }
   },
   {
-    title: computed(() => t('userActivation.orderId')).value,
+    title: t('userActivation.orderId'),
     key: 'order_id',
   },
   {
-    title: computed(() => t('userActivation.clientVersion')).value,
+    title: t('userActivation.clientVersion'),
     key: 'client_version',
     render(row: ActivateRecord) {
       return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.client_version});
     }
   },
   {
-    title: computed(() => t('userActivation.osType')).value,
+    title: t('userActivation.osType'),
     key: 'os_type',
     render(row: ActivateRecord) {
       return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.os_type});
     }
   },
   {
-    title: computed(() => t('userActivation.requestAt')).value,
+    title: t('userActivation.requestAt'),
     key: 'request_at',
     render(row: ActivateRecord) {
       return h('span', {}, {default: () => formatDate(row.request_at)});
     },
   },
-  // {
-  //   title: computed(() => t('userActivation.createdAt')).value,
-  //   key: 'created_at',
-  //   render(row: ActivateRecord) {
-  //     return h('span', {}, {default: () => formatDate(row.created_at)});
-  //   },
-  // },
   {
-    title: computed(() => t('userActivation.actions')).value,
+    title: t('userActivation.actions'),
     key: 'actions',
     fixed: 'right',
     render(row: ActivateRecord) {
@@ -158,7 +151,7 @@ const columns = [
           bordered: false,
           onClick: () => showDetails(row),
         }, {
-          default: () => computed(() => t('userActivation.showDetail')).value,
+          default: () => t('userActivation.showDetail'),
         }),
         h(NButton, {
           size: 'small',
@@ -166,16 +159,15 @@ const columns = [
           type: 'warning',
           style: {marginLeft: '10px'},
           bordered: false,
-          disabled: !row.is_bind,
+          disabled:!row.is_bind,
           onClick: () => callHandleUnbindById(row),
         }, {
-          default: () => computed(() => t('userActivation.cancelBind')).value,
+          default: () => t('userActivation.cancelBind'),
         }),
       ]);
     },
-
   }
-];
+]);
 
 let callHandleGetAllMyActivateLog = async () => {
   let data = await handleGetAllMyActivateLog(
@@ -191,28 +183,6 @@ let callHandleGetAllMyActivateLog = async () => {
   }
 }
 
-// let handleGetAllMyActivateLog = async () => {
-//   try {
-//     let {data} = await instance.get('/api/user/v1/activation', {
-//       params: {
-//         user_id: userInfoStore.thisUser.id,
-//         page: dataSize.value.page,
-//         size: dataSize.value.pageSize,
-//       }
-//     })
-//     if (data.code === 200) {
-//       activateRecordList.value = []
-//       data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
-//       pageCount.value = data.page_count
-//       animated.value = true
-//     }
-//
-//   } catch (error: any) {
-//     console.log(error)
-//     message.error("unknown err: " + error)
-//   }
-// }
-
 let callHandleUnbindById = async (row: ActivateRecord) => {
   let data = await handleUnbindById(
       userInfoStore.thisUser.id,
@@ -221,25 +191,6 @@ let callHandleUnbindById = async (row: ActivateRecord) => {
   if (data.code === 200) await callHandleGetAllMyActivateLog()
   else message.error('err:' + data.message || '')
 }
-
-// let handleUnbindById = async (row: ActivateRecord) => {
-//   animated.value = false
-//   try {
-//     let {data} = await instance.delete('/api/user/v1/activation', {
-//       params: {
-//         user_id: userInfoStore.thisUser.id,
-//         activation_id: row.id,
-//       }
-//     })
-//     if (data.code === 200) {
-//       await handleGetAllMyActivateLog()
-//     }
-//
-//   } catch (error: any) {
-//     console.log(error)
-//     message.error("unknown err: " + error)
-//   }
-// }
 
 let enableAlterRemark = ref<boolean>(false)
 
@@ -313,22 +264,6 @@ export default {
           v-model:animated="animated"
           :update-data="callHandleGetAllMyActivateLog"
       />
-<!--      <div style="margin-top: 15px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="animated=false; callHandleGetAllMyActivateLog()"-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 200px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="animated=false; dataSize.page = 1; callHandleGetAllMyActivateLog()"-->
-<!--        />-->
-<!--      </div>-->
     </div>
   </transition>
 

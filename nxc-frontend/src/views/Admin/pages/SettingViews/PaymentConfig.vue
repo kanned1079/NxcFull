@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {computed, onMounted, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {useMessage} from "naive-ui";
 import {CheckmarkCircle, LogoAlipay, LogoApple, LogoWechat} from "@vicons/ionicons5"
 import instance from "@/axios";
 
+const {t} = useI18n()
 let animated = ref<boolean>(false)
 
 const message = useMessage()
@@ -90,17 +92,17 @@ let paymentMethodList = [
   {
     id: 0,
     system: 'alipay',
-    title: '支付宝',
+    title: 'adminViews.payConfig.alipay.title',
   },
   {
     id: 1,
     system: 'wechat',
-    title: '微信支付',
+    title: 'adminViews.payConfig.wechat.title',
   },
   {
     id: 2,
     system: 'apple',
-    title: 'Apple Pay',
+    title: 'adminViews.payConfig.apple.title',
   }
 ] as PaymentConfig[]
 
@@ -117,6 +119,7 @@ let showDrawer = ref<boolean>(false);
 
 let addPaymentMethodClick = () => {
   message.info('Developing...')
+  // TODO 添加支付方式功能
 }
 
 let conf = computed(() => {
@@ -157,7 +160,7 @@ let handleGetAllPaymentMethodsBasic = async () => {
       });
 
     } else {
-      message.error(data.msg + '');
+      message.error(t('adminViews.payConfig.common.alterSuccess') + data.msg || '');
     }
   } catch (err: any) {
     console.log(err);
@@ -177,9 +180,9 @@ let handleSavePaymentMethodBySystemName = async () => {
     if (data.code === 200) {
       animated.value = true;
       await handleGetAllPaymentMethodsBasic()
-      message.success('Saved successfully')
+      message.success(t('adminViews.payConfig.common.saveSuccess'))
     } else {
-      message.error(data.msg + '');
+      message.error(t('adminViews.payConfig.common.alterSuccess') + data.msg || '');
     }
   } catch (err: any) {
     console.log(err)
@@ -195,10 +198,10 @@ let handleChangeEnabledClick = async (system: string) => {
     if (data.code === 200) {
       // animated.value = true;
       await handleGetAllPaymentMethodsBasic()
-      message.success('Alter successfully')
+      message.success(t('adminViews.payConfig.common.alterSuccess'))
 
     } else {
-      message.error(data.msg + '');
+      message.error(t('adminViews.payConfig.common.alterSuccess') + data.msg ||'');
     }
   } catch (err: any) {
     console.log(err)
@@ -213,7 +216,6 @@ let handleGetPaymentMethodDetailsBySystemName = async (system: string) => {
       }
     })
     if (data.code === 200) {
-      message.success('Details get successfully')
       switch (system) {
         case 'alipay':
           Object.assign(alipayConfig.value, data.details);
@@ -257,59 +259,41 @@ export default {
         hoverable
         :embedded="true"
         :bordered="false"
-
     >
       <div style="display: flex; justify-content: space-between; align-items: center">
-        <p style="font-weight: bold; font-size: 1.1rem">支付设置</p>
+        <p style="font-weight: bold; font-size: 1.1rem">{{ t('adminViews.payConfig.title') }}</p>
         <n-button
             type="primary"
             :bordered="false"
             class="add-btn"
             @click="addPaymentMethodClick"
         >
-          添加支付方式
+          {{ t('adminViews.payConfig.addPaymentMethod') }}
         </n-button>
       </div>
     </n-card>
-
-    <!--    <n-alert-->
-    <!--        type="error"-->
-    <!--        :bordered="false"-->
-    <!--        style="margin: 20px 0 10px 0;"-->
-    <!--    >-->
-    <!--      请注意，务必先配置支付方式的信息再进行启用。-->
-    <!--    </n-alert>-->
 
     <n-alert
         type="warning"
         :bordered="true"
         style="margin: 15px 0 0 0"
-        :title="'注意事项'"
+        :title="t('adminViews.payConfig.attention.title')"
     >
-
       <n-ul>
         <n-li style="font-weight: bold">
-          务必先配置支付方式的信息再进行启用，这真的很重要。
+          {{ t('adminViews.payConfig.attention.point1') }}
         </n-li>
         <n-li>
-          修改付款方式配置时，如果显示为"---"则代表该选项已经被设置且非空，如果需要重新修改直接输入新值保存即可。
-        </n-li>
-        <!--        <n-li>-->
-        <!--          修改付款方式配置后，该付款方式会默认被禁用，测试无误后您需要重新启用。-->
-        <!--        </n-li>-->
-        <n-li>
-          由于配置信息有三级缓存，如遇到失败时，可以在重启Redis*和order微服务*后再试。
+          {{ t('adminViews.payConfig.attention.point2') }}
         </n-li>
         <n-li>
-          目前仅支持支付宝支付，但是您也可以先配置微信和ApplePay，等待项目进一步完善后可以在更新日志中查看是否支持。
+          {{ t('adminViews.payConfig.attention.point3') }}
         </n-li>
-        <!--        <n-li>-->
-        <!--          如出现收款未到账的问题，首先排除开发者问题，项目中不存在任何开发者个人的收款信息。-->
-        <!--        </n-li>-->
-
+        <n-li>
+          {{ t('adminViews.payConfig.attention.point4') }}
+        </n-li>
       </n-ul>
     </n-alert>
-
   </div>
 
   <transition name="slide-fade">
@@ -322,7 +306,7 @@ export default {
           v-for="item in computedPaymentMethods"
           :key="item.id"
           content-style="padding: 20px;"
-          :style="{ opacity: item.enabled ? 1 : 0.8 }"
+          :style="{ opacity: item.enabled? 1 : 0.8 }"
       >
         <div class="payment-item-card-inner">
           <div class="payment-item-card-inner-l">
@@ -336,7 +320,7 @@ export default {
               <LogoApple/>
             </n-icon>
 
-            <p class="payment-item-card-inner-l-title">{{ item.title }}</p>
+            <p class="payment-item-card-inner-l-title">{{ t(item.title) }}</p>
             <n-tag
                 type="success"
                 size="small"
@@ -358,7 +342,7 @@ export default {
                 style="margin-right: 10px"
                 @click="handleChangeEnabledClick(item.system)"
             >
-              {{ item.enabled ? '禁用' : '启用' }}
+              {{ item.enabled? t('adminViews.payConfig.disableBtnHint') : t('adminViews.payConfig.enableBtnHint') }}
             </n-button>
             <n-button
                 class="payment-item-card-inner-r-btn"
@@ -369,7 +353,7 @@ export default {
                 editSystemName=item.system as string;
                 showDrawer=true"
             >
-              配置
+              {{ t('adminViews.payConfig.setupPaymentMethod') }}
             </n-button>
           </div>
         </div>
@@ -377,26 +361,23 @@ export default {
     </div>
   </transition>
 
-
   <n-drawer v-model:show="showDrawer" :width="'40%'" :placement="'right'">
-    <n-drawer-content title="支付宝配置" v-if="editSystemName==='alipay'">
-
+    <n-drawer-content :title="t('adminViews.payConfig.common.detail', {method: t('adminViews.payConfig.alipay.title')})" v-if="editSystemName==='alipay'">
       <n-alert
-          type="warning"
-          :show-icon="false"
+          type="info"
+          :show-icon="true"
           style="margin: 0 0 20px 0;"
       >
-        为确保安全，不显示详细信息，重新填入信息以创建或覆盖配置。
+        {{ t('adminViews.payConfig.common.fillAttention') }}
       </n-alert>
-
       <div class="add-panel">
         <div class="item">
-          <p class="title">应用Id</p>
+          <p class="title">{{ t('adminViews.payConfig.alipay.config.appId') }}</p>
           <n-input v-model:value.trim="alipayConfig.app_id" size="medium" placeholder="app_id"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">应用公钥证书内容</p>
+          <p class="title">{{ t('adminViews.payConfig.alipay.config.appPublicKeyCertContent') }}</p>
           <n-input
               v-model:value.trim="alipayConfig.app_cert_public"
               size="medium"
@@ -407,7 +388,7 @@ export default {
         </div>
 
         <div class="item">
-          <p class="title">应用私钥</p>
+          <p class="title">{{ t('adminViews.payConfig.alipay.config.appPrivateKey') }}</p>
           <n-input v-model:value.trim="alipayConfig.app_private_key" size="medium"
                    placeholder="app_private_key"
                    type="textarea"
@@ -415,7 +396,7 @@ export default {
         </div>
 
         <div class="item">
-          <p class="title">支付宝根证书</p>
+          <p class="title">{{ t('adminViews.payConfig.alipay.config.alipayRootCert') }}</p>
           <n-input v-model:value.trim="alipayConfig.alipay_root_cert" size="medium"
                    placeholder="alipay_root_cert"
                    type="textarea"
@@ -423,7 +404,7 @@ export default {
         </div>
 
         <div class="item">
-          <p class="title">支付宝公钥证书内容</p>
+          <p class="title">{{ t('adminViews.payConfig.alipay.config.alipayPublicKeyCertContent') }}</p>
           <n-input v-model:value.trim="alipayConfig.alipay_cert_public_key" size="medium"
                    placeholder="alipay_cert_public_key"
                    type="textarea"
@@ -431,20 +412,20 @@ export default {
         </div>
 
         <div class="item">
-          <p class="title">优惠金额</p>
+          <p class="title">{{ t('adminViews.payConfig.common.discountAmount') }}</p>
           <n-input-number v-model:value.number="alipayConfig.discount" size="medium"
-                          placeholder="有时或许会有一点优惠"></n-input-number>
+                          :placeholder="t('adminViews.payConfig.common.discountPlaceholder')"></n-input-number>
         </div>
 
       </div>
-      <div style="display: flex; flex-direction: row; justify-content: flex-end">
+      <div style="display: flex; flex-direction: row; justify-content: flex-end; margin-top: 50px">
         <n-button
             type="default"
             secondary
             style="width: 90px; margin-right: 15px"
             @click="showDrawer=false; Object.assign(alipayConfig, { app_id: '', app_cert_public: '',app_private_key: '',alipay_root_cert: '',alipay_cert_public_key: '',discount: 0.00,})"
         >
-          取消
+          {{ t('adminViews.payConfig.common.cancelBtnHint') }}
         </n-button>
         <n-button
             type="primary"
@@ -452,48 +433,54 @@ export default {
             style="width: 90px"
             @click="handleSavePaymentMethodBySystemName"
         >
-          保存
+          {{ t('adminViews.payConfig.common.saveConfigBtnHint') }}
         </n-button>
       </div>
-
     </n-drawer-content>
 
-    <n-drawer-content title="微信支付配置" v-if="editSystemName === 'wechat'">
+    <n-drawer-content :title="t('adminViews.payConfig.common.detail', {method: t('adminViews.payConfig.wechat.title')})" v-if="editSystemName === 'wechat'">
+      <n-alert
+          type="info"
+          :show-icon="true"
+          style="margin: 0 0 20px 0;"
+      >
+        {{ t('adminViews.payConfig.common.fillAttention') }}
+      </n-alert>
       <div class="add-panel">
         <div class="item">
-          <p class="title">商户 ID</p>
+          <p class="title">{{ t('adminViews.payConfig.wechat.config.mchId') }}</p>
           <n-input v-model:value.trim="wechatConfig.mch_id" size="medium" placeholder="mch_id"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">商户证书序列号</p>
+          <p class="title">{{ t('adminViews.payConfig.wechat.config.mchCertSerial') }}</p>
           <n-input v-model:value.trim="wechatConfig.serial_no" size="medium" placeholder="serial_no"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">API v3 Key</p>
+          <p class="title">{{ t('adminViews.payConfig.wechat.config.apiV3Key') }}</p>
           <n-input v-model:value.trim="wechatConfig.api_v3_key" size="medium" placeholder="api_v3_key"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">私钥</p>
+          <p class="title">{{ t('adminViews.payConfig.wechat.config.privateKey') }}</p>
           <n-input v-model:value.trim="wechatConfig.private_key" size="medium" placeholder="private_key"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">优惠金额</p>
+          <p class="title">{{ t('adminViews.payConfig.common.discountAmount') }}</p>
           <n-input-number v-model:value.number="wechatConfig.discount" size="medium"
-                          placeholder="输入优惠金额"></n-input-number>
+                          :placeholder="t('adminViews.payConfig.common.discountPlaceholder')"></n-input-number>
         </div>
       </div>
-      <div style="display: flex; flex-direction: row; justify-content: flex-end">
+      <div style="display: flex; flex-direction: row; justify-content: flex-end; margin-top: 50px">
         <n-button
             type="default"
             secondary
             style="width: 90px; margin-right: 15px"
             @click="showDrawer=false; Object.assign(alipayConfig, { app_id: '', app_cert_public: '',app_private_key: '',alipay_root_cert: '',alipay_cert_public_key: '',discount: 0.00,})"
         >
-          取消
+          {{ t('adminViews.payConfig.common.cancelBtnHint') }}
         </n-button>
         <n-button
             type="primary"
@@ -501,47 +488,54 @@ export default {
             style="width: 90px"
             @click="handleSavePaymentMethodBySystemName"
         >
-          保存
+          {{ t('adminViews.payConfig.common.saveConfigBtnHint') }}
         </n-button>
       </div>
     </n-drawer-content>
 
-    <n-drawer-content title="Apple Pay 配置" v-if="editSystemName === 'apple'">
+    <n-drawer-content :title="t('adminViews.payConfig.common.detail', {method: t('adminViews.payConfig.apple.title')})" v-if="editSystemName === 'apple'">
+      <n-alert
+          type="info"
+          :show-icon="true"
+          style="margin: 0 0 20px 0;"
+      >
+        {{ t('adminViews.payConfig.common.fillAttention') }}
+      </n-alert>
       <div class="add-panel">
         <div class="item">
-          <p class="title">Issuer ID</p>
+          <p class="title">{{ t('adminViews.payConfig.apple.config.issuerId') }}</p>
           <n-input v-model:value.trim="appleConfig.iss" size="medium" placeholder="issuer_id"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">Bundle ID</p>
+          <p class="title">{{ t('adminViews.payConfig.apple.config.bundleId') }}</p>
           <n-input v-model:value.trim="appleConfig.bid" size="medium" placeholder="bundle_id"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">Private Key ID</p>
+          <p class="title">{{ t('adminViews.payConfig.apple.config.privateKeyId') }}</p>
           <n-input v-model:value.trim="appleConfig.kid" size="medium" placeholder="key_id"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">私钥内容</p>
+          <p class="title">{{ t('adminViews.payConfig.apple.config.privateKeyContent') }}</p>
           <n-input v-model:value.trim="appleConfig.private_key" size="medium" placeholder="private_key"></n-input>
         </div>
 
         <div class="item">
-          <p class="title">优惠金额</p>
+          <p class="title">{{ t('adminViews.payConfig.common.discountAmount') }}</p>
           <n-input-number v-model:value="appleConfig.discount" size="medium"
-                          placeholder="输入优惠金额"></n-input-number>
+                          :placeholder="t('adminViews.payConfig.common.discountPlaceholder')"></n-input-number>
         </div>
       </div>
-      <div style="display: flex; flex-direction: row; justify-content: flex-end">
+      <div style="display: flex; flex-direction: row; justify-content: flex-end; margin-top: 50px">
         <n-button
             type="default"
             secondary
             style="width: 90px; margin-right: 15px"
             @click="showDrawer=false; Object.assign(alipayConfig, { app_id: '', app_cert_public: '',app_private_key: '',alipay_root_cert: '',alipay_cert_public_key: '',discount: 0.00,})"
         >
-          取消
+          {{ t('adminViews.payConfig.common.cancelBtnHint') }}
         </n-button>
         <n-button
             type="primary"
@@ -549,13 +543,11 @@ export default {
             style="width: 90px"
             @click="handleSavePaymentMethodBySystemName"
         >
-          保存
+          {{ t('adminViews.payConfig.common.saveConfigBtnHint') }}
         </n-button>
       </div>
     </n-drawer-content>
   </n-drawer>
-
-
 </template>
 
 <style lang="less" scoped>

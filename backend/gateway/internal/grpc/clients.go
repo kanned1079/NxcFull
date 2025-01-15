@@ -9,6 +9,8 @@ import (
 	groupPb "gateway/internal/grpc/api/group/proto"
 	"gateway/internal/grpc/api/key"
 	keyPb "gateway/internal/grpc/api/key/proto"
+	"gateway/internal/grpc/api/logs"
+	logPb "gateway/internal/grpc/api/logs/proto"
 	"gateway/internal/grpc/api/notice"
 	noticePb "gateway/internal/grpc/api/notice/proto"
 	"gateway/internal/grpc/api/order"
@@ -40,6 +42,7 @@ type Clients struct {
 	OrderHandleServicesClient orderHandlePb.OrderHandleServiceClient
 	KeyServicesClient         keyPb.KeyServiceClient
 	TicketHandleClient        ticketHandlePb.TicketHandleServiceClient
+	LogServiceClient          logPb.LogServiceClient
 }
 
 func NewClients() Clients {
@@ -57,6 +60,6 @@ func NewClients() Clients {
 		OrderHandleServicesClient: orderHandle.NewOrderHandleClient(),
 		KeyServicesClient:         key.NewKeyClient(),
 		TicketHandleClient:        ticketHandle.NewTicketHandleClient(),
+		LogServiceClient:          logs.NewLogsClient(),
 	}
-
 }

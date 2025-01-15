@@ -5,7 +5,7 @@ import {computed, h, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
-import {NButton, NTag, useMessage} from "naive-ui"
+import {NButton, NTag, useMessage, type DataTableColumns} from "naive-ui"
 // import instance from "@/axios/index"
 import {cancelOrder, getAllMyOrders} from "@/api/user/order";
 import {formatDate} from "@/utils/timeFormat"
@@ -28,7 +28,7 @@ let dataSize = ref<{ pageSize: number, page: number }>({
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore()
 
-interface OrderList {
+interface OrderListItem {
   id: number
   order_id: string
   user_id: number
@@ -50,7 +50,7 @@ interface OrderList {
   deleted_at: any
 }
 
-let isOrderCanBeCancelled = ref<boolean>(false)
+// let isOrderCanBeCancelled = ref<boolean>(false)
 
 let orderStatusTagColor = (is_finished: boolean, is_success: boolean): "warning" | "error" | "success" => {
   if (!is_success && !is_finished) {
@@ -73,22 +73,22 @@ let orderStatusText = (is_finished: boolean, is_success: boolean): string => {
 }
 
 
-let orderList = ref<OrderList[]>([])
+let orderList = ref<OrderListItem[]>([])
 
 // 定义表格的列
-const columns = [
+const columns = computed<DataTableColumns<OrderListItem>>(() => [
   {
-    title: computed(() => t('userOrders.orderId')).value,
+    title: t('userOrders.orderId'),
     key: 'order_id'
   },
   {
-    title: computed(() => t('userOrders.planName')).value,
+    title: t('userOrders.planName'),
     key: 'plan_name'
   },
   {
-    title: computed(() => t('userOrders.planCycle')).value,
+    title: t('userOrders.planCycle'),
     key: 'period',
-    render(row: OrderList) {
+    render(row: OrderListItem) {
       const periodLabel = computed(() => {
         switch (row.period) {
           case 'month':
@@ -108,34 +108,34 @@ const columns = [
     }
   },
   {
-    title: computed(() => t('userOrders.orderPrice')).value,
+    title: t('userOrders.orderPrice'),
     key: 'amount',
-    render(row: OrderList) {
+    render(row: OrderListItem) {
       return h('span', {}, {default: () => row.amount.toFixed(2)});
     }
   },
   {
-    title: computed(() => t('userOrders.orderStatus')).value,
+    title: t('userOrders.orderStatus'),
     key: 'is_success',
-    render(row: OrderList) {
+    render(row: OrderListItem) {
       return h(NTag, {
-        // type: row.is_success ? 'success' : 'error',
+        // type: row.is_success? 'success' : 'error',
         type: orderStatusTagColor(row.is_finished, row.is_success),
         bordered: false,
       }, {default: () => orderStatusText(row.is_finished, row.is_success)});
     }
   },
   {
-    title: computed(() => t('userOrders.createdAt')).value,
+    title: t('userOrders.createdAt'),
     key: 'created_at',
-    render(row: OrderList) {
+    render(row: OrderListItem) {
       return h('span', {}, {default: () => formatDate(row.created_at)});
     }
   },
   {
-    title: computed(() => t('userOrders.operate')).value,
+    title: t('userOrders.operate'),
     key: 'actions',
-    render(row: OrderList) {
+    render(row: OrderListItem) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
         h(NButton, {
           size: 'small',
@@ -144,26 +144,26 @@ const columns = [
           bordered: false,
           onClick: () => showOrderDetails(row)
         }, {
-          default: () => computed(() => t('userOrders.showDetail')).value
+          default: () => t('userOrders.showDetail')
         }),
         h(NButton, {
           size: 'small',
           type: 'error',
           secondary: true,
-          disabled: !(!row.is_success && !row.is_finished),
+          disabled:!(!row.is_success &&!row.is_finished),
           style: {marginLeft: '10px'},
           onClick: () => callCancelOrder(row)
         }, {
-          default: () => computed(() => t('userOrders.cancelOrder')).value
+          default: () => t('userOrders.cancelOrder')
         })
       ]);
     },
     width: 200,
     fixed: 'right'
   }
-];
+]);
 
-let showOrderDetails = (row: OrderList) => {
+let showOrderDetails = (row: OrderListItem) => {
 
   paymentStore.orderDetail.order_id = row.order_id
   paymentStore.orderDetail.plan_name = row.plan_name
@@ -179,7 +179,7 @@ let showOrderDetails = (row: OrderList) => {
   })
 }
 
-let callCancelOrder = async (row: OrderList) => {
+let callCancelOrder = async (row: OrderListItem) => {
   let data = await cancelOrder(userInfoStore.thisUser.id, row.order_id)
   if (data.code === 200) {
     console.log(data)
@@ -198,7 +198,7 @@ let callGetAllMyOrders = async () => {
     animated.value = true
     orderList.value = []
     pageCount.value = data.page_count
-    data.order_list.forEach((order: OrderList) => orderList.value.push(order))
+    data.order_list.forEach((order: OrderListItem) => orderList.value.push(order))
   }
 }
 

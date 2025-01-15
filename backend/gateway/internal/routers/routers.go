@@ -7,33 +7,19 @@ import (
 	"gateway/internal/middleware"
 	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 	"strconv"
 )
 
 func StartApiGateways() {
 	router := gin.Default()
-	// 中间件 过OPTIONS预检
-	router.Use(func(context *gin.Context) {
-		context.Header("Access-Control-Allow-Origin", "*")
-		context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, PATCH")
-		context.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		if context.Request.Method == "OPTIONS" {
-			context.AbortWithStatus(http.StatusOK)
-			return
-		}
-		context.Next()
-	})
 
-	router.Use(middleware.APICountMiddleware())
+	router.Use(middleware.AccessLoggerMiddleware()) // 統計API訪問紀錄 提交到日誌為服務
+	router.Use(middleware.ProtocolAllowance())      // 設置後端允許的請求方式和过OPTIONS预检
+	router.Use(middleware.APICountMiddleware())     // 對API訪問進行計數
 
 	publicRoutes := router.Group("/api")
-	//publicRoutes.Use(middleware.APICountMiddleware())
-	//publicRoutes := router.Group("/ws")
 
 	// 这里是获取网站的标题 颜色 说明 配置
-	//publicRoutes.GET("/admin/getStartTheme", getStartTheme)
-
 	publicRoutes.GET("/app/preference/")
 	publicRoutes.GET("/app/v1/env/root", handler.HandleGetAppRuntimeEnv)
 	publicRoutes.GET("/app/v1/env/welcome", handler.HandleGetWelcomeConfig)

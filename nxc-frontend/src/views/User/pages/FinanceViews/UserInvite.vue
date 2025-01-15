@@ -12,7 +12,7 @@ import {
   handleGetMyInviteCode,
   handleGetMyInvitedUserList
 } from "@/api/user/invite";
-import {NButton, NIcon, NTag, useMessage} from "naive-ui";
+import {NButton, NIcon, NTag, useMessage, type DataTableColumns} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
@@ -45,23 +45,23 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   page: 1,
 })
 
-const columns = [
+const columns = computed<DataTableColumns<MyInvitedUser>>(() => [
   {
     title: '#',
     key: 'id'
   },
   {
-    title: computed(() => t('userInvite.email')).value,
+    title: t('userInvite.email'),
     key: 'email'
   },
   {
-    title: computed(() => t('userInvite.createdAt')).value,
+    title: t('userInvite.createdAt'),
     key: 'created_at',
     render(row: MyInvitedUser) {
       return h('span', {}, {default: () => formatDate(row.created_at)});
     }
   },
-];
+]);
 
 let callHandleCreateMyInviteCode = async () => {
   let data = await handleCreateMyInviteCode(userInfoStore.thisUser.id)

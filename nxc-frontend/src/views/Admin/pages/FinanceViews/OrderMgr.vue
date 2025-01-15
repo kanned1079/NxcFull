@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import {computed, h, onMounted, ref} from "vue"
+import {computed, h, onMounted, onBeforeMount, ref} from "vue"
 import {useI18n} from "vue-i18n";
+import useThemeStore from "@/stores/useThemeStore";
 import {
   CheckmarkDoneOutline as passOrderIcon,
   ChevronDownOutline as downIcon,
@@ -42,7 +43,7 @@ interface PrivilegeGroup {
 }
 
 const {t} = useI18n()
-
+const themeStore = useThemeStore()
 const message = useMessage()
 
 let animated = ref<boolean>(false)
@@ -291,14 +292,6 @@ const columns = [
               },
             },
             {default: () => '查看详情'}),
-        // h(NButton, {
-        //   size: 'small',
-        //   type: row.status ? 'error' : 'warning',
-        //   secondary: true,
-        //   disabled: false,
-        //   style: {marginLeft: '10px'},
-        //   onClick: () => handleBlock2UnblockUserById(row)
-        // }, {default: () => row.status ? computed(() => t('adminViews.userMgr.banUser')).value : computed(() => t('adminViews.userMgr.unbanUser')).value})
       ]);
     },
   }
@@ -391,6 +384,10 @@ let getAllGroups = async () => {
     console.log(error)
   }
 }
+
+onBeforeMount(() => {
+  themeStore.menuSelected = 'order-manager'
+})
 
 onMounted(async () => {
   await getAllGroups()
