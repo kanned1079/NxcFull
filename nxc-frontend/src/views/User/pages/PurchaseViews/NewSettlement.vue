@@ -77,10 +77,8 @@ let showCycleName = computed(() => {
 })
 
 let cycleSelect = (key: string) => {
-  console.log(key)
   selectedCycle.value = key
   period.value = key
-  console.log('period: ', period.value)
 }
 
 const menuOptions: MenuOption[] = []
@@ -114,12 +112,7 @@ let appendCycleOptions = () => {
       disabled: false,
     })
   }
-  console.log(menuOptions)
 }
-
-// let handleUpdateExpandedKeys = (keys: string) => {
-//   console.log(keys)
-// }
 
 // 优惠券信息
 interface Coupon {
@@ -141,11 +134,9 @@ let callVerifyTicket = async () => {
     notify('error', t('newSettlement.err'), t('newSettlement.notify.couponIsNull'))
     return
   }
-  console.log('验证优惠券')
   let data = await verifyTicket(couponCode.value, plan.id, userInfoStore.thisUser.id)
   if (data.code === 200) {
     if (data.verified) {
-      console.log('验证码有效', data);
       // ticketVerified.value = true;
       couponInfo.value.id = data.id;
       couponInfo.value.verified = true;
@@ -154,7 +145,6 @@ let callVerifyTicket = async () => {
       notify('success', t('newSettlement.notify.passTitle'), t('newSettlement.notify.couponVerified'));
     } else {
       couponInfo.value.verified = false
-      // console.log('未知错误', data.msg);
       notify('error', t('newSettlement.notify.couponInvalid'), data.msg);
     }
   } else {

@@ -130,7 +130,6 @@ let callGetActivePlanList = async () => {
   if (data.code === 200) {
     haveActive.value = true
     myActivePlans.value = data.my_plans
-    console.log(myActivePlans.value)
     // animated.value = true
   } else {
     haveActive.value = false

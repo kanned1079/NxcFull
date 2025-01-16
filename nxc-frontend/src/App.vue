@@ -13,8 +13,7 @@ const handleResize = () => themeStore.menuCollapsed = window.innerWidth < 768;
 // const handleToggleDarkMode = (event.ma)
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-  if (event.matches) themeStore.enableDarkMode = true
-  else themeStore.enableDarkMode = false
+  themeStore.enableDarkMode = event.matches;
 });
 
 let isDark = computed(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -28,7 +27,6 @@ let isDark = computed(() => window.matchMedia('(prefers-color-scheme: dark)').ma
 onMounted(() => {
   handleResize(); // 初始时根据当前宽度设置状
   window.addEventListener('resize', handleResize); // 动态监听窗口大小
-  console.log('app挂载');
   // 处理深色主题设置
   themeStore.readEnableDarkMode()
   // 从总设置中获取主题并应用
@@ -36,7 +34,6 @@ onMounted(() => {
   // 监听深色模式的变化
   // console.log(isDark.value)
   themeStore.enableDarkMode = isDark.value;
-  console.info('App', appInfosStore.registerPageConfig)
 
 });
 

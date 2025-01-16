@@ -47,6 +47,14 @@ export default {
     },
     adminViews: {
         login: {
+            secureCard: {
+                title: '安全检查',
+                securePath : '安全路径',
+                hint: '为保障系统安全，您需输入安全路径方可进入管理员登录页面。请在下方输入框中输入安全路径，成功验证安全路径后您可选择选择保存，以便后续快捷登录。',
+                placeholder: '请输入安全路径',
+                checkBtn: '检查',
+                rememberPath: '记住安全路径',
+            },
             card: {
                 back: '返回首页',
                 toAdminCenter: '登录到管理中心',
@@ -71,7 +79,10 @@ export default {
                 passwordErr: '密码不正确',
                 adminNotExist: '管理员不存在',
                 authPassed: '验证通过',
-                authFailure: '验证失败'
+                authFailure: '验证失败',
+                pathCheckPassed: '安全路径检查通过',
+                pathCheckFailure: '安全路径不正确',
+                rememberSecureMention: '为了保证后台管理的安全性，如果这不是您的私人电脑请不要勾选。'
             }
         },
         summary: {

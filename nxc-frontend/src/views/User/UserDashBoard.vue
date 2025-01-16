@@ -4,17 +4,11 @@ import useThemeStore from "@/stores/useThemeStore";
 import {RouterView, useRouter} from 'vue-router';
 import CommonHeader from "@/components/CommonHeader.vue";
 import CommonAside from "@/components/CommonAside.vue";
-import useUserInfoStore from "@/stores/useUserInfoStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
 import {InformationOutline as infoIcon} from "@vicons/ionicons5"
 import {useMessage} from "naive-ui";
 
 const messages = useMessage();
-
-const apiAddrStore = useApiAddrStore();
-
 const themeStore = useThemeStore();
-const userInfoStore = useUserInfoStore();
 
 const router = useRouter();
 
@@ -24,22 +18,8 @@ let floatBtnClicked = () => {
   messages.info('clicked')
 }
 
-
 onMounted(() => {
-  // themeStore.contentPath = '/admin/dashboard/summary'
-  // themeStore.menuSelected = 'dashboard'
-  console.log('新的dashboard', themeStore.contentPath)
-  console.log('dashboard挂载')
-
   interfaceAnimated.value = true
-
-  // getAllNotices()
-
-  // if (!userInfoStore.isAuthed) {
-  //   router.push({
-  //     path: '/admin/login',
-  //   })
-  // }
   setTimeout(() => {
     router.push({
       // path: '/admin/dashboard/summary',

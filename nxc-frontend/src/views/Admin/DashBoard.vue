@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import {onMounted} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {RouterView} from 'vue-router';
 import CommonHeader from "@/components/CommonHeader.vue";
 import CommonAside from "@/components/CommonAside.vue";
-
 const themeStore = useThemeStore();
-
-onMounted(() => {
-  console.log('新的dashboard', themeStore.contentPath)
-  console.log('dashboard挂载')
-
-})
 </script>
 
 <script lang="ts">

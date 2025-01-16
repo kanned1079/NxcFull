@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
+import {useRouter} from 'vue-router'
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
@@ -32,7 +32,7 @@ let animated = ref<boolean>(false)
 
 let notifyErr = (type: NotificationType, msg: string) => {
   notification[type]({
-    content: computed(() => t('adminViews.login.card.authFailure')).value,
+    content: computed(() => t('adminViews.login.message.authFailure')).value,
     meta: msg,
     duration: 2500,
     keepAliveOnHover: true
@@ -41,7 +41,7 @@ let notifyErr = (type: NotificationType, msg: string) => {
 
 let notifyPass = (type: NotificationType) => {
   notification[type]({
-    content: computed(() => t('adminViews.login.card.authPassed')).value,
+    content: computed(() => t('adminViews.login.message.authPassed')).value,
     // meta: '1111',
     duration: 2500,
     keepAliveOnHover: true
@@ -55,7 +55,7 @@ interface AdminForm {
 
 const userInfoStore = useUserInfoStore();
 const router = useRouter();
-const route = useRoute();
+// const route = useRoute();
 // let sourcePath = route.params.path as string || ''
 let thisSecurePath = ref<string | null>(null)
 let rememberSecurePath = ref<boolean>(false)
@@ -131,7 +131,6 @@ let handleLoginClick = async (e: MouseEvent) => {
 
 let submitLogin = async () => {
   enableLogin.value = false
-  console.log('登陆信息', userFormData.value)
   try {
     // let hashedPwd =  hashPassword(password.value.trim())
     let {data} = await instance.post('http://localhost:8081/api/admin/v1/login', {
@@ -154,10 +153,8 @@ let submitLogin = async () => {
       switch (data.msg) {
         case 'incorrect_password':
           return notifyErr('error', computed(() => t('adminViews.login.message.passwordErr')).value)
-
         case 'user_not_exist':
           return notifyErr('error', computed(() => t('adminViews.login.message.adminNotExist')).value)
-
       }
     }
   } catch (error) {
@@ -198,7 +195,7 @@ let showStartupNotification = () => {
   let _toMainPage = computed(() => t('adminViews.login.card.back'))
   notification.create({
     title: _title.value,
-    duration: 10000,
+    duration: 3000,
     description: _description.value,
     content: () => {
       return h('div', [
@@ -218,8 +215,7 @@ let showStartupNotification = () => {
       ]);
     },
     // meta: new Date().toLocaleString(),
-    onClose: () => {
-    },
+    onClose: () => {},
   });
 };
 
@@ -229,17 +225,17 @@ let checkSecurePath = () => {
       && thisSecurePath.value === appInfoStore.appCommonConfig.secure_path
   ) {
     showInputSecurePathModal.value = false
-    message.success('安全路径验证通过')
+    message.success(t('adminViews.login.message.pathCheckPassed'))
     sessionStorage.setItem('secure_path', JSON.stringify(thisSecurePath.value))
   } else {
-    message.error('安全路径不正确')
+    message.error(t('adminViews.login.message.pathCheckFailure'))
   }
 }
 
 let changeRememberSecurePath = () => {
   console.log('changeRememberSecurePath')
   if (rememberSecurePath.value) {
-    message.info('为了保证后台管理的安全性，如果这不是您的私人电脑请不要勾选。')
+    message.info(t('adminViews.login.message.rememberSecureMention'))
     localStorage.setItem('secure_path', JSON.stringify(thisSecurePath.value))
   } else {
     localStorage.removeItem('secure_path')
@@ -264,17 +260,12 @@ onBeforeMount(() => {
   if (localStorage.getItem('secure_path')) rememberSecurePath.value = true
 });
 onMounted(() => {
-  console.log('AdminLogin挂载')
-  console.log('6666', JSON.parse(sessionStorage.getItem('isAuthed') as string))
-  console.log('store.isAuthed: ', userInfoStore.isAuthed)
-
   if (JSON.parse(sessionStorage.getItem('isAuthed') as string)) {
     console.log('to dashboard')
     router.push({path: '/admin/dashboard/summary'})
   }
   animated.value = true
   showStartupNotification()
-
 })
 
 </script>
@@ -356,7 +347,7 @@ export default {
                   </n-form-item>
                   <n-form-item>
                     <n-checkbox v-model:checked="rememberSecurePath" @change="changeRememberSecurePath">
-                      记住安全路径
+                      {{ t('adminViews.login.secureCard.rememberPath') }}
                     </n-checkbox>
                   </n-form-item>
                   <n-form-item>
@@ -397,7 +388,7 @@ export default {
       <n-modal
           v-model:show="showInputSecurePathModal"
           preset="card"
-          title="安全检查"
+          :title="t('adminViews.login.secureCard.title')"
           size="medium"
           style="width: 400px"
           :bordered="false"
@@ -405,17 +396,17 @@ export default {
           :mask-closable="false"
       >
         <n-p style="margin-top: 10px">
-          为保障系统安全，您需输入安全路径方可进入管理员登录页面。请在下方输入框中输入安全路径，成功验证安全路径后您可选择选择保存，以便后续快捷登录。
+          {{ t('adminViews.login.secureCard.hint') }}
         </n-p>
         <n-form-item
-          label="安全路径"
+          :label="t('adminViews.login.secureCard.securePath')"
           :show-require-mark="true"
           style="margin-top: 20px"
           :show-feedback="false"
           :rule="{trigger: ['blur', 'input'],validator:() => thisSecurePath!==''} as FormRules"
         >
           <n-input
-            placeholder="请输入安全路径"
+            :placeholder="t('adminViews.login.secureCard.placeholder')"
             v-model:value="thisSecurePath"
           />
         </n-form-item>
