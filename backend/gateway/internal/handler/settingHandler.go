@@ -490,6 +490,26 @@ func HandleGetWelcomeConfig(context *gin.Context) {
 	})
 }
 
+func HandleGetAllAppDownloadLink(context *gin.Context) {
+	var lang = context.Query("lang")
+	resp, err := grpcClient.SettingServiceClient.GetAppDownloadLink(sysContext.Background(), &pb.GetAppDownloadLinkRequest{
+		Lang: lang,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":             resp.Code,
+		"msg":              resp.Msg,
+		"download_enabled": resp.DownloadEnabled,
+		"download_links":   resp.DownloadLinks,
+	})
+}
+
 //func GetRegisterEnvRuntime(context *gin.Context) {
 //
 //}

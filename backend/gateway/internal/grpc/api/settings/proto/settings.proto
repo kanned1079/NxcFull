@@ -59,6 +59,8 @@ service SettingsService {
   rpc GetRegisterEnvConfig(GetRegisterEnvConfigRequest) returns (GetRegisterEnvConfigResponse);
 
   rpc GetWelcomePageConfig(GetWelcomePageConfigRequest) returns (GetWelcomePageConfigResponse);
+
+  rpc GetAppDownloadLink(GetAppDownloadLinkRequest) returns (GetAppDownloadLinkResponse);
 }
 
 // 更新单个设置项的请求
@@ -337,3 +339,20 @@ message GetWelcomePageConfigResponse {
   string msg = 2;
   bytes config = 3;
 }
+
+message GetAppDownloadLinkRequest {
+  string lang = 1;
+}
+
+message AppItem {
+  string platform = 1;
+  string link = 2;
+}
+
+message GetAppDownloadLinkResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool download_enabled = 3;
+  repeated AppItem download_links = 4;
+}
+

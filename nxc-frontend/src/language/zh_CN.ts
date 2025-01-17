@@ -1060,6 +1060,29 @@ export default {
         commitRemark: '提交',
         updateSuccess: '更新成功',
     },
+    userAppDownload: {
+        downloadDisabledHint: '很抱歉，App下载暂时不可用或被管理员禁用，如您有需要请在工单处联系我们的技术已获取支持。',
+        windows: {
+            title: 'Windows NT',
+            shallow: '该客户端适用于NT内核的Windows操作系统，请查看文档页面以获取兼容性支持。',
+        },
+        osx: {
+            title: 'macOS (OSX)',
+            shallow: '该客户端适用于Darwin内核的macOS(OSX)操作系统，请查看文档页面以获取兼容性支持。',
+        },
+        linux :{
+            title: 'Linux',
+            shallow: '该客户端适用于Linux内核的各类发行版，由于发行版系列不同请查看文档页面以获取兼容性支持。',
+        },
+        android: {
+            title: 'Android',
+            shallow: '该客户端适用于搭载了Google Android操作系统的移动设备，请查看文档页面以获取兼容性支持。',
+        },
+        ios: {
+            title: 'IOS',
+            shallow: '该客户端适用于搭载了Apple IOS操作系统的移动设备，请查看文档页面以获取兼容性支持。',
+        },
+    },
     welcome: {
         A: {
             aboutUs: '關於我們',

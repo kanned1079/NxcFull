@@ -45,6 +45,10 @@ const userRoutes: RouteRecordRaw[] = [
                 component: () => import("@/views/User/pages/RootViews/UserDocument.vue"),
             },
             {
+                path: 'app',
+                component: () => import("@/views/User/pages/RootViews/UserAppDownload.vue"),
+            },
+            {
                 path: 'purchase',
                 component: () => import("@/views/User/pages/PurchaseViews/NewPurchase.vue"),
             },

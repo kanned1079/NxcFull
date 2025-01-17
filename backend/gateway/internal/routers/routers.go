@@ -172,6 +172,8 @@ func StartApiGateways() {
 		userAuthorized.DELETE("activation", handler.HandleDisableBindKey)
 		userAuthorized.PATCH("activation/remark", handler.HandleAlterRemarkByUser)
 
+		userAuthorized.GET("app", handler.HandleGetAllAppDownloadLink)
+
 	}
 
 	// WebSocket 路由组

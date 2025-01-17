@@ -199,7 +199,7 @@ let UserMenuOption = ref([
   },
   {
     label: computed(() => t('commonAside.user.app')),
-    key: 'app-download',
+    key: 'user-app-download',
     icon: renderIcon(downloadIcon)
   },
   {
@@ -275,7 +275,7 @@ let userUpdate = (key: string) => {
   switch (key) {
     case 'user-dashboard': return router.push({path: '/dashboard/summary'})
     case 'user-doc': return router.push({path: '/dashboard/document'})
-    case 'app-download': return console.log('app')
+    case 'user-app-download': return router.push({path: '/dashboard/app'})
     case 'user-buy-plan': return router.push({path: '/dashboard/purchase'})
     case 'user-orders': return router.push({path: '/dashboard/orders'})
     case 'user-profile': return router.push({path: '/dashboard/profile'})

@@ -246,7 +246,7 @@ onBeforeMount(() => {
   let path: string | null = null;
   try {
     // 优先从 sessionStorage 获取 secure_path，否则从 localStorage 获取
-    const rawPath = sessionStorage.getItem('secure_path') || localStorage.getItem('secure_path');
+    let rawPath = sessionStorage.getItem('secure_path') || localStorage.getItem('secure_path');
     path = rawPath ? JSON.parse(rawPath) : null;
   } catch (e: any) {
     console.error('Error parsing secure_path:', e);
