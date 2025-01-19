@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppFrame from "@/views/utils/AppFrame.vue";
 import {useI18n} from "vue-i18n";
 import {useRoute} from "vue-router"
 import {ref, computed, onMounted, onBeforeMount} from "vue";
@@ -94,84 +95,16 @@ export default {
               style="max-width: 1024px"
           >
             <n-grid-item>
-              <n-card
-                  hoverable
-                  :embedded="true"
-                  :bordered="false"
-                  content-style="padding: 0;"
-                  style="background: linear-gradient(to bottom right, rgb(211, 149, 155), rgb(191, 230, 186)); height: 500px;"
-              >
-                <div style="width: 100%; margin-top: 100px; display: flex; flex-direction: row; justify-content: center">
-                  <n-card style="width: 300px; height: 400px; border-radius: 10px 10px 0 0; opacity: 0.9; backdrop-filter: blur(10px)" content-style="padding: 0;" hoverable>
-                      <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin-top: 10px">
-                        <div style="opacity: 0.9">
-                          <p style="font-size: 0.8rem; margin: 0 0 0 15px;">10:13</p>
-                        </div>
 
-                        <div style="margin-right: 15px; opacity: 0.6; display: flex; gap: 5px" >
-<!--                          <n-icon size="15">-->
-<!--                            <dataIcon />-->
-<!--                          </n-icon>-->
-                          <div style="width: 16px; display: flex; align-items: center"><dataIcon /></div>
-                          <div style="width: 16px; display: flex; align-items: center"><wifiIcon /></div>
-                          <div style="width: 20px; display: flex; align-items: center"><batteryIcon /></div>
-
-                        </div>
-<!--                        <div style="margin-right: 10px; align-content: center">-->
-<!--                          -->
-<!--                        </div>-->
-
-                      </div>
-                    <div style="margin-top: 30px; padding: 20px">
-                      <n-skeleton :width="100" :height="20"></n-skeleton>
-                      <n-skeleton :width="150" :height="12" style="margin-top: 10px"></n-skeleton>
-                      <n-skeleton :height="10" style="margin-top: 50px"></n-skeleton>
-                      <n-skeleton :height="10" style="margin-top: 10px"></n-skeleton>
-                      <n-skeleton :height="10" style="margin-top: 10px"></n-skeleton>
-                      <n-skeleton :height="10" style="margin-top: 10px"></n-skeleton>
-                    </div>
-                  </n-card>
-                </div>
-              </n-card>
+              <AppFrame
+                  platform="mobile"
+              ></AppFrame>
             </n-grid-item>
             <n-grid-item>
-              <n-card
-                  hoverable
-                  :embedded="true"
-                  :bordered="false"
-                  content-style="padding: 0;"
-                  style="background: linear-gradient(to bottom right, rgb(185, 147, 214), rgb(140, 166, 219)); height: 500px;"
-              >
-                <div style="width: 100%; margin-top: 100px; display: flex; flex-direction: row; justify-content: center">
-                  <n-card style="width: 400px; border-radius: 10px"  content-style="padding: 0;">
-                    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin-top: 10px">
-                      <div style="opacity: 0.9; display: flex; margin-left: 15px">
-<!--                        <p style="font-size: 0.8rem; margin: 0 0 0 15px;">10:13</p>-->
-                        <div style="width: 10px; height: 10px; border-radius: 50%; background-color: #ff6666; margin-right: 5px"></div>
-                        <div style="width: 10px; height: 10px; border-radius: 50%; background-color: #ffcc66; margin-right: 5px"></div>
-                        <div style="width: 10px; height: 10px; border-radius: 50%; background-color: #66cc66; margin-right: 5px"></div>
 
-                      </div>
-
-                      <n-flex style="margin-right: 15px; opacity: 0.6" >
-<!--                       <div style="width: 10px; height: 10px; border-radius: 50%; background-color: rgba(51,51,51,0.7)"></div>-->
-                      </n-flex>
-                      <!--                        <div style="margin-right: 10px; align-content: center">-->
-                      <!--                          -->
-                      <!--                        </div>-->
-
-                    </div>
-                    <div style="margin-top: 30px; padding: 20px">
-                      <n-skeleton :width="100" :height="20"></n-skeleton>
-                      <n-skeleton :width="150" :height="12" style="margin-top: 10px"></n-skeleton>
-                      <n-skeleton :height="10" style="margin-top: 50px"></n-skeleton>
-                      <n-skeleton :height="10" style="margin-top: 10px"></n-skeleton>
-                      <n-skeleton :height="10" style="margin-top: 10px"></n-skeleton>
-                      <n-skeleton :height="10" style="margin-top: 10px"></n-skeleton>
-                    </div>
-                  </n-card>
-                </div>
-              </n-card>
+              <AppFrame
+                  platform="desktop"
+              ></AppFrame>
             </n-grid-item>
           </n-grid>
 
