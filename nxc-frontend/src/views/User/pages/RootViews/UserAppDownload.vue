@@ -2,12 +2,10 @@
 import AppFrame from "@/views/utils/AppFrame.vue";
 import {useI18n} from "vue-i18n";
 import {useRoute} from "vue-router"
-import {ref, computed, onMounted, onBeforeMount} from "vue";
+import {onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import {useMessage} from "naive-ui"
 import {handleFetchAllAppDownloadList} from "@/api/user/app";
-import {formatDate, formatTimestamp} from "../../../../utils/timeFormat";
-import {BatteryHalfOutline as batteryIcon, Cellular as dataIcon, Wifi as wifiIcon} from "@vicons/ionicons5"
 
 const {t} = useI18n()
 const route = useRoute()
@@ -30,8 +28,9 @@ let callFetchAllDownloadLink = async () => {
     console.log(data)
     downloadEnabled.value = data.download_enabled
     data.download_links.forEach((item: AppItem) => appDownloadList.value.push(item))
+    animated.value = true
   } else {
-    message.error('数据获取失败')
+    message.error(data.message || '')
   }
 }
 
@@ -41,8 +40,7 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-  animated.value = true
-  // await callFetchAllDownloadLink()
+  await callFetchAllDownloadLink()
 })
 
 </script>
@@ -54,45 +52,37 @@ export default {
 </script>
 
 <template>
-<div class="root">
-  <transition name="slide-fade">
-    <div class="inner-root" v-if="animated">
+  <div class="root">
+    <transition name="slide-fade">
+      <div class="inner-root" v-if="animated">
 
-      <n-alert
-        type="warning"
-        class="mention"
-        v-if="!downloadEnabled"
-      >
-        很抱歉暂时还没有下载，请您稍后再试，如有问题请提交工单以联系我们的支持服务。
-      </n-alert>
+        <n-alert
+            type="warning"
+            class="mention"
+            v-if="!downloadEnabled"
+        >
+          {{ t('userAppDownload.common.noDownload') }}
+        </n-alert>
 
-      <n-card
-          v-if="downloadEnabled"
-        hoverable
-        :embedded="true"
-        :bordered="false"
-        v-for="item in appDownloadList"
-        :title="item.platform"
-        class="platform-card"
-      >
-        <n-tag
-          type="success"
-          >
-          {{ item.link  }}
-        </n-tag>
-      </n-card>
-
-<!--      <div style="display: flex; justify-content: center">-->
+        <div class="up-title-root">
+          <p class="download-title">
+            {{ t('userAppDownload.common.title') }}
+          </p>
+          <p class="download-sub-title">
+            {{ t('userAppDownload.common.shallow') }}
+          </p>
+        </div>
 
         <div
-          style="width: 100%; display: flex; justify-content: center; margin-top: 30px"
+            v-if="downloadEnabled"
+            style="width: 100%; display: flex; justify-content: center;"
         >
           <n-grid
               cols="1 s:1 m:2"
               responsive="screen"
               x-gap="20px"
               y-gap="20px"
-              style="max-width: 1024px"
+              style="max-width: 1368px"
           >
             <n-grid-item>
 
@@ -111,21 +101,34 @@ export default {
         </div>
 
 
-
-
-
-    </div>
-  </transition>
-</div>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <style scoped lang="less">
 .root {
   padding: 20px;
+
   .inner-root {
     .mention {
       margin-bottom: 20px;
     }
+
+    .up-title-root {
+      text-align: center;
+      .download-title {
+        font-size: 1.5rem;
+        margin: 20px;
+      }
+      .download-sub-title {
+        font-size: 0.9rem;
+        opacity: 0.7;
+        margin: 0 30px 20px 30px;
+        text-align: center !important;
+      }
+    }
+
     .platform-card {
       margin-bottom: 20px;
     }

@@ -74,7 +74,7 @@ const appDownloadSettings: AppSetting[] = [
 ];
 
 const saveFiled = async (k: string, v: any) => {
-  let updateResponse = await settingStore.saveOption('site', k, v)
+  let updateResponse = await settingStore.saveOption('my_app', k, v)
   if (updateResponse.code === 200)
     message.success(t('adminViews.systemConfig.common.success'))
   else

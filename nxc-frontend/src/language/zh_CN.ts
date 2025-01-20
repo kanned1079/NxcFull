@@ -49,7 +49,7 @@ export default {
         login: {
             secureCard: {
                 title: '安全检查',
-                securePath : '安全路径',
+                securePath: '安全路径',
                 hint: '为保障系统安全，您需输入安全路径方可进入管理员登录页面。请在下方输入框中输入安全路径，成功验证安全路径后您可选择选择保存，以便后续快捷登录。',
                 placeholder: '请输入安全路径',
                 checkBtn: '检查',
@@ -1061,6 +1061,30 @@ export default {
         updateSuccess: '更新成功',
     },
     userAppDownload: {
+        common: {
+            title: '下載我們的應用程序',
+            shallow2: '為不同的客戶端獲取我們的應用程序',
+            shallow: '使用我們的應用程序您可以更便捷地訪問我們的服務，免去每次在瀏覽器繁瑣的操作；您可在在文檔中找到詳盡的安裝需求和使用教程，包括運行環境、報錯解決等，如果您遇到了其他問題請聯繫我們的技術支持。',
+            noDownload: '很抱歉暂时还没有提供下载，请您稍后再试，如有问题请提交工单以联系我们的支持服务。'
+        },
+        card: {
+            common: {
+                welcome: '歡迎來到',
+            },
+            mobile: {
+                designFor: '為移動端設計',
+                designShallow: '您可以在這裡獲取我們的移動端應用程序',
+                iosDownloadShallow: '下載 IOS 客戶端',
+                androidDownloadShallow: '下載 Android 客戶端',
+            },
+            desktop: {
+                designFor: '為桌面端設計',
+                designShallow: '您可以在這裡獲取我們的桌面動端應用程序',
+                windowsDownloadShallow: '下載 Windows 客戶端',
+                osxDownloadShallow: '下載 macOS 客戶端',
+                linuxDownloadShallow: '下載 Linux 客戶端',
+            },
+        },
         downloadDisabledHint: '很抱歉，App下载暂时不可用或被管理员禁用，如您有需要请在工单处联系我们的技术已获取支持。',
         windows: {
             title: 'Windows NT',
@@ -1070,7 +1094,7 @@ export default {
             title: 'macOS (OSX)',
             shallow: '该客户端适用于Darwin内核的macOS(OSX)操作系统，请查看文档页面以获取兼容性支持。',
         },
-        linux :{
+        linux: {
             title: 'Linux',
             shallow: '该客户端适用于Linux内核的各类发行版，由于发行版系列不同请查看文档页面以获取兼容性支持。',
         },

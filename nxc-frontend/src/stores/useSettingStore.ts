@@ -232,7 +232,7 @@ const useSettingStore = defineStore('SettingStore', () => {
             console.log(data)
             if (data.code == 200) {
                 Object.assign(settings, data.settings)
-                console.log(data.msg)
+
             }
         } catch (error: any) {
             console.error(error.toString())
