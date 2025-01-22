@@ -17,7 +17,8 @@ interface User {
     balance: number,
     lastLogin: string,
     lastLoginIp: string,
-    token: string
+    token: string,
+    status: boolean,
 }
 
 const useUserInfoStore = defineStore('userInfoS',() => {
@@ -38,6 +39,7 @@ const useUserInfoStore = defineStore('userInfoS',() => {
         // licenseExpiration: '',
         // licenseId: 0,
         token: '',
+        status: false,
     })
 
     // 方法

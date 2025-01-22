@@ -40,6 +40,8 @@ const (
 	UserService_GetUserInvitedUserListByUserId_FullMethodName = "/proto.UserService/GetUserInvitedUserListByUserId"
 	UserService_CreateUserInviteCodeByUserId_FullMethodName   = "/proto.UserService/CreateUserInviteCodeByUserId"
 	UserService_CheckUserAuthInternal_FullMethodName          = "/proto.UserService/CheckUserAuthInternal"
+	UserService_UploadUserAvatar_FullMethodName               = "/proto.UserService/UploadUserAvatar"
+	UserService_GetUserAvatar_FullMethodName                  = "/proto.UserService/GetUserAvatar"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -71,6 +73,8 @@ type UserServiceClient interface {
 	GetUserInvitedUserListByUserId(ctx context.Context, in *GetUserInvitedUserListByUserIdRequest, opts ...grpc.CallOption) (*GetUserInvitedUserListByUserIdResponse, error)
 	CreateUserInviteCodeByUserId(ctx context.Context, in *CreateUserInviteCodeByUserIdRequest, opts ...grpc.CallOption) (*CreateUserInviteCodeByUserIdResponse, error)
 	CheckUserAuthInternal(ctx context.Context, in *CheckUserAuthInternalRequest, opts ...grpc.CallOption) (*CheckUserAuthInternalResponse, error)
+	UploadUserAvatar(ctx context.Context, in *UploadUserAvatarRequest, opts ...grpc.CallOption) (*UploadUserAvatarResponse, error)
+	GetUserAvatar(ctx context.Context, in *GetUserAvatarRequest, opts ...grpc.CallOption) (*GetUserAvatarResponse, error)
 }
 
 type userServiceClient struct {
@@ -291,6 +295,26 @@ func (c *userServiceClient) CheckUserAuthInternal(ctx context.Context, in *Check
 	return out, nil
 }
 
+func (c *userServiceClient) UploadUserAvatar(ctx context.Context, in *UploadUserAvatarRequest, opts ...grpc.CallOption) (*UploadUserAvatarResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadUserAvatarResponse)
+	err := c.cc.Invoke(ctx, UserService_UploadUserAvatar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserAvatar(ctx context.Context, in *GetUserAvatarRequest, opts ...grpc.CallOption) (*GetUserAvatarResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserAvatarResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUserAvatar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -320,6 +344,8 @@ type UserServiceServer interface {
 	GetUserInvitedUserListByUserId(context.Context, *GetUserInvitedUserListByUserIdRequest) (*GetUserInvitedUserListByUserIdResponse, error)
 	CreateUserInviteCodeByUserId(context.Context, *CreateUserInviteCodeByUserIdRequest) (*CreateUserInviteCodeByUserIdResponse, error)
 	CheckUserAuthInternal(context.Context, *CheckUserAuthInternalRequest) (*CheckUserAuthInternalResponse, error)
+	UploadUserAvatar(context.Context, *UploadUserAvatarRequest) (*UploadUserAvatarResponse, error)
+	GetUserAvatar(context.Context, *GetUserAvatarRequest) (*GetUserAvatarResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -392,6 +418,12 @@ func (UnimplementedUserServiceServer) CreateUserInviteCodeByUserId(context.Conte
 }
 func (UnimplementedUserServiceServer) CheckUserAuthInternal(context.Context, *CheckUserAuthInternalRequest) (*CheckUserAuthInternalResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckUserAuthInternal not implemented")
+}
+func (UnimplementedUserServiceServer) UploadUserAvatar(context.Context, *UploadUserAvatarRequest) (*UploadUserAvatarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadUserAvatar not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserAvatar(context.Context, *GetUserAvatarRequest) (*GetUserAvatarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserAvatar not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -792,6 +824,42 @@ func _UserService_CheckUserAuthInternal_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UploadUserAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadUserAvatarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UploadUserAvatar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UploadUserAvatar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UploadUserAvatar(ctx, req.(*UploadUserAvatarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserAvatarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserAvatar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUserAvatar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserAvatar(ctx, req.(*GetUserAvatarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -882,6 +950,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckUserAuthInternal",
 			Handler:    _UserService_CheckUserAuthInternal_Handler,
+		},
+		{
+			MethodName: "UploadUserAvatar",
+			Handler:    _UserService_UploadUserAvatar_Handler,
+		},
+		{
+			MethodName: "GetUserAvatar",
+			Handler:    _UserService_GetUserAvatar_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

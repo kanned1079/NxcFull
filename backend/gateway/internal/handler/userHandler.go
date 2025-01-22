@@ -5,6 +5,7 @@ import (
 	pb "gateway/internal/grpc/api/user/proto"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
+	"io"
 	"log"
 	"strconv"
 
@@ -758,5 +759,93 @@ func HandleGetUserInvitedUserListByUserId(context *gin.Context) {
 		"user_list":  usersMap,
 		"page_count": resp.PageCount,
 	})
+}
 
+func HandleUserUploadAvatar(context *gin.Context) {
+	userIDStr := context.PostForm("user_id")
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusBadRequest,
+			"error": "invalid user_id, must be int64",
+		})
+		return
+	}
+
+	// 获取上传的文件
+	file, err := context.FormFile("file")
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusBadRequest,
+			"error": "file is required",
+		})
+		return
+	}
+
+	// 打开文件并读取数据
+	src, err := file.Open()
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusInternalServerError,
+			"error": "Failed to open file",
+		})
+		return
+	}
+	defer src.Close()
+
+	// 读取文件内容到字节数组
+	fileBytes, err := io.ReadAll(src)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusInternalServerError,
+			"error": "Failed to read file",
+		})
+		return
+	}
+
+	// 调用 gRPC 服务上传头像
+	resp, err := grpcClient.UserServiceClient.UploadUserAvatar(context.Request.Context(), &pb.UploadUserAvatarRequest{
+		UserId:   userID,
+		FileName: file.Filename,
+		FileData: fileBytes,
+	})
+	if err = failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}
+
+func HandleGetUserAvatar(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code":  http.StatusBadRequest,
+			"error": err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.UserServiceClient.GetUserAvatar(sysContext.Background(), &pb.GetUserAvatarRequest{
+		UserId: userId,
+	})
+	if failOnRpcError(err, resp) != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":      resp.Code,
+		"msg":       resp.Msg,
+		"file_name": resp.FileName,
+		"file_data": resp.FileData,
+	})
 }

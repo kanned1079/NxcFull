@@ -212,7 +212,7 @@ export default {
                 :style="{color:theme.topHeaderTextColor}"
                 style="margin-right: 10px"
             >
-              {{ thisUser.email }}
+              {{ thisUser.name || thisUser.email }}
             </n-p>
             <n-icon size="16" style="font-weight: 800"><downIcon/></n-icon>
           </n-button>

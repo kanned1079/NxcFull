@@ -17,6 +17,7 @@ import {
 } from '@vicons/ionicons5'
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import {encodeToBase64} from "@/utils/encryptor";
+import {handleUserLogin} from "@/api/common/auth";
 
 const {t} = useI18n()
 const appInfoStore = useAppInfosStore()
@@ -128,6 +129,7 @@ interface UserData {
   balance: number;
   last_login: Date;
   last_login_ip: string;
+  status: boolean
 }
 
 let bindUserInfo = (data: DataWithAuth) => {
@@ -144,37 +146,46 @@ let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.thisUser.balance = user_data.balance
   userInfoStore.thisUser.lastLogin = user_data.last_login ? user_data.last_login.toString() : ''
   userInfoStore.thisUser.lastLoginIp = user_data.last_login_ip
+  userInfoStore.thisUser.status = user_data.status
 }
 
 let callLogin = async () => {
-  console.log(formValue.value.user.email, formValue.value.user.password)
-  try {
+  // console.log(formValue.value.user.email, formValue.value.user.password)
+  // try {
     // let hashedPwd = await hashPassword(formValue.value.user.password)
     // console.log('测试用hashedPwd ', hashedPwd)
-    let {data} = await instance.post("http://localhost:8081/api/user/v1/login", {
-      email: formValue.value.user.email.trim(),
-      password: encodeToBase64(formValue.value.user.password.trim() as string),
-      two_fa_code: formValue.value.user.two_fa_code.trim(),
-      // password: hashedPwd,
-      role: 'user',
-    })
-    console.log(data)
+    // let {data} = await instance.post("/api/user/v1/login", {
+    //   email: formValue.value.user.email.trim(),
+    //   password: encodeToBase64(formValue.value.user.password.trim() as string),
+    //   two_fa_code: formValue.value.user.two_fa_code.trim(),
+    //   // password: hashedPwd,
+    //   role: 'user',
+    // })
+    let data = await handleUserLogin(
+        formValue.value.user.email,
+        formValue.value.user.password.trim(),
+        'user',
+        formValue.value.user.two_fa_code.trim(),
+    )
+    if (!data) return message.error(t('userLogin.reqErr'))
     if (data.code === 200 && data.isAuthed === true) {
+      if (!data.user_data.status) return message.error(t('userLogin.accountLocked'))
       // 验证通过 保存token
       sessionStorage.setItem('token', data.token)
       // sessionStorage.setItem('isAuthed', JSON.stringify(true))
       notifyPass('success');
       bindUserInfo(data)
+      // if (!userInfoStore.thisUser.status) return message.error('locked')
       await router.push({path: '/dashboard'});
     } else {
       enableLogin.value = true
       notifyErr("error", data.msg)
     }
-  } catch (error) {
-    console.log(error)
-    // notifyErr('error', error.toString())
-    enableLogin.value = true
-  }
+  // } catch (error) {
+  //   console.log(error)
+  //   // notifyErr('error', error.toString())
+  //   enableLogin.value = true
+  // }
 }
 
 // 处理忘记密码

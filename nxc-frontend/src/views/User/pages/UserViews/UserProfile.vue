@@ -6,11 +6,12 @@ import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import type {FormInst, FormItemRule, FormRules, NotificationType} from 'naive-ui'
-import {NIcon, useMessage, useNotification} from 'naive-ui'
+import {NIcon, type UploadCustomRequestOptions, useMessage, useNotification} from 'naive-ui'
 import {
   ChevronForwardOutline as toRightIcon,
   InformationCircle as infoIcon,
   Wallet as walletIcon,
+  AddOutline as addIcon,
 } from "@vicons/ionicons5"
 // import {encodeToBase64, hashPassword} from "@/utils/encryptor";
 import {
@@ -23,6 +24,8 @@ import {
   saveNewPassword,
   verifyOldPassword
 } from "@/api/user/profile";
+import {compressAvatar} from "@/utils/compress"
+import instance from "@/axios";
 // import instance from "@/axios";
 
 const notification = useNotification()
@@ -42,11 +45,15 @@ let confirmDeleteAccountEmailInput = ref<string>('')
 let loadingDeleteSpin = ref<boolean>(false)
 const message = useMessage()
 let animated = ref<boolean>(false)
+let showAlterAvatarModal = ref<boolean>(false)
 let showDeleteMyModal = ref<boolean>(false)
+let showAlterNameModal = ref<boolean>(false)
+let uploadSuccess = ref<boolean>(false)
 const {t} = useI18n()
 const router = useRouter()
 const updatePwdForm = ref<FormInst | null>(null)
 // const message = useMessage()
+const newName = ref<string>('')
 const modelRef = ref<ModelType>({
   old_password: '',
   new_password: '',
@@ -54,6 +61,28 @@ const modelRef = ref<ModelType>({
 })
 
 let failReasons = ref<string[]>([]);
+
+const newNameRule: FormItemRule = {
+  required: true,
+  trigger: ['blur', 'input'],
+  validator() {
+    let val = newName.value.trim();
+
+    // 检查：
+    // 1. 不能包含空格
+    // 2. 不能是纯数字
+    // 3. 不能以数字开头
+    // 4. 只允许字母和数字
+    if (val && val.length >= 4
+        && /^[a-zA-Z][a-zA-Z0-9]*$/.test(val)  // 只允许字母和数字且不能以数字开头
+        && !/\s/.test(val)                    // 不允许空格
+    ) {
+      return true;  // 返回true表示验证通过
+    } else {
+      return new Error(t('userProfile.secondary.modify.input.spaceIsNotAllowed'));  // 返回错误
+    }
+  },
+};
 
 const rules: FormRules = {
   old_password: {
@@ -305,6 +334,68 @@ let confirmedDelete = () => {
   }, 1500)
 }
 
+let uploadStatus = ref<string>('')
+let callCustomUploadAvatar = async ({
+                                      file,
+                                      onFinish,
+                                      onError,
+                                      onProgress,
+                                    }: UploadCustomRequestOptions) => {
+  try {
+    onProgress({percent: 0})
+    const compressedFile = await compressAvatar(file.file as File, 160);
+    onProgress({percent: 30})
+    const {data} = await instance.post('http://localhost:8081/api/user/v1/upload/avatar', {
+      user_id: userInfoStore.thisUser.id,
+      file: compressedFile
+    }, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+
+    if (data.code === 200) {
+      message.success(t('userProfile.secondary.mention.alterAvatarSuccess'))
+      onProgress({percent: 99})
+      setTimeout(() => {
+        onFinish()
+        callGetUserAvatarByUserId()
+      }, 1000)
+    } else {
+      onError()
+
+      message.error(t('userProfile.secondary.mention.alterAvatarSuccess') + data.msg || '')
+    }
+  } catch (error: any) {
+    console.error(error);
+  }
+}
+
+let avatarData = ref<any>()
+let callGetUserAvatarByUserId = async () => {
+  try {
+    let {data} = await instance.get('/api/user/v1/avatar', {
+      params: {
+        user_id: userInfoStore.thisUser.id,
+      }
+    })
+    console.log(data)
+    if (data.code === 404) return message.warning('no avatar')
+    else if (data.code === 200) {
+      avatarData.value = `data:image/jpeg;base64,${data.file_data}`
+    } else {
+      message.error(t('userProfile.secondary.mention.fetchAvatarErr'))
+    }
+    showAlterAvatarModal.value = false
+  } catch (err: any) {
+    console.log(err)
+  }
+}
+
+let getAvatarFilter = computed(() =>
+    // style="filter: brightness(60%)"
+  themeStore.enableDarkMode?({filter: 'brightness(60%)'}):null)
+
 onMounted(async () => {
   themeStore.menuSelected = 'user-profile'
   themeStore.userPath = '/dashboard/profile'
@@ -317,6 +408,8 @@ onMounted(async () => {
   await callHandleGet2FAStatus()
 
   animated.value = true
+
+  await callGetUserAvatarByUserId()
 
 })
 
@@ -331,6 +424,56 @@ export default {
 <template>
   <transition name="slide-fade">
     <div class="root" v-if="animated">
+      <n-card
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          content-style="padding: 0"
+          class="secondary-card"
+      >
+        <div class="secondary-card-inner">
+          <n-p class="title">{{ t('userProfile.secondary.title') }}</n-p>
+
+          <div class="secondary-show">
+            <div class="secondary-l">
+              <n-avatar
+                  v-if="avatarData"
+                  :src="avatarData"
+                  :size="60"
+                  @click="showAlterAvatarModal=true"
+                  :style="getAvatarFilter"
+              />
+             <div
+                 v-else
+              style="width: 60px; height: 60px; background-color: #9a6969"
+              @click="showAlterAvatarModal=true"
+             ></div>
+            </div>
+            <div class="secondary-r">
+              <div class="secondary-r-up">
+                <n-button
+                    text
+                    type="primary"
+                    class="secondary-name"
+                    @click="showAlterNameModal = true"
+                >
+                  {{ userInfoStore.thisUser.name || '点击以设置或修改' }}
+                </n-button>
+              </div>
+              <div class="secondary-r-below">
+                <p class="secondary-email">{{ userInfoStore.thisUser.email }}</p>
+              </div>
+            </div>
+          </div>
+
+          <p
+            style="font-size: 0.8rem; opacity: 0.5"
+          >{{ t('userProfile.secondary.modify.alterShallow') }}</p>
+
+        </div>
+
+      </n-card>
+
       <n-card
           class="wallet-card"
           :embedded="true"
@@ -632,11 +775,136 @@ export default {
     </n-card>
   </n-modal>
 
+  <n-modal
+      v-model:show="showAlterAvatarModal"
+      auto-focus
+      @after-hide=""
+  >
+    <n-card
+        class="alter-avatar-modal"
+        :bordered="false"
+        size="medium"
+        :title="t('userProfile.secondary.modify.alterAvatar')"
+    >
+      <div class="alter-avatar-inner">
+        <p class="alter-avatar-title">{{ t('userProfile.secondary.mention.uploadImageHint') }}</p>
+        <n-upload
+            :max="1"
+            :custom-request="callCustomUploadAvatar"
+            accept="image/*"
+            :status="uploadStatus"
+            class="upload-board"
+        >
+          <n-upload-dragger>
+            <n-text style="font-size: 16px">
+              {{ t('userProfile.secondary.mention.click2Upload') }}
+            </n-text>
+            <n-p depth="3" style="margin: 8px 0 0 0">
+              {{ t('userProfile.secondary.mention.uploadWarn') }}
+            </n-p>
+          </n-upload-dragger>
+        </n-upload>
+
+        <p class="alter-avatar-hint-upper">{{ t('userProfile.secondary.mention.imageRequire.title') }}</p>
+        <p
+            class="alter-avatar-hint"
+            v-for="(item, index) in ['p1', 'p2', 'p3']"
+            :key="item"
+        >{{ `${index + 1}. ` + t(`userProfile.secondary.mention.imageRequire.${item}`) }}</p>
+        <!--       <p>{{ t('userProfile.secondary.mention.imageRequire.p2') }}</p>-->
+        <!--       <p>{{ t('userProfile.secondary.mention.imageRequire.p3') }}</p>-->
+      </div>
+    </n-card>
+  </n-modal>
+
+
+  <n-modal
+      :title="t('userProfile.secondary.modify.alterName')"
+      v-model:show="showAlterNameModal"
+      preset="dialog"
+      :positive-text="t('modal.confirm')"
+      :negative-text="t('modal.cancel')"
+      style="width: 400px;"
+      @positive-click="message.info('positive')"
+      @negative-click="message.warning('negative')"
+      :show-icon="false"
+  >
+
+    <div style="margin-top: 30px">
+      <n-form-item
+          :label="t('userProfile.secondary.modify.input.label')"
+          label-placement="top"
+          :rule="newNameRule"
+      >
+        <n-input
+            v-model:value="newName"
+            :placeholder="t('userProfile.secondary.modify.input.placeholder')"
+        />
+      </n-form-item>
+
+      <n-li
+          style="opacity: 0.7; margin-top: 4px"
+          v-for="i in 4"
+          :key="i"
+      >{{ t(`userProfile.secondary.modify.input.require.p${i}`) }}</n-li>
+    </div>
+
+  </n-modal>
+
 </template>
 
 <style scoped lang="less">
 .root {
   margin: 20px;
+
+  .secondary-card {
+    margin-bottom: 14px;
+
+    .secondary-card-inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      background-color: rgba(216, 216, 216, 0.0);
+      padding: 10px 20px 10px 20px;
+
+      .title {
+        font-size: 1rem;
+        font-weight: normal;
+        opacity: 0.6;
+      }
+
+      .secondary-show {
+        display: flex;
+        flex-direction: row;
+        background-color: rgba(216, 216, 216, 0.0);
+        margin: 10px 0;
+
+        .secondary-l {
+
+        }
+
+        .secondary-r {
+          display: flex;
+          flex-direction: column;
+          margin-left: 20px;
+
+          .secondary-r-up {
+            .secondary-name {
+              font-size: 1.1rem;
+              opacity: 0.8;
+            }
+          }
+
+          .secondary-r-below {
+            .secondary-email {
+              font-size: 1rem;
+              opacity: 0.6;
+            }
+          }
+        }
+      }
+    }
+  }
 
   .wallet-card {
     .wallet-header {
@@ -954,5 +1222,32 @@ export default {
   }
 }
 
+.alter-avatar-modal {
+  width: 400px;
+
+  .alter-avatar-inner {
+    padding-bottom: 30px;
+
+    .alter-avatar-title {
+      margin-bottom: 20px;
+    }
+
+    .upload-board {
+      margin-bottom: 20px;
+    }
+
+    .alter-avatar-hint-upper {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin: 20px 0 10px 0;
+      opacity: 0.8;
+    }
+
+    .alter-avatar-hint {
+      opacity: 0.6;
+      margin-top: 4px;
+    }
+  }
+}
 
 </style>

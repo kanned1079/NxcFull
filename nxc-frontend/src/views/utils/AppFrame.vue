@@ -7,15 +7,16 @@ import {
   ReturnDownForwardOutline as downloadIcon,
   Home as homeDirIcon,
   Apps as appsIcon,
-  MusicalNotes as musicIcon,
   Globe as netIcon,
   Terminal as terminalIcon,
   Trash as trashIcon,
 } from "@vicons/ionicons5"
+import {useMessage} from "naive-ui";
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 
 const {t} = useI18n();
+const message = useMessage();
 const themeStore = useThemeStore();
 const appInfoStore = useAppInfosStore()
 const props = defineProps<{
@@ -30,6 +31,10 @@ const props = defineProps<{
 let getDockBgColor = computed(() => themeStore.enableDarkMode?'rgba(37,37,37,0.3)':'rgba(255,255,255,0.3)')
 let getIconBgColor = computed(() => themeStore.enableDarkMode?'#252525':'#fff')
 
+let downloadClick = (platform: string) => {
+  message.info(platform);
+  window.open('https://ikanned.com:2444/d/R730xd_SSD/61256422_p0.jpg')
+}
 
 </script>
 
@@ -93,6 +98,7 @@ export default {
           class="app-link"
           size="medium"
           icon-placement="right"
+          @click="downloadClick('android')"
       >
         {{ t('userAppDownload.card.mobile.androidDownloadShallow') }}
         <template #icon>
@@ -107,6 +113,7 @@ export default {
           class="app-link"
           size="medium"
           icon-placement="right"
+          @click="downloadClick('ios')"
       >
         {{ t('userAppDownload.card.mobile.iosDownloadShallow') }}
         <template #icon>
@@ -146,7 +153,7 @@ export default {
                 <div class="desktop-content-l">
                   <div class="menu-part-l">
                     <n-skeleton :height="6" style="margin: 5px 0 20px 0"></n-skeleton>
-                    <div v-for="i in 3">
+                    <div v-for="i in 3" :key="i">
                       <n-skeleton :height="3" width="40%" style="margin-top: 14px"></n-skeleton>
                       <n-skeleton :height="2" style="margin-top: 6px"></n-skeleton>
                       <n-skeleton :height="2" style="margin-top: 6px"></n-skeleton>
@@ -213,6 +220,7 @@ export default {
           class="app-link"
           size="medium"
           icon-placement="right"
+          @click="downloadClick('windows')"
       >
         {{ t('userAppDownload.card.desktop.windowsDownloadShallow') }}
         <template #icon>
@@ -227,6 +235,7 @@ export default {
           class="app-link"
           size="medium"
           icon-placement="right"
+          @click="downloadClick('osx')"
       >
         {{ t('userAppDownload.card.desktop.osxDownloadShallow') }}
         <template #icon>
@@ -241,6 +250,7 @@ export default {
           class="app-link"
           size="medium"
           icon-placement="right"
+          @click="downloadClick('linux')"
       >
         {{ t('userAppDownload.card.desktop.linuxDownloadShallow') }}
         <template #icon>

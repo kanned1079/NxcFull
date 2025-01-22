@@ -629,7 +629,9 @@ export default {
         authPass: '驗證通過',
         loginFailure: '登錄失敗',
         checkForm: '請檢查表單',
-        if2FaEnabledHint: '如果您啟用了兩步驗證（非必填）'
+        if2FaEnabledHint: '如果您啟用了兩步驗證（非必填）',
+        reqErr: '請求出現錯誤請稍後再試',
+        accountLocked: '您的帳戶可能被註銷或封禁，暫時無法繼續使用，如你仍然認為這是一個錯誤，請聯繫我們的技術支持。'
     },
     userRegister: {
         backHomePage: '回到首頁',
@@ -816,6 +818,46 @@ export default {
             passwordAgainNotMatch: '兩次輸入的密碼不匹配',
             passwordAgainRequire: '請輸入確認密碼',
             updatePasswordFailure: '更新密碼出錯',
+        },
+        secondary: {
+            title: '基礎資料',
+            card: {
+                avatar: '用戶頭像',
+                name: '用戶名',
+                lastLoginAt: '上一次登錄時間',
+                accountStatus: '帳戶狀態',
+            },
+            modify: {
+                alterAvatar: '新增/修改頭像',
+                alterShallow: '* 點擊頭像或用戶名以添加或修改',
+                alterName: '修改用戶名',
+                input: {
+                    label: '用户名',
+                    placeholder: 'kanade4272',
+                    spaceIsNotAllowed: '用戶名驗證不通過',
+                    require: {
+                        p1: '只允許使用英文和數字',
+                        p2: '不允許純數字且數字開頭',
+                        p3: '不允許有空格',
+                        p4: '長度大於四位',
+                    }
+                }
+            },
+            mention: {
+                fetchAvatarErr: '獲取頭像數據失敗請稍後再試',
+                alterAvatarErr: '修改頭像失敗請稍後再試',
+                success: '成功',
+                alterAvatarSuccess: '修改頭像成功，',
+                uploadImageHint: '您可以上傳圖像作為您的新頭像',
+                imageRequire: {
+                    title: '注意',
+                    p1: '您可以上傳 *.jpg(jpeg), *.png, *.webp 等主流格式。',
+                    p2: '圖像的長寬比為1:1（正方形），如果為其他比例，將會被居中裁切為正方形，多餘的部分將會被刪除。',
+                    p3: '您上傳的圖像的大小將會被設置為160px。',
+                },
+                click2Upload: '點擊或拖動文件到該區域來上傳',
+                uploadWarn: '*請不要上傳敏感數據，比如您的銀行卡、信用卡、密碼和安全碼等。'
+            }
         }
     },
     // tickets: {
@@ -1140,6 +1182,10 @@ export default {
         perPage20: '20 條數據/頁',
         perPage50: '50 條數據/頁',
         perPage100: '100 條數據/頁',
+    },
+    modal: {
+        cancel: '取消',
+        confirm: '确认'
     },
     week: {
         monday: '週一',

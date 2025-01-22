@@ -41,13 +41,16 @@ func init() {
 	dao.InitRedisServer() // 初始化Redis服务器
 	dao.InitMq()
 	// 自动迁移
-	if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {
+	if err = dao.Db.Model(model.User{}).AutoMigrate(model.User{}); err != nil {
 		panic(err)
 	}
-	if err = dao.Db.Model(model.Auth{}).AutoMigrate(); err != nil {
+	if err = dao.Db.Model(model.Avatar{}).AutoMigrate(model.Avatar{}); err != nil {
 		panic(err)
 	}
-	if err = dao.Db.Model(model.TwoFA{}).AutoMigrate(); err != nil {
+	if err = dao.Db.Model(model.Auth{}).AutoMigrate(model.Auth{}); err != nil {
+		panic(err)
+	}
+	if err = dao.Db.Model(model.TwoFA{}).AutoMigrate(model.TwoFA{}); err != nil {
 		panic(err)
 	}
 
