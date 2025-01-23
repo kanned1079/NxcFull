@@ -86,7 +86,7 @@ func (s *UserService) ApplyNewPassword(cxt context.Context, req *pb.ApplyNewPass
 	}, nil
 }
 
-func (s *UserService) UpdateUserInfo(context context.Context, request *pb.UpdateUserInfoRequest) (*pb.UpdateUserInfoResponse, error) {
+func (s *UserService) UpdateUserInfo(ctx context.Context, request *pb.UpdateUserInfoRequest) (*pb.UpdateUserInfoResponse, error) {
 	var user model.User
 	if result := dao.Db.Model(&model.User{}).Where("id = ?", request.UserId).First(&user); result.RowsAffected == 0 {
 		log.Println("无该记录 id：", request.UserId)
@@ -101,6 +101,14 @@ func (s *UserService) UpdateUserInfo(context context.Context, request *pb.Update
 			Msg:  fmt.Sprintf("User marshal fail. id: %d", request.UserId),
 		}, nil
 	} else {
+		// 刷新缓存
+		redisErr := dao.Rdb.Set(ctx, fmt.Sprintf("user:%s", user.Email), userJson, 24*time.Hour).Err()
+		if redisErr != nil {
+			log.Printf("Redis 存储用户信息失败: %v", redisErr)
+		} else {
+			log.Println("用户信息已成功存储到 Redis")
+		}
+
 		return &pb.UpdateUserInfoResponse{
 			Code:     http.StatusOK,
 			Msg:      "Query ok",

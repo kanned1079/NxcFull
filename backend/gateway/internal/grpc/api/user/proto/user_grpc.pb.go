@@ -42,6 +42,7 @@ const (
 	UserService_CheckUserAuthInternal_FullMethodName          = "/proto.UserService/CheckUserAuthInternal"
 	UserService_UploadUserAvatar_FullMethodName               = "/proto.UserService/UploadUserAvatar"
 	UserService_GetUserAvatar_FullMethodName                  = "/proto.UserService/GetUserAvatar"
+	UserService_AlterUserSecondaryName_FullMethodName         = "/proto.UserService/AlterUserSecondaryName"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -75,6 +76,7 @@ type UserServiceClient interface {
 	CheckUserAuthInternal(ctx context.Context, in *CheckUserAuthInternalRequest, opts ...grpc.CallOption) (*CheckUserAuthInternalResponse, error)
 	UploadUserAvatar(ctx context.Context, in *UploadUserAvatarRequest, opts ...grpc.CallOption) (*UploadUserAvatarResponse, error)
 	GetUserAvatar(ctx context.Context, in *GetUserAvatarRequest, opts ...grpc.CallOption) (*GetUserAvatarResponse, error)
+	AlterUserSecondaryName(ctx context.Context, in *AlterUserSecondaryNameRequest, opts ...grpc.CallOption) (*AlterUserSecondaryNameResponse, error)
 }
 
 type userServiceClient struct {
@@ -315,6 +317,16 @@ func (c *userServiceClient) GetUserAvatar(ctx context.Context, in *GetUserAvatar
 	return out, nil
 }
 
+func (c *userServiceClient) AlterUserSecondaryName(ctx context.Context, in *AlterUserSecondaryNameRequest, opts ...grpc.CallOption) (*AlterUserSecondaryNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlterUserSecondaryNameResponse)
+	err := c.cc.Invoke(ctx, UserService_AlterUserSecondaryName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -346,6 +358,7 @@ type UserServiceServer interface {
 	CheckUserAuthInternal(context.Context, *CheckUserAuthInternalRequest) (*CheckUserAuthInternalResponse, error)
 	UploadUserAvatar(context.Context, *UploadUserAvatarRequest) (*UploadUserAvatarResponse, error)
 	GetUserAvatar(context.Context, *GetUserAvatarRequest) (*GetUserAvatarResponse, error)
+	AlterUserSecondaryName(context.Context, *AlterUserSecondaryNameRequest) (*AlterUserSecondaryNameResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -424,6 +437,9 @@ func (UnimplementedUserServiceServer) UploadUserAvatar(context.Context, *UploadU
 }
 func (UnimplementedUserServiceServer) GetUserAvatar(context.Context, *GetUserAvatarRequest) (*GetUserAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserAvatar not implemented")
+}
+func (UnimplementedUserServiceServer) AlterUserSecondaryName(context.Context, *AlterUserSecondaryNameRequest) (*AlterUserSecondaryNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AlterUserSecondaryName not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -860,6 +876,24 @@ func _UserService_GetUserAvatar_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_AlterUserSecondaryName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AlterUserSecondaryNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AlterUserSecondaryName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_AlterUserSecondaryName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AlterUserSecondaryName(ctx, req.(*AlterUserSecondaryNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -958,6 +992,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserAvatar",
 			Handler:    _UserService_GetUserAvatar_Handler,
+		},
+		{
+			MethodName: "AlterUserSecondaryName",
+			Handler:    _UserService_AlterUserSecondaryName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

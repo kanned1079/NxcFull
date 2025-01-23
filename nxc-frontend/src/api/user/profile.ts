@@ -1,6 +1,5 @@
 import instance from "@/axios/index"
 import {encodeToBase64, hashPassword} from "@/utils/encryptor";
-import {computed} from "vue";
 
 // verifyOldPassword 验证旧密码是否正确
 export const verifyOldPassword = async (email: string, oldPassword: string): Promise<boolean> => {
@@ -116,6 +115,48 @@ export const handleDeleteMyAccount = async (userId: number, confirmed: boolean) 
                 user_id: userId,
                 confirmed: confirmed,
             },
+        })
+        return data
+    } catch (err: any) {
+        console.log(err)
+    }
+}
+
+export const handleUploadAvatar = async (userId: number, fileName: string, file: File) => {
+    try {
+        let {data} = await instance.post('http://localhost:8081/api/user/v1/user/upload/avatar', {
+            user_id: userId,
+            file_name: fileName,
+            file: file
+        }, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+        return data
+    } catch (error: any) {
+        console.error(error);
+    }
+}
+
+export const handleGetUserAvatar = async (userId: number) => {
+    try {
+        let {data} = await instance.get('/api/user/v1/user/avatar', {
+            params: {
+                user_id: userId,
+            }
+        })
+        return data
+    } catch (err: any) {
+        console.log(err)
+    }
+}
+
+export const handleAlterMyName = async (userId: number, name: string) => {
+    try {
+        let {data} = await instance.patch('/api/user/v1/user/name', {
+            user_id: userId,
+            name: name,
         })
         return data
     } catch (err: any) {

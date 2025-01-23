@@ -2,6 +2,7 @@
 import {useI18n} from "vue-i18n";
 import {computed, ref} from "vue";
 import {useRouter} from 'vue-router'
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import renderIcon from "@/utils/iconFormator";
@@ -35,6 +36,7 @@ import {
 } from '@vicons/ionicons5'
 
 const {t} = useI18n()
+const appInfoStore = useAppInfosStore()
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
 
@@ -319,9 +321,10 @@ export default {
           v-model="themeStore.menuSelected"
           :root-indent="36"
           :indent="0"
-
       />
     </n-scrollbar>
+    <p class="left-suffix">{{ appInfoStore.appCommonConfig.app_name }} {{ appInfoStore.appVersion }}</p>
+
   </div>
 </template>
 
@@ -333,6 +336,14 @@ export default {
   }
   .menu {
     padding: 15px;
+  }
+  .left-suffix {
+    font-size: 0.7rem;
+    font-weight: bold;
+    opacity: 0.2;
+    position: absolute;
+    left: 20px;
+    bottom: 8px;
   }
 }
 </style>

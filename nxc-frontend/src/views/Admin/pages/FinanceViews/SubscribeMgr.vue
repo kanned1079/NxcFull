@@ -5,7 +5,7 @@ import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 // import useUserInfoStore from "@/stores/useUserInfoStore";
-import type {DrawerPlacement, FormInst, NotificationType} from 'naive-ui'
+import type {DrawerPlacement, FormInst, NotificationType, DataTableColumns} from 'naive-ui'
 import {NButton, NSwitch, NTag, useMessage, useNotification} from 'naive-ui'
 import instance from "@/axios";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
@@ -123,7 +123,6 @@ const placement = ref<DrawerPlacement>('right')
 // }
 
 let handleAddSubscribe = () => {
-  console.log('处理添加一个订阅')
   editType.value = 'add'  // 添加操作
   Object.assign(formValue.value.plan, {
     id: null,
@@ -197,7 +196,6 @@ let submitPlan = async () => {
   }
 }
 
-
 interface GroupItemFromServer {
   id: number
   label: string
@@ -211,7 +209,6 @@ let getAllGroups = async () => {
   try {
     let {data} = await instance.get('/api/admin/v1/groups/kv',)
     if (data.code === 200) {
-      console.log('获取到的权限组列表', data)
       groupOptions.value = []
       // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
       data.group_list.forEach((group: GroupItemFromServer) => groupOptions.value.push({
@@ -236,13 +233,13 @@ let notify = (type: NotificationType, title: string, meta?: string) => {
 }
 
 
-const columns = [
+const columns = computed<DataTableColumns<Plan>>(() => [
   {
-    title: '#',
+    title: t('adminViews.planMgr.table.id'),
     key: 'id'
   },
   {
-    title: '启用销售',
+    title: t('adminViews.planMgr.table.isSale'),
     key: 'is_sale',
     render(row: Plan) {
       return h(NSwitch, {
@@ -252,7 +249,7 @@ const columns = [
     }
   },
   {
-    title: '允许续费',
+    title: t('adminViews.planMgr.table.isRenew'),
     key: 'is_renew',
     render(row: Plan) {
       return h(NSwitch, {
@@ -262,14 +259,15 @@ const columns = [
     }
   },
   {
-    title: '排序',
+    title: t('adminViews.planMgr.table.sort'),
     key: 'sort',
     render(row: Plan) {
       return h(NTag, {}, {default: () => row.hasOwnProperty('sort') ? row.sort?.toString() : 'null'});
     }
   },
   {
-    title: '权限组',
+    // title: '权限组',
+    title: t('adminViews.planMgr.table.group'),
     key: 'group',
     render(row: Plan) {
       const group = groupOptions.value.find(option => option.value === row.group_id);
@@ -277,47 +275,56 @@ const columns = [
     }
   },
   {
-    title: '名称',
+    // title: '名称',
+    title: t('adminViews.planMgr.table.name'),
     key: 'name'
   },
   {
-    title: '数量',
+    // title: '数量',
+    title: t('adminViews.planMgr.table.nums'),
     key: 'capacity_limit'
   },
   {
-    title: '余量',
+    // title: '余量',
+    title: t('adminViews.planMgr.table.residue'),
     key: 'residue'
   },
   {
-    title: '月付价格',
+    // title: '月付价格',
+
+    title: t('period.month'),
     key: 'month_price',
     render(row: Plan): any {
       return row.hasOwnProperty('month_price') ? row.month_price?.toFixed(2) : 'null'
     }
   },
   {
-    title: '季付价格',
+    // title: '季付价格',
+    title: t('period.quarter'),
     key: 'quarter_price',
     render(row: Plan): any {
       return row.hasOwnProperty('quarter_price') ? row.quarter_price?.toFixed(2) : 'null'
     }
   },
   {
-    title: '半年付价格',
+    // title: '半年付价格',
+    title: t('period.halfYear'),
     key: 'halfYear_price',
     render(row: Plan): any {
       return row.hasOwnProperty('half_year_price') ? row.half_year_price?.toFixed(2) : 'null'
     }
   },
   {
-    title: '年付价格',
+    // title: '年付价格',
+    title: t('period.year'),
     key: 'year_price',
     render(row: Plan): any {
       return row.hasOwnProperty('year_price') ? row.year_price?.toFixed(2) : 'null'
     }
   },
   {
-    title: '操作',
+    // title: '操作',
+    title: t('adminViews.planMgr.table.operate'),
     key: 'actions',
     fixed: 'right',
     render(row: Plan) {
@@ -329,18 +336,18 @@ const columns = [
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => handleUpdate(row)
-        }, {default: () => 'Update'}),
+        }, {default: () => t('adminViews.planMgr.table.operateBtn.update')}),
         h(NButton, {
           size: 'small',
           type: 'error',
           secondary: true,
           style: {marginLeft: '10px'},
           onClick: () => handleDelete(row.id as number)
-        }, {default: () => 'Delete'})
+        }, {default: () => t('adminViews.planMgr.table.operateBtn.delete')})
       ]);
     }
-  }
-];
+  },
+])
 
 let updatePlan = async () => {
   console.log('updatePlan')
@@ -458,9 +465,6 @@ let reloadPlanList = async () => {
 
 
 onMounted(async () => {
-  console.log('SubscribeMgr挂载')
-  // getAllSubscribeItems()
-
   themeStore.menuSelected = 'subscription-manager'
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
   await getAllGroups()
@@ -490,7 +494,7 @@ export default {
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-      <n-card class="card" hoverable :embedded="true" title="订阅管理" :bordered="false">
+      <n-card class="card" hoverable :embedded="true" :title="t('adminViews.planMgr.title')" :bordered="false">
         <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>
       </n-card>
 
@@ -513,77 +517,60 @@ export default {
           :update-data="reloadPlanList"
       />
 
-<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="animated=false; reloadPlanList()"-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 160px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="animated=false; dataSize.page = 1; reloadPlanList()"-->
-<!--        />-->
-<!--      </div>-->
-
       <n-drawer v-model:show="active" width="60%" :placement="placement">
-        <n-drawer-content title="添加订阅">
+        <n-drawer-content :title="t('adminViews.planMgr.addNewPlan')">
           <n-form
               ref="formRef"
               :model="formValue"
               :rules="rules"
               :scroll-x="800"
           >
-            <n-form-item label="订阅名称" path="plan.name">
-              <n-input v-model:value="formValue.plan.name" placeholder="输入文档标题"/>
+            <n-form-item :label="t('adminViews.planMgr.form.items.name.title')" path="plan.name">
+              <n-input v-model:value="formValue.plan.name" :placeholder="t('adminViews.planMgr.form.items.name.placeholder')"/>
             </n-form-item>
-            <n-form-item label="订阅描述" path="plan.describe">
-              <n-input type="textarea" :rows="8" v-model:value="formValue.plan.describe" placeholder="输入订阅描述"/>
+            <n-form-item :label="t('adminViews.planMgr.form.items.describe.title')" path="plan.describe">
+              <n-input type="textarea" :rows="8" v-model:value="formValue.plan.describe" :placeholder="t('adminViews.planMgr.form.items.describe.placeholder')"/>
             </n-form-item>
-            <n-form-item v-if="editType==='add'" label="启用销售" path="plan.is_sale">
+            <n-form-item v-if="editType==='add'" :label="t('adminViews.planMgr.form.items.isSale.title')" path="plan.is_sale">
               <n-switch v-model:value="formValue.plan.is_sale"/>
             </n-form-item>
-            <n-form-item v-if="editType==='add'" label="允许续费" path="plan.is_renew">
+            <n-form-item v-if="editType==='add'" :label="t('adminViews.planMgr.form.items.isRenew.title')" path="plan.is_renew">
               <n-switch v-model:value="formValue.plan.is_renew"/>
             </n-form-item>
-            <n-form-item label="群组ID" path="plan.group_id">
+            <n-form-item :label="t('adminViews.planMgr.form.items.group.title')" path="plan.group_id">
               <n-select :options="groupOptions" v-model:value.number="formValue.plan.group_id"
-                        placeholder="选择所属群组"/>
+                        :placeholder="t('adminViews.planMgr.form.items.group.placeholder')"/>
             </n-form-item>
-            <n-form-item label="最大允许用户数目" path="plan.capacity_limit">
+            <n-form-item :label="t('adminViews.planMgr.form.items.capacityLimit.title')" path="plan.capacity_limit">
               <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.capacity_limit"
-                              placeholder="输入最大承载的用户数"/>
+                              :placeholder="t('adminViews.planMgr.form.items.capacityLimit.placeholder')"/>
             </n-form-item>
-            <n-form-item label="排序" path="plan.sort">
+            <n-form-item :label="t('adminViews.planMgr.form.items.sort.title')" path="plan.sort">
               <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.sort"
-                              placeholder="用于前端排序"/>
+                              :placeholder="t('adminViews.planMgr.form.items.sort.placeholder')"/>
             </n-form-item>
-            <n-form-item label="月付价格" path="plan.month_price">
+            <n-form-item :label="t('period.month')" path="plan.month_price">
               <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.month_price"
-                              placeholder="输入月付价格"/>
+                              :placeholder="t('adminViews.planMgr.form.items.periodPlaceholder.month')"/>
             </n-form-item>
-            <n-form-item label="季付价格" path="plan.quarter_price">
+            <n-form-item :label="t('period.quarter')" path="plan.quarter_price">
               <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.quarter_price"
-                              placeholder="输入季付价格"/>
+                              :placeholder="t('adminViews.planMgr.form.items.periodPlaceholder.quarter')"/>
             </n-form-item>
-            <n-form-item label="半年付价格" path="plan.half_year_price">
+            <n-form-item :label="t('period.halfYear')" path="plan.half_year_price">
               <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.half_year_price"
-                              placeholder="输入半年付价格"/>
+                              :placeholder="t('adminViews.planMgr.form.items.periodPlaceholder.halfYear')"/>
             </n-form-item>
-            <n-form-item label="年付价格" path="plan.year_price">
+            <n-form-item :label="t('period.year')" path="plan.year_price">
               <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.year_price"
-                              placeholder="输入年付价格"/>
+                              :placeholder="t('adminViews.planMgr.form.items.periodPlaceholder.year')"/>
             </n-form-item>
           </n-form>
           <div style="display: flex; flex-direction: row; justify-content: right; margin-top: 20px">
-            <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">取消
+            <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">{{ t('operate.cancel') }}
             </n-button>
             <n-button style="width: 80px" type="primary" @click="submitPlan">{{
-                editType === 'add' ? '添加' : '修改'
+                editType === 'add' ? t('operate.update') : t('operate.add')
               }}
             </n-button>
           </div>

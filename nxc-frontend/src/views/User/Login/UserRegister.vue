@@ -610,19 +610,19 @@ export default {
               </n-form-item>
             </n-form>
 
-            <div class="bottom-hint-root">
-              <div v-if="appInfosStore.registerPageConfig.stop_register" style="height: 50px"></div>
-              <n-divider style="width: 98%; margin: 0 !important;">
-                <p style="opacity: 0.2">·</p>
-              </n-divider>
-              <!--            <div style="margin: 50px 0 5px 0">-->
-              <!--              <img style="width: 45px" :src="appInfosStore.appCommonConfig.logo_url" alt="icon">-->
-              <!--            </div>-->
-              <div style="font-size: 1rem; opacity: 0.8; margin-top: 20px">{{ appInfosStore.appCommonConfig.app_name }}
-                {{ t('userRegister.allRightsReserved') }}
-              </div>
-              <div style="opacity: 0.4; margin-top: 10px"> {{ t('userRegister.securityAndLaws') }}</div>
-            </div>
+<!--            <div class="bottom-hint-root">-->
+<!--              <div v-if="appInfosStore.registerPageConfig.stop_register" style="height: 50px"></div>-->
+<!--              <n-divider style="width: 98%; margin: 0 !important;">-->
+<!--                <p style="opacity: 0.2">·</p>-->
+<!--              </n-divider>-->
+<!--              &lt;!&ndash;            <div style="margin: 50px 0 5px 0">&ndash;&gt;-->
+<!--              &lt;!&ndash;              <img style="width: 45px" :src="appInfosStore.appCommonConfig.logo_url" alt="icon">&ndash;&gt;-->
+<!--              &lt;!&ndash;            </div>&ndash;&gt;-->
+<!--              <div style="font-size: 1rem; opacity: 0.8; margin-top: 20px">{{ appInfosStore.appCommonConfig.app_name }}-->
+<!--                {{ t('userRegister.allRightsReserved') }}-->
+<!--              </div>-->
+<!--              <div style="opacity: 0.4; margin-top: 10px"> {{ t('userRegister.securityAndLaws') }}</div>-->
+<!--            </div>-->
           </n-card>
         </n-scrollbar>
       </transition>

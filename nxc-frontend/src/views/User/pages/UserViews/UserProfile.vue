@@ -9,23 +9,25 @@ import type {FormInst, FormItemRule, FormRules, NotificationType} from 'naive-ui
 import {NIcon, type UploadCustomRequestOptions, useMessage, useNotification} from 'naive-ui'
 import {
   ChevronForwardOutline as toRightIcon,
+  Add as createIcon,
   InformationCircle as infoIcon,
   Wallet as walletIcon,
-  AddOutline as addIcon,
 } from "@vicons/ionicons5"
 // import {encodeToBase64, hashPassword} from "@/utils/encryptor";
 import {
+  handleAlterMyName,
   handleCancelSetup2FA,
   handleDeleteMyAccount,
   handleDisable2FA,
   handleGet2FAStatus,
+  handleGetUserAvatar,
   handleSetup2FA,
   handleTest2FA,
+  handleUploadAvatar,
   saveNewPassword,
   verifyOldPassword
 } from "@/api/user/profile";
 import {compressAvatar} from "@/utils/compress"
-import instance from "@/axios";
 // import instance from "@/axios";
 
 const notification = useNotification()
@@ -48,7 +50,7 @@ let animated = ref<boolean>(false)
 let showAlterAvatarModal = ref<boolean>(false)
 let showDeleteMyModal = ref<boolean>(false)
 let showAlterNameModal = ref<boolean>(false)
-let uploadSuccess = ref<boolean>(false)
+// let uploadSuccess = ref<boolean>(false)
 const {t} = useI18n()
 const router = useRouter()
 const updatePwdForm = ref<FormInst | null>(null)
@@ -62,6 +64,7 @@ const modelRef = ref<ModelType>({
 
 let failReasons = ref<string[]>([]);
 
+let newNameIsValid = ref<boolean>(false);
 const newNameRule: FormItemRule = {
   required: true,
   trigger: ['blur', 'input'],
@@ -72,13 +75,21 @@ const newNameRule: FormItemRule = {
     // 1. 不能包含空格
     // 2. 不能是纯数字
     // 3. 不能以数字开头
-    // 4. 只允许字母和数字
-    if (val && val.length >= 4
-        && /^[a-zA-Z][a-zA-Z0-9]*$/.test(val)  // 只允许字母和数字且不能以数字开头
-        && !/\s/.test(val)                    // 不允许空格
-    ) {
+    // 4. 其他字符（包括字母、中文、日文等）都允许
+
+    // 正则表达式：
+    // 1. ^[^\d\s] 表示开头不能是数字和空格
+    // 2. [^\s]+$ 表示整个字符串中不能有空格
+    // 3. isNaN(Number(val)) 确保不是纯数字
+    const isValid = /^[^\d\s][^\s]*$/.test(val) // 不允许空格和数字开头
+        && !/^\d+$/.test(val)  // 确保不是纯数字
+        && !/\s/.test(val);  // 不允许包含空格
+
+    if (val && val.length >= 3 && isValid) {
+      newNameIsValid.value = true;
       return true;  // 返回true表示验证通过
     } else {
+      newNameIsValid.value = false;
       return new Error(t('userProfile.secondary.modify.input.spaceIsNotAllowed'));  // 返回错误
     }
   },
@@ -345,25 +356,17 @@ let callCustomUploadAvatar = async ({
     onProgress({percent: 0})
     const compressedFile = await compressAvatar(file.file as File, 160);
     onProgress({percent: 30})
-    const {data} = await instance.post('http://localhost:8081/api/user/v1/upload/avatar', {
-      user_id: userInfoStore.thisUser.id,
-      file: compressedFile
-    }, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
 
+    let data = await handleUploadAvatar(userInfoStore.thisUser.id, file.name, compressedFile)
     if (data.code === 200) {
       message.success(t('userProfile.secondary.mention.alterAvatarSuccess'))
-      onProgress({percent: 99})
+      onProgress({percent: 95})
       setTimeout(() => {
         onFinish()
         callGetUserAvatarByUserId()
       }, 1000)
     } else {
       onError()
-
       message.error(t('userProfile.secondary.mention.alterAvatarSuccess') + data.msg || '')
     }
   } catch (error: any) {
@@ -373,28 +376,39 @@ let callCustomUploadAvatar = async ({
 
 let avatarData = ref<any>()
 let callGetUserAvatarByUserId = async () => {
-  try {
-    let {data} = await instance.get('/api/user/v1/avatar', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-      }
-    })
-    console.log(data)
-    if (data.code === 404) return message.warning('no avatar')
-    else if (data.code === 200) {
-      avatarData.value = `data:image/jpeg;base64,${data.file_data}`
-    } else {
-      message.error(t('userProfile.secondary.mention.fetchAvatarErr'))
-    }
-    showAlterAvatarModal.value = false
-  } catch (err: any) {
-    console.log(err)
+  let data = await handleGetUserAvatar(userInfoStore.thisUser.id)
+  if (data.code === 404) return message.warning('no avatar')
+  else if (data.code === 200) {
+    avatarData.value = `data:image/jpeg;base64,${data.file_data}`
+  } else {
+    message.error(t('userProfile.secondary.mention.fetchAvatarErr'))
   }
+  showAlterAvatarModal.value = false
+
 }
 
-let getAvatarFilter = computed(() =>
-    // style="filter: brightness(60%)"
-  themeStore.enableDarkMode?({filter: 'brightness(60%)'}):null)
+let getAvatarFilter = computed(() => themeStore.enableDarkMode ? ({filter: 'brightness(60%)'}) : null)
+
+const nameClick = () => {
+  if (userInfoStore.thisUser.name) {
+    newName.value = userInfoStore.thisUser.name
+  }
+  showAlterNameModal.value = true
+}
+
+const callAlterUsername = async () => {
+  if (newNameIsValid.value) {
+  } else return message.warning(t('userProfile.secondary.mention.newNameIsNotValid'))
+  let data = await handleAlterMyName(userInfoStore.thisUser.id, newName.value)
+  if (data.code === 200) {
+    message.success(t('userProfile.secondary.mention.alterNameSuccess'))
+    let isUpdated = await userInfoStore.updateUserInfo()
+    console.log(isUpdated)
+    !isUpdated ? notify('error', t('userProfile.failure'), t('userProfile.notLatestHint')) : null
+  } else {
+    message.error(t('userProfile.secondary.mention.alterNameErr'))
+  }
+}
 
 onMounted(async () => {
   themeStore.menuSelected = 'user-profile'
@@ -443,11 +457,16 @@ export default {
                   @click="showAlterAvatarModal=true"
                   :style="getAvatarFilter"
               />
-             <div
-                 v-else
-              style="width: 60px; height: 60px; background-color: #9a6969"
-              @click="showAlterAvatarModal=true"
-             ></div>
+              <div
+                  v-else
+                  class="no-avatar-div"
+                  @click="showAlterAvatarModal=true"
+              >
+                <n-icon size="30" style="opacity: 0.5">
+                  <createIcon/>
+                </n-icon>
+                <p class="drag-icon-hint">{{ t('userProfile.secondary.modify.uploadIconHint') }}</p>
+              </div>
             </div>
             <div class="secondary-r">
               <div class="secondary-r-up">
@@ -455,9 +474,9 @@ export default {
                     text
                     type="primary"
                     class="secondary-name"
-                    @click="showAlterNameModal = true"
+                    @click="nameClick"
                 >
-                  {{ userInfoStore.thisUser.name || '点击以设置或修改' }}
+                  {{ userInfoStore.thisUser.name || t('userProfile.secondary.mention.click2SetName') }}
                 </n-button>
               </div>
               <div class="secondary-r-below">
@@ -467,7 +486,7 @@ export default {
           </div>
 
           <p
-            style="font-size: 0.8rem; opacity: 0.5"
+              style="font-size: 0.7rem; opacity: 0.3"
           >{{ t('userProfile.secondary.modify.alterShallow') }}</p>
 
         </div>
@@ -796,10 +815,10 @@ export default {
             class="upload-board"
         >
           <n-upload-dragger>
-            <n-text style="font-size: 16px">
+            <n-text style="font-size: 0.9rem">
               {{ t('userProfile.secondary.mention.click2Upload') }}
             </n-text>
-            <n-p depth="3" style="margin: 8px 0 0 0">
+            <n-p depth="3" style="margin: 8px 0 0 0; font-size: 0.7rem">
               {{ t('userProfile.secondary.mention.uploadWarn') }}
             </n-p>
           </n-upload-dragger>
@@ -825,7 +844,7 @@ export default {
       :positive-text="t('modal.confirm')"
       :negative-text="t('modal.cancel')"
       style="width: 400px;"
-      @positive-click="message.info('positive')"
+      @positive-click="callAlterUsername"
       @negative-click="message.warning('negative')"
       :show-icon="false"
   >
@@ -839,14 +858,17 @@ export default {
         <n-input
             v-model:value="newName"
             :placeholder="t('userProfile.secondary.modify.input.placeholder')"
+            show-count
+            clearable
         />
       </n-form-item>
 
       <n-li
           style="opacity: 0.7; margin-top: 4px"
-          v-for="i in 4"
+          v-for="i in 3"
           :key="i"
-      >{{ t(`userProfile.secondary.modify.input.require.p${i}`) }}</n-li>
+      >{{ t(`userProfile.secondary.modify.input.require.p${i}`) }}
+      </n-li>
     </div>
 
   </n-modal>
@@ -878,19 +900,41 @@ export default {
         flex-direction: row;
         background-color: rgba(216, 216, 216, 0.0);
         margin: 10px 0;
+        justify-content: flex-start;
+        align-items: center;
 
         .secondary-l {
+          .no-avatar-div {
+            width: 60px;
+            height: 60px;
+            border-radius: 3px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* border: rgba(51,51,51,0.3) 1px solid; */
 
+            .drag-icon-hint {
+              font-size: 0.6rem;
+              margin-top: 2px;
+              opacity: 0.5;
+            }
+          }
         }
 
         .secondary-r {
+          height: 100%;
           display: flex;
           flex-direction: column;
+          justify-content: flex-start;
           margin-left: 20px;
 
           .secondary-r-up {
+            align-items: center;
+
             .secondary-name {
               font-size: 1.1rem;
+              font-weight: bold;
               opacity: 0.8;
             }
           }

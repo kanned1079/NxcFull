@@ -464,7 +464,7 @@ func HandleUpdateUserInfo(context *gin.Context) {
 	if paramsUserId == "" {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusBadRequest,
-			"msg":  "请提供用户Id",
+			"msg":  "no user_id provided",
 		})
 		return
 	}
@@ -772,6 +772,8 @@ func HandleUserUploadAvatar(context *gin.Context) {
 		return
 	}
 
+	fileName := context.PostForm("file_name")
+
 	// 获取上传的文件
 	file, err := context.FormFile("file")
 	if err != nil {
@@ -806,7 +808,7 @@ func HandleUserUploadAvatar(context *gin.Context) {
 	// 调用 gRPC 服务上传头像
 	resp, err := grpcClient.UserServiceClient.UploadUserAvatar(context.Request.Context(), &pb.UploadUserAvatarRequest{
 		UserId:   userID,
-		FileName: file.Filename,
+		FileName: fileName,
 		FileData: fileBytes,
 	})
 	if err = failOnRpcError(err, resp); err != nil {
@@ -848,4 +850,34 @@ func HandleGetUserAvatar(context *gin.Context) {
 		"file_name": resp.FileName,
 		"file_data": resp.FileData,
 	})
+}
+
+func HandleAlterUsername(context *gin.Context) {
+	postData := &struct {
+		UserId int64  `json:"user_id"`
+		Name   string `json:"name"`
+	}{}
+	if err := context.ShouldBind(&postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.UserServiceClient.AlterUserSecondaryName(sysContext.Background(), &pb.AlterUserSecondaryNameRequest{
+		UserId:  postData.UserId,
+		NewName: postData.Name,
+	})
+	if err = failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+
 }

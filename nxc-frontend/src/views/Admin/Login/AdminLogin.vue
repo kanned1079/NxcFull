@@ -319,7 +319,7 @@ export default {
                     ref="userFormInstance"
                     :model="userFormData"
                     :rules="rules"
-                    size="large"
+                    size="medium"
                     style="width: 100%"
                     :show-label="true"
                     :show-feedback="false"

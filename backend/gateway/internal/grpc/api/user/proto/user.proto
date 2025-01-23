@@ -61,6 +61,8 @@ service UserService {
   rpc UploadUserAvatar(UploadUserAvatarRequest) returns (UploadUserAvatarResponse);
 
   rpc GetUserAvatar(GetUserAvatarRequest) returns (GetUserAvatarResponse);
+
+  rpc AlterUserSecondaryName(AlterUserSecondaryNameRequest) returns (AlterUserSecondaryNameResponse);
 }
 
 
@@ -382,4 +384,14 @@ message GetUserAvatarResponse {
   string msg = 2;
   string file_name = 3;
   bytes file_data = 4;
+}
+
+message AlterUserSecondaryNameRequest {
+  int64 user_id = 1;
+  string new_name = 2;
+}
+
+message AlterUserSecondaryNameResponse {
+  int32 code = 1;
+  string msg = 2;
 }

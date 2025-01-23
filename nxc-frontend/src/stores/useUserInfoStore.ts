@@ -86,6 +86,7 @@ const useUserInfoStore = defineStore('userInfoS',() => {
             })
             if ((data.code as number) === 200) {
                 thisUser.value.balance = data.user_info.balance
+                thisUser.value.name = data.user_info.name
                 console.log('ok')
                 return true
             } else {

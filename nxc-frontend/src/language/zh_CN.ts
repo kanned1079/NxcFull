@@ -494,6 +494,11 @@ export default {
             disableBtnHint: '禁用',
             setupPaymentMethod: '配置',
         },
+        themeConfig: {
+            title: '主題配置',
+            using: '使用，',
+            setAsCurrent: ''
+        },
         groupMgr: {
             title: '權限組管理',
             common: {
@@ -530,7 +535,72 @@ export default {
             operate: '操作',
             edit: '編輯',
             delete: '刪除',
-
+        },
+        planMgr: {
+            title: '訂閱管理',
+            addNewPlan: '添加新訂閱',
+            table: {
+                id: '#',
+                isSale: '啟用銷售',
+                isRenew: '允許續費',
+                sort: '排序等級',
+                group: '所屬權限組',
+                name: '名稱',
+                nums: '數量',
+                residue: '餘量',
+                operate: '操作',
+                operateBtn: {
+                    update: '修改',
+                    delete: '刪除',
+                }
+            },
+            mention: {
+                common: {
+                    success: '成功',
+                    failure: '失敗',
+                },
+                addSuccess: '添加新訂閱成功',
+                addFailure: '添加新訂閱失敗',
+                updateSuccess: '更新訂閱成功',
+                updateFailure: '更新訂閱失敗',
+            },
+            form: {
+                title: '添加訂閱',
+                items: {
+                    name: {
+                        title: '訂閱名稱',
+                        placeholder: '輸入訂閱計畫的名稱',
+                    },
+                    describe: {
+                        title: '訂閱描述',
+                        placeholder :'輸入訂閱的描述（支持Markdown）'
+                    },
+                    isSale: {
+                        title: '啟用銷售',
+                    },
+                    isRenew: {
+                        title: '啟用續費',
+                    },
+                    group: {
+                        title: '所屬權限組',
+                        placeholder: '選擇所屬權限組',
+                    },
+                    capacityLimit: {
+                        title: '最大允许用户数目',
+                        placeholder: '最大允许用户数目',
+                    },
+                    sort: {
+                        title: '排序',
+                        placeholder: '用于前端排序',
+                    },
+                    periodPlaceholder : {
+                        month: '输入月付价格',
+                        quarter: '输入季付价格',
+                        halfYear: '输入半年付价格',
+                        year: '输入年付价格',
+                    },
+                }
+            }
         },
         userMgr: {
             userManager: "用戶管理",
@@ -828,22 +898,27 @@ export default {
                 accountStatus: '帳戶狀態',
             },
             modify: {
+                uploadIconHint: '上傳',
                 alterAvatar: '新增/修改頭像',
-                alterShallow: '* 點擊頭像或用戶名以添加或修改',
+                alterShallow: '* 點擊頭像或用戶名以添加或修改（設置後均不允許清除）',
                 alterName: '修改用戶名',
                 input: {
                     label: '用户名',
-                    placeholder: 'kanade4272',
+                    placeholder: '輸入用戶名',
                     spaceIsNotAllowed: '用戶名驗證不通過',
                     require: {
-                        p1: '只允許使用英文和數字',
-                        p2: '不允許純數字且數字開頭',
-                        p3: '不允許有空格',
-                        p4: '長度大於四位',
+                        // p1: '只允許使用英文和數字',
+                        p1: '不允許純數字且數字開頭',
+                        p2: '不允許有空格',
+                        p3: '長度大於三位',
                     }
                 }
             },
             mention: {
+                alterNameSuccess: '修改用戶名成功',
+                alterNameErr: '修改用戶名失敗請稍後再試',
+                newNameIsNotValid: '用戶名不合法',
+                click2SetName: '點擊以設置用戶名',
                 fetchAvatarErr: '獲取頭像數據失敗請稍後再試',
                 alterAvatarErr: '修改頭像失敗請稍後再試',
                 success: '成功',
@@ -1175,7 +1250,6 @@ export default {
     },
     adminTicket: {
         ticketMgr: '工單管理',
-
     },
     pagination: {
         perPage10: '10 條數據/頁',
@@ -1185,7 +1259,7 @@ export default {
     },
     modal: {
         cancel: '取消',
-        confirm: '确认'
+        confirm: '确认',
     },
     week: {
         monday: '週一',
@@ -1195,5 +1269,17 @@ export default {
         friday: '週五',
         saturday: '週六',
         sunday: '週日'
+    },
+    period: {
+        month: '月付',
+        quarter: '季付',
+        halfYear: '半年付',
+        year: '年付'
+    },
+    operate: {
+        cancel: '取消',
+        confirm: '确认',
+        update: '更新',
+        add: '添加'
     }
 }

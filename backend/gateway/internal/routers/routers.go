@@ -123,6 +123,9 @@ func StartApiGateways() {
 		userAuthorized.GET("/profile")
 		userAuthorized.GET("/user", handler.HandleUpdateUserInfo)
 		userAuthorized.DELETE("/user/delete", handler.HandleDeleteUserAccount)
+		userAuthorized.PATCH("/user/name", handler.HandleAlterUsername)
+		userAuthorized.GET("/user/avatar", handler.HandleGetUserAvatar)
+		userAuthorized.POST("/user/upload/avatar", handler.HandleUserUploadAvatar)
 
 		userAuthorized.GET("/notice", handler.HandleGetAllNotices)        // 获取所有的通知列表
 		userAuthorized.GET("/document", handler.HandleGetAllDocuments)    // 按照分类获取所有的文档列表	// rpc实现
@@ -173,9 +176,6 @@ func StartApiGateways() {
 		userAuthorized.PATCH("/activation/remark", handler.HandleAlterRemarkByUser)
 
 		userAuthorized.GET("/app", handler.HandleGetAllAppDownloadLink)
-
-		userAuthorized.GET("/avatar", handler.HandleGetUserAvatar)
-		userAuthorized.POST("/upload/avatar", handler.HandleUserUploadAvatar)
 
 	}
 

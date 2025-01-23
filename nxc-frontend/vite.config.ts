@@ -12,12 +12,15 @@ import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 
 import svgLoader from 'vite-svg-loader';
 
+import vueDevTools from 'vite-plugin-vue-devtools'
+
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
         vue(),
         svgLoader(),
         VueSetupExtend(), // 第二步使用插件
+        vueDevTools(),  // 开发工具
         AutoImport({
             imports: [
                 'vue',
@@ -35,9 +38,12 @@ export default defineConfig({
             resolvers: [NaiveUiResolver()]
         })
     ],
+    // define: {
+    //     __APP_VERSION__: 'v1.0.0_patch4',
+    // },
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
-    }
+    },
 })
