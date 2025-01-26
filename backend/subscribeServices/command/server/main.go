@@ -7,7 +7,6 @@ import (
 	"subscribeServices/internal/dao"
 	"subscribeServices/internal/etcd"
 	"subscribeServices/internal/handler"
-	"subscribeServices/internal/model"
 )
 
 var err error
@@ -37,27 +36,27 @@ func init() {
 
 	dao.InitMysqlServer() // 初始化主数据库
 
-	if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.Coupon{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.CouponUsage{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.Plan{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.ActiveOrders{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.Orders{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.ActivateRecord{}).AutoMigrate(model.ActivateRecord{}); err != nil {
-		panic(err)
-	}
+	//if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.Coupon{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.CouponUsage{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.Plan{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.ActiveOrders{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.Orders{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.ActivateRecord{}).AutoMigrate(model.ActivateRecord{}); err != nil {
+	//	panic(err)
+	//}
 	//log.Println("自動遷移完成")
 }
 

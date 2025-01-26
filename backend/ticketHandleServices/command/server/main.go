@@ -9,7 +9,6 @@ import (
 	"ticketHandleServices/internal/dao"
 	"ticketHandleServices/internal/etcd"
 	"ticketHandleServices/internal/handler"
-	"ticketHandleServices/internal/model"
 )
 
 var err error
@@ -42,33 +41,33 @@ func init() {
 	//dao.InitMq()          // 初始化RabbitMQ消息队列
 	dao.InitMq()
 
-	if err = dao.Db.Model(&model.User{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Coupon{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.CouponUsage{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Orders{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.ActiveOrders{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Plan{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Keys{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Ticket{}).AutoMigrate(&model.Ticket{}); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Chat{}).AutoMigrate(&model.Chat{}); err != nil {
-		panic(err)
-	}
+	//if err = dao.Db.Model(&model.User{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Coupon{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.CouponUsage{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Orders{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.ActiveOrders{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Plan{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Keys{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Ticket{}).AutoMigrate(&model.Ticket{}); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Chat{}).AutoMigrate(&model.Chat{}); err != nil {
+	//	panic(err)
+	//}
 }
 
 func main() {

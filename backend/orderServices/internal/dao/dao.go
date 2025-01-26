@@ -6,7 +6,6 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"orderServices/internal/config/remote"
-	"orderServices/internal/model"
 )
 
 //const (
@@ -46,21 +45,21 @@ func InitMysqlServer() {
 	} else {
 		log.Println("初始化数据库成功")
 	}
-	if err := Db.AutoMigrate(&model.Orders{}); err != nil {
-		panic(err)
-	}
-	if err := Db.AutoMigrate(&model.ActiveOrders{}); err != nil {
-		panic(err)
-	}
-	if err := Db.AutoMigrate(&model.User{}); err != nil {
-		panic(err)
-	}
-	if err := Db.AutoMigrate(&model.Coupon{}); err != nil {
-		panic(err)
-	}
-	if err := Db.AutoMigrate(&model.CouponUsage{}); err != nil {
-		panic(err)
-	}
+	//if err := Db.AutoMigrate(&model.Orders{}); err != nil {
+	//	panic(err)
+	//}
+	//if err := Db.AutoMigrate(&model.ActiveOrders{}); err != nil {
+	//	panic(err)
+	//}
+	//if err := Db.AutoMigrate(&model.User{}); err != nil {
+	//	panic(err)
+	//}
+	//if err := Db.AutoMigrate(&model.Coupon{}); err != nil {
+	//	panic(err)
+	//}
+	//if err := Db.AutoMigrate(&model.CouponUsage{}); err != nil {
+	//	panic(err)
+	//}
 	//if err := Db.AutoMigrate(&model.Keys{}); err != nil {
 	//	panic(err)
 	//}

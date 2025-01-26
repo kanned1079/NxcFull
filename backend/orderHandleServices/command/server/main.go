@@ -8,7 +8,6 @@ import (
 	"orderHandleServices/internal/dao"
 	"orderHandleServices/internal/etcd"
 	"orderHandleServices/internal/handler"
-	"orderHandleServices/internal/model"
 	"sync"
 )
 
@@ -45,27 +44,27 @@ func init() {
 	dao.InitTopUpOrderMq()
 	dao.InitOrderMq()
 
-	if err = dao.Db.Model(&model.User{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Coupon{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.CouponUsage{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Orders{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.ActiveOrders{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Plan{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(&model.Keys{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
+	//if err = dao.Db.Model(&model.User{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Coupon{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.CouponUsage{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Orders{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.ActiveOrders{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Plan{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(&model.Keys{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
 }
 
 func main() {

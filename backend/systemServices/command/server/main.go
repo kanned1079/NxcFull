@@ -7,7 +7,6 @@ import (
 	"systemServices/internal/dao"
 	"systemServices/internal/etcd"
 	"systemServices/internal/handler"
-	"systemServices/internal/model"
 	"systemServices/internal/services"
 )
 
@@ -38,13 +37,13 @@ func init() {
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer()
 
-	if err = dao.Db.AutoMigrate(&model.SiteSetting{}); err != nil {
-		panic(err)
-	}
-
-	if err = dao.Db.AutoMigrate(&model.PaymentSettings{}); err != nil {
-		panic(err)
-	}
+	//if err = dao.Db.AutoMigrate(&model.SiteSetting{}); err != nil {
+	//	panic(err)
+	//}
+	//
+	//if err = dao.Db.AutoMigrate(&model.PaymentSettings{}); err != nil {
+	//	panic(err)
+	//}
 
 	// 刷新缓存
 	if err = services.MakeSettingsCache(); err != nil {

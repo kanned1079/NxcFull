@@ -6,7 +6,6 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"userServices/internal/config/remote"
-	"userServices/internal/model"
 )
 
 const (
@@ -44,18 +43,18 @@ func InitMysqlServer() {
 		log.Println("初始化数据库失败 err: ", err)
 		panic(err)
 	} else {
-		if err := Db.AutoMigrate(model.User{}); err != nil {
-			//log.Println("AutoMigrate Failure", err)
-			panic("AutoMigrate Failure" + err.Error())
-		}
-		if err := Db.AutoMigrate(model.Auth{}); err != nil {
-			//log.Println("AutoMigrate Failure", err)
-			panic("AutoMigrate Failure" + err.Error())
-		}
-		if err := Db.AutoMigrate(model.TwoFA{}); err != nil {
-			//log.Println("AutoMigrate Failure", err)
-			panic("AutoMigrate Failure" + err.Error())
-		}
+		//if err := Db.AutoMigrate(model.User{}); err != nil {
+		//	//log.Println("AutoMigrate Failure", err)
+		//	panic("AutoMigrate Failure" + err.Error())
+		//}
+		//if err := Db.AutoMigrate(model.Auth{}); err != nil {
+		//	//log.Println("AutoMigrate Failure", err)
+		//	panic("AutoMigrate Failure" + err.Error())
+		//}
+		//if err := Db.AutoMigrate(model.TwoFA{}); err != nil {
+		//	//log.Println("AutoMigrate Failure", err)
+		//	panic("AutoMigrate Failure" + err.Error())
+		//}
 		log.Println("初始化数据库成功")
 	}
 }

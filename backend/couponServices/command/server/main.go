@@ -6,7 +6,6 @@ import (
 	"couponServices/internal/dao"
 	"couponServices/internal/etcd"
 	"couponServices/internal/handler"
-	"couponServices/internal/model"
 	"log"
 )
 
@@ -35,12 +34,12 @@ func init() {
 
 	dao.InitMysqlServer() // 初始化主数据库
 
-	if err = dao.Db.Model(model.Coupon{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.CouponUsage{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
+	//if err = dao.Db.Model(model.Coupon{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.CouponUsage{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
 
 }
 

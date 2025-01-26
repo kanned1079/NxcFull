@@ -6,7 +6,6 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"logsServices/internal/config/remote"
-	"logsServices/internal/model"
 )
 
 var (
@@ -43,10 +42,10 @@ func InitMysqlServer() {
 		//	//log.Println("AutoMigrate Failure", err)
 		//	panic("AutoMigrate Failure" + err.Error())
 		//}
-		if err := Db.AutoMigrate(model.ApiLog{}); err != nil {
-			panic("AutoMigrate Failure" + err.Error())
-		}
-		log.Println("初始化数据库成功")
+		//if err := Db.AutoMigrate(model.ApiLog{}); err != nil {
+		//	panic("AutoMigrate Failure" + err.Error())
+		//}
+		//log.Println("初始化数据库成功")
 	}
 }
 

@@ -7,7 +7,6 @@ import (
 	"orderServices/internal/dao"
 	"orderServices/internal/etcd"
 	"orderServices/internal/handler"
-	"orderServices/internal/model"
 	"orderServices/internal/payment"
 )
 
@@ -46,24 +45,24 @@ func init() {
 
 	payment.PaymentInstanceRoot.Initial() // 初始化所有被启用的支付方式
 
-	if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.Coupon{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.CouponUsage{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.Plan{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.ActiveOrders{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
-	if err = dao.Db.Model(model.Orders{}).AutoMigrate(); err != nil {
-		panic(err)
-	}
+	//if err = dao.Db.Model(model.User{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.Coupon{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.CouponUsage{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.Plan{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.ActiveOrders{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
+	//if err = dao.Db.Model(model.Orders{}).AutoMigrate(); err != nil {
+	//	panic(err)
+	//}
 
 }
 
