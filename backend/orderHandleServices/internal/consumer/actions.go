@@ -115,14 +115,6 @@ func ProcessOrder(jsonData []byte) error {
 	order.DiscountAmount = math.Round((disCountAmount)*100) / 100
 	order.Amount = math.Round((originalPrice-disCountAmount)*100) / 100
 
-	// 插入订单记录
-	// 先存入redis 超时后再存入数据库
-	//if err := tx.Create(&order).Error; err != nil {
-	//	log.Println("订单插入失败:", err)
-	//	tx.Rollback()
-	//	return err
-	//}
-
 	// 添加优惠券使用记录
 	if postOrderData.CouponId != 0 {
 		couponUsed := model.CouponUsage{
