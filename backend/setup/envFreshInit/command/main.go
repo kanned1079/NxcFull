@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"envFreshInit/internal/config"
 	"envFreshInit/internal/dao"
+	"envFreshInit/internal/model"
 	"envFreshInit/internal/setup"
+	"envFreshInit/internal/utils"
 	"fmt"
 	"log"
 	"os"
@@ -65,7 +67,7 @@ func main() {
 	fmt.Println("1. Create all database tables.")
 	fmt.Println("2. Create a default admin user.")
 
-	fmt.Println("STEP1---------->")
+	fmt.Println("ENTER STEP1---------->")
 	fmt.Print("Please enter the database name: ")
 
 	// 获取用户输入的数据库名
@@ -79,14 +81,45 @@ func main() {
 	} else {
 		log.Println("Successfully connected to server, preparing to create tables.")
 	}
-	fmt.Println("STEP1----------OK")
 
 	if err := setup.StartAutoMigrate(); err != nil {
 		log.Println("Failed to start auto migration, please check the database configuration.")
+		return
 	}
 	fmt.Println("Successfully migrated all tables.")
 
-	fmt.Println("STEP2---------->")
+	// 清除数据
+	fmt.Print("Settings table will be truncated (type yes to continue):")
+	// 获取确认输入
+	confirmationClear, _ := reader.ReadString('\n')
+	confirmationClear = strings.TrimSpace(confirmationClear)
+
+	if confirmationClear != "yes" {
+		fmt.Println("User cancelled process.")
+		return
+	}
+	if err := utils.ClearTable(model.SiteSetting{}.TableName()); err != nil {
+		fmt.Println("Failed to clear table, please check the database configuration.")
+		return
+	}
+	// 读取csv数据
+	fmt.Println("Start reading default configuration file.")
+	settings, err := utils.ReadCSVData("./config/x_site_settings_202501270004.csv")
+	if err != nil {
+		log.Println("Failed to read settings, please check the database configuration.")
+		return
+	}
+	fmt.Println("Successfully read settings file, ready to insert into db.")
+
+	if err := utils.InsertDataToDB(settings); err != nil {
+		log.Println("Failed to insert settings, please check the database configuration.")
+		return
+	} else {
+		log.Println("Successfully inserted settings to database.")
+	}
+
+	fmt.Println("Congratulations on completing the first step of creating a database. Next, you need to create a default administrator.")
+	fmt.Println("ENTER STEP2---------->")
 
 	// 2.让用户创建一个管理员用户
 	//putPrompt(lang, "请输入管理员邮箱: ", "")
@@ -107,31 +140,22 @@ func main() {
 	confirmation = strings.TrimSpace(confirmation)
 
 	if confirmation != "yes" {
-		fmt.Println("ok2")
+		fmt.Println("User cancelled process.")
 		return
 	}
-
-	//// 创建管理员用户
-	//if err := CreateNewAdminUser(adminEmail, adminPassword); err != nil {
-	//	if lang == "1" {
-	//		fmt.Println("管理员创建失败:", err)
-	//	} else {
-	//		fmt.Println("Admin creation failed:", err)
-	//	}
+	//if err := utils.ClearTable(model.Auth{}.TableName()); err != nil {
+	//	fmt.Println("Failed to clear table, please check the database configuration.")
 	//	return
 	//}
-	//
-	//// 成功提示
-	//if lang == "1" {
-	//	fmt.Println("管理员创建成功！")
-	//} else {
-	//	fmt.Println("Admin user created successfully!")
+	//if err := utils.ClearTable(model.User{}.TableName()); err != nil {
+	//	fmt.Println("Failed to clear table, please check the database configuration.")
+	//	return
 	//}
-	//
-	//// 最后退出提示用户成功
-	//if lang == "1" {
-	//	fmt.Println("初始化成功！程序结束。")
-	//} else {
-	//	fmt.Println("Initialization successful! Program exiting.")
-	//}
+	if err := setup.SetupNewAdminAccount(adminEmail, adminPassword); err != nil {
+		log.Println("Failed to setup new admin account, please check the database configuration.")
+		return
+	}
+	fmt.Println("Successfully setup new admin account.")
+	fmt.Println("Your database initialization has been completed. Please follow the documentation to continue.")
+
 }

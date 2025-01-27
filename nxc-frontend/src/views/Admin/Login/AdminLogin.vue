@@ -96,7 +96,7 @@ interface UserData {
   is_admin: boolean;
   is_staff: boolean;
   balance: number;
-  last_login: Date;
+  last_login: string;
   last_login_ip: string
 }
 
@@ -111,7 +111,7 @@ let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.thisUser.isAdmin = user_data.is_admin
   userInfoStore.thisUser.isStaff = user_data.is_staff
   userInfoStore.thisUser.balance = user_data.balance
-  userInfoStore.thisUser.lastLogin = user_data.last_login.toString()
+  userInfoStore.thisUser.lastLogin = user_data.last_login
   userInfoStore.thisUser.lastLoginIp = user_data.last_login_ip
   userInfoStore.thisUser.token = data.token
   console.log('isAdmin', user_data.is_admin)
