@@ -20,7 +20,7 @@ export default defineConfig({
         vue(),
         svgLoader(),
         VueSetupExtend(), // 第二步使用插件
-        vueDevTools(),  // 开发工具
+        // vueDevTools(),  // 开发工具
         AutoImport({
             imports: [
                 'vue',
@@ -46,4 +46,7 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
+    server: {
+        host: '0.0.0.0'
+    }
 })

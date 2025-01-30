@@ -729,7 +729,7 @@ export default {
         verifyCodeExpireErr: '验证码错误或已過期，請重試或獲取新驗證碼。',
         thisMailAlreadyExist: '該郵箱已經被註冊',
         pageConfigFetchFailure: '配置獲取失敗請刷新重試',
-        stopRegisterHint: '很抱歉，目前註冊功能已暫停。如閣下有需要，請稍後再試或臉喔我們的支持團隊獲取更多信息。感謝您的理解與支持。',
+        stopRegisterHint: '很抱歉，目前註冊功能已暫停。如閣下有需要，請稍後再試或联系我們的支持團隊獲取更多信息。感謝您的理解與支持。',
         passwordComplexRequirePart1: '* 密碼需要符合',
         passwordComplexRequirePart2: '複雜度要求',
         passwordComplexHint1: '1. 需要使用大寫字母、小寫字母、數字、特殊符號中的三種及以上',

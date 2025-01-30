@@ -136,12 +136,12 @@ export default {
           <img :src="appInfoStore.appCommonConfig.logo_url" alt="icon">
       </span>
       <p class="name">{{ appInfoStore.appCommonConfig.app_name }}</p>
-      <n-button v-if="!collapse" size="large" style="margin-right: 40px" color="#277aa8" text >
-        {{ t('welcome.A.aboutUs') }}
-      </n-button>
-      <n-button v-if="!collapse" size="large" color="#277aa8" text>
-        {{ t('welcome.A.pricing') }}
-      </n-button>
+<!--      <n-button v-if="!collapse" size="large" style="margin-right: 40px" color="#277aa8" text >-->
+<!--        {{ t('welcome.A.aboutUs') }}-->
+<!--      </n-button>-->
+<!--      <n-button v-if="!collapse" size="large" color="#277aa8" text>-->
+<!--        {{ t('welcome.A.pricing') }}-->
+<!--      </n-button>-->
     </div>
     <div class="right-content">
       <n-dropdown

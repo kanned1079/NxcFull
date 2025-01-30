@@ -41,7 +41,7 @@ func NewSettingServices() *SettingServices {
 		basicRuntimeEnvCache:       nil,             // 初始化时没有缓存
 		basicRuntimeEnvCacheTTL:    1 * time.Minute, // 设置基本运行环境配置的缓存有效期为10分钟
 		welcomePageConfigCache:     nil,
-		welcomePageConfigCacheTTL:  10 * time.Minute,
+		welcomePageConfigCacheTTL:  1 * time.Minute,
 		registerRuntimeEnvCache:    nil,
 		registerRuntimeEnvCacheTTL: 1 * time.Minute,
 	}
