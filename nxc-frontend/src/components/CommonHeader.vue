@@ -16,7 +16,7 @@ import useThemeStore from "@/stores/useThemeStore";
 // import type {GlobalTheme} from 'naive-ui'
 import {useRouter} from 'vue-router';
 import type {DrawerPlacement} from 'naive-ui'
-import useUserDropDown from "@/stores/userDropdownItems";
+// import useUserDropDown from "@/stores/userDropdownItems";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import CommonAside from "@/components/CommonAside.vue";
 import renderIcon from "@/utils/iconFormator";
@@ -26,7 +26,7 @@ const {t, locale} = useI18n()
 const dropDownBtn = ref<HTMLElement | null>(null);
 let dropDownWidth = ref(0)
 
-const userDropdownStore = useUserDropDown()
+// const userDropdownStore = useUserDropDown()
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore();
 let thisUser = userInfoStore.thisUser;
@@ -223,12 +223,14 @@ export default {
     </div>
   </div>
 
+
+
   <n-drawer
       v-model:show="themeStore.menuIsFlippActive"
       :width="themeStore.menuCollapsed?'80%':'320px'"
       :placement="placement"
   >
-    <CommonAside></CommonAside>
+    <CommonAside />
   </n-drawer>
 </template>
 

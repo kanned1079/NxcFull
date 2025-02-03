@@ -8,8 +8,8 @@ import useAppInfosStore from "@/stores/useAppInfosStore";
 import type {FormInst, FormItemRule, FormRules, NotificationType} from 'naive-ui'
 import {NIcon, type UploadCustomRequestOptions, useMessage, useNotification} from 'naive-ui'
 import {
-  ChevronForwardOutline as toRightIcon,
   Add as createIcon,
+  ChevronForwardOutline as toRightIcon,
   InformationCircle as infoIcon,
   Wallet as walletIcon,
 } from "@vicons/ionicons5"
@@ -380,11 +380,11 @@ let callGetUserAvatarByUserId = async () => {
   if (data.code === 404) return message.warning('no avatar')
   else if (data.code === 200) {
     avatarData.value = `data:image/jpeg;base64,${data.file_data}`
+    // data.file_data 是头像的 Base64 编码，所以将其拼接成 data:image/jpeg;base64,xxx 的格式，以 Base64 URL 方式存入 avatarData.value。
   } else {
     message.error(t('userProfile.secondary.mention.fetchAvatarErr'))
   }
   showAlterAvatarModal.value = false
-
 }
 
 let getAvatarFilter = computed(() => themeStore.enableDarkMode ? ({filter: 'brightness(60%)'}) : null)
@@ -583,6 +583,7 @@ export default {
           hoverable
           content-style="padding: 0"
           :bordered="false"
+          v-if="false"
       >
         <n-p class="title">{{ t('userProfile.notify') }}</n-p>
         <div class="form">

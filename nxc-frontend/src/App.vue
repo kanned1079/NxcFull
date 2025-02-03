@@ -4,7 +4,6 @@ import {RouterView} from 'vue-router';
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {type NConfigProvider} from 'naive-ui'
-import * as process from "node:process";
 
 const themeStore = useThemeStore();
 const appInfosStore = useAppInfosStore()
@@ -19,6 +18,9 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (ev
 
 let isDark = computed(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
 
+// onMounted(() => {
+//   themeStore.enableDarkMode = isDark.value;
+// })
 
 // watch(isDark, (val: boolean) => {
 //   console.log('主题变化了')

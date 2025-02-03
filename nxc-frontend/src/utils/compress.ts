@@ -13,7 +13,31 @@ const loadImage = (file: File): Promise<HTMLImageElement> => {
 };
 
 /**
- * 在 Canvas 上裁剪并调整大小
+ * 裁剪并调整图像大小的函数。
+ *
+ * 该函数会从指定的 `HTMLImageElement` 中裁剪出一部分区域，并将其缩放到目标大小后返回为 `Blob` 格式的图片数据。
+ *
+ * @param {HTMLImageElement} image - 要裁剪的图像对象。
+ * @param {number} x - 裁剪区域的左上角 X 坐标（相对于原始图像）。
+ * @param {number} y - 裁剪区域的左上角 Y 坐标（相对于原始图像）。
+ * @param {number} cropSize - 裁剪区域的宽度和高度（正方形）。
+ * @param {number} outputSize - 输出图像的最终宽度和高度（缩放后，仍为正方形）。
+ * @returns {Promise<Blob>} 返回一个 `Promise`，解析为包含裁剪和缩放后图像数据的 `Blob`。
+ *
+ * @throws {Error} 当无法获取 `CanvasRenderingContext2D` 时，会触发错误。
+ * @throws {Error} 当 `canvas.toBlob` 失败时，会触发错误。
+ *
+ * @example
+ * const image = new Image();
+ * image.src = 'example.jpg';
+ * image.onload = async () => {
+ *     try {
+ *         const croppedBlob = await cropAndResizeImage(image, 50, 50, 100, 150);
+ *         console.log('裁剪后的图片 Blob:', croppedBlob);
+ *     } catch (error) {
+ *         console.error('裁剪失败:', error);
+ *     }
+ * };
  */
 const cropAndResizeImage = (
     image: HTMLImageElement,
@@ -26,14 +50,14 @@ const cropAndResizeImage = (
         canvas.height = outputSize;
         const ctx = canvas.getContext('2d');
 
-        if (ctx) {
+        if (ctx) {  // 确保创建的元素存在
             ctx.drawImage(image, x, y, cropSize, cropSize, 0, 0, outputSize, outputSize);
             canvas.toBlob(blob => {
                 if (blob) resolve(blob);
-                else reject(new Error('Canvas 生成 Blob 失败'));
+                else reject(new Error('Canvas create Blob failure.'));
             }, 'image/jpeg', 0.9);
         } else {
-            reject(new Error('无法获取 Canvas 上下文'));
+            reject(new Error('cannot get context of Canvas.'));
         }
     });
 };
@@ -68,10 +92,10 @@ export const compressAvatar = async (file: File, outputSize = 150): Promise<File
             initialQuality: 0.8, // 初始质量
         });
 
-        console.log('压缩后的图片大小:', (compressedFile.size / 1024).toFixed(2) + ' KB');
+        console.log('compressed size:', (compressedFile.size / 1024).toFixed(2) + ' KB');
         return compressedFile;
     } catch (error) {
-        console.error('图片裁剪和压缩失败:', error);
-        throw new Error('图片处理失败，请重试');
+        console.error('resize and compress:', error);
+        throw new Error('img process failure, please try again');
     }
 };

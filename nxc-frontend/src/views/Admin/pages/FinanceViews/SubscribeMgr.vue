@@ -365,9 +365,12 @@ let updatePlan = async () => {
       if (success) {
         pageCount.value = page_count as number
         animated.value = false
+        active.value = false
       } else {
         message.error('更新失败')
       }
+      animated.value = true
+
     } else {
       // notify('error', '修改出错', data.error)
       message.error('修改出错' + data.msg || '')

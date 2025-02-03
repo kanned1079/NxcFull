@@ -139,6 +139,8 @@ export const handleUploadAvatar = async (userId: number, fileName: string, file:
     }
 }
 
+
+
 export const handleGetUserAvatar = async (userId: number) => {
     try {
         let {data} = await instance.get('/api/user/v1/user/avatar', {
