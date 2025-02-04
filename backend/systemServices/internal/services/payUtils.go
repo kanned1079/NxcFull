@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,7 +8,6 @@ import (
 	"systemServices/internal/dao"
 	"systemServices/internal/model"
 	"systemServices/internal/utils"
-	"time"
 )
 
 // system 为systemName
@@ -68,9 +66,7 @@ func SaveOrUpdatePaymentMethodBySystemName(systemName string, conf json.RawMessa
 		}
 	}
 
-	notifyCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	err = utils.NotifyPaymentConfigUpdate(notifyCtx)
+	err = utils.NotifyPaymentConfigUpdate()
 
 	return err
 }

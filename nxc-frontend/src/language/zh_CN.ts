@@ -120,6 +120,38 @@ export default {
 
             }
         },
+        queueMonit: {
+            latency: {
+                retry: '再次測試',
+                hint: '*這裡的請求指的是客戶端發送請求到服務器後，服務器給予成功響應到客戶端所需要的時間。',
+                level: {
+                    l1: {
+                        title: '優秀',
+                        description: '這是很優秀的網絡情況，幾乎不會感覺到延遲。',
+                    },
+                    l2: {
+                        title: '正常',
+                        description: '這是大多數時候的網絡情況，用戶幾乎感覺不到延遲。',
+                    },
+                    l3: {
+                        title: '較差',
+                        description: '在在此情况下用户可能感觉到轻微卡顿或延迟。',
+                    },
+                    l4: {
+                        title: '差',
+                        description: '可以感受到明显的延迟，有影响用户体验。',
+                    },
+                    l5: {
+                        title: '非常差',
+                        description: '出现明显的延迟并且加载速度变慢甚至无法刷新，严重影响用户互动和体验。',
+                    },
+                    offline: {
+                        title: '服務器離線',
+                        description: '無法連接到服務器或處理請求錯誤，請檢查是否配置正確。',
+                    }
+                },
+            }
+        },
         systemConfig: {
             common: {
                 success: '更新配置成功',
@@ -573,7 +605,7 @@ export default {
                     },
                     describe: {
                         title: '訂閱描述',
-                        placeholder :'輸入訂閱的描述（支持Markdown）'
+                        placeholder: '輸入訂閱的描述（支持Markdown）'
                     },
                     isSale: {
                         title: '啟用銷售',
@@ -593,7 +625,7 @@ export default {
                         title: '排序',
                         placeholder: '用于前端排序',
                     },
-                    periodPlaceholder : {
+                    periodPlaceholder: {
                         month: '输入月付价格',
                         quarter: '输入季付价格',
                         halfYear: '输入半年付价格',

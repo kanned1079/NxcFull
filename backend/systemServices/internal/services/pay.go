@@ -12,7 +12,7 @@ import (
 	"systemServices/internal/dao"
 	"systemServices/internal/model"
 	"systemServices/internal/utils"
-	"time"
+	_ "time"
 )
 
 /*
@@ -203,9 +203,7 @@ func (s *SettingServices) EnablePaymentSettingBySystemName(ctx context.Context, 
 		}, nil
 	}
 
-	updateCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	err = utils.NotifyPaymentConfigUpdate(updateCtx)
+	err = utils.NotifyPaymentConfigUpdate()
 	if err != nil {
 		return &pb.EnablePaymentSettingBySystemNameResponse{
 			Code: http.StatusInternalServerError,

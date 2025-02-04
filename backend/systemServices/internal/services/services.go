@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 	"log"
 	"net/http"
 	"sync"
@@ -31,37 +30,88 @@ type SettingServices struct {
 	welcomePageConfigCache     *BasicSetting // 欢迎页面配置的缓存
 	welcomePageConfigCacheMux  sync.Mutex    // 用于保护 welcomePageConfigCache 的线程安全
 	welcomePageConfigCacheTTL  time.Duration // 欢迎页面配置缓存的有效期
-	registerRuntimeEnvCache    *BasicSetting
-	registerRuntimeEnvCacheMux sync.Mutex
-	registerRuntimeEnvCacheTTL time.Duration
+	registerRuntimeEnvCache    *BasicSetting // 注册页面缓存
+	registerRuntimeEnvCacheMux sync.Mutex    // 用于保护 registerRuntimeEnvCacheMux 的线程安全
+	registerRuntimeEnvCacheTTL time.Duration // 主页页面数据有效期
 }
 
 func NewSettingServices() *SettingServices {
 	return &SettingServices{
-		basicRuntimeEnvCache:       nil,             // 初始化时没有缓存
-		basicRuntimeEnvCacheTTL:    1 * time.Minute, // 设置基本运行环境配置的缓存有效期为10分钟
+		basicRuntimeEnvCache:       nil,              // 初始化时没有缓存
+		basicRuntimeEnvCacheTTL:    10 * time.Minute, // 设置基本运行环境配置的缓存有效期为10分钟
 		welcomePageConfigCache:     nil,
-		welcomePageConfigCacheTTL:  1 * time.Minute,
+		welcomePageConfigCacheTTL:  10 * time.Minute,
 		registerRuntimeEnvCache:    nil,
-		registerRuntimeEnvCacheTTL: 1 * time.Minute,
+		registerRuntimeEnvCacheTTL: 10 * time.Minute,
 	}
 }
 
-// UpdateSingleOption 更新单个设置的键值
-func (s *SettingServices) UpdateSingleOption(context context.Context, request *pb.UpdateSingleOptionRequest) (*pb.UpdateSingleOptionResponse, error) {
-	// 保存或更新设置
-	if err := saveSettingToDB(request.Category, request.Key, request.Value); err != nil {
-		return &pb.UpdateSingleOptionResponse{
-			Code: http.StatusInternalServerError,
-			Msg:  "保存或更新设置失败" + err.Error(),
-		}, nil
+//// UpdateSingleOption 更新单个设置的键值
+//func (s *SettingServices) UpdateSingleOption(context context.Context, request *pb.UpdateSingleOptionRequest) (*pb.UpdateSingleOptionResponse, error) {
+//	// 保存或更新设置
+//	if err := saveSettingToDB(request.Category, request.Key, request.Value); err != nil {
+//		return &pb.UpdateSingleOptionResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "保存或更新设置失败" + err.Error(),
+//		}, nil
+//	}
+//
+//	//context.JSON(http.StatusOK, gin.H{"message": "Setting updated successfully"})
+//	return &pb.UpdateSingleOptionResponse{
+//		Code: http.StatusOK,
+//		Msg:  "配置项更新成功",
+//	}, nil
+//}
+
+// ClearBasicRuntimeEnvCache 清除基本运行环境配置缓存
+func (s *SettingServices) ClearBasicRuntimeEnvCache(ctx context.Context) error {
+	s.basicRuntimeEnvCacheMux.Lock()
+	defer s.basicRuntimeEnvCacheMux.Unlock()
+
+	s.basicRuntimeEnvCache = nil
+	log.Println("Basic runtime environment config cache has been cleared.")
+	return nil
+}
+
+// ClearWelcomePageConfigCache 清除欢迎页面配置缓存
+func (s *SettingServices) ClearWelcomePageConfigCache(ctx context.Context) error {
+	s.welcomePageConfigCacheMux.Lock()
+	defer s.welcomePageConfigCacheMux.Unlock()
+
+	s.welcomePageConfigCache = nil
+	log.Println("Welcome page config cache has been cleared.")
+	return nil
+}
+
+// ClearRegisterRuntimeEnvCache 清除注册页面配置缓存
+func (s *SettingServices) ClearRegisterRuntimeEnvCache(ctx context.Context) error {
+	s.registerRuntimeEnvCacheMux.Lock()
+	defer s.registerRuntimeEnvCacheMux.Unlock()
+
+	s.registerRuntimeEnvCache = nil
+	log.Println("Register runtime environment config cache has been cleared.")
+	return nil
+}
+
+// ClearAllCaches 清除所有缓存
+func (s *SettingServices) ClearAllCaches(ctx context.Context) error {
+	err := s.ClearBasicRuntimeEnvCache(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to clear basic runtime env cache: %w", err)
 	}
 
-	//context.JSON(http.StatusOK, gin.H{"message": "Setting updated successfully"})
-	return &pb.UpdateSingleOptionResponse{
-		Code: http.StatusOK,
-		Msg:  "配置项更新成功",
-	}, nil
+	err = s.ClearWelcomePageConfigCache(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to clear welcome page config cache: %w", err)
+	}
+
+	err = s.ClearRegisterRuntimeEnvCache(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to clear register runtime env cache: %w", err)
+	}
+
+	log.Println("All caches have been cleared.")
+	return nil
 }
 
 //func (s *SettingServices) GetSystemSettings(context context.Context, request *pb.GetSystemSettingsRequest) (*pb.GetSystemSettingsResponse, error) {
@@ -178,87 +228,87 @@ func (s *SettingServices) UpdateSingleOption(context context.Context, request *p
 //	}, nil
 //}
 
-func (s *SettingServices) GetSystemSettings(rpcCtx context.Context, request *pb.GetSystemSettingsRequest) (*pb.GetSystemSettingsResponse, error) {
-	settingsMap := make(map[string]map[string]any)
-	//categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "server", "site", "invite"}
-	categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "welcome", "site", "invite"}
-
-	// 遍历每个类别从 Redis 缓存中获取设置
-	for _, category := range categories {
-		redisKey := fmt.Sprintf("settings:%s", category)
-		// 使用 HGetALL 获取整个类别的键值对
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		entries, err := dao.Rdb.HGetAll(ctx, redisKey).Result()
-		if err == nil && len(entries) > 0 {
-			// 如果 Redis 存在缓存数据，解析并填充 settingsMap
-			settingsMap[category] = make(map[string]any)
-			for key, value := range entries {
-				var parsedValue any
-				if err := json.Unmarshal([]byte(value), &parsedValue); err != nil {
-					log.Printf("Error unmarshalling value for key '%s': %v\n", key, err)
-					continue
-				}
-				settingsMap[category][key] = parsedValue
-			}
-			log.Printf("Category '%s' loaded from Redis cache.\n", category)
-		} else if err != nil && err != redis.Nil {
-			// 如果发生 Redis 错误（非空值错误），记录日志并继续数据库读取
-			log.Printf("Redis error for category '%s': %v\n", category, err)
-		}
-	}
-
-	// 检查是否所有类别都在缓存中
-	if len(settingsMap) == len(categories) {
-		// 全部类别均已从 Redis 缓存中获取，直接返回
-		jsonSettings, err := json.Marshal(settingsMap)
-		if err != nil {
-			return &pb.GetSystemSettingsResponse{
-				Code: http.StatusInternalServerError,
-				Msg:  "Serialization failed: " + err.Error(),
-			}, nil
-		}
-
-		log.Println("Returning settings from Redis cache.")
-		return &pb.GetSystemSettingsResponse{
-			Code:     http.StatusOK,
-			Msg:      "Query ok",
-			Settings: jsonSettings,
-		}, nil
-	}
-
-	// Redis 未完全命中，读取数据库
-	var settingOptions []model.SiteSetting
-	if err := dao.Db.Find(&settingOptions).Error; err != nil {
-		log.Println("Error fetching settings from DB:", err)
-		return &pb.GetSystemSettingsResponse{
-			Code: http.StatusInternalServerError,
-			Msg:  "Failed to fetch settings: " + err.Error(),
-		}, nil
-	}
-
-	go func() {
-		if err := MakeSettingsCache(); err != nil {
-			log.Println("Error making settings cache:", err)
-		}
-	}()
-
-	// 返回组织好的数据
-	jsonSettings, err := json.Marshal(settingsMap)
-	if err != nil {
-		return &pb.GetSystemSettingsResponse{
-			Code: http.StatusInternalServerError,
-			Msg:  "Serialization failed: " + err.Error(),
-		}, nil
-	}
-
-	log.Println("Returning settings from database and cached in Redis.")
-	return &pb.GetSystemSettingsResponse{
-		Code:     http.StatusOK,
-		Msg:      "Query ok",
-		Settings: jsonSettings,
-	}, nil
-}
+//func (s *SettingServices) GetSystemSettings(rpcCtx context.Context, request *pb.GetSystemSettingsRequest) (*pb.GetSystemSettingsResponse, error) {
+//	settingsMap := make(map[string]map[string]any)
+//	//categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "server", "site", "invite"}
+//	categories := []string{"frontend", "my_app", "notice", "security", "sendmail", "welcome", "site", "invite"}
+//
+//	// 遍历每个类别从 Redis 缓存中获取设置
+//	for _, category := range categories {
+//		redisKey := fmt.Sprintf("settings:%s", category)
+//		// 使用 HGetALL 获取整个类别的键值对
+//		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+//		defer cancel()
+//		entries, err := dao.Rdb.HGetAll(ctx, redisKey).Result()
+//		if err == nil && len(entries) > 0 {
+//			// 如果 Redis 存在缓存数据，解析并填充 settingsMap
+//			settingsMap[category] = make(map[string]any)
+//			for key, value := range entries {
+//				var parsedValue any
+//				if err := json.Unmarshal([]byte(value), &parsedValue); err != nil {
+//					log.Printf("Error unmarshalling value for key '%s': %v\n", key, err)
+//					continue
+//				}
+//				settingsMap[category][key] = parsedValue
+//			}
+//			log.Printf("Category '%s' loaded from Redis cache.\n", category)
+//		} else if err != nil && err != redis.Nil {
+//			// 如果发生 Redis 错误（非空值错误），记录日志并继续数据库读取
+//			log.Printf("Redis error for category '%s': %v\n", category, err)
+//		}
+//	}
+//
+//	// 检查是否所有类别都在缓存中
+//	if len(settingsMap) == len(categories) {
+//		// 全部类别均已从 Redis 缓存中获取，直接返回
+//		jsonSettings, err := json.Marshal(settingsMap)
+//		if err != nil {
+//			return &pb.GetSystemSettingsResponse{
+//				Code: http.StatusInternalServerError,
+//				Msg:  "Serialization failed: " + err.Error(),
+//			}, nil
+//		}
+//
+//		log.Println("Returning settings from Redis cache.")
+//		return &pb.GetSystemSettingsResponse{
+//			Code:     http.StatusOK,
+//			Msg:      "Query ok",
+//			Settings: jsonSettings,
+//		}, nil
+//	}
+//
+//	// Redis 未完全命中，读取数据库
+//	var settingOptions []model.SiteSetting
+//	if err := dao.Db.Find(&settingOptions).Error; err != nil {
+//		log.Println("Error fetching settings from DB:", err)
+//		return &pb.GetSystemSettingsResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "Failed to fetch settings: " + err.Error(),
+//		}, nil
+//	}
+//
+//	go func() {
+//		if err := MakeSettingsCache(); err != nil {
+//			log.Println("Error making settings cache:", err)
+//		}
+//	}()
+//
+//	// 返回组织好的数据
+//	jsonSettings, err := json.Marshal(settingsMap)
+//	if err != nil {
+//		return &pb.GetSystemSettingsResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "Serialization failed: " + err.Error(),
+//		}, nil
+//	}
+//
+//	log.Println("Returning settings from database and cached in Redis.")
+//	return &pb.GetSystemSettingsResponse{
+//		Code:     http.StatusOK,
+//		Msg:      "Query ok",
+//		Settings: jsonSettings,
+//	}, nil
+//}
 
 // handleGetSystemSetting 取出所有设置项
 func handleGetSystemSetting(context *gin.Context) {

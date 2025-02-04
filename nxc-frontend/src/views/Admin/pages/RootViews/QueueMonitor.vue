@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import {onBeforeMount, onMounted, onUnmounted, reactive, ref} from 'vue'
-import type {NumberAnimationInst} from 'naive-ui'
+import {useI18n} from "vue-i18n";
+import {computed, onBeforeMount, onMounted, onUnmounted, reactive, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
-import instance from "@/axios";
 import useApiAddrStore from "@/stores/useApiAddrStore";
+import {handleTestServerLatency} from "@/api/admin/test";
+import {RefreshOutline as retryIcon} from "@vicons/ionicons5"
 
+// let animated = ref<boolean>(false)
+const {t} = useI18n();
 const apiAddrStore = useApiAddrStore();
 
 let animated = ref<boolean>(false)
@@ -16,20 +19,7 @@ const statusColor = {
   error: '#f95555',
   running: '#3bc65c'
 }
-let nowStatusColor = ref()
-onMounted(() => {
-  nowStatusColor.value = status.value ? statusColor.running : statusColor.error;
-})
-let workerNumber = ref(13)
 
-const numberAnimationInstRef = ref<NumberAnimationInst | null>(null)
-
-let serverLoad = reactive({
-  cpu: 0,
-  gpu: 0,
-  mem: 0,
-  disk: 0,
-})
 
 let hardwareInfo = reactive({
   cpu: {
@@ -87,29 +77,130 @@ let intervalId = ref()
 //   getSysInfo()
 // }, 3000)
 
-let getSysInfo = async () => {
+let retryTestLatency = ref<boolean>(false)
+let latencyTestIntervalId = ref<undefined | number>(undefined)
+let latency = ref<number>(-1)
+const callTestConnLatency = async () => {
+  // const startTime = new Date();
+  retryTestLatency.value = false
+  let testStartTime: Date | null | undefined = null
+  let testEndTime: Date | null | undefined = null
 
-  // const token = sessionStorage.getItem('token');
+  // 定时器，每隔 1 秒测试连接并更新延迟
+  latencyTestIntervalId.value = setInterval(async () => {
+    testStartTime = new Date(); // 每次请求前记录开始时间
+    if (await handleTestServerLatency()) {
+      testEndTime = new Date(); // 每次请求完成后记录结束时间
+      latency.value = testEndTime.getTime() - testStartTime.getTime(); // 计算请求的延迟时间（毫秒）
+    } else {
+      return latency.value = -1
+    }
+  }, 3000); // 每 1 秒执行一次请求
 
-  let {data} = await instance.get('/api/admin/v1/infrastructure/status');
-  console.log(data)
-  serverLoad.cpu = Number(data.osInfo.cpu_percent.toFixed(1))
-  serverLoad.mem = Number(data.osInfo.mem_percent.toFixed(1))
-  serverLoad.disk = Number(data.osInfo.disk_percent.toFixed(1))
+  setTimeout(() => {
+    if (latencyTestIntervalId.value !== undefined) {
+      clearInterval(latencyTestIntervalId.value);
+      console.log('Stopped latency test');
+      retryTestLatency.value = true
 
-  hardwareInfo.cpu.content = data.osInfo.cpu_model
-  hardwareInfo.cores.content = Number(data.osInfo.cores)
-  hardwareInfo.memory.content = String(data.osInfo.mem_used.toFixed(1)) + ' / ' + String(data.osInfo.mem_size.toFixed(1))
-  hardwareInfo.disk.content = String(data.osInfo.disk_used.toFixed(1)) + ' / ' + String(data.osInfo.disk_size.toFixed(1))
+    }
+  }, 30000); // 10 秒后自动停止测试
+};
 
-  osInfo.release.content = data.osInfo.os_version
-  osInfo.kernel.content = data.osInfo.kernel_version
-  osInfo.architecture.content = data.osInfo.os_arch
-  osInfo.processNum.content = String(data.osInfo.process_id)
-  osInfo.goroutine.content = String(data.osInfo.nums_of_goroutine)
-  osInfo.gc.content = String(data.osInfo.last_gc_time)
+// const callTestConnLatency = () => {
+//   // 初始化重试测试延迟标志为 false
+//   retryTestLatency.value = false;
+//
+//   // 初始化测试开始时间和结束时间为 null
+//   let testStartTime: Date | null | undefined = null;
+//   let testEndTime = null;
+//
+//   // 定时器 ID
+//   let latencyTestIntervalId;
+//
+//   // 定义一个内部函数来执行延迟测试
+//   const performLatencyTest = () => {
+//     // 记录测试开始时间
+//     testStartTime = new Date();
+//
+//     // 调用处理服务器延迟测试的函数
+//     handleTestServerLatency()
+//         .then((success) => {
+//           if (success) {
+//             // 记录测试结束时间
+//             testEndTime = new Date();
+//             // 计算延迟时间（毫秒）
+//             latency.value = testEndTime.getTime() - testStartTime.getTime();
+//           } else {
+//             // 测试失败，将延迟时间设为 -1
+//             latency.value = -1;
+//           }
+//         })
+//         .catch(() => {
+//           // 处理错误，将延迟时间设为 -1
+//           latency.value = -1;
+//         });
+//   };
+//
+//   // 每隔 5 秒执行一次延迟测试
+//   latencyTestIntervalId = setInterval(performLatencyTest, 5000);
+//
+//   // 30 秒后自动停止测试
+//   setTimeout(() => {
+//     if (latencyTestIntervalId) {
+//       // 清除定时器
+//       clearInterval(latencyTestIntervalId);
+//       console.log('Stopped latency test');
+//       // 设置重试测试延迟标志为 true
+//       retryTestLatency.value = true;
+//     }
+//   }, 30000);
+// };
 
-}
+let getLatencyHint = computed<{
+  title: string
+  description: string
+  classColor: string
+}>(() => {
+  if (latency.value > 0 && latency.value <= 20) {
+    return {
+      title: 'adminViews.queueMonit.latency.level.l1.title', // 对应 l1
+      description: 'adminViews.queueMonit.latency.level.l1.description',
+      classColor: 'green',
+    };
+  } else if (latency.value > 20 && latency.value <= 100) {
+    return {
+      title: 'adminViews.queueMonit.latency.level.l2.title', // 对应 l2
+      description: 'adminViews.queueMonit.latency.level.l2.description',
+      classColor: 'green',
+    };
+  } else if (latency.value > 100 && latency.value <= 250) {
+    return {
+      title: 'adminViews.queueMonit.latency.level.l3.title', // 对应 l3
+      description: 'adminViews.queueMonit.latency.level.l3.description',
+      classColor: 'yellow',
+    };
+  } else if (latency.value > 250 && latency.value <= 500) {
+    return {
+      title: 'adminViews.queueMonit.latency.level.l4.title', // 对应 l4
+      description: 'adminViews.queueMonit.latency.level.l4.description',
+      classColor: 'red',
+    };
+  } else if (latency.value == -1) {
+    return {
+      title: 'adminViews.queueMonit.latency.level.offline.title', // 对应 l4
+      description: 'adminViews.queueMonit.latency.level.offline.description',
+      classColor: 'offline',
+    };
+  } else {
+    return {
+      title: 'adminViews.queueMonit.latency.level.l5.title', // 对应 l5
+      description: 'adminViews.queueMonit.latency.level.l5.description',
+      classColor: 'red',
+    };
+  }
+});
+
 onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/monitor'
   themeStore.menuSelected = 'queue-monitor'
@@ -120,21 +211,29 @@ onMounted(() => {
   //   getSysInfo()
   // }, 3000)
 
+  callTestConnLatency()
+
   animated.value = true
+  // setTimeout(() => reloadCharts(), 1000)
+  // reloadCharts()
+
+  // setInterval(async () => handleTestServerLatency(), 10)
+
 })
 
 onBeforeMount(() => {
   // 调用接口获取数据
-  getSysInfo()
-  intervalId.value = setInterval(() => {
-    getSysInfo()
-  }, 3000)
+  // getSysInfo()
+  // intervalId.value = setInterval(() => {
+  //   getSysInfo()
+  // }, 3000)
 })
 
 onUnmounted(() => {
   console.log('queue组件卸载')
   // clearInterval()
   clearInterval(intervalId.value)
+  clearInterval(latencyTestIntervalId.value)
 })
 
 </script>
@@ -147,94 +246,76 @@ export default {
 
 <template>
   <transition name="slide-fade">
-    <div class="root" v-if="animated">
-      <n-card hoverable :embedded="true" class="card1" title="队列监控">
-        <n-flex class="inner-card" justify="center">
-          <div class="part1">
-            <p class="title">当前作业量</p>
-            <!--          <p class="num">34</p>-->
-            <!--          <n-number-animation class="num" :from="0" :to="33456344" />-->
-            <n-statistic tabular-nums class="num">
-              <n-number-animation ref="numberAnimationInstRef" :from="0" :to="12039"/>
-              <template #suffix>条</template>
-            </n-statistic>
-          </div>
-          <div class="part1">
-            <p class="title">近一小时处理量</p>
-            <!--          <p class="num">875</p>-->
-            <n-statistic tabular-nums class="num">
-              <n-number-animation ref="numberAnimationInstRef" :from="0" :to="345"/>
-              <template #suffix>条</template>
-            </n-statistic>
-          </div>
-          <div class="part1">
-            <p class="title">7日内报错数量</p>
-            <!--          <p class="num">0</p>-->
-            <n-statistic tabular-nums class="num">
-              <n-number-animation ref="numberAnimationInstRef" :from="0" :to="0"/>
-              <template #suffix>条</template>
-            </n-statistic>
-          </div>
-          <div class="part1">
-            <p class="title">状态</p>
-            <p class="status" v-if="status == true">运行中</p>
-            <p class="status" v-else>离线</p>
-          </div>
-        </n-flex>
-      </n-card>
+    <div v-if="animated" class="root">
+      <!--      <n-card-->
+      <!--          title="最近一周API接口访问次数"-->
+      <!--          hoverable class="card1" :embedded="true" :bordered="false">-->
+      <!--        <div class="visited" style="height: 280px" ref="visitedChartDOM">-->
 
-      <n-card hoverable :embedded="true" class="card2" title="服务器负载">
-        <div class="card1-inner">
-          <div class="cpu-panel">
-            <n-progress type="dashboard" gap-position="bottom" :percentage="serverLoad.cpu"/>
-            <p>CPU使用率</p>
+      <!--        </div>-->
+      <!--      </n-card>-->
+
+      <n-card
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          class="latency-card"
+          title="服务器延迟"
+      >
+        <div
+            class="latency-inner"
+        >
+          <!--          <div class="latency-inner-up">-->
+          <!--            <p>连接状态： OK</p>-->
+          <!--          </div>-->
+          <div class="latency-inner-mid">
+            <div class="l-i-mid-left">
+              <!--              <p class="latency-nums">{{ latency }}</p>-->
+              <n-statistic tabular-nums>
+                <n-number-animation
+                    :to="latency"
+                    :duration="0"
+                />
+                <template #suffix>
+                  ms
+                </template>
+              </n-statistic>
+
+            </div>
+            <div class="l-i-mid-right">
+              <div class="latency-title">
+                <div :class="`mention-color-general ${getLatencyHint.classColor}`"></div>
+                <div class="latency-mention-title">
+                  {{ t(getLatencyHint?.title || '') }}
+                </div>
+                <n-button
+                    v-if="retryTestLatency"
+                    type="primary"
+                    text
+                    style="text-decoration: underline; margin-left: 10px; font-size: 0.8rem"
+                    icon-placement="right"
+                    @click="callTestConnLatency"
+                >
+                  {{ t('adminViews.queueMonit.latency.retry') }}
+<!--                  <template #icon>-->
+<!--                    <n-icon size="14">-->
+<!--                      <retryIcon/>-->
+<!--                    </n-icon>-->
+<!--                  </template>-->
+                </n-button>
+
+              </div>
+              <div class="latency-description">
+                {{ t(getLatencyHint?.description || '') }}
+              </div>
+            </div>
           </div>
-          <div class="cpu-panel">
-            <n-progress type="dashboard" gap-position="bottom" :percentage="serverLoad.gpu"/>
-            <p>GPU使用率</p>
-          </div>
-          <div class="mem-panel">
-            <n-progress type="dashboard" gap-position="bottom" :percentage="serverLoad.mem"/>
-            <p>内存使用率</p>
-          </div>
-          <div class="disk-panel">
-            <n-progress type="dashboard" gap-position="bottom" :percentage="serverLoad.disk"/>
-            <p>硬盘使用率</p>
+          <div class="latency-inner-btn">
+            <p>{{ t('adminViews.queueMonit.latency.hint') }}</p>
           </div>
         </div>
 
-        <hr style="margin-top: 30px; opacity: 0.1">
-
-
-        <div class="card3">
-          <n-card class="card2-inner" title="服务器基本信息" :bordered="false" :embedded="true">
-            <div v-for="item in hardwareInfo" :key="item.title" class="item-box">
-              <p class="title">{{ item.title }}：</p>
-              <p class="content">{{ item.content }} {{ item.unit }}</p>
-            </div>
-          </n-card>
-
-          <n-card class="card2-inner" title="系统信息" :bordered="false" :embedded="true">
-            <div v-for="item in osInfo" :key="item.title" class="item-box">
-              <p class="title">{{ item.title }}：</p>
-              <p class="content">{{ item.content }}</p>
-
-            </div>
-          </n-card>
-
-
-        </div>
-
-        <!--      <n-card class="card2-inner" title="基本信息" :bordered="false">-->
-        <!--        <div v-for="item in hardwareInfo" :key="item.title" class="item-box">-->
-        <!--          <p class="title">{{ item.title }}：</p>-->
-        <!--          <p class="content">{{ item.content }}</p>-->
-        <!--        </div>-->
-        <!--      </n-card>-->
-
-
       </n-card>
-
     </div>
 
   </transition>
@@ -244,9 +325,86 @@ export default {
 
 <style scoped>
 .root {
-  min-width: 900px;
   padding: 20px;
 
+  .latency-card {
+    .latency-inner {
+      .latency-inner-up {
+
+      }
+
+      .latency-inner-mid {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+
+        .l-i-mid-left {
+          width: auto;
+
+          .latency-nums {
+            font-size: 1.6rem;
+            font-weight: bold;
+          }
+        }
+
+        .l-i-mid-right {
+          display: flex;
+          flex-direction: column;
+          margin-left: 16px;
+
+          .latency-title {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            .mention-color-general {
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              margin-right: 8px;
+            }
+
+            .red {
+              background-color: #ff6666;
+            }
+
+            .yellow {
+              background-color: #ffcc66;
+            }
+
+            .green {
+              background-color: #66cc66;
+            }
+
+            .offline {
+              background-color: #979797;
+            }
+
+            .latency-mention-title {
+              font-size: 0.9rem;
+              font-weight: bold;
+            }
+          }
+
+          .latency-description {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            /* text-decoration: underline; */
+          }
+        }
+      }
+
+      .latency-inner-btn {
+        margin-top: 14px;
+        font-size: 0.8rem;
+        opacity: 0.8;
+
+      }
+    }
+  }
+
+  /*
   .card1 {
     width: 100%;
 
@@ -347,10 +505,9 @@ export default {
 
 
   }
+
+   */
 }
 
-.n-card {
-  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-  border: 0;
-}
+
 </style>
