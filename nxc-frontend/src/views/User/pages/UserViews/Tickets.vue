@@ -7,6 +7,13 @@ import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {formatDate} from "@/utils/timeFormat";
 import {closeTicket, commitNewTicket, getAllMyTickets} from "@/api/user/tickets";
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+
+let pageCount = ref<number>(0)
+let dataSize = ref<{ pageSize: number, page: number }>({
+  pageSize: 10,
+  page: 1,
+})
 
 interface Ticket {
   subject: string
@@ -84,20 +91,23 @@ let validateClick = () => {
 }
 
 
-let urgencyOptions = [
+let urgencyOptions = computed<{
+  label: string;
+  value: number;
+}[]>(() => [
   {
-    label: computed(() => t('userTickets.ticketUrgencyLevel.low')).value,
+    label: t('userTickets.ticketUrgencyLevel.low'),
     value: 1,
   },
   {
-    label: computed(() => t('userTickets.ticketUrgencyLevel.med')).value,
+    label: t('userTickets.ticketUrgencyLevel.med'),
     value: 2,
   },
   {
-    label: computed(() => t('userTickets.ticketUrgencyLevel.high')).value,
+    label: t('userTickets.ticketUrgencyLevel.high'),
     value: 3,
   }
-]
+])
 
 
 let newTicket = ref<Ticket>({
@@ -129,10 +139,11 @@ let callCloseTicket = async (ticket_id: number) => {
 
 let callGetAllMyTickets = async () => {
   animated.value = false
-  let data = await getAllMyTickets(userInfoStore.thisUser.id)
+  let data = await getAllMyTickets(userInfoStore.thisUser.id, dataSize.value.page, dataSize.value.pageSize)
   if (data.code === 200) {
     ticketList.value = []
     data.tickets.forEach((ticket: TicketItem) => ticketList.value.push(ticket))
+    pageCount.value = data.page_count
     animated.value = true
   } else if (data.code === 404) {
     message.info(computed(() => t('userTickets.noTickets')).value)
@@ -314,18 +325,30 @@ export default {
     </n-card>
 
     <transition name="slide-fade">
-      <n-card v-if="animated" :embedded="true" hoverable content-style="padding: 0;" :bordered="false">
-        <n-data-table
-            striped
-            class="table"
-            :columns="columns"
-            :data="ticketList"
-            :pagination="false"
-            :bordered="true"
-            style=""
-            :scroll-x="800"
+      <div v-if="animated">
+        <n-card :embedded="true" hoverable content-style="padding: 0;" :bordered="false">
+          <n-data-table
+              striped
+              class="table"
+              :columns="columns"
+              :data="ticketList"
+              :pagination="false"
+              :bordered="true"
+              style=""
+              :scroll-x="800"
+          />
+
+
+        </n-card>
+
+        <DataTableSuffix
+            v-model:data-size="dataSize"
+            v-model:page-count="pageCount"
+            v-model:animated="animated"
+            :update-data="callGetAllMyTickets"
         />
-      </n-card>
+      </div>
+
     </transition>
 
 

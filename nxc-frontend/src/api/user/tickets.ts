@@ -15,11 +15,13 @@ export const commitNewTicket = async (userId: number, newTicketDetails: any) => 
     }
 }
 
-export const getAllMyTickets = async (userId: number) => {
+export const getAllMyTickets = async (userId: number, page: number, size: number) => {
     try {
         let {data} = await instance.get('/api/user/v1/ticket', {
             params: {
-                user_id: userId
+                user_id: userId,
+                page,
+                size
             }
         })
         return data

@@ -13,6 +13,7 @@ import (
 )
 
 func HandleGetAllMyTickets(context *gin.Context) {
+	err, page, size := GetPage2SizeFromQuery(context)
 	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
 	if err != nil {
 		log.Println(err)
@@ -24,6 +25,8 @@ func HandleGetAllMyTickets(context *gin.Context) {
 	}
 	resp, err := grpcClient.TicketHandleClient.GetUserTicketsByUserId(sysContext.Background(), &ticketPb.GetUserTicketsByUserIdRequest{
 		UserId: userId,
+		Page:   page,
+		Size:   size,
 	})
 	if err := failOnRpcError(err, resp); err != nil {
 		log.Println(err)
@@ -43,9 +46,10 @@ func HandleGetAllMyTickets(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{
-		"code":    resp.Code,
-		"tickets": ticketsMap,
-		"msg":     resp.Msg,
+		"code":       resp.Code,
+		"tickets":    ticketsMap,
+		"page_count": resp.PageCount,
+		"msg":        resp.Msg,
 	})
 }
 

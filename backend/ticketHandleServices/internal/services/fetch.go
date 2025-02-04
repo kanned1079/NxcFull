@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"math"
 	"net/http"
 	pb "ticketHandleServices/api/proto"
 	"ticketHandleServices/internal/dao"
@@ -66,15 +67,68 @@ func (s *TicketHandleServices) CheckIsUserHaveOpeningTickets(ctx context.Context
 	}, nil
 }
 
+//func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, request *pb.GetUserTicketsByUserIdRequest) (*pb.GetUserTicketsByUserIdResponse, error) {
+//	// request.Page
+//	// request.Size
+//	var tickets []model.Ticket
+//	if result := dao.Db.Model(&model.Ticket{}).Where("user_id = ?", request.UserId).Find(&tickets); result.Error != nil {
+//		log.Println(result.Error)
+//		return &pb.GetUserTicketsByUserIdResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "查找失败" + result.Error.Error(),
+//		}, nil
+//	}
+//	if ticketsJson, err := json.Marshal(tickets); err != nil {
+//		return &pb.GetUserTicketsByUserIdResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "转化格式失败",
+//		}, nil
+//	} else {
+//		return &pb.GetUserTicketsByUserIdResponse{
+//			Code:      http.StatusOK,
+//			Msg:       "查询成功",
+//			Tickets:   ticketsJson,
+//			PageCount: 10, // 根据page和size进行计算
+//		}, nil
+//	}
+//}
+
 func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, request *pb.GetUserTicketsByUserIdRequest) (*pb.GetUserTicketsByUserIdResponse, error) {
+	// 参数校验
+	if request.Page <= 0 {
+		request.Page = 1
+	}
+	if request.Size <= 0 {
+		request.Size = 10
+	}
+
 	var tickets []model.Ticket
-	if result := dao.Db.Model(&model.Ticket{}).Where("user_id = ?", request.UserId).Find(&tickets); result.Error != nil {
+	var total int64
+
+	// 计算总记录数
+	if result := dao.Db.Model(&model.Ticket{}).Where("user_id = ?", request.UserId).Count(&total); result.Error != nil {
 		log.Println(result.Error)
 		return &pb.GetUserTicketsByUserIdResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "查找失败" + result.Error.Error(),
 		}, nil
 	}
+
+	// 分页查询
+	if result := dao.Db.Model(&model.Ticket{}).Where("user_id = ?", request.UserId).
+		Offset(int((request.Page - 1) * request.Size)).
+		Limit(int(request.Size)).
+		Find(&tickets); result.Error != nil {
+		log.Println(result.Error)
+		return &pb.GetUserTicketsByUserIdResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查询失败" + result.Error.Error(),
+		}, nil
+	}
+
+	// 计算总页数
+	pageCount := math.Ceil(float64(total) / float64(request.Size))
+
 	if ticketsJson, err := json.Marshal(tickets); err != nil {
 		return &pb.GetUserTicketsByUserIdResponse{
 			Code: http.StatusInternalServerError,
@@ -82,9 +136,10 @@ func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, r
 		}, nil
 	} else {
 		return &pb.GetUserTicketsByUserIdResponse{
-			Code:    http.StatusOK,
-			Msg:     "查询成功",
-			Tickets: ticketsJson,
+			Code:      http.StatusOK,
+			Msg:       "查询成功",
+			Tickets:   ticketsJson,
+			PageCount: int64(pageCount),
 		}, nil
 	}
 }
