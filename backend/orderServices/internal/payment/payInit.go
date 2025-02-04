@@ -10,6 +10,8 @@ import (
 )
 
 func InitPaymentConf() {
+	//clear(model.PaymentMethodsArr)
+	model.PaymentMethodsArr = nil
 	var paymentSettings []model.PaymentSettings
 
 	// 查询数据库

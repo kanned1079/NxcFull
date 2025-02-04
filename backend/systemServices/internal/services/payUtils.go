@@ -1,12 +1,15 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"gorm.io/gorm"
 	"systemServices/internal/dao"
 	"systemServices/internal/model"
+	"systemServices/internal/utils"
+	"time"
 )
 
 // system 为systemName
@@ -65,5 +68,9 @@ func SaveOrUpdatePaymentMethodBySystemName(systemName string, conf json.RawMessa
 		}
 	}
 
-	return nil
+	notifyCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err = utils.NotifyPaymentConfigUpdate(notifyCtx)
+
+	return err
 }

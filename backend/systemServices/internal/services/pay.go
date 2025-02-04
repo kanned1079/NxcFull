@@ -11,6 +11,8 @@ import (
 	pb "systemServices/api/proto"
 	"systemServices/internal/dao"
 	"systemServices/internal/model"
+	"systemServices/internal/utils"
+	"time"
 )
 
 /*
@@ -198,6 +200,16 @@ func (s *SettingServices) EnablePaymentSettingBySystemName(ctx context.Context, 
 		return &pb.EnablePaymentSettingBySystemNameResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  fmt.Sprintf("Failed to update value in database: %v", err),
+		}, nil
+	}
+
+	updateCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err = utils.NotifyPaymentConfigUpdate(updateCtx)
+	if err != nil {
+		return &pb.EnablePaymentSettingBySystemNameResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  fmt.Sprintf("Failed to pub update meaage: %v", err),
 		}, nil
 	}
 

@@ -68,22 +68,22 @@ export default {
           <!--          </n-config-provider>-->
 
 
-          <div
-              style="height: 100%;width: 100%; pointer-events: none; transform: translate(0); z-index: 1000; position: absolute; top: 0; left: 0;">
-            <n-float-button
-                :bottom="100"
-                :right="50"
-                style="pointer-events: auto;"
-                @click="floatBtnClicked"
-            >
-              <n-badge color="#e3e5e7" value="Hi" :offset="[4, -4]">
-                <n-icon>
-                  <infoIcon/>
-                </n-icon>
-              </n-badge>
+<!--          <div-->
+<!--              style="height: 100%;width: 100%; pointer-events: none; transform: translate(0); z-index: 1000; position: absolute; top: 0; left: 0;">-->
+<!--            <n-float-button-->
+<!--                :bottom="100"-->
+<!--                :right="50"-->
+<!--                style="pointer-events: auto;"-->
+<!--                @click="floatBtnClicked"-->
+<!--            >-->
+<!--              <n-badge color="#e3e5e7" value="Hi" :offset="[4, -4]">-->
+<!--                <n-icon>-->
+<!--                  <infoIcon/>-->
+<!--                </n-icon>-->
+<!--              </n-badge>-->
 
-            </n-float-button>
-          </div>
+<!--            </n-float-button>-->
+<!--          </div>-->
 
 
           <div style="height: 3rem"></div>

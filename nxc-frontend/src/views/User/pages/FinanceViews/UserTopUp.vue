@@ -168,7 +168,6 @@ let handleCommitNewTopUpOrder = async () => {
       Object.assign(topUpOrderResponse.value, data)
       showQrCodeModal.value = true
       setTimeout(() => {
-
         startQueryTopUpOrderStatusLoop()
       }, 5000)
     }
@@ -254,7 +253,6 @@ let startQueryTopUpOrderStatusLoop = () => {
         setTimeout(async () => {
           let updated = await userInfoStore.updateUserInfo();
           if (updated) {
-            console.log("用户信息更新成功")
             setTimeout(async () => {
               await router.push({
                 path: "/dashboard/profile",

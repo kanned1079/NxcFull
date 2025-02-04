@@ -1,4 +1,5 @@
 <template>
+<!--  1-->
   <canvas ref="canvasRef" class="confetti-canvas"></canvas>
 </template>
 

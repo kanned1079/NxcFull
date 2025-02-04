@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"orderServices/internal/dao"
+	"orderServices/internal/payment"
 	"time"
 )
 
@@ -48,4 +49,23 @@ func FreshUserPropertyInfoInRedis(userId int64) error {
 
 	fmt.Printf("All keys for user %d deleted successfully\n", userId)
 	return nil
+}
+
+// SubscribePaymentConfigUpdates 订阅 Redis 频道，监听配置更新
+func SubscribePaymentConfigUpdates() {
+	pubsub := dao.Rdb.Subscribe(context.Background(), "PAYMENT_CONFIG_UPDATED")
+	ch := pubsub.Channel()
+
+	go func() {
+		for msg := range ch {
+			if msg.Payload == "reload" {
+				fmt.Println("Received payment config update, reloading...")
+				//InitPaymentConf()
+				//payment.InitPaymentConf()
+				payment.InitPaymentConf()
+
+				payment.PaymentInstanceRoot.Initial() // 重新初始化所有被启用的支付方式
+			}
+		}
+	}()
 }

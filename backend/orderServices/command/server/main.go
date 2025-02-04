@@ -8,6 +8,7 @@ import (
 	"orderServices/internal/etcd"
 	"orderServices/internal/handler"
 	"orderServices/internal/payment"
+	"orderServices/internal/utils"
 )
 
 var err error
@@ -28,7 +29,6 @@ func init() {
 	if err := remote.MyDbConfig.Get(); err != nil {
 		panic(err)
 	}
-
 	if err := remote.MyRedisConfig.Get(); err != nil {
 		panic(err)
 	}
@@ -68,6 +68,7 @@ func init() {
 
 func main() {
 	go etcd.RegisterService2Etcd(86400)
+	go utils.SubscribePaymentConfigUpdates()
 	handler.RunGRPCServer()
 
 }
