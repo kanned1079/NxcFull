@@ -39,16 +39,18 @@ func HandleGetSystemStatus(context *gin.Context) {
 		})
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{
-		"code":         http.StatusOK,
-		"msg":          "success",
-		"status200":    resp.Status200,
-		"status404":    resp.Status404,
-		"status500":    resp.Status500,
-		"login_req":    resp.LoginReq,
-		"reg_req":      resp.RegisterReq,
-		"api_log_list": apiLogList,
-		"page_count":   resp.PageSize,
+	context.SecureJSON(http.StatusOK, gin.H{
+		"code":                 http.StatusOK,
+		"msg":                  "success",
+		"status200":            resp.Status200,
+		"status404":            resp.Status404,
+		"status500":            resp.Status500,
+		"login_req":            resp.LoginReq,
+		"reg_req":              resp.RegisterReq,
+		"api_log_list":         apiLogList,
+		"page_count":           resp.PageSize,
+		"log_table_size":       resp.TableSize,
+		"log_table_rows_count": resp.LogTableRowsCount,
 	})
 }
 

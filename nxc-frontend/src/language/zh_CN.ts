@@ -155,9 +155,7 @@ export default {
                 },
             },
             api: {
-                title: '最近一小时API请求状态',
-                deleteLogMsg: '刪除日誌 {nums} 條',
-                deleteLogErr: '刪除日誌失敗',
+                title: '最近7天API请求状态',
                 items: {
                     ok: {
                         title: '成功 (StatusOK)',
@@ -175,6 +173,29 @@ export default {
                         title: '登录 / 注册',
                         unit: '次'
                     }
+                },
+            },
+            log: {
+                title: '日誌記錄',
+                deleteLogMsg: '刪除日誌 {nums} 條',
+                deleteLogErr: '刪除日誌失敗',
+                logTableRows: '日誌表總記錄數',
+                logTableSize: '日誌表佔用空間',
+                unit: {
+                    lines: '行',
+                    mb: '兆字節',
+                },
+                deleteLog: '刪除日誌',
+                exportCsv: '導出CSV',
+                deleteLogHint: '這將執行刪除前一周前所有的日誌，刪除方式為硬刪除，所有被刪除的日誌將無法恢復，建議先保存備份。',
+                table: {
+                    id: '#',
+                    method: '請求方式',
+                    path: '請求路徑',
+                    code: '狀態碼',
+                    clientIp: '客戶端IP',
+                    responseTime: '處理時間',
+                    requestAt: '請求時間',
                 }
             }
         },

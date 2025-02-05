@@ -12,9 +12,14 @@ var (
 	LogMutex  sync.Mutex
 )
 
-// AccessLoggerMiddleware 收集请求日志的中间件
 func AccessLoggerMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 如果请求路径是 /api/admin/v1/server/latency/test，则跳过日志收集
+		if c.Request.URL.Path == "/api/admin/v1/server/latency/test" {
+			c.Next()
+			return
+		}
+
 		startTime := time.Now()
 
 		// 处理请求

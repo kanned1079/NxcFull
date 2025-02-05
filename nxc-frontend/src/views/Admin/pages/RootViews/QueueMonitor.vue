@@ -1,24 +1,25 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {type DataTableColumns, useMessage} from "naive-ui"
-import {computed, h, onBeforeMount, onMounted, onUnmounted, reactive, ref} from 'vue'
+import {type DataTableColumns, type DataTableInst, NButton, NIcon, NTag, useMessage} from "naive-ui"
+import {computed, h, onBeforeMount, onMounted, onUnmounted, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {handleDeletePreviousLog, handleFetchServerStatus, handleTestServerLatency} from "@/api/admin/server";
 
 import {
   CheckmarkDoneOutline as status200,
-  HandLeftOutline as status404,
   CloseOutline as status500,
-  EnterOutline, PauseOutline as closeOrderIcon, CheckmarkDoneOutline as passOrderIcon, ChevronDownOutline as downIcon,
-
+  EnterOutline,
+  RefreshOutline as status404,
+  ReorderFourOutline as recordIcon,
+  ServerOutline as sizeIcon,
 } from "@vicons/ionicons5"
-import {NButton, NDropdown, NIcon, NTag} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 const {t} = useI18n();
 const message = useMessage()
 const themeStore = useThemeStore()
+const tableRef = ref<DataTableInst>()
 let animated = ref<boolean>(false)
 
 let searchCode = ref<number>(0)
@@ -124,13 +125,13 @@ interface ApiLog {
   "updated_at": string,
 }
 
-const columns: DataTableColumns<ApiLog> = [
+const columns = computed<DataTableColumns<ApiLog>>(() => [
   {
-    title :'#',
+    title: t('adminViews.queueMonit.log.table.id'),
     key: 'id',
   },
   {
-    title: '请求方式',
+    title: t('adminViews.queueMonit.log.table.method'),
     key: 'method',
     render(row: ApiLog) {
       return h(NTag, {
@@ -143,7 +144,7 @@ const columns: DataTableColumns<ApiLog> = [
     }
   },
   {
-    title :'请求路径',
+    title: t('adminViews.queueMonit.log.table.path'),
     key: 'path',
     render(row: ApiLog) {
       return h('p', {style: {textDecoration: 'underline'}}, {
@@ -152,18 +153,22 @@ const columns: DataTableColumns<ApiLog> = [
     }
   },
   {
-    title: '状态码',
-    key: 'period',
+    title: t('adminViews.queueMonit.log.table.code'),
+    key: 'status_code',
     render(row: ApiLog) {
       return h(NTag, {
         size: 'small',
         bordered: false,
         type: computed(() => {
           switch (row.status_code) {
-            case 200: return 'success';
-            case 404: return 'warning';
-            case 500: return 'error';
-            default: return 'default';
+            case 200:
+              return 'success';
+            case 404:
+              return 'warning';
+            case 500:
+              return 'error';
+            default:
+              return 'default';
           }
         }).value
       }, {
@@ -172,12 +177,12 @@ const columns: DataTableColumns<ApiLog> = [
     }
   },
   {
-    title :'客户端IP',
+    title: t('adminViews.queueMonit.log.table.clientIp'),
     key: 'client_ip',
   },
   {
-    title: '处理时间',
-    key: 'status',
+    title: t('adminViews.queueMonit.log.table.responseTime'),
+    key: 'response_time',
     render(row: ApiLog) {
       return h('p', {}, {
         default: () => row.response_time.toFixed(2) + 'ms'
@@ -185,7 +190,7 @@ const columns: DataTableColumns<ApiLog> = [
     }
   },
   {
-    title :'请求时间',
+    title: t('adminViews.queueMonit.log.table.requestAt'),
     key: 'request_at',
     render(row: ApiLog) {
       return h('p', {}, {
@@ -193,7 +198,7 @@ const columns: DataTableColumns<ApiLog> = [
       })
     }
   },
-];
+])
 
 interface ApiReq {
   status200: number,
@@ -202,6 +207,8 @@ interface ApiReq {
   login_req: number,
   reg_req: number,
   code: number,
+  log_table_rows_count: number,
+  log_table_size: number,
   // api_log_list: ApiLog[],
 }
 
@@ -213,6 +220,8 @@ let apiReq = ref<ApiReq>({
   login_req: 0,
   reg_req: 0,
   code: 200,
+  log_table_rows_count: 0,
+  log_table_size: 0,
   // api_log_list: []
 })
 
@@ -238,6 +247,10 @@ const apiItems = computed<{
   },
 ])
 
+const downloadCsv = () => {
+  tableRef.value?.downloadCsv({ fileName: 'data-table' })
+}
+
 const callFetchServerStatus = async () => {
   animated.value = false
   let data = await handleFetchServerStatus(0, dataSize.value.page, dataSize.value.pageSize)
@@ -258,10 +271,10 @@ let showMention = ref<boolean>(true)
 const callDeletePreviousLog = async () => {
   let data = await handleDeletePreviousLog()
   if (data.code === 200) {
-    message.success(t('adminViews.queueMonit.api.deleteLogMsg', {nums: data.rows_deleted}))
+    message.success(t('adminViews.queueMonit.log.deleteLogMsg', {nums: data.rows_deleted}))
     await callFetchServerStatus()
   } else {
-    message.error(t('adminViews.queueMonit.api.deleteLogMsg') + data.msg || '')
+    message.error(t('adminViews.queueMonit.log.deleteLogMsg') + data.msg || '')
   }
 }
 
@@ -373,12 +386,12 @@ export default {
       </n-card>
 
       <n-card
-        hoverable
-        :embedded="true"
-        :bordered="false"
-        class="api-card"
-        :title="t('adminViews.queueMonit.api.title')"
-        >
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          class="api-card"
+          :title="t('adminViews.queueMonit.api.title')"
+      >
         <div>
           <n-grid
               cols="2 s:2 m:4"
@@ -389,9 +402,15 @@ export default {
             <n-grid-item v-for="(i, index) in apiItems" :key="index">
               <n-statistic :label="t(i.title)" :value="i.content">
                 <template #prefix>
-                  <n-icon v-if="index === 0"><status200 /></n-icon>
-                  <n-icon v-if="index === 1"><status404 /></n-icon>
-                  <n-icon v-if="index === 2"><status500 /></n-icon>
+                  <n-icon v-if="index === 0">
+                    <status200/>
+                  </n-icon>
+                  <n-icon v-if="index === 1">
+                    <status404/>
+                  </n-icon>
+                  <n-icon v-if="index === 2">
+                    <status500/>
+                  </n-icon>
                 </template>
                 <template #suffix>
                   {{ t(i.unit || '') }}
@@ -407,7 +426,9 @@ export default {
                     :value="apiReq.login_req"
                 >
                   <template #prefix>
-                    <n-icon><EnterOutline /></n-icon>
+                    <n-icon>
+                      <EnterOutline/>
+                    </n-icon>
 
                   </template>
                   <template #suffix>
@@ -428,25 +449,78 @@ export default {
         </div>
       </n-card>
 
-<!--      <n-card-->
-<!--          hoverable-->
-<!--          :embedded="true"-->
-<!--          :bordered="false"-->
-<!--          class="api-log-card"-->
-<!--          content-style="padding: 0;"-->
-<!--          :title="''"-->
-<!--      >-->
-<!--      </n-card>-->
-
-<!--      <n-h3>-->
-<!--        详细Api日志-->
-<!--      </n-h3>-->
-
-      <n-button
-        text
-        type="primary"
-        @click="callDeletePreviousLog"
-      >清除日志</n-button>
+      <n-card
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          class="log-card"
+          :title="t('adminViews.queueMonit.log.title')"
+      >
+        <div class="log-card-inner">
+          <div class="log-card-inner-l">
+            <n-grid
+                cols="1 s:1 m:2"
+                responsive="screen"
+                :x-gap="15"
+                :y-gap="15"
+            >
+              <n-grid-item
+                  style="display: flex; flex-direction: row;"
+              >
+                <n-statistic :label="t('adminViews.queueMonit.log.logTableRows')" tabular-nums>
+                  <n-number-animation ref="numberAnimationInstRef" :from="0" :to="apiReq.log_table_rows_count"/>
+                  <template #prefix>
+                    <n-icon>
+                      <recordIcon/>
+                    </n-icon>
+                  </template>
+                  <template #suffix>
+                    {{ t('adminViews.queueMonit.log.unit.lines') }}
+                  </template>
+                </n-statistic>
+              </n-grid-item>
+              <n-grid-item>
+                <n-statistic :label="t('adminViews.queueMonit.log.logTableSize')" tabular-nums>
+                  <n-number-animation
+                      :from="0"
+                      :to="apiReq.log_table_size"
+                      :precision="2"
+                  />
+                  <template #prefix>
+                    <n-icon>
+                      <sizeIcon/>
+                    </n-icon>
+                  </template>
+                  <template #suffix>
+                    {{ t('adminViews.queueMonit.log.unit.mb') }}
+                  </template>
+                </n-statistic>
+              </n-grid-item>
+            </n-grid>
+          </div>
+          <div class="log-card-inner-r">
+            <n-button
+                text
+                size="small"
+                type="warning"
+                @click="callDeletePreviousLog"
+                class="clear-btn"
+            >
+              {{ t('adminViews.queueMonit.log.deleteLog') }}
+            </n-button>
+            <n-button
+                text
+                size="small"
+                type="primary"
+                @click="downloadCsv"
+                class="export-btn"
+            >
+              {{ t('adminViews.queueMonit.log.exportCsv') }}
+            </n-button>
+            <p class="clear-hint">{{ t('adminViews.queueMonit.log.deleteLogHint') }}</p>
+          </div>
+        </div>
+      </n-card>
 
       <n-card
           hoverable
@@ -456,9 +530,11 @@ export default {
           content-style="padding: 0;"
       >
         <n-data-table
-          :columns="columns"
-          :data="apiLogList"
-          striped
+            ref="tableRef"
+            :bordered="false"
+            :columns="columns"
+            :data="apiLogList"
+            striped
         />
       </n-card>
 
@@ -556,8 +632,41 @@ export default {
       }
     }
   }
+
   .api-card {
     margin-top: 14px;
+  }
+
+  .log-card {
+    margin-top: 14px;
+
+    .log-card-inner {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .log-card-inner-l {
+        flex: 1;
+      }
+
+      .log-card-inner-r {
+        flex: 1;
+        .clear-btn {
+          font-size: 1rem;
+          font-weight: bold !important;
+          text-decoration: underline;
+        }
+        .export-btn {
+          font-size: 1rem;
+          margin-left: 10px;
+          text-decoration: underline;
+        }
+        .clear-hint {
+          margin-top: 4px;
+          opacity: .8;
+        }
+      }
+    }
   }
 
   .api-log-card {
