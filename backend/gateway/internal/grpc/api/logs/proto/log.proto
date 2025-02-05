@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto";
+
+
+service LogService {
+  rpc GetApiAccessLog(GetApiAccessLogRequest) returns (GetApiAccessLogResponse);
+  rpc SaveApiAccessLog2Db(SaveApiAccessLog2DbRequest) returns (SaveApiAccessLog2DbResponse);
+  rpc GetServerLiveStatus(GetServerLiveStatusRequest) returns (GetServerLiveStatusResponse);
+  rpc ClearPreviousApiLog(ClearPreviousApiLogRequest) returns (ClearPreviousApiLogResponse);
+}
+
+message GetApiAccessLogRequest {
+  int64 page = 1;
+  int64 size = 2;
+  string level = 3;
+}
+
+message GetApiAccessLogResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes log_records = 3;
+  int64 page_count = 4;
+}
+
+// 单个日志条目
+message ApiLogEntry {
+  string level = 1;         // 日志等级
+  int32 status_code = 2;    // 请求状态码
+  int64 request_at = 3;     // 请求时间 (Unix 时间戳)
+  float response_time = 4;  // 响应时间（单位：毫秒）
+  string client_ip = 5;     // 客户端 IP
+  string method = 6;        // 请求方法 (GET, POST, etc.)
+  string path = 7;          // 请求路径
+}
+
+// 请求消息
+message SaveApiAccessLog2DbRequest {
+  repeated ApiLogEntry logs = 1; // 多条日志记录
+}
+
+// 响应消息
+message SaveApiAccessLog2DbResponse {
+  int32 code = 1;           // 状态码 (0 表示成功)
+  string msg = 2;           // 消息 (描述信息)
+}
+
+message GetServerLiveStatusRequest {
+  int32 code = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message GetServerLiveStatusResponse {
+  int32 code = 1;
+  int64 status200 = 2;
+  int64 status404 = 3;
+  int64 status500 = 4;
+  int64 login_req = 5;
+  int64 register_req = 6;
+  bytes api_log_list = 7;
+  int64 page_size = 8;
+}
+
+message ClearPreviousApiLogRequest {
+
+}
+
+message ClearPreviousApiLogResponse {
+  int32 code = 1;
+  string msg = 2;
+  int64 row_deleted = 3;
+}
