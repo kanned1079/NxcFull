@@ -52,6 +52,7 @@ func StartApiGateways() {
 	{
 		//// 管理员特定的路由
 		adminAuthorized.GET("/server/latency/test", utils.ConnectionTestForAdmin)
+		adminAuthorized.GET("/server/status/fetch", handler.HandleGetSystemStatus)
 		adminAuthorized.GET("/os/status/get") // 获取当前系统的负载
 		adminAuthorized.GET("/server/status")
 		adminAuthorized.GET("/infrastructure/status", handler.GetSystemInfrastructureInfo)

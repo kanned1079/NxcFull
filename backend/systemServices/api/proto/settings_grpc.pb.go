@@ -34,6 +34,7 @@ const (
 	SettingsService_GetRegisterEnvConfig_FullMethodName             = "/settings.SettingsService/GetRegisterEnvConfig"
 	SettingsService_GetWelcomePageConfig_FullMethodName             = "/settings.SettingsService/GetWelcomePageConfig"
 	SettingsService_GetAppDownloadLink_FullMethodName               = "/settings.SettingsService/GetAppDownloadLink"
+	SettingsService_GetServerLiveStatus_FullMethodName              = "/settings.SettingsService/GetServerLiveStatus"
 )
 
 // SettingsServiceClient is the client API for SettingsService service.
@@ -69,6 +70,7 @@ type SettingsServiceClient interface {
 	GetRegisterEnvConfig(ctx context.Context, in *GetRegisterEnvConfigRequest, opts ...grpc.CallOption) (*GetRegisterEnvConfigResponse, error)
 	GetWelcomePageConfig(ctx context.Context, in *GetWelcomePageConfigRequest, opts ...grpc.CallOption) (*GetWelcomePageConfigResponse, error)
 	GetAppDownloadLink(ctx context.Context, in *GetAppDownloadLinkRequest, opts ...grpc.CallOption) (*GetAppDownloadLinkResponse, error)
+	GetServerLiveStatus(ctx context.Context, in *GetServerLiveStatusRequest, opts ...grpc.CallOption) (*GetServerLiveStatusResponse, error)
 }
 
 type settingsServiceClient struct {
@@ -229,6 +231,16 @@ func (c *settingsServiceClient) GetAppDownloadLink(ctx context.Context, in *GetA
 	return out, nil
 }
 
+func (c *settingsServiceClient) GetServerLiveStatus(ctx context.Context, in *GetServerLiveStatusRequest, opts ...grpc.CallOption) (*GetServerLiveStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetServerLiveStatusResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetServerLiveStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SettingsServiceServer is the server API for SettingsService service.
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
@@ -262,6 +274,7 @@ type SettingsServiceServer interface {
 	GetRegisterEnvConfig(context.Context, *GetRegisterEnvConfigRequest) (*GetRegisterEnvConfigResponse, error)
 	GetWelcomePageConfig(context.Context, *GetWelcomePageConfigRequest) (*GetWelcomePageConfigResponse, error)
 	GetAppDownloadLink(context.Context, *GetAppDownloadLinkRequest) (*GetAppDownloadLinkResponse, error)
+	GetServerLiveStatus(context.Context, *GetServerLiveStatusRequest) (*GetServerLiveStatusResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
 
@@ -316,6 +329,9 @@ func (UnimplementedSettingsServiceServer) GetWelcomePageConfig(context.Context, 
 }
 func (UnimplementedSettingsServiceServer) GetAppDownloadLink(context.Context, *GetAppDownloadLinkRequest) (*GetAppDownloadLinkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppDownloadLink not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetServerLiveStatus(context.Context, *GetServerLiveStatusRequest) (*GetServerLiveStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetServerLiveStatus not implemented")
 }
 func (UnimplementedSettingsServiceServer) mustEmbedUnimplementedSettingsServiceServer() {}
 func (UnimplementedSettingsServiceServer) testEmbeddedByValue()                         {}
@@ -608,6 +624,24 @@ func _SettingsService_GetAppDownloadLink_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SettingsService_GetServerLiveStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetServerLiveStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetServerLiveStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetServerLiveStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetServerLiveStatus(ctx, req.(*GetServerLiveStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SettingsService_ServiceDesc is the grpc.ServiceDesc for SettingsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -674,6 +708,10 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAppDownloadLink",
 			Handler:    _SettingsService_GetAppDownloadLink_Handler,
+		},
+		{
+			MethodName: "GetServerLiveStatus",
+			Handler:    _SettingsService_GetServerLiveStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

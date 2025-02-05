@@ -4,158 +4,49 @@ import {computed, onBeforeMount, onMounted, onUnmounted, reactive, ref} from 'vu
 import useThemeStore from "@/stores/useThemeStore";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import {handleTestServerLatency} from "@/api/admin/test";
-import {RefreshOutline as retryIcon} from "@vicons/ionicons5"
-
-// let animated = ref<boolean>(false)
+import instance from "@/axios/index"
 const {t} = useI18n();
 const apiAddrStore = useApiAddrStore();
-
-let animated = ref<boolean>(false)
-
-// const titlePart1 = ['当前作业量', '近一小时处理量', '7日内报错数量']
 const themeStore = useThemeStore()
-let status = ref(true)
-const statusColor = {
-  error: '#f95555',
-  running: '#3bc65c'
-}
-
-
-let hardwareInfo = reactive({
-  cpu: {
-    title: 'CPU型号',
-    content: '',
-    unit: '',
-  },
-  cores: {
-    title: '总核心数',
-    content: 0,
-    unit: 'core(s)',
-  },
-  memory: {
-    title: '内存大小',
-    content: '',
-    unit: 'GiB',
-  },
-  disk: {
-    title: '根目录大小',
-    content: '',
-    unit: 'GiB',
-  },
-})
-
-let osInfo = reactive({
-  release: {
-    title: '操作系统版本',
-    content: ''
-  },
-  kernel: {
-    title: '内核版本',
-    content: ''
-  },
-  architecture: {
-    title: '系统架构',
-    content: ''
-  },
-  processNum: {
-    title: '进程号',
-    content: '',
-  },
-  goroutine: {
-    title: '系统Go协程数',
-    content: '',
-  },
-  gc: {
-    title: '上一次GC回收时间',
-    content: ''
-  }
-})
-
-let intervalId = ref()
-
-// let refresh = setInterval(() => {
-//   getSysInfo()
-// }, 3000)
+let animated = ref<boolean>(false)
 
 let retryTestLatency = ref<boolean>(false)
 let latencyTestIntervalId = ref<undefined | number>(undefined)
 let latency = ref<number>(-1)
 const callTestConnLatency = async () => {
-  // const startTime = new Date();
-  retryTestLatency.value = false
-  let testStartTime: Date | null | undefined = null
-  let testEndTime: Date | null | undefined = null
+  retryTestLatency.value = false;
+  let testStartTime: Date | null | undefined = null;
+  let testEndTime: Date | null | undefined = null;
 
-  // 定时器，每隔 1 秒测试连接并更新延迟
+  // 使用一个标志来避免请求堆积
+  let isTesting = false;
+
+  // 定时器 每隔 3 秒测试连接并更新延迟
   latencyTestIntervalId.value = setInterval(async () => {
+    if (isTesting) return; // 如果上一个请求还没有完成，跳过当前请求
+    isTesting = true;
+
     testStartTime = new Date(); // 每次请求前记录开始时间
+
     if (await handleTestServerLatency()) {
       testEndTime = new Date(); // 每次请求完成后记录结束时间
       latency.value = testEndTime.getTime() - testStartTime.getTime(); // 计算请求的延迟时间（毫秒）
     } else {
-      return latency.value = -1
+      latency.value = -1; // 如果请求失败，设置延迟为 -1
     }
-  }, 3000); // 每 1 秒执行一次请求
 
+    isTesting = false; // 请求完成，允许下一次请求
+  }, 3000);
+
+  // 30秒后停止测试
   setTimeout(() => {
     if (latencyTestIntervalId.value !== undefined) {
       clearInterval(latencyTestIntervalId.value);
       console.log('Stopped latency test');
-      retryTestLatency.value = true
-
+      retryTestLatency.value = true;
     }
-  }, 30000); // 10 秒后自动停止测试
+  }, 30000); // 30秒后停止
 };
-
-// const callTestConnLatency = () => {
-//   // 初始化重试测试延迟标志为 false
-//   retryTestLatency.value = false;
-//
-//   // 初始化测试开始时间和结束时间为 null
-//   let testStartTime: Date | null | undefined = null;
-//   let testEndTime = null;
-//
-//   // 定时器 ID
-//   let latencyTestIntervalId;
-//
-//   // 定义一个内部函数来执行延迟测试
-//   const performLatencyTest = () => {
-//     // 记录测试开始时间
-//     testStartTime = new Date();
-//
-//     // 调用处理服务器延迟测试的函数
-//     handleTestServerLatency()
-//         .then((success) => {
-//           if (success) {
-//             // 记录测试结束时间
-//             testEndTime = new Date();
-//             // 计算延迟时间（毫秒）
-//             latency.value = testEndTime.getTime() - testStartTime.getTime();
-//           } else {
-//             // 测试失败，将延迟时间设为 -1
-//             latency.value = -1;
-//           }
-//         })
-//         .catch(() => {
-//           // 处理错误，将延迟时间设为 -1
-//           latency.value = -1;
-//         });
-//   };
-//
-//   // 每隔 5 秒执行一次延迟测试
-//   latencyTestIntervalId = setInterval(performLatencyTest, 5000);
-//
-//   // 30 秒后自动停止测试
-//   setTimeout(() => {
-//     if (latencyTestIntervalId) {
-//       // 清除定时器
-//       clearInterval(latencyTestIntervalId);
-//       console.log('Stopped latency test');
-//       // 设置重试测试延迟标志为 true
-//       retryTestLatency.value = true;
-//     }
-//   }, 30000);
-// };
 
 let getLatencyHint = computed<{
   title: string
@@ -201,15 +92,17 @@ let getLatencyHint = computed<{
   }
 });
 
+const callFetchServerStatus = async () => {
+  let {data} = await instance.get('/api/admin/v1/server/status/fetch')
+  console.log(data)
+}
+
+let showMention = ref<boolean>(true)
+
 onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/monitor'
   themeStore.menuSelected = 'queue-monitor'
-  // themeStore.menuSelected = 'queue-monitor'
-  // // 调用接口获取数据
-  // getSysInfo()
-  // intervalId.value = setInterval(() => {
-  //   getSysInfo()
-  // }, 3000)
+
 
   callTestConnLatency()
 
@@ -218,7 +111,9 @@ onMounted(() => {
   // reloadCharts()
 
   // setInterval(async () => handleTestServerLatency(), 10)
+  setTimeout(() => showMention.value = false, 5000)
 
+  callFetchServerStatus()
 })
 
 onBeforeMount(() => {
@@ -232,7 +127,6 @@ onBeforeMount(() => {
 onUnmounted(() => {
   console.log('queue组件卸载')
   // clearInterval()
-  clearInterval(intervalId.value)
   clearInterval(latencyTestIntervalId.value)
 })
 
@@ -255,6 +149,18 @@ export default {
       <!--        </div>-->
       <!--      </n-card>-->
 
+
+      <n-collapse-transition :show="showMention">
+        <n-alert
+            type="info"
+            :bordered="!themeStore.enableDarkMode"
+            style="margin-bottom: 14px"
+        >
+          请勿长时间停留此页面，在网络高峰时段频繁查询将些许影响网关性能和数据库吞吐量。
+        </n-alert>
+      </n-collapse-transition>
+
+
       <n-card
           hoverable
           :embedded="true"
@@ -265,9 +171,7 @@ export default {
         <div
             class="latency-inner"
         >
-          <!--          <div class="latency-inner-up">-->
-          <!--            <p>连接状态： OK</p>-->
-          <!--          </div>-->
+
           <div class="latency-inner-mid">
             <div class="l-i-mid-left">
               <!--              <p class="latency-nums">{{ latency }}</p>-->
@@ -297,11 +201,11 @@ export default {
                     @click="callTestConnLatency"
                 >
                   {{ t('adminViews.queueMonit.latency.retry') }}
-<!--                  <template #icon>-->
-<!--                    <n-icon size="14">-->
-<!--                      <retryIcon/>-->
-<!--                    </n-icon>-->
-<!--                  </template>-->
+                  <!--                  <template #icon>-->
+                  <!--                    <n-icon size="14">-->
+                  <!--                      <retryIcon/>-->
+                  <!--                    </n-icon>-->
+                  <!--                  </template>-->
                 </n-button>
 
               </div>
@@ -404,109 +308,7 @@ export default {
     }
   }
 
-  /*
-  .card1 {
-    width: 100%;
 
-    .inner-card {
-      display: flex;
-
-      .part1 {
-        flex: 1;
-        height: 100px;
-        border-radius: 4px;
-        position: relative;
-
-        .title {
-          position: absolute;
-          top: 3px;
-          left: 3px;
-          font-size: 1rem;
-          opacity: 0.8;
-        }
-
-        .num {
-          position: absolute;
-          bottom: 10px;
-          left: 3px;
-          font-size: 30px;
-        }
-
-        .status {
-          position: absolute;
-          bottom: 10px;
-          left: 3px;
-          font-size: 30px;
-          color: v-bind(nowStatusColor);
-        }
-      }
-    }
-  }
-
-  .card2 {
-    width: 100%;
-    margin-top: 20px;
-
-    .card1-inner {
-      width: 100%;
-      height: 150px;
-      display: flex;
-
-      .cpu-panel {
-        flex: 1;
-        text-align: center;
-        width: 200px;
-      }
-
-      .mem-panel {
-        flex: 1;
-        text-align: center;
-        width: 200px;
-
-      }
-
-      .disk-panel {
-        flex: 1;
-        text-align: center;
-        width: 200px;
-      }
-    }
-
-    .card3 {
-      display: flex;
-
-      .card2-inner {
-        flex: 1;
-        height: 320px;
-        border-radius: 5px;
-        margin-top: 30px;
-
-        .title-card2 {
-          font-size: 1.15rem;
-          opacity: 0.8;
-          margin-bottom: 20px;
-        }
-
-        .item-box {
-          display: flex;
-          margin-left: 5px;
-          justify-content: left;
-          line-height: 30px;
-
-          .title {
-            font-size: 1rem;
-            margin-right: 5px;
-            margin-bottom: 10px;
-          }
-
-        }
-      }
-    }
-
-
-  }
-
-   */
 }
 
 

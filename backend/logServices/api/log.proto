@@ -8,6 +8,7 @@ option go_package = "./proto";
 service LogService {
   rpc GetApiAccessLog(GetApiAccessLogRequest) returns (GetApiAccessLogResponse);
   rpc SaveApiAccessLog2Db(SaveApiAccessLog2DbRequest) returns (SaveApiAccessLog2DbResponse);
+  rpc GetServerLiveStatus(GetServerLiveStatusRequest) returns (GetServerLiveStatusResponse);
 }
 
 message GetApiAccessLogRequest {
@@ -44,4 +45,22 @@ message SaveApiAccessLog2DbResponse {
   int32 code = 1;           // 状态码 (0 表示成功)
   string msg = 2;           // 消息 (描述信息)
 }
+
+message GetServerLiveStatusRequest {
+  int32 code = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message GetServerLiveStatusResponse {
+  int32 code = 1;
+  int64 status200 = 2;
+  int64 status404 = 3;
+  int64 status500 = 4;
+  int64 login_req = 5;
+  int64 register_req = 6;
+  bytes api_log_list = 7;
+  int64 page_size = 8;
+}
+
 
