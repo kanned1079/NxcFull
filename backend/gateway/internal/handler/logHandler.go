@@ -6,10 +6,24 @@ import (
 	pb "gateway/internal/grpc/api/logs/proto"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func HandleGetSystemStatus(context *gin.Context) {
-	resp, err := grpcClient.LogServiceClient.GetServerLiveStatus(sysContext.Background(), &pb.GetServerLiveStatusRequest{})
+	searchCode, err := strconv.ParseInt(context.Query("code"), 10, 64)
+	err, page, size := GetPage2SizeFromQuery(context)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "page and size not found",
+		})
+		return
+	}
+	resp, err := grpcClient.LogServiceClient.GetServerLiveStatus(sysContext.Background(), &pb.GetServerLiveStatusRequest{
+		Page: page,
+		Size: size,
+		Code: int32(searchCode),
+	})
 	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
@@ -34,6 +48,22 @@ func HandleGetSystemStatus(context *gin.Context) {
 		"login_req":    resp.LoginReq,
 		"reg_req":      resp.RegisterReq,
 		"api_log_list": apiLogList,
-		"page_count":   0,
+		"page_count":   resp.PageSize,
+	})
+}
+
+func HandleClearPreviousLog(context *gin.Context) {
+	resp, err := grpcClient.LogServiceClient.ClearPreviousApiLog(sysContext.Background(), &pb.ClearPreviousApiLogRequest{})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":         resp.Code,
+		"rows_deleted": resp.RowDeleted,
+		"msg":          resp.Msg,
 	})
 }

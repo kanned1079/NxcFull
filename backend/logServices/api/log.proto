@@ -9,6 +9,7 @@ service LogService {
   rpc GetApiAccessLog(GetApiAccessLogRequest) returns (GetApiAccessLogResponse);
   rpc SaveApiAccessLog2Db(SaveApiAccessLog2DbRequest) returns (SaveApiAccessLog2DbResponse);
   rpc GetServerLiveStatus(GetServerLiveStatusRequest) returns (GetServerLiveStatusResponse);
+  rpc ClearPreviousApiLog(ClearPreviousApiLogRequest) returns (ClearPreviousApiLogResponse);
 }
 
 message GetApiAccessLogRequest {
@@ -63,4 +64,12 @@ message GetServerLiveStatusResponse {
   int64 page_size = 8;
 }
 
+message ClearPreviousApiLogRequest {
 
+}
+
+message ClearPreviousApiLogResponse {
+  int32 code = 1;
+  string msg = 2;
+  int64 row_deleted = 3;
+}

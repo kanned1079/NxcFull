@@ -58,7 +58,7 @@ export default {
       <!--      <transition name="slide-fade">-->
 
       <n-layout-content content-style="padding: 0" class="content">
-        <n-scrollbar style="max-height: 100vh">
+<!--        <n-scrollbar style="max-height: 100vh">-->
 
 
           <!--          <n-config-provider>-->
@@ -87,7 +87,7 @@ export default {
 
 
           <div style="height: 3rem"></div>
-        </n-scrollbar>
+<!--        </n-scrollbar>-->
       </n-layout-content>
       <!--      </transition>-->
       <!--      <n-layout-footer>成府路</n-layout-footer>-->

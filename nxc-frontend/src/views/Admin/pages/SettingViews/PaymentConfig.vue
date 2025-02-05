@@ -286,9 +286,9 @@ export default {
         <n-li>
           {{ t('adminViews.payConfig.attention.point2') }}
         </n-li>
-        <n-li>
-          {{ t('adminViews.payConfig.attention.point3') }}
-        </n-li>
+<!--        <n-li>-->
+<!--          {{ t('adminViews.payConfig.attention.point3') }}-->
+<!--        </n-li>-->
         <n-li>
           {{ t('adminViews.payConfig.attention.point4') }}
         </n-li>

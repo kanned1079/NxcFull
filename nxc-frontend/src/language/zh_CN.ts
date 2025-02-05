@@ -121,9 +121,12 @@ export default {
             }
         },
         queueMonit: {
+            headerHint: '請勿長時間停留在此頁面，在網絡高峰時段頻繁查詢將些許影響網關性能和數據庫吞吐量。',
             latency: {
+                title: '服務器延遲',
                 retry: '再次測試',
                 hint: '*這裡的請求指的是客戶端發送請求到服務器後，服務器給予成功響應到客戶端所需要的時間。',
+                unit: '毫秒',
                 level: {
                     l1: {
                         title: '優秀',
@@ -150,6 +153,29 @@ export default {
                         description: '無法連接到服務器或處理請求錯誤，請檢查是否配置正確。',
                     }
                 },
+            },
+            api: {
+                title: '最近一小时API请求状态',
+                deleteLogMsg: '刪除日誌 {nums} 條',
+                deleteLogErr: '刪除日誌失敗',
+                items: {
+                    ok: {
+                        title: '成功 (StatusOK)',
+                        unit: '次',
+                    },
+                    notFound: {
+                        title: '状态路径错误 (404)',
+                        unit: '次',
+                    },
+                    internalErr: {
+                        title: '服务器内部错误 (500)',
+                        unit: '次',
+                    },
+                    login2reg: {
+                        title: '登录 / 注册',
+                        unit: '次'
+                    }
+                }
             }
         },
         systemConfig: {

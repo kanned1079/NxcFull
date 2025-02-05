@@ -1,14 +1,32 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onBeforeMount, onMounted, onUnmounted, reactive, ref} from 'vue'
+import {type DataTableColumns, useMessage} from "naive-ui"
+import {computed, h, onBeforeMount, onMounted, onUnmounted, reactive, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
-import useApiAddrStore from "@/stores/useApiAddrStore";
-import {handleTestServerLatency} from "@/api/admin/test";
-import instance from "@/axios/index"
+import {handleDeletePreviousLog, handleFetchServerStatus, handleTestServerLatency} from "@/api/admin/server";
+
+import {
+  CheckmarkDoneOutline as status200,
+  HandLeftOutline as status404,
+  CloseOutline as status500,
+  EnterOutline, PauseOutline as closeOrderIcon, CheckmarkDoneOutline as passOrderIcon, ChevronDownOutline as downIcon,
+
+} from "@vicons/ionicons5"
+import {NButton, NDropdown, NIcon, NTag} from "naive-ui";
+import {formatDate} from "@/utils/timeFormat";
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+
 const {t} = useI18n();
-const apiAddrStore = useApiAddrStore();
+const message = useMessage()
 const themeStore = useThemeStore()
 let animated = ref<boolean>(false)
+
+let searchCode = ref<number>(0)
+let pageCount = ref<number>(0)
+let dataSize = ref<{ pageSize: number, page: number }>({
+  pageSize: 20,
+  page: 1,
+})
 
 let retryTestLatency = ref<boolean>(false)
 let latencyTestIntervalId = ref<undefined | number>(undefined)
@@ -29,14 +47,14 @@ const callTestConnLatency = async () => {
     testStartTime = new Date(); // 每次请求前记录开始时间
 
     if (await handleTestServerLatency()) {
-      testEndTime = new Date(); // 每次请求完成后记录结束时间
+      testEndTime = new Date();
       latency.value = testEndTime.getTime() - testStartTime.getTime(); // 计算请求的延迟时间（毫秒）
     } else {
       latency.value = -1; // 如果请求失败，设置延迟为 -1
     }
 
     isTesting = false; // 请求完成，允许下一次请求
-  }, 3000);
+  }, 1500);
 
   // 30秒后停止测试
   setTimeout(() => {
@@ -92,12 +110,160 @@ let getLatencyHint = computed<{
   }
 });
 
+interface ApiLog {
+  id: number,
+  level: string,
+  method: string,
+  path: string,
+  status_code: number,
+  response_time: number,
+  request_at: string,
+  client_ip: string,
+  "created_at": string,
+  "deleted_at": string,
+  "updated_at": string,
+}
+
+const columns: DataTableColumns<ApiLog> = [
+  {
+    title :'#',
+    key: 'id',
+  },
+  {
+    title: '请求方式',
+    key: 'method',
+    render(row: ApiLog) {
+      return h(NTag, {
+        size: 'small',
+        bordered: false,
+        type: 'default',
+      }, {
+        default: () => row.method
+      })
+    }
+  },
+  {
+    title :'请求路径',
+    key: 'path',
+    render(row: ApiLog) {
+      return h('p', {style: {textDecoration: 'underline'}}, {
+        default: () => row.path
+      })
+    }
+  },
+  {
+    title: '状态码',
+    key: 'period',
+    render(row: ApiLog) {
+      return h(NTag, {
+        size: 'small',
+        bordered: false,
+        type: computed(() => {
+          switch (row.status_code) {
+            case 200: return 'success';
+            case 404: return 'warning';
+            case 500: return 'error';
+            default: return 'default';
+          }
+        }).value
+      }, {
+        default: () => row.status_code
+      })
+    }
+  },
+  {
+    title :'客户端IP',
+    key: 'client_ip',
+  },
+  {
+    title: '处理时间',
+    key: 'status',
+    render(row: ApiLog) {
+      return h('p', {}, {
+        default: () => row.response_time.toFixed(2) + 'ms'
+      })
+    }
+  },
+  {
+    title :'请求时间',
+    key: 'request_at',
+    render(row: ApiLog) {
+      return h('p', {}, {
+        default: () => formatDate(row.request_at)
+      })
+    }
+  },
+];
+
+interface ApiReq {
+  status200: number,
+  status404: number,
+  status500: number,
+  login_req: number,
+  reg_req: number,
+  code: number,
+  // api_log_list: ApiLog[],
+}
+
+let apiLogList = ref<ApiLog[]>([])
+let apiReq = ref<ApiReq>({
+  status200: 0,
+  status404: 0,
+  status500: 0,
+  login_req: 0,
+  reg_req: 0,
+  code: 200,
+  // api_log_list: []
+})
+
+const apiItems = computed<{
+  title: string,
+  content: any,
+  unit?: string
+}[]>(() => [
+  {
+    title: 'adminViews.queueMonit.api.items.ok.title',
+    content: apiReq.value.status200,
+    unit: 'adminViews.queueMonit.api.items.ok.unit',
+  },
+  {
+    title: 'adminViews.queueMonit.api.items.notFound.title',
+    content: apiReq.value.status404,
+    unit: 'adminViews.queueMonit.api.items.notFound.unit',
+  },
+  {
+    title: 'adminViews.queueMonit.api.items.internalErr.title',
+    content: apiReq.value.status500,
+    unit: 'adminViews.queueMonit.api.items.internalErr.unit',
+  },
+])
+
 const callFetchServerStatus = async () => {
-  let {data} = await instance.get('/api/admin/v1/server/status/fetch')
+  animated.value = false
+  let data = await handleFetchServerStatus(0, dataSize.value.page, dataSize.value.pageSize)
+  if (data.code === 200) {
+    Object.assign(apiReq.value, data)
+    apiLogList.value = []
+    data.api_log_list.forEach((log: ApiLog) => apiLogList.value.push(log))
+    pageCount.value = data.page_count
+    animated.value = true
+  } else {
+
+  }
   console.log(data)
 }
 
 let showMention = ref<boolean>(true)
+
+const callDeletePreviousLog = async () => {
+  let data = await handleDeletePreviousLog()
+  if (data.code === 200) {
+    message.success(t('adminViews.queueMonit.api.deleteLogMsg', {nums: data.rows_deleted}))
+    await callFetchServerStatus()
+  } else {
+    message.error(t('adminViews.queueMonit.api.deleteLogMsg') + data.msg || '')
+  }
+}
 
 onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/monitor'
@@ -141,14 +307,6 @@ export default {
 <template>
   <transition name="slide-fade">
     <div v-if="animated" class="root">
-      <!--      <n-card-->
-      <!--          title="最近一周API接口访问次数"-->
-      <!--          hoverable class="card1" :embedded="true" :bordered="false">-->
-      <!--        <div class="visited" style="height: 280px" ref="visitedChartDOM">-->
-
-      <!--        </div>-->
-      <!--      </n-card>-->
-
 
       <n-collapse-transition :show="showMention">
         <n-alert
@@ -156,7 +314,7 @@ export default {
             :bordered="!themeStore.enableDarkMode"
             style="margin-bottom: 14px"
         >
-          请勿长时间停留此页面，在网络高峰时段频繁查询将些许影响网关性能和数据库吞吐量。
+          {{ t('adminViews.queueMonit.headerHint') }}
         </n-alert>
       </n-collapse-transition>
 
@@ -166,12 +324,11 @@ export default {
           :embedded="true"
           :bordered="false"
           class="latency-card"
-          title="服务器延迟"
+          :title="t('adminViews.queueMonit.latency.title')"
       >
         <div
             class="latency-inner"
         >
-
           <div class="latency-inner-mid">
             <div class="l-i-mid-left">
               <!--              <p class="latency-nums">{{ latency }}</p>-->
@@ -181,7 +338,7 @@ export default {
                     :duration="0"
                 />
                 <template #suffix>
-                  ms
+                  {{ t('adminViews.queueMonit.latency.unit') }}
                 </template>
               </n-statistic>
 
@@ -201,11 +358,6 @@ export default {
                     @click="callTestConnLatency"
                 >
                   {{ t('adminViews.queueMonit.latency.retry') }}
-                  <!--                  <template #icon>-->
-                  <!--                    <n-icon size="14">-->
-                  <!--                      <retryIcon/>-->
-                  <!--                    </n-icon>-->
-                  <!--                  </template>-->
                 </n-button>
 
               </div>
@@ -218,8 +370,105 @@ export default {
             <p>{{ t('adminViews.queueMonit.latency.hint') }}</p>
           </div>
         </div>
-
       </n-card>
+
+      <n-card
+        hoverable
+        :embedded="true"
+        :bordered="false"
+        class="api-card"
+        :title="t('adminViews.queueMonit.api.title')"
+        >
+        <div>
+          <n-grid
+              cols="2 s:2 m:4"
+              responsive="screen"
+              :x-gap="15"
+              :y-gap="15"
+          >
+            <n-grid-item v-for="(i, index) in apiItems" :key="index">
+              <n-statistic :label="t(i.title)" :value="i.content">
+                <template #prefix>
+                  <n-icon v-if="index === 0"><status200 /></n-icon>
+                  <n-icon v-if="index === 1"><status404 /></n-icon>
+                  <n-icon v-if="index === 2"><status500 /></n-icon>
+                </template>
+                <template #suffix>
+                  {{ t(i.unit || '') }}
+                </template>
+              </n-statistic>
+            </n-grid-item>
+
+
+            <n-grid-item>
+              <div style="display: flex; flex-direction: row">
+                <n-statistic
+                    :label="t('adminViews.queueMonit.api.items.login2reg.title')"
+                    :value="apiReq.login_req"
+                >
+                  <template #prefix>
+                    <n-icon><EnterOutline /></n-icon>
+
+                  </template>
+                  <template #suffix>
+                    /
+                  </template>
+                </n-statistic>
+                <n-statistic
+                    :label="'*'"
+                    :value="apiReq.reg_req"
+                >
+                  <template #suffix>
+                    {{ t('adminViews.queueMonit.api.items.internalErr.unit') }}
+                  </template>
+                </n-statistic>
+              </div>
+            </n-grid-item>
+          </n-grid>
+        </div>
+      </n-card>
+
+<!--      <n-card-->
+<!--          hoverable-->
+<!--          :embedded="true"-->
+<!--          :bordered="false"-->
+<!--          class="api-log-card"-->
+<!--          content-style="padding: 0;"-->
+<!--          :title="''"-->
+<!--      >-->
+<!--      </n-card>-->
+
+<!--      <n-h3>-->
+<!--        详细Api日志-->
+<!--      </n-h3>-->
+
+      <n-button
+        text
+        type="primary"
+        @click="callDeletePreviousLog"
+      >清除日志</n-button>
+
+      <n-card
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          class="api-log-card"
+          content-style="padding: 0;"
+      >
+        <n-data-table
+          :columns="columns"
+          :data="apiLogList"
+          striped
+        />
+      </n-card>
+
+      <DataTableSuffix
+          v-model:data-size="dataSize"
+          v-model:page-count="pageCount"
+          v-model:animated="animated"
+          :update-data="callFetchServerStatus"
+      />
+
     </div>
 
   </transition>
@@ -306,6 +555,13 @@ export default {
 
       }
     }
+  }
+  .api-card {
+    margin-top: 14px;
+  }
+
+  .api-log-card {
+    margin-top: 14px;
   }
 
 
