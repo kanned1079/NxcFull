@@ -4,12 +4,15 @@ import {useI18n} from "vue-i18n";
 import {computed, h, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
-import type {FormInst} from 'naive-ui'
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
+
+import {type FormInst, NIcon} from 'naive-ui'
 import {NButton, NSwitch, NTag, useMessage} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import instance from "@/axios";
 import {formatTimestamp} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 const {t} = useI18n();
 // const apiAddrStore = useApiAddrStore();
@@ -324,11 +327,32 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px 20px 0 20px">
-    <n-card title="优惠券管理" hoverable :embedded="true" class="card-root" :bordered="false">
-      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddCoupon">添加优惠券</n-button>
-    </n-card>
-  </div>
+  <PageHead
+      :title="t('adminViews.couponMgr.title')"
+      :description="t('adminViews.couponMgr.description')"
+  >
+    <n-button
+        tertiary
+        type="primary"
+        size="medium"
+        class="btn-right"
+        @click="handleAddCoupon">
+      <template #icon>
+        <n-icon>
+          <AddIcon/>
+        </n-icon>
+      </template>
+
+      {{ t('adminViews.couponMgr.addNewCoupon') }}
+    </n-button>
+  </PageHead>
+<!--  <div style="padding: 20px 20px 0 20px">-->
+<!--&lt;!&ndash;    <n-card title="优惠券管理" hoverable :embedded="true" class="card-root" :bordered="false">&ndash;&gt;-->
+<!--&lt;!&ndash;      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddCoupon">添加优惠券</n-button>&ndash;&gt;-->
+<!--&lt;!&ndash;    </n-card>&ndash;&gt;-->
+
+<!--  </div>-->
+
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
@@ -445,7 +469,7 @@ export default {
 
 <style lang="less" scoped>
 .root {
-  padding: 0 20px 20px 20px;
+  padding: 0 20px 0 20px;
 
   .card-root {
     .add-btn {

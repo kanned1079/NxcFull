@@ -30,14 +30,14 @@ let settingsData: WelcomeSetting[] = [
   {
     title: 'adminViews.systemConfig.welcome.homeDescription.title',
     description: 'adminViews.systemConfig.welcome.homeDescription.description',
-    type: 'input',
+    type: 'input-area',
     placeholder: 'adminViews.systemConfig.welcome.homeDescription.placeholder',
     modelValue: 'app_sub_description',
   },
   {
     title: 'adminViews.systemConfig.welcome.whyChooseUs.title',
     description: 'adminViews.systemConfig.welcome.whyChooseUs.description',
-    type: 'input',
+    type: 'input-area',
     placeholder: 'adminViews.systemConfig.welcome.whyChooseUs.placeholder',
     modelValue: 'why_choose_us_hint',
   },
@@ -85,67 +85,6 @@ let settingsData: WelcomeSetting[] = [
   },
 ];
 
-
-// let settingsData: WelcomeSetting[] = [
-//   {
-//     title: "首页描述",
-//     description: "设置首页的简要描述内容。",
-//     type: "input",
-//     placeholder: "请输入首页描述内容",
-//     modelValue: "app_sub_description"
-//   },
-//   {
-//     title: "为什么选择我们",
-//     description: "设置关于为什么选择我们的描述。",
-//     type: "input",
-//     placeholder: "请输入详细描述",
-//     modelValue: "why_choose_us_hint"
-//   },
-//   {
-//     title: "Bilibili 官方链接",
-//     description: "设置 Bilibili 官方账号的链接地址。",
-//     type: "input",
-//     placeholder: "https://space.bilibili.com/xxxx",
-//     modelValue: "bilibili_official_link"
-//   },
-//   {
-//     title: "YouTube 官方链接",
-//     description: "设置 YouTube 官方账号的链接地址。",
-//     type: "input",
-//     placeholder: "https://youtube.com/channel/xxxx",
-//     modelValue: "youtube_official_link"
-//   },
-//   {
-//     title: "Instagram 官方链接",
-//     description: "设置 Instagram 官方账号的链接地址。",
-//     type: "input",
-//     placeholder: "https://instagram.com/xxxx",
-//     modelValue: "instagram_link"
-//   },
-//   {
-//     title: "微信公众账号链接",
-//     description: "设置微信公众账号的链接地址。",
-//     type: "input",
-//     placeholder: "请输入微信公众链接",
-//     modelValue: "wechat_official_link"
-//   },
-//   {
-//     title: "备案号",
-//     description: "设置站点的备案号。",
-//     type: "input",
-//     placeholder: "如：粤ICP备12345678号",
-//     modelValue: "filing_number"
-//   },
-//   {
-//     title: "站点后缀",
-//     description: "设置站点名称后缀，用于标题显示。",
-//     type: "input",
-//     placeholder: "如：- 你的站点名称",
-//     modelValue: "page_suffix"
-//   }
-// ];
-
-
 </script>
 
 <script lang="ts">
@@ -156,94 +95,79 @@ export default {
 
 <template>
   <n-card
-      class="root"
+      class="root security-panel"
       :embedded="true"
       :bordered="false"
       :title="t('adminViews.systemConfig.welcome.common.title')"
   >
-    <!--    <div v-for="(item, index) in settingsData" :key="index" class="item">-->
-    <!--      <span class="l-content">-->
-    <!--        <div class="describe">-->
-    <!--          <p class="title">{{ item.title }}</p>-->
-    <!--          <p class="shallow">{{ item.description }}</p>-->
-    <!--        </div>-->
-    <!--      </span>-->
-    <!--      <span v-if="item.type === 'input'" class="r-content">-->
-    <!--        <n-input-->
-    <!--            size="large"-->
-    <!--            :placeholder="item.placeholder"-->
-    <!--            v-model:value="settingStore.settings.welcome[item.modelValue]"-->
-    <!--            @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"-->
-    <!--        ></n-input>-->
-    <!--      </span>-->
-    <!--      <span v-if="item.type === 'input-number'" class="r-content">-->
-    <!--        <n-input-number-->
-    <!--            size="large"-->
-    <!--            :placeholder="item.placeholder"-->
-    <!--            v-model:value.number="settingStore.settings.welcome[item.modelValue]"-->
-    <!--            @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"-->
-    <!--        ></n-input-number>-->
-    <!--      </span>-->
-    <!--    </div>-->
+    <n-grid cols="1" responsive="screen" y-gap="16">
+      <n-grid-item v-for="(item, index) in settingsData" :key="index" class="grid-item">
+        <n-grid cols="1 s:1 m:2 l:2" responsive="screen" align-items="center">
+          <!-- 左侧：标题 + 描述 -->
+          <n-grid-item>
+            <div class="describe">
+              <p class="title">{{ t(item.title) }}</p>
+              <p class="shallow">{{ t(item.description) }}</p>
+            </div>
+          </n-grid-item>
 
-    <div v-for="(item, index) in settingsData" :key="index" class="item">
-      <span class="l-content">
-       <div class="describe">
-          <p class="title">{{ t(item.title) }}</p>
-          <p class="shallow">{{ t(item.description) }}</p>
-      </div>
-  </span>
-      <span v-if="item.type === 'input'" class="r-content">
-    <n-input
-        size="large"
-        :placeholder="t(item.placeholder || '')"
-        v-model:value="settingStore.settings.welcome[item.modelValue]"
-        @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"
-    ></n-input>
-  </span>
-      <span v-if="item.type === 'input-number'" class="r-content">
-    <n-input-number
-        size="large"
-        :placeholder="t(item.placeholder || '')"
-        v-model:value.number="settingStore.settings.welcome[item.modelValue]"
-        @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"
-    ></n-input-number>
-  </span>
-    </div>
-
+          <!-- 右侧：输入框 / 数字输入框 -->
+          <n-grid-item>
+            <n-input
+                v-if="item.type === 'input'"
+                size="large"
+                :placeholder="t(item.placeholder || '')"
+                v-model:value="settingStore.settings.welcome[item.modelValue]"
+                @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"
+            />
+            <n-input
+            v-if="item.type === 'input-area'"
+            type="textarea"
+            :show-count="true"
+            size="large"
+            rows="2"
+            :placeholder="t(item.placeholder || '')"
+            v-model:value="settingStore.settings.welcome[item.modelValue]"
+            @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"
+            >
+            </n-input>
+            <n-input-number
+                v-else-if="item.type === 'input-number'"
+                size="large"
+                :placeholder="t(item.placeholder || '')"
+                v-model:value.number="settingStore.settings.welcome[item.modelValue]"
+                @blur="settingStore.saveOption('welcome', item.modelValue, settingStore.settings.welcome[item.modelValue])"
+            />
+          </n-grid-item>
+        </n-grid>
+      </n-grid-item>
+    </n-grid>
   </n-card>
 </template>
 
 <style lang="less" scoped>
 .root {
-  border: 0;
+  margin: 0 auto;
+}
 
-  .item {
-    height: 50px;
-    display: flex;
-    margin-bottom: 30px;
+.security-panel {
+  .grid-item {
+    margin-bottom: 16px;
+  }
 
-    .l-content {
-      flex: 1;
-
-      .describe {
-        .title {
-          font-weight: bold;
-        }
-
-        .shallow {
-          margin-top: 5px;
-          opacity: 0.5;
-        }
-      }
+  .describe {
+    .title {
+      font-weight: bold;
     }
 
-    .r-content {
-      margin-left: 30px;
-      flex: 0.8;
-      justify-content: center;
-      line-height: 50px;
+    .shallow {
+      margin-top: 5px;
+      opacity: 0.5;
     }
   }
+}
+
+.to-right {
+  text-align: right;
 }
 </style>

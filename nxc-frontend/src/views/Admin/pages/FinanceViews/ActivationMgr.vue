@@ -13,8 +13,11 @@ import {useRouter} from "vue-router";
 //   SaveOutline as saveIcon,
 // } from "@vicons/ionicons5"
 import {RefreshOutline as refreshIcon, Search as searchIcon,} from "@vicons/ionicons5"
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
+
 import {handleGetAllActivationLog} from "@/api/admin/activation";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 interface ActivateRecord {
   id: number;
@@ -354,35 +357,67 @@ export default {
 </script>
 
 <template>
-  <div class="root-header">
-    <!--    <n-card-->
-    <!--        hoverable-->
-    <!--        :embedded="true"-->
-    <!--        :bordered="false"-->
-    <!--        :title="t('adminViews.activation.activateLog')"-->
-    <!--    ></n-card>-->
-    <n-card
-        hoverable
-        :bordered="false"
-        :embedded="true"
-        class="card1"
-        :title="t('adminViews.activation.activateLog')"
-    >
-      <n-button class="btn" secondary type="primary" size="medium" @click="showSearchModal=true">
-        <n-icon size="14" style="padding-right: 8px">
+  <PageHead
+      :title="t('adminViews.activation.activateLog')"
+      :description="t('adminViews.activation.description')"
+  >
+    <n-button
+        tertiary
+        type="primary"
+        size="medium"
+        class="btn-right"
+        @click="showSearchModal=true">
+      <template #icon>
+        <n-icon>
           <searchIcon/>
         </n-icon>
-        {{ t('adminViews.userMgr.query') }}
-      </n-button>
-      <n-button class="btn" tertiary type="primary" size="medium"
-                @click="searchForm.email=''; animated=false; callGetAllActivateLog()">
-        <n-icon size="14" style="padding-right: 8px">
+      </template>
+      {{ t('adminViews.userMgr.query') }}
+    </n-button>
+    <n-button
+        tertiary
+        type="primary"
+        size="medium"
+        class="btn-right"
+        @click="searchForm.email=''; animated=false; callGetAllActivateLog()">
+      <template #icon>
+        <n-icon>
           <refreshIcon/>
         </n-icon>
-        {{ '重置搜索' }}
-      </n-button>
-    </n-card>
-  </div>
+      </template>
+      {{ '重置搜索' }}
+    </n-button>
+  </PageHead>
+
+<!--  <div class="root-header">-->
+<!--    &lt;!&ndash;    <n-card&ndash;&gt;-->
+<!--    &lt;!&ndash;        hoverable&ndash;&gt;-->
+<!--    &lt;!&ndash;        :embedded="true"&ndash;&gt;-->
+<!--    &lt;!&ndash;        :bordered="false"&ndash;&gt;-->
+<!--    &lt;!&ndash;        :title="t('adminViews.activation.activateLog')"&ndash;&gt;-->
+<!--    &lt;!&ndash;    ></n-card>&ndash;&gt;-->
+<!--    <n-card-->
+<!--        hoverable-->
+<!--        :bordered="false"-->
+<!--        :embedded="true"-->
+<!--        class="card1"-->
+<!--        :title="t('adminViews.activation.activateLog')"-->
+<!--    >-->
+<!--      <n-button class="btn" secondary type="primary" size="medium" @click="showSearchModal=true">-->
+<!--        <n-icon size="14" style="padding-right: 8px">-->
+<!--          <searchIcon/>-->
+<!--        </n-icon>-->
+<!--        {{ t('adminViews.userMgr.query') }}-->
+<!--      </n-button>-->
+<!--      <n-button class="btn" tertiary type="primary" size="medium"-->
+<!--                @click="searchForm.email=''; animated=false; callGetAllActivateLog()">-->
+<!--        <n-icon size="14" style="padding-right: 8px">-->
+<!--          <refreshIcon/>-->
+<!--        </n-icon>-->
+<!--        {{ '重置搜索' }}-->
+<!--      </n-button>-->
+<!--    </n-card>-->
+<!--  </div>-->
   <transition name="slide-fade">
     <div class="root" v-if="animated">
       <n-card
@@ -456,11 +491,11 @@ export default {
 
 <style scoped lang="less">
 .root-header {
-  padding: 20px 20px 0 20px;
+  padding: 0 20px 0 20px;
 }
 
 .root {
-  padding: 15px 20px;
+  padding: 0 20px 20px 20px;
 }
 
 .details-item-detail {
@@ -503,4 +538,9 @@ export default {
 .btn {
   margin-right: 10px;
 }
+
+.btn-right {
+  margin-right: 10px;
+}
+
 </style>

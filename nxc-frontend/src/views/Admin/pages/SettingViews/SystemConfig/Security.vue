@@ -118,72 +118,65 @@ export default {
         :title="t('adminViews.systemConfig.security.common.title')"
         :bordered="false"
     >
-      <div v-for="(item, index) in securitySettingsData" :key="index" class="item">
-        <span class="l-content">
-          <div class="describe">
-            <p class="title">{{ t(item.title) }}</p>
-            <p class="shallow">{{ t(item.description) }}</p>
-          </div>
-        </span>
-        <span v-if="item.type === 'switch'" class="r-content to-right">
-          <n-switch
-              size="medium"
-              v-model:value="settingStore.settings.security[item.modelValue]"
-              @update:value="saveFiled(item.modelValue, settingStore.settings.security[item.modelValue])"
-          ></n-switch>
-        </span>
-        <span v-if="item.type === 'input'" class="r-content">
-          <n-input
-              size="large"
-              :placeholder="t(item.placeholder || '')"
-              v-model:value="settingStore.settings.security[item.modelValue]"
-              @blur="saveFiled(item.modelValue, settingStore.settings.security[item.modelValue])"
-          ></n-input>
-        </span>
-        <span v-if="item.type === 'input-number'" class="r-content">
-          <n-input-number
-              size="large"
-              :placeholder="t(item.placeholder || '')"
-              v-model:value.number="settingStore.settings.security[item.modelValue]"
-              @blur="saveFiled(item.modelValue, settingStore.settings.security[item.modelValue])"
-          ></n-input-number>
-        </span>
-      </div>
-    </n-card>
+      <n-grid cols="1" responsive="screen" y-gap="16">
+        <n-grid-item v-for="(item, index) in securitySettingsData" :key="index" class="grid-item">
+          <n-grid cols="1 s:1 m:2 l:2" responsive="screen" align-items="center">
+            <!-- 左侧：标题 + 描述 -->
+            <n-grid-item>
+              <div class="describe">
+                <p class="title">{{ t(item.title) }}</p>
+                <p class="shallow">{{ t(item.description) }}</p>
+              </div>
+            </n-grid-item>
 
+            <!-- 右侧：输入框 / 选择框 / 开关 -->
+            <n-grid-item>
+              <n-input
+                  v-if="item.type === 'input'"
+                  size="large"
+                  :placeholder="t(item.placeholder || '')"
+                  v-model:value="settingStore.settings.security[item.modelValue]"
+                  @blur="saveFiled(item.modelValue, settingStore.settings.security[item.modelValue])"
+              />
+              <n-input-number
+                  v-else-if="item.type === 'input-number'"
+                  size="large"
+                  :placeholder="t(item.placeholder || '')"
+                  v-model:value.number="settingStore.settings.security[item.modelValue]"
+                  @blur="saveFiled(item.modelValue, settingStore.settings.security[item.modelValue])"
+              />
+              <div v-else-if="item.type === 'switch'" class="to-right">
+                <n-switch
+                    size="medium"
+                    v-model:value="settingStore.settings.security[item.modelValue]"
+                    @update:value="saveFiled(item.modelValue, settingStore.settings.security[item.modelValue])"
+                />
+              </div>
+            </n-grid-item>
+          </n-grid>
+        </n-grid-item>
+      </n-grid>
+    </n-card>
   </div>
 </template>
 
 <style lang="less" scoped>
 .root {
-  min-width: 900px;
+  margin: 0 auto;
 
   .security-panel {
-    .item {
-      height: 50px;
-      display: flex;
-      margin-bottom: 30px;
+    .grid-item {
+      margin-bottom: 16px;
+    }
 
-      .l-content {
-        flex: 1;
-
-        .describe {
-          .title {
-            font-weight: bold;
-          }
-
-          .shallow {
-            margin-top: 5px;
-            opacity: 0.5;
-          }
-        }
+    .describe {
+      .title {
+        font-weight: bold;
       }
 
-      .r-content {
-        margin-left: 30px;
-        flex: 0.8;
-        justify-content: center;
-        line-height: 50px;
+      .shallow {
+        margin-top: 5px;
+        opacity: 0.5;
       }
     }
   }
@@ -192,5 +185,4 @@ export default {
 .to-right {
   text-align: right;
 }
-
 </style>

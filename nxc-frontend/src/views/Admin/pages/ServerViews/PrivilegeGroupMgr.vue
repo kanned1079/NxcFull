@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref} from 'vue'
-import {type FormInst, NButton, NIcon, type NotificationType, useMessage, useNotification, type DataTableColumns} from "naive-ui";
-
+import {computed, h, onBeforeMount, onMounted, ref} from 'vue'
+import {
+  type DataTableColumns,
+  type FormInst,
+  NButton,
+  NIcon,
+  type NotificationType,
+  useMessage,
+  useNotification
+} from "naive-ui";
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
 import useThemeStore from "@/stores/useThemeStore";
 import instance from "@/axios";
 import {BarChartOutlined, UserOutlined} from '@vicons/antd'
-import DataTableSuffix from "@/views/utils/DataTableSuffix.vue"; // 引入所需圖標
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue"; // 引入所需圖標
 
 const {t} = useI18n()
 const message = useMessage()
@@ -42,11 +51,10 @@ interface GroupItem {
   deleted_at?: string
 }
 
-// 假數據
 const groupList = ref<GroupItem[]>([])
 
 // 定義表格列
-const columns = computed(() =>
+const columns = computed<DataTableColumns<GroupItem>>(() =>
     [
       {title: t('adminViews.groupMgr.groupId'), key: 'id'},
       {title: t('adminViews.groupMgr.groupName'), key: 'name'},
@@ -215,9 +223,12 @@ let submitUpdate = async () => {
   }
 }
 
+onBeforeMount(() => {
+  themeStore.menuSelected = 'privilege-group-mgr'
+})
+
 onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/group'
-  themeStore.menuSelected = 'privilege-group-mgr'
   await getAllGroups()
   animated.value = true
 })
@@ -231,11 +242,82 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px 20px 0 20px">
-    <n-card hoverable :embedded="true" :title="t('adminViews.groupMgr.title')" :bordered="false">
-      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddGroup">{{ t('adminViews.groupMgr.common.addNewGroup') }}</n-button>
-    </n-card>
-  </div>
+  <!--  <div style="padding: 20px 20px 0 20px">-->
+  <!--    <n-card hoverable :embedded="true" :title="t('adminViews.groupMgr.title')" :bordered="false">-->
+  <!--      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddGroup">{{ t('adminViews.groupMgr.common.addNewGroup') }}</n-button>-->
+  <!--    </n-card>-->
+  <!--  </div>-->
+
+  <PageHead
+      :title="t('adminViews.groupMgr.title')"
+      :description="t('adminViews.groupMgr.description')"
+  >
+    <template #default>
+      <n-button
+          tertiary
+          type="primary"
+          size="medium"
+          class="btn-right"
+          @click="handleAddGroup"
+      >
+        {{ t('adminViews.groupMgr.common.addNewGroup') }}
+        <template #icon>
+          <n-icon>
+            <AddIcon/>
+          </n-icon>
+        </template>
+      </n-button>
+    </template>
+  </PageHead>
+
+  <!--  <div style="padding: 20px 20px 0 20px">-->
+
+  <!--    <n-page-header :subtitle="t('adminViews.groupMgr.description')" @back="useRouter().back()">-->
+  <!--      <template #title>-->
+  <!--        <p style="font-size: 1.4rem; font-weight: bold; margin-bottom: 10px;">{{ t('adminViews.groupMgr.title') }}</p>-->
+  <!--      </template>-->
+  <!--&lt;!&ndash;      <template #avatar>&ndash;&gt;-->
+  <!--&lt;!&ndash;        <n-icon><privilegeIcon /></n-icon>&ndash;&gt;-->
+  <!--&lt;!&ndash;      </template>&ndash;&gt;-->
+
+  <!--    </n-page-header>-->
+
+  <!--    <n-flex vertical>-->
+  <!--      <div>-->
+  <!--              <n-tag-->
+  <!--                  type="default"-->
+  <!--                  :bordered="false"-->
+  <!--                  checkable-->
+  <!--                  style="font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; width: auto"-->
+  <!--              >{{ t('adminViews.groupMgr.title') }}-->
+  <!--                <template #icon>-->
+  <!--                  <n-icon><privilegeIcon /></n-icon>-->
+  <!--                </template>-->
+  <!--              </n-tag>-->
+  <!--      </div>-->
+  <!--    </n-flex>-->
+
+  <!--    <n-flex vertical>-->
+  <!--      <n-tag-->
+  <!--          type="default"-->
+  <!--          :bordered="false"-->
+  <!--          checkable-->
+  <!--          style="font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; width: auto"-->
+  <!--      >{{ t('adminViews.groupMgr.title') }}-->
+  <!--        <template #icon>-->
+  <!--          <n-icon><privilegeIcon /></n-icon>-->
+  <!--        </template>-->
+  <!--      </n-tag>-->
+  <!--      <n-tag-->
+  <!--          type="primary"-->
+  <!--          checkable-->
+  <!--          disabled-->
+  <!--          style="font-size: 0.8rem; opacity: 0.8">-->
+  <!--        > {{ t('adminViews.groupMgr.description') }}-->
+  <!--      </n-tag>-->
+  <!--    </n-flex>-->
+
+  <!--  </div>-->
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
@@ -293,18 +375,18 @@ export default {
 <style lang="less" scoped>
 .root {
   //padding: 20px;
-  padding: 0 20px 20px 20px;
+  padding: 0 20px;
 
-  .add-btn {
-    margin-top: 10px;
-  }
-
-  .btn-pagination {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
-  }
+  //.add-btn {
+  //  margin-top: 10px;
+  //}
+  //
+  //.btn-pagination {
+  //  margin-top: 20px;
+  //  display: flex;
+  //  flex-direction: row;
+  //  justify-content: right;
+  //}
 }
 
 </style>

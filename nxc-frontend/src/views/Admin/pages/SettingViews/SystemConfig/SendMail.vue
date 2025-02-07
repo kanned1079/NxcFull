@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {h, reactive, ref} from "vue"
+import {h, ref} from "vue"
 import useSettingStore from "@/stores/useSettingStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import {useI18n} from "vue-i18n"
 import instance from "@/axios/index";
-import {HourglassOutline as waitIcon, Flask as testIcon} from '@vicons/ionicons5'
+import {Flask as testIcon, HourglassOutline as waitIcon} from '@vicons/ionicons5'
 import {NIcon, type NotificationType, useDialog, useMessage, useNotification} from 'naive-ui'
 
 const {t} = useI18n()
@@ -27,7 +27,7 @@ let makeNotify = (type: NotificationType, title: string, msg: string) => {
 
 let sendTestMail = async () => {
   show.value = true
-  message.warning(t('adminViews.systemConfig.sendMail.common.sending') , {
+  message.warning(t('adminViews.systemConfig.sendMail.common.sending'), {
     icon: () => h(NIcon, null, {default: () => h(waitIcon)})
   })
   try {
@@ -120,7 +120,7 @@ const smtpSettings: SmtpSetting[] = [
     shallow: 'adminViews.systemConfig.sendMail.smtpPassword.shallow',
     placeholder: 'adminViews.systemConfig.sendMail.smtpPassword.placeholder',
     model: 'email_password',
-    type: 'input',
+    type: 'input-pwd',
   },
   {
     title: 'adminViews.systemConfig.sendMail.senderAddress.title',
@@ -155,122 +155,118 @@ export default {
 </script>
 
 <template>
-
   <n-card
       class="root"
       :embedded="true"
       :title="t('adminViews.systemConfig.sendMail.common.title')"
       :bordered="false"
   >
-    <n-alert type="warning" style="margin-bottom: 30px" :bordered="false">
+    <n-alert type="warning" class="alert">
       {{ t('adminViews.systemConfig.sendMail.common.warning') }}
     </n-alert>
 
-    <div v-for="setting in smtpSettings" :key="setting.title" class="item">
-  <span class="l-content">
-    <div class="describe">
-      <p class="title">{{ t(setting.title) }}</p>
-      <p class="shallow">{{ t(setting.shallow) }}</p>
-    </div>
-  </span>
-      <span class="r-content" v-if="setting.type === 'input'">
-    <n-input
-        size="large"
-        :placeholder="t(setting.placeholder || '')"
-        v-model:value="settingStore.settings.sendmail[setting.model]"
-        @blur="saveFiled(setting.model, settingStore.settings.sendmail[setting.model])"
-    />
-  </span>
-      <span class="r-content" v-if="setting.type === 'input-number'">
-    <n-input-number
-        size="large"
-        :placeholder="t(setting.placeholder || '')"
-        v-model:value.number="settingStore.settings.sendmail[setting.model]"
-        @blur="saveFiled(setting.model, settingStore.settings.sendmail[setting.model])"
-    />
-  </span>
-      <span class="r-content" v-if="setting.type === 'select'">
-    <n-select
-        size="large"
-        :options="options"
-        :placeholder="t(setting.placeholder || '')"
-        v-model:value="settingStore.settings.sendmail[setting.model]"
-        @update:value="saveFiled(setting.model, settingStore.settings.sendmail[setting.model])"
-    />
-  </span>
-    </div>
+    <n-grid cols="1" responsive="screen" y-gap="16">
+      <n-grid-item v-for="setting in smtpSettings" :key="setting.title" class="grid-item">
+        <n-grid cols="1 s:1 m:2 l:2" responsive="screen" align-items="center">
+          <!-- 左侧：标题 + 描述 -->
+          <n-grid-item>
+            <div class="describe">
+              <p class="title">{{ t(setting.title) }}</p>
+              <p class="shallow">{{ t(setting.shallow) }}</p>
+            </div>
+          </n-grid-item>
 
-    <div class="item">
-        <span class="l-content">
-          <div class="describe">
-            <p class="title">{{ t('adminViews.systemConfig.sendMail.common.sendTestMailTitle') }}</p>
-            <p class="shallow">{{ t('adminViews.systemConfig.sendMail.common.sendTestMailShallow') }}</p>
-          </div>
-        </span>
-      <span class="r-content to-right">
-        <n-spin :show="show" :delay="100" size="small">
-        <n-button @click="sendTestMail" size="large" type="primary" :bordered="false" icon-placement="left">
-          {{ t('adminViews.systemConfig.sendMail.common.sendTestMailTo') +' '+ userInfoStore.thisUser.email }}
-          <template #icon>
-            <n-icon size="16">
-               <testIcon />
-            </n-icon>
-          </template>
-        </n-button>
-        </n-spin>
-        </span>
-    </div>
+          <!-- 右侧：输入框 / 选择框 -->
+          <n-grid-item>
+            <n-input
+                v-if="setting.type === 'input'"
+                size="large"
+                :placeholder="t(setting.placeholder || '')"
+                v-model:value="settingStore.settings.sendmail[setting.model]"
+                @blur="saveFiled(setting.model, settingStore.settings.sendmail[setting.model])"
+            />
+            <n-input
+                v-if="setting.type === 'input-pwd'"
+                type="password"
+                show-password-on="click"
+                size="large"
+                :placeholder="t(setting.placeholder || '')"
+                v-model:value="settingStore.settings.sendmail[setting.model]"
+                @blur="saveFiled(setting.model, settingStore.settings.sendmail[setting.model])"
+            />
+            <n-input-number
+                v-else-if="setting.type === 'input-number'"
+                size="large"
+                :placeholder="t(setting.placeholder || '')"
+                v-model:value.number="settingStore.settings.sendmail[setting.model]"
+                @blur="saveFiled(setting.model, settingStore.settings.sendmail[setting.model])"
+            />
+            <n-select
+                v-else-if="setting.type === 'select'"
+                size="large"
+                :options="options"
+                :placeholder="t(setting.placeholder || '')"
+                v-model:value="settingStore.settings.sendmail[setting.model]"
+                @update:value="saveFiled(setting.model, settingStore.settings.sendmail[setting.model])"
+            />
+          </n-grid-item>
+        </n-grid>
+      </n-grid-item>
+
+      <!-- 测试邮件部分 -->
+      <n-grid-item class="grid-item">
+        <n-grid cols="1 s:1 m:2 l:2" responsive="screen" align-items="center">
+          <n-grid-item>
+            <div class="describe">
+              <p class="title">{{ t('adminViews.systemConfig.sendMail.common.sendTestMailTitle') }}</p>
+              <p class="shallow">{{ t('adminViews.systemConfig.sendMail.common.sendTestMailShallow') }}</p>
+            </div>
+          </n-grid-item>
+
+          <n-grid-item class="to-right">
+            <n-spin :show="show" :delay="100" size="small">
+              <n-button @click="sendTestMail" size="large" type="primary" :bordered="false" icon-placement="left">
+                {{ t('adminViews.systemConfig.sendMail.common.sendTestMailTo') + ' ' + userInfoStore.thisUser.email }}
+                <template #icon>
+                  <n-icon size="16">
+                    <testIcon/>
+                  </n-icon>
+                </template>
+              </n-button>
+            </n-spin>
+          </n-grid-item>
+        </n-grid>
+      </n-grid-item>
+    </n-grid>
 
   </n-card>
 </template>
 
 <style lang="less" scoped>
 .root {
-  .warm {
-    background-color: #ffefd1;
-    height: 50px;
-    border: 0;
-    line-height: 50px;
-    text-align: left;
-
-    p {
-      color: #956d34;
-      margin-left: 20px;
-      font-size: 1rem;
-    }
-  }
+  margin: 0 auto;
 }
 
-.item {
-  height: 50px;
-  display: flex;
-  margin-bottom: 30px;
+.alert {
+  margin-bottom: 16px;
+}
 
-  .l-content {
-    flex: 1;
+.grid-item {
+  margin-bottom: 16px; // 统一所有配置项间距
+}
 
-    .describe {
-      .title {
-        font-weight: bold;
-      }
-
-      .shallow {
-        margin-top: 5px;
-        opacity: 0.5;
-      }
-    }
+.describe {
+  .title {
+    font-weight: bold;
   }
 
-  .r-content {
-    margin-left: 30px;
-    flex: 0.8;
-    justify-content: center;
-    line-height: 50px;
+  .shallow {
+    margin-top: 5px;
+    opacity: 0.5;
   }
 }
 
 .to-right {
   text-align: right;
 }
-
 </style>

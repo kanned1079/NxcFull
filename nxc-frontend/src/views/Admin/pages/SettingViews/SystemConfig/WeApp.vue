@@ -12,6 +12,8 @@ type AppModel =
     | "download_enabled"
     | "win_download"
     | "osx_download"
+    | "linux_download"
+    | "ios_download"
     | "android_download";
 
 interface AppSetting {
@@ -59,6 +61,13 @@ const appDownloadSettings: AppSetting[] = [
   },
   {
     type: 'input',
+    title: 'adminViews.systemConfig.appDownload.linux.title',
+    shallow: 'adminViews.systemConfig.appDownload.linux.shallow',
+    placeholder: 'adminViews.systemConfig.appDownload.linux.placeholder',
+    model: 'linux_download',
+  },
+  {
+    type: 'input',
     title: 'adminViews.systemConfig.appDownload.macos.title',
     shallow: 'adminViews.systemConfig.appDownload.macos.shallow',
     placeholder: 'adminViews.systemConfig.appDownload.macos.placeholder',
@@ -70,6 +79,13 @@ const appDownloadSettings: AppSetting[] = [
     shallow: 'adminViews.systemConfig.appDownload.android.shallow',
     placeholder: 'adminViews.systemConfig.appDownload.android.placeholder',
     model: 'android_download',
+  },
+  {
+    type: 'input',
+    title: 'adminViews.systemConfig.appDownload.ios.title',
+    shallow: 'adminViews.systemConfig.appDownload.ios.shallow',
+    placeholder: 'adminViews.systemConfig.appDownload.ios.placeholder',
+    model: 'ios_download',
   },
 ];
 
@@ -127,24 +143,6 @@ export default {
   </span>
     </div>
 
-
-    <!--    <div v-for="setting in appDownloadSettings" :key="setting.title" class="item">-->
-    <!--    <span class="l-content">-->
-    <!--      <div class="describe">-->
-    <!--        <p class="title">{{ setting.title }}</p>-->
-    <!--        <p class="shallow">{{ setting.shallow }}</p>-->
-    <!--      </div>-->
-    <!--    </span>-->
-    <!--      <span class="r-content">-->
-    <!--      <n-input-->
-    <!--          type="text"-->
-    <!--          placeholder="{{ setting.placeholder }}"-->
-    <!--          size="large"-->
-    <!--          v-model:value="settingStore.settings.my_app[setting.model]"-->
-    <!--          @blur="settingStore.saveOption('my_app', setting.model, settingStore.settings.my_app[setting.model])"-->
-    <!--      />-->
-    <!--    </span>-->
-    <!--    </div>-->
 
   </n-card>
 </template>

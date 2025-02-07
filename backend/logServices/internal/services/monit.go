@@ -11,19 +11,6 @@ import (
 	"time"
 )
 
-/**
-message GetServerLiveStatusResponse {
-  int32 code = 1;
-  int64 status200 = 2;
-  int64 status404 = 3;
-  int64 status500 = 4;
-  int64 login_req = 5;
-  int64 register_req = 6;
-  bytes api_log_list = 7;
-  int64 page_size = 8;
-}
-*/
-
 //func (s *LogService) GetServerLiveStatus(ctx context.Context, request *pb.GetServerLiveStatusRequest) (*pb.GetServerLiveStatusResponse, error) {
 //	// 获取分页参数
 //	page := request.Page
@@ -35,36 +22,57 @@ message GetServerLiveStatusResponse {
 //
 //	var status200count, status404count, status500count, loginReq, regReq int64
 //
-//	// 查询不同状态的日志数量
-//	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ?", http.StatusOK).Count(&status200count).Error; err != nil {
+//	// 查询一周内不同状态的日志数量
+//	oneWeekAgo := time.Now().AddDate(0, 0, -7).Format("2006-01-02 15:04:05") // 获取一周前的时间
+//
+//	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ? AND created_at >= ?", http.StatusOK, oneWeekAgo).Count(&status200count).Error; err != nil {
 //		return &pb.GetServerLiveStatusResponse{
 //			Code: http.StatusInternalServerError,
 //		}, fmt.Errorf("failed to count status 200 logs: %v", err)
 //	}
 //
-//	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ?", http.StatusNotFound).Count(&status404count).Error; err != nil {
+//	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ? AND created_at >= ?", http.StatusNotFound, oneWeekAgo).Count(&status404count).Error; err != nil {
 //		return &pb.GetServerLiveStatusResponse{
 //			Code: http.StatusInternalServerError,
 //		}, fmt.Errorf("failed to count status 404 logs: %v", err)
 //	}
 //
-//	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ?", http.StatusInternalServerError).Count(&status500count).Error; err != nil {
+//	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ? AND created_at >= ?", http.StatusInternalServerError, oneWeekAgo).Count(&status500count).Error; err != nil {
 //		return &pb.GetServerLiveStatusResponse{
 //			Code: http.StatusInternalServerError,
 //		}, fmt.Errorf("failed to count status 500 logs: %v", err)
 //	}
 //
-//	// 查询登录和注册请求数量
-//	if err := dao.Db.Model(&model.ApiLog{}).Where("path = ? or ?", "/api/admin/v1/login", "/api/user/v1/login").Count(&loginReq).Error; err != nil {
+//	// 查询一周内的登录和注册请求数量
+//	if err := dao.Db.Model(&model.ApiLog{}).Where("path IN (?, ?) AND created_at >= ?", "/api/admin/v1/login", "/api/user/v1/login", oneWeekAgo).Count(&loginReq).Error; err != nil {
 //		return &pb.GetServerLiveStatusResponse{
 //			Code: http.StatusInternalServerError,
 //		}, fmt.Errorf("failed to count login requests: %v", err)
 //	}
 //
-//	if err := dao.Db.Model(&model.ApiLog{}).Where("path = ?", "/api/user/v1/register/register").Count(&regReq).Error; err != nil {
+//	if err := dao.Db.Model(&model.ApiLog{}).Where("path = ? AND created_at >= ?", "/api/user/v1/register/register", oneWeekAgo).Count(&regReq).Error; err != nil {
 //		return &pb.GetServerLiveStatusResponse{
 //			Code: http.StatusInternalServerError,
 //		}, fmt.Errorf("failed to count register requests: %v", err)
+//	}
+//
+//	// 获取日志表大小（单位MB）
+//	var tableSize float64
+//	if err := dao.Db.Raw(`
+//		SELECT ROUND(data_length / 1024 / 1024, 2) AS size_mb
+//		FROM information_schema.tables
+//		WHERE table_name = ?`, model.ApiLog{}.TableName()).Scan(&tableSize).Error; err != nil {
+//		return &pb.GetServerLiveStatusResponse{
+//			Code: http.StatusInternalServerError,
+//		}, fmt.Errorf("failed to fetch table size: %v", err)
+//	}
+//
+//	// 获取日志表的总记录数
+//	var logTableRowsCount int64
+//	if err := dao.Db.Model(&model.ApiLog{}).Count(&logTableRowsCount).Error; err != nil {
+//		return &pb.GetServerLiveStatusResponse{
+//			Code: http.StatusInternalServerError,
+//		}, fmt.Errorf("failed to count total logs: %v", err)
 //	}
 //
 //	// 获取符合条件的总记录数，用于分页计算
@@ -108,8 +116,8 @@ message GetServerLiveStatusResponse {
 //		RegisterReq:       regReq,
 //		PageSize:          pageSize, // 返回计算出来的总页数
 //		ApiLogList:        apiListJson,
-//		TableSize:         4.65,  // log表的大小
-//		LogTableRowsCount: 25341, // log 表总记录数
+//		TableSize:         float32(tableSize), // 返回查询到的日志表大小（单位MB）
+//		LogTableRowsCount: logTableRowsCount,  // 返回查询到的日志表总记录数
 //	}, nil
 //}
 
@@ -122,71 +130,55 @@ func (s *LogService) GetServerLiveStatus(ctx context.Context, request *pb.GetSer
 	offset := (page - 1) * size
 	limit := size
 
-	var status200count, status404count, status500count, loginReq, regReq int64
+	// 获取一周前的时间
+	oneWeekAgo := time.Now().AddDate(0, 0, -7).Format("2006-01-02 15:04:05")
 
-	// 查询一周内不同状态的日志数量
-	oneWeekAgo := time.Now().AddDate(0, 0, -7).Format("2006-01-02 15:04:05") // 获取一周前的时间
+	// 定义计数变量
+	var status200count, status404count, status500count, loginReq, regReq, logTableRowsCount, totalCount int64
+	var tableSize float64
 
-	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ? AND created_at >= ?", http.StatusOK, oneWeekAgo).Count(&status200count).Error; err != nil {
-		return &pb.GetServerLiveStatusResponse{
-			Code: http.StatusInternalServerError,
-		}, fmt.Errorf("failed to count status 200 logs: %v", err)
+	// 定义查询条件和对应的计数变量
+	queries := []struct {
+		whereClause string
+		args        []interface{}
+		countPtr    *int64
+	}{
+		{"status_code = ? AND created_at >= ?", []interface{}{http.StatusOK, oneWeekAgo}, &status200count},
+		{"status_code = ? AND created_at >= ?", []interface{}{http.StatusNotFound, oneWeekAgo}, &status404count},
+		{"status_code = ? AND created_at >= ?", []interface{}{http.StatusInternalServerError, oneWeekAgo}, &status500count},
+		{"path IN (?, ?) AND created_at >= ?", []interface{}{"/api/admin/v1/login", "/api/user/v1/login", oneWeekAgo}, &loginReq},
+		{"path = ? AND created_at >= ?", []interface{}{"/api/user/v1/register/register", oneWeekAgo}, &regReq},
+		{"1 = 1", nil, &totalCount},
 	}
 
-	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ? AND created_at >= ?", http.StatusNotFound, oneWeekAgo).Count(&status404count).Error; err != nil {
-		return &pb.GetServerLiveStatusResponse{
-			Code: http.StatusInternalServerError,
-		}, fmt.Errorf("failed to count status 404 logs: %v", err)
-	}
-
-	if err := dao.Db.Model(&model.ApiLog{}).Where("status_code = ? AND created_at >= ?", http.StatusInternalServerError, oneWeekAgo).Count(&status500count).Error; err != nil {
-		return &pb.GetServerLiveStatusResponse{
-			Code: http.StatusInternalServerError,
-		}, fmt.Errorf("failed to count status 500 logs: %v", err)
-	}
-
-	// 查询一周内的登录和注册请求数量
-	if err := dao.Db.Model(&model.ApiLog{}).Where("path IN (?, ?) AND created_at >= ?", "/api/admin/v1/login", "/api/user/v1/login", oneWeekAgo).Count(&loginReq).Error; err != nil {
-		return &pb.GetServerLiveStatusResponse{
-			Code: http.StatusInternalServerError,
-		}, fmt.Errorf("failed to count login requests: %v", err)
-	}
-
-	if err := dao.Db.Model(&model.ApiLog{}).Where("path = ? AND created_at >= ?", "/api/user/v1/register/register", oneWeekAgo).Count(&regReq).Error; err != nil {
-		return &pb.GetServerLiveStatusResponse{
-			Code: http.StatusInternalServerError,
-		}, fmt.Errorf("failed to count register requests: %v", err)
+	// 批量执行查询计数
+	for _, query := range queries {
+		if err := dao.Db.Model(&model.ApiLog{}).Where(query.whereClause, query.args...).Count(query.countPtr).Error; err != nil {
+			return &pb.GetServerLiveStatusResponse{
+				Code: http.StatusInternalServerError,
+			}, fmt.Errorf("failed to count logs: %v", err)
+		}
 	}
 
 	// 获取日志表大小（单位MB）
-	var tableSize float64
 	if err := dao.Db.Raw(`
-		SELECT ROUND(data_length / 1024 / 1024, 2) AS size_mb 
-		FROM information_schema.tables 
-		WHERE table_name = ?`, model.ApiLog{}.TableName()).Scan(&tableSize).Error; err != nil {
+       SELECT ROUND(data_length / 1024 / 1024, 4) AS size_mb
+       FROM information_schema.tables
+       WHERE table_name = ?`, model.ApiLog{}.TableName()).Scan(&tableSize).Error; err != nil {
 		return &pb.GetServerLiveStatusResponse{
 			Code: http.StatusInternalServerError,
 		}, fmt.Errorf("failed to fetch table size: %v", err)
 	}
 
 	// 获取日志表的总记录数
-	var logTableRowsCount int64
 	if err := dao.Db.Model(&model.ApiLog{}).Count(&logTableRowsCount).Error; err != nil {
 		return &pb.GetServerLiveStatusResponse{
 			Code: http.StatusInternalServerError,
 		}, fmt.Errorf("failed to count total logs: %v", err)
 	}
 
-	// 获取符合条件的总记录数，用于分页计算
-	var totalCount int64
-	if err := dao.Db.Model(&model.ApiLog{}).Count(&totalCount).Error; err != nil {
-		return &pb.GetServerLiveStatusResponse{
-			Code: http.StatusInternalServerError,
-		}, fmt.Errorf("failed to count total logs: %v", err)
-	}
-
 	// 计算总页数（PageSize）
-	pageSize := (totalCount + int64(size) - 1) / int64(size) // 这里用向上取整公式计算总页数
+	pageSize := (totalCount + int64(size) - 1) / int64(size)
 
 	// 分页查询日志数据
 	var apiList []model.ApiLog
@@ -216,10 +208,10 @@ func (s *LogService) GetServerLiveStatus(ctx context.Context, request *pb.GetSer
 		Status500:         status500count,
 		LoginReq:          loginReq,
 		RegisterReq:       regReq,
-		PageSize:          pageSize, // 返回计算出来的总页数
+		PageSize:          pageSize,
 		ApiLogList:        apiListJson,
-		TableSize:         float32(tableSize), // 返回查询到的日志表大小（单位MB）
-		LogTableRowsCount: logTableRowsCount,  // 返回查询到的日志表总记录数
+		TableSize:         float32(tableSize),
+		LogTableRowsCount: logTableRowsCount,
 	}, nil
 }
 

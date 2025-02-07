@@ -90,7 +90,9 @@ interface MyAppSettings {
     download_enabled: boolean;
     win_download: string;
     osx_download: string;
+    linux_download: string;
     android_download: string;
+    ios_download: string;
 }
 
 interface Settings {
@@ -186,7 +188,9 @@ const useSettingStore = defineStore('SettingStore', () => {
             download_enabled: false,
             win_download: '',       // windows端软件下载地址
             osx_download: '',       // osx端软件下载地址
+            linux_download: '',
             android_download: '',   // 安卓端软件下载地址
+            ios_download: '',
         }
     } as Settings)
 

@@ -4,7 +4,7 @@ import {computed, onBeforeMount, onMounted, ref} from "vue"
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
-import {useMessage} from "naive-ui";
+import {NButton, NIcon, useMessage} from "naive-ui";
 import instance from "@/axios";
 import {
   CheckmarkOutline as copiedIcon,
@@ -13,6 +13,7 @@ import {
   Key as keyIcon
 } from "@vicons/ionicons5"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 const {t} = useI18n();
 const message = useMessage()
@@ -147,15 +148,35 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px 20px 0 20px">
-    <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">
-    </n-card>
-  </div>
+
+  <PageHead
+      :title="t('userKeys.myKeys')"
+      :description="t('userKeys.description')"
+  >
+<!--    <n-button-->
+<!--        tertiary-->
+<!--        type="primary"-->
+<!--        size="medium"-->
+<!--        class="btn-right"-->
+<!--        @click="addPaymentMethodClick">-->
+<!--      <template #icon>-->
+<!--        <n-icon>-->
+<!--          <AddIcon/>-->
+<!--        </n-icon>-->
+<!--      </template>-->
+
+<!--      {{ t('adminViews.payConfig.addPaymentMethod') }}-->
+<!--    </n-button>-->
+  </PageHead>
+
+<!--  <div style="padding: 20px 20px 0 20px">-->
+<!--    <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">-->
+<!--    </n-card>-->
+<!--  </div>-->
   <transition name="slide-fade">
     <div class="root" v-if="animated">
       <n-card :embedded="true" hoverable :bordered="false" style="margin-top: 30px" v-if="myKeys.length === 0">
         <n-result status="404" title="无结果" description="找不到可用的密钥，请先购买订阅。">
-
         </n-result>
       </n-card>
 
@@ -331,7 +352,7 @@ export default {
 
 .root {
   //padding: 20px;
-  padding: 0 20px 20px 20px;
+  padding: 0 20px 0 20px;
 
   //.title {
   //

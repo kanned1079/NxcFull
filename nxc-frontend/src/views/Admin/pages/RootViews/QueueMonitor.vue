@@ -280,7 +280,6 @@ const callDeletePreviousLog = async () => {
 
 onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/monitor'
-  themeStore.menuSelected = 'queue-monitor'
 
 
   callTestConnLatency()
@@ -296,6 +295,7 @@ onMounted(() => {
 })
 
 onBeforeMount(() => {
+  themeStore.menuSelected = 'queue-monitor'
   // 调用接口获取数据
   // getSysInfo()
   // intervalId.value = setInterval(() => {
@@ -400,7 +400,12 @@ export default {
               :y-gap="15"
           >
             <n-grid-item v-for="(i, index) in apiItems" :key="index">
-              <n-statistic :label="t(i.title)" :value="i.content">
+              <n-statistic :label="t(i.title)"  tabular-nums>
+                <n-number-animation
+                    :from="0"
+                    :to="i.content"
+                >
+                </n-number-animation>
                 <template #prefix>
                   <n-icon v-if="index === 0">
                     <status200/>
@@ -423,8 +428,11 @@ export default {
               <div style="display: flex; flex-direction: row">
                 <n-statistic
                     :label="t('adminViews.queueMonit.api.items.login2reg.title')"
-                    :value="apiReq.login_req"
                 >
+                  <n-number-animation
+                    :from="0"
+                    :to="apiReq.login_req">
+                  </n-number-animation>
                   <template #prefix>
                     <n-icon>
                       <EnterOutline/>
@@ -437,8 +445,11 @@ export default {
                 </n-statistic>
                 <n-statistic
                     :label="'*'"
-                    :value="apiReq.reg_req"
                 >
+                  <n-number-animation
+                      :from="0"
+                      :to="apiReq.reg_req">
+                  </n-number-animation>
                   <template #suffix>
                     {{ t('adminViews.queueMonit.api.items.internalErr.unit') }}
                   </template>
@@ -484,7 +495,7 @@ export default {
                   <n-number-animation
                       :from="0"
                       :to="apiReq.log_table_size"
-                      :precision="2"
+                      :precision="3"
                   />
                   <template #prefix>
                     <n-icon>
@@ -531,7 +542,6 @@ export default {
       >
         <n-data-table
             ref="tableRef"
-            :bordered="false"
             :columns="columns"
             :data="apiLogList"
             striped

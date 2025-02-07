@@ -14,25 +14,17 @@ import useSettingStore from "@/stores/useSettingStore";
 
 const {t} = useI18n()
 let animated = ref<boolean>(false)
-
 const settingStore = useSettingStore()
-
 const themeStore = useThemeStore();
-//
-// let initSystemConfigData = async () => {
-//   let { data } = await instance.get('http://localhost:8080/admin/get-setting')
-//   console.log(data)
-// }
 
 onBeforeMount(async () => {
+  themeStore.menuSelected = 'system-config'
   await settingStore.loadSetting()
-
 })
 
 onMounted(() => {
   console.log('menuSelected:', themeStore.menuSelected)
   themeStore.contentPath = '/admin/dashboard/systemconfig'
-  themeStore.menuSelected = 'system-config'
   animated.value = true
 })
 
@@ -67,10 +59,10 @@ export default {
           <n-tab-pane name="chap6" :tab="t('adminViews.systemConfig.sendMail.common.title')">
               <SendMail></SendMail>
           </n-tab-pane>
-          <n-tab-pane name="chap7" :tab="t('adminViews.systemConfig.notice.common.title')">
-            <Notice></Notice>
-          </n-tab-pane>
-          <n-tab-pane name="chap8" :tab="t('adminViews.systemConfig.notice.common.title')">
+<!--          <n-tab-pane name="chap7" :tab="t('adminViews.systemConfig.notice.common.title')">-->
+<!--            <Notice></Notice>-->
+<!--          </n-tab-pane>-->
+          <n-tab-pane name="chap7" :tab="t('adminViews.systemConfig.appDownload.common.title')">
             <WeApp></WeApp>
           </n-tab-pane>
         </n-tabs>
@@ -78,19 +70,7 @@ export default {
     </div>
   </transition>
 
-
-  <!--  <div style="display: flex; flex-direction: column; max-height: 100vh; overflow-y: auto;">-->
-  <!--    <Personalization></Personalization>-->
-  <!--    <Site></Site>-->
-  <!--    <h1>1</h1>-->
-  <!--  </div>-->
-
-
 </template>
 
 <style lang="less" scoped>
-//.n-card {
-//  //background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-//  border: 0;
-//}
 </style>

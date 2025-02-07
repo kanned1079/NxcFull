@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {type FormInst, NButton, NTag, useMessage} from 'naive-ui'
+import {type FormInst, NButton, NIcon, NTag, useMessage} from 'naive-ui'
 import {computed, h, onMounted, ref} from 'vue'
-import {PersonAddOutline as addUserIcon, RefreshOutline as refreshIcon, Search as searchIcon} from '@vicons/ionicons5'
+import {
+  PeopleOutline as usersIcon,
+  PersonAddOutline as addUserIcon,
+  RefreshOutline as refreshIcon,
+  Search as searchIcon
+} from '@vicons/ionicons5'
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import instance from "@/axios";
 import {formatDate} from "@/utils/timeFormat";
 import {hashPassword} from "@/utils/encryptor";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 const {t} = useI18n()
 const appInfoStore = useAppInfosStore()
@@ -393,29 +399,82 @@ export default {
 </script>
 
 <template>
-  <div class="root">
-    <n-card hoverable :bordered="false" :embedded="true" class="card1" :title="t('adminViews.userMgr.userManager')">
-      <n-button class="btn" tertiary type="primary" size="medium" @click="showSearchNModal=true">
-        <n-icon size="14" style="padding-right: 8px">
-          <searchIcon/>
-        </n-icon>
+
+  <PageHead
+      :title="t('adminViews.userMgr.userManager')"
+      :description="t('adminViews.userMgr.description')"
+  >
+    <template #default>
+      <n-button
+          tertiary
+          type="primary"
+          size="medium"
+          class="btn-right"
+          @click="showSearchNModal=true"
+      >
         {{ t('adminViews.userMgr.query') }}
+        <template #icon>
+          <n-icon>
+            <searchIcon/>
+          </n-icon>
+        </template>
       </n-button>
-      <n-button class="btn" tertiary type="primary" size="medium"
-                @click="searchEmail=''; animated=false; getAllUsers()">
-        <n-icon size="14" style="padding-right: 8px">
-          <refreshIcon/>
-        </n-icon>
+
+      <n-button
+          tertiary
+          type="primary"
+          size="medium"
+          class="btn-right"
+          @click="searchEmail=''; animated=false; getAllUsers()">
+        <template #icon>
+          <n-icon>
+            <refreshIcon/>
+          </n-icon>
+        </template>
+
         {{ t('adminViews.userMgr.reset') }}
       </n-button>
-      <n-button class="btn" tertiary type="primary" size="medium" @click="showAddUserModal=true">
-        <n-icon size="14" style="padding-right: 8px">
-          <addUserIcon/>
-        </n-icon>
+
+      <n-button
+          tertiary
+          type="primary"
+          size="medium"
+          class="btn-right"
+          @click="showAddUserModal=true">
+
+        <template #icon>
+          <n-icon>
+            <addUserIcon/>
+          </n-icon>
+        </template>
         {{ t('adminViews.userMgr.addNewUser') }}
       </n-button>
-    </n-card>
-  </div>
+    </template>
+  </PageHead>
+
+  <!--  <div class="root">-->
+  <!--    <n-card hoverable :bordered="false" :embedded="true" class="card1" :title="t('adminViews.userMgr.userManager')">-->
+  <!--      <n-button class="btn" tertiary type="primary" size="medium" @click="showSearchNModal=true">-->
+  <!--        <n-icon size="14" style="padding-right: 8px">-->
+  <!--          <searchIcon/>-->
+  <!--        </n-icon>-->
+  <!--        {{ t('adminViews.userMgr.query') }}-->
+  <!--      </n-button>-->
+  <!--      <n-button class="btn" tertiary type="primary" size="medium"-->
+  <!--                @click="searchEmail=''; animated=false; getAllUsers()">-->
+  <!--        <n-icon size="14" style="padding-right: 8px">-->
+  <!--          <refreshIcon/>-->
+  <!--        </n-icon>-->
+  <!--        {{ t('adminViews.userMgr.reset') }}-->
+  <!--      </n-button>-->
+  <!--      <n-button class="btn" tertiary type="primary" size="medium" @click="showAddUserModal=true">-->
+  <!--        <n-icon size="14" style="padding-right: 8px">-->
+  <!--          <addUserIcon/>-->
+  <!--        </n-icon>-->
+  <!--        {{ t('adminViews.userMgr.addNewUser') }}-->
+  <!--      </n-button>-->
+  <!--    </n-card>-->
+  <!--  </div>-->
 
   <transition name="slide-fade">
     <div style="padding: 20px" v-if="animated">
@@ -430,22 +489,22 @@ export default {
         />
       </n-card>
 
-<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="animated=false; getAllUsers()"-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 160px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="animated=false; dataSize.page = 1; getAllUsers()"-->
-<!--        />-->
-<!--      </div>-->
+      <!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+      <!--        <n-pagination-->
+      <!--            size="medium"-->
+      <!--            v-model:page.number="dataSize.page"-->
+      <!--            :page-count="pageCount"-->
+      <!--            @update:page="animated=false; getAllUsers()"-->
+      <!--        />-->
+      <!--        <n-select-->
+      <!--            style="width: 160px; margin-left: 20px"-->
+      <!--            v-model:value.number="dataSize.pageSize"-->
+      <!--            size="small"-->
+      <!--            :options="dataCountOptions"-->
+      <!--            :remote="true"-->
+      <!--            @update:value="animated=false; dataSize.page = 1; getAllUsers()"-->
+      <!--        />-->
+      <!--      </div>-->
 
       <DataTableSuffix
           v-model:data-size="dataSize"
@@ -585,13 +644,17 @@ export default {
 
 <style lang="less" scoped>
 .root {
-  padding: 20px 20px 0 20px;
+  padding: 0 20px 0 20px;
 
   .card1 {
     .btn {
       margin-right: 10px;
     }
   }
+}
+
+.btn-right {
+  margin-right: 10px;
 }
 
 

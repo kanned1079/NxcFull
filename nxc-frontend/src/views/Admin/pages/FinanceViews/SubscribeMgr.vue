@@ -5,10 +5,13 @@ import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 // import useUserInfoStore from "@/stores/useUserInfoStore";
-import type {DrawerPlacement, FormInst, NotificationType, DataTableColumns} from 'naive-ui'
+import {type DrawerPlacement, type FormInst, type NotificationType, type DataTableColumns, NIcon} from 'naive-ui'
 import {NButton, NSwitch, NTag, useMessage, useNotification} from 'naive-ui'
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
+
 import instance from "@/axios";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 // import {MdEditor} from "md-editor-v3";
 
 const {t} = useI18n();
@@ -495,11 +498,33 @@ export default {
 
 <template>
 
+  <div>
+    <PageHead
+        :title="t('adminViews.planMgr.title')"
+        :description="t('adminViews.planMgr.description')"
+    >
+      <n-button
+          tertiary
+          type="primary"
+          size="medium"
+          class="btn-right"
+          @click="handleAddSubscribe">
+        <template #icon>
+          <n-icon>
+            <AddIcon/>
+          </n-icon>
+        </template>
+
+        {{ t('adminViews.planMgr.addNewPlan') }}
+      </n-button>
+    </PageHead>
+  </div>
+
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-      <n-card class="card" hoverable :embedded="true" :title="t('adminViews.planMgr.title')" :bordered="false">
-        <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>
-      </n-card>
+<!--      <n-card class="card" hoverable :embedded="true" :title="t('adminViews.planMgr.title')" :bordered="false">-->
+<!--        <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>-->
+<!--      </n-card>-->
 
       <n-card :embedded="true" :bordered="false" hoverable content-style="padding: 0;" style="margin-top: 20px">
         <!--      在此处放置表格-->
@@ -587,7 +612,7 @@ export default {
 
 <style scoped lang="less">
 .root {
-  padding: 20px;
+  margin: 20px 20px 0 20px;
 
   .card {
     .add-btn {

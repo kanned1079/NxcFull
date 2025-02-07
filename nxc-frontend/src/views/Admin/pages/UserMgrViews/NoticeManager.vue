@@ -3,10 +3,12 @@ import {useI18n} from "vue-i18n";
 import {computed, h, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore"
 import instance from "@/axios";
-import {NButton, NSwitch, useMessage} from 'naive-ui'
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
+import {NButton, NIcon, NSwitch, useMessage} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import {formatDate} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 // const apiAddrStore = useApiAddrStore();
 const {t} = useI18n()
@@ -25,26 +27,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
-
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
-
 
 interface formData {
   id?: number
@@ -308,13 +290,33 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px 20px 0 20px">
-    <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">
-      <n-button secondary type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>
-      <n-button secondary type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试
-      </n-button>
-    </n-card>
-  </div>
+
+  <PageHead
+      :title="'公告管理'"
+      :description="t('adminViews.activation.description')"
+  >
+    <n-button
+        tertiary
+        type="primary"
+        size="medium"
+        class="btn-right"
+        @click="handleAddNotice">
+      <template #icon>
+        <n-icon>
+          <AddIcon/>
+        </n-icon>
+      </template>
+      {{ '添加公告' }}
+    </n-button>
+
+  </PageHead>
+<!--  <div style="padding: 20px 20px 0 20px">-->
+<!--    <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">-->
+<!--      <n-button secondary type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>-->
+<!--      <n-button secondary type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试-->
+<!--      </n-button>-->
+<!--    </n-card>-->
+<!--  </div>-->
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
@@ -408,7 +410,7 @@ export default {
 }
 
 .root {
-  padding: 0 20px 20px 20px;
+  padding: 0 20px 0 20px;
 
 
 }

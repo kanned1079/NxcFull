@@ -9,11 +9,14 @@ import {
   RefreshOutline as refreshIcon,
   Search as searchIcon,
 } from "@vicons/ionicons5"
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
+
 import {NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
 import instance from "@/axios";
 import {formatDate} from "@/utils/timeFormat";
 import renderIcon from "@/utils/iconFormator";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 interface Order {
   id: number
@@ -405,23 +408,58 @@ export default {
 </script>
 
 <template>
-  <div class="root">
-    <n-card hoverable :bordered="false" :embedded="true" class="card1" :title="'订单管理'">
-      <n-button class="btn" secondary type="primary" size="medium" @click="showSearchModal=true">
-        <n-icon size="14" style="padding-right: 8px">
+
+  <PageHead
+      :title="t('adminViews.orderMgr.title')"
+      :description="t('adminViews.orderMgr.description')"
+  >
+    <n-button
+        tertiary
+        type="primary"
+        size="medium"
+        class="btn-right"
+        @click="showSearchModal=true">
+      <template #icon>
+        <n-icon>
           <searchIcon/>
         </n-icon>
-        {{ t('adminViews.userMgr.query') }}
-      </n-button>
-      <n-button class="btn" tertiary type="primary" size="medium"
-                @click="searchForm.email=''; animated=false; getAllOrders()">
-        <n-icon size="14" style="padding-right: 8px">
+      </template>
+
+      {{ t('adminViews.userMgr.query') }}
+    </n-button>
+    <n-button
+        tertiary
+        type="primary"
+        size="medium"
+        class="btn-right"
+        @click="searchForm.email=''; animated=false; getAllOrders()">
+      <template #icon>
+        <n-icon>
           <refreshIcon/>
         </n-icon>
-        {{ '重置搜索' }}
-      </n-button>
-    </n-card>
-  </div>
+      </template>
+
+      {{ '重置搜索' }}
+    </n-button>
+  </PageHead>
+
+<!--  <div class="root">-->
+<!--    <n-card hoverable :bordered="false" :embedded="true" class="card1" :title="'订单管理'">-->
+<!--      <n-button class="btn" secondary type="primary" size="medium" @click="showSearchModal=true">-->
+<!--        <n-icon size="14" style="padding-right: 8px">-->
+<!--          <searchIcon/>-->
+<!--        </n-icon>-->
+<!--        {{ t('adminViews.userMgr.query') }}-->
+<!--      </n-button>-->
+<!--      <n-button class="btn" tertiary type="primary" size="medium"-->
+<!--                @click="searchForm.email=''; animated=false; getAllOrders()">-->
+<!--        <n-icon size="14" style="padding-right: 8px">-->
+<!--          <refreshIcon/>-->
+<!--        </n-icon>-->
+<!--        {{ '重置搜索' }}-->
+<!--      </n-button>-->
+<!--    </n-card>-->
+<!--  </div>-->
 
   <transition name="slide-fade">
     <div style="padding: 20px" v-if="animated">
@@ -501,13 +539,17 @@ export default {
 
 <style scoped lang="less">
 .root {
-  padding: 20px 20px 0 20px;
+  padding: 0 20px 0 20px;
 
   .card1 {
     .btn {
       margin-right: 10px;
     }
   }
+}
+
+.btn-right {
+  margin-right: 10px;
 }
 
 </style>

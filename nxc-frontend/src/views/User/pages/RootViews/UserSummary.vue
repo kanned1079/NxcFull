@@ -43,29 +43,36 @@ interface Notice {
 
 let thisNotices = ref<Notice[]>([])
 
-let helpData = [
+let helpData:{
+  id: number,
+  title: string,
+  content: string,
+  suffix?: any,
+  icon_id: number,
+}[] = [
   {
     id: 0,
-    title: computed(() => t('userSummary.tutorial.title')).value,
-    content: computed(() => t('userSummary.tutorial.content', {name: appInfoStore.appCommonConfig.app_name})).value,
+    title: 'userSummary.tutorial.title',
+    content: 'userSummary.tutorial.content',
+    suffix: {name: appInfoStore.appCommonConfig.app_name},
     icon_id: 1,
   },
   {
     id: 1,
-    title: computed(() => t('userSummary.checkKey.title')).value,
-    content: computed(() => t('userSummary.checkKey.content')).value,
+    title: 'userSummary.checkKey.title',
+    content: 'userSummary.checkKey.content',
     icon_id: 2,
   },
   {
     id: 2,
-    title: computed(() => t('userSummary.renewPlan.title')).value,
-    content: computed(() => t('userSummary.renewPlan.content')).value,
+    title: 'userSummary.renewPlan.title',
+    content: 'userSummary.renewPlan.content',
     icon_id: 3,
   },
   {
     id: 3,
-    title: computed(() => t('userSummary.support.title')).value,
-    content: computed(() => t('userSummary.support.content')).value,
+    title: 'userSummary.support.title',
+    content: 'userSummary.support.content',
     icon_id: 4,
   }
 ]
@@ -339,8 +346,8 @@ export default {
             @click="router.push({ path: pathById[item.id].path})"
         >
           <div style="height: 100%; text-align: left; padding-left: 20px">
-            <p style="font-size: 16px;">{{ item.title }}</p>
-            <p style="font-size: 12px; margin-top: 5px; opacity: 0.5">{{ item.content }}</p>
+            <p style="font-size: 16px;">{{ t(item.title) }}</p>
+            <p style="font-size: 12px; margin-top: 5px; opacity: 0.5">{{ t(item.content, item.suffix?{...item.suffix}:null) }}</p>
           </div>
           <div
               style="width: 40px; font-size: 30px; margin-right: 20px; display: flex; flex-direction: column; justify-content: center">

@@ -513,21 +513,32 @@ export default {
                     shallow: 'macOS 端版本号及下载地址',
                     placeholder: 'https://xxxx.com/xxx.dmg',
                 },
+                linux: {
+                    title: 'Linux',
+                    shallow: 'Linux 端版本号及下载地址',
+                    placeholder: 'https://xxxx.com/xxx.deb',
+                },
                 android: {
                     title: 'Android',
                     shallow: 'Android 端版本号及下载地址',
                     placeholder: 'https://xxxx.com/xxx.apk',
                 },
+                ios: {
+                    title: 'IOS',
+                    shallow: 'IOS 端版本号及下载地址',
+                    placeholder: 'https://xxxx.com/xxx.ipk',
+                },
             },
         },
         payConfig: {
             title: '支付設置',
+            description: '在這裡可以管理所有支持的付款方式，目前僅支持支付寶支付，但是您也可以先行配置其他支付方式，如沒有符合您的支付流程，可以等待項目進一步完善後在更新日誌中查看是否支持。',
             attention: {
                 title: '注意事項',
                 point1: '务必先配置支付方式的信息再进行启用，这真的很重要。',
                 point2: '修改付款方式配置时，如果显示为"---"则代表该选项已经被设置且非空，如果需要重新修改直接输入新值保存即可。',
-                point3: '由于配置信息有三级缓存，如遇到失败时，可以在重启Redis*和order微服务*后再试。',
-                point4: '目前仅支持支付宝支付，但是您也可以先配置微信和ApplePay，等待项目进一步完善后可以在更新日志中查看是否支持。',
+                // point3: '由于配置信息有三级缓存，如遇到失败时，可以在重启Redis*和order微服务*后再试。',
+                // point3: '目前仅支持支付宝支付，但是您也可以先配置微信和ApplePay，等待项目进一步完善后可以在更新日志中查看是否支持。',
             },
             common: {
                 detail: '{method} 配置',
@@ -580,6 +591,7 @@ export default {
         },
         groupMgr: {
             title: '權限組管理',
+            description: '權限組是用來標示不同的訂閱等級，您可以將同等級別但是額度等有細微區別的訂閱計畫歸納在一個權限組中方便管理。',
             common: {
                 addNewGroup: '新建權限組',
                 alterGroupName: '修改權限組名稱',
@@ -617,6 +629,7 @@ export default {
         },
         planMgr: {
             title: '訂閱管理',
+            description: '在這裡可以添加新的訂閱計畫、修改已有訂閱計畫的描述、價格、餘糧、其所属的权限组等。',
             addNewPlan: '添加新訂閱',
             table: {
                 id: '#',
@@ -681,8 +694,18 @@ export default {
                 }
             }
         },
+        couponMgr: {
+          title: '優惠券管理',
+          description: '在這裡您可以為一些特定的節日等添加一些優惠券，它允許用戶在下單的時候使用並按照您設置的比例進行抵折優惠。',
+            addNewCoupon: '添加新優惠券',
+        },
+        orderMgr: {
+          title: '訂單管理',
+            description: '在這裡您可以檢視所有訂閱計畫的訂單，篩選不同用戶的訂單、手動對用戶的訂單處理通過等。',
+        },
         userMgr: {
             userManager: "用戶管理",
+            description: '你可以在這裡管理所有的用戶，包括員工和管理員，授予或取消管理權限、設定用戶餘額、重置密碼、手動添加新用戶等操作。',
             enterEmail: "請輸入郵箱",
             enterValidEmail: "請輸入正確的郵箱格式",
             enterPassword: "請輸入密碼",
@@ -706,10 +729,6 @@ export default {
             updateSuccess: "更新成功",
             addUserSuccess: "添加新用戶成功",
             unknownError: "未知錯誤",
-            dataCountOptions10: "10條數據/頁",
-            dataCountOptions20: "20條數據/頁",
-            dataCountOptions50: "50條數據/頁",
-            dataCountOptions100: "100條數據/頁",
             email: "郵箱",
             registerDate: "註冊日期",
             isAdmin: "管理員",
@@ -738,6 +757,7 @@ export default {
         },
         activation: {
             activateLog: '激活紀錄',
+            description: '您可以檢視所有售出密鑰的具體激活情況，查看客户端的识别码、激活时间等。',
             click2getKey: '點擊以獲取密鑰內容',
             createdAt: '創建時間',
             turn2keyPage: '轉到密鑰',
@@ -1020,6 +1040,7 @@ export default {
     // },
     userKeys: {
         myKeys: '我的密鑰',
+        description: '您可以檢視您的所有密鑰的活動情況、到期日期等，如需要為密鑰設置備注，請前往激活紀錄頁面。',
         noKeys: '您還沒有有效的購買紀錄',
         keyDetail: '密鑰細節',
         keyId: '密鑰ID',

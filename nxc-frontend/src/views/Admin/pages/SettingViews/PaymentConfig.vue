@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, onBeforeMount, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
-import {useMessage} from "naive-ui";
+import {NButton, NIcon, useMessage} from "naive-ui";
 import {CheckmarkCircle, LogoAlipay, LogoApple, LogoWechat} from "@vicons/ionicons5"
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
+
 import instance from "@/axios";
+import PageHead from "@/views/utils/PageHead.vue";
 
 const {t} = useI18n()
 let animated = ref<boolean>(false)
@@ -238,6 +241,10 @@ let handleGetPaymentMethodDetailsBySystemName = async (system: string) => {
   }
 }
 
+onBeforeMount(() => {
+  themeStore.menuSelected = 'payment-config'
+})
+
 onMounted(async () => {
 
   await handleGetAllPaymentMethodsBasic()
@@ -254,24 +261,46 @@ export default {
 
 
 <template>
-  <div style="padding: 20px 20px 10px 20px">
-    <n-card
-        hoverable
-        :embedded="true"
-        :bordered="false"
+
+  <div style="padding: 0 20px 10px 20px">
+    <PageHead
+        :title="t('adminViews.payConfig.title')"
+        :description="t('adminViews.payConfig.description')"
     >
-      <div style="display: flex; justify-content: space-between; align-items: center">
-        <p style="font-weight: bold; font-size: 1.1rem">{{ t('adminViews.payConfig.title') }}</p>
-        <n-button
-            type="primary"
-            :bordered="false"
-            class="add-btn"
-            @click="addPaymentMethodClick"
-        >
-          {{ t('adminViews.payConfig.addPaymentMethod') }}
-        </n-button>
-      </div>
-    </n-card>
+      <n-button
+          tertiary
+          type="primary"
+          size="medium"
+          class="btn-right"
+          @click="addPaymentMethodClick">
+        <template #icon>
+          <n-icon>
+            <AddIcon/>
+          </n-icon>
+        </template>
+
+        {{ t('adminViews.payConfig.addPaymentMethod') }}
+      </n-button>
+    </PageHead>
+<!--    <n-card-->
+<!--        hoverable-->
+<!--        :embedded="true"-->
+<!--        :bordered="false"-->
+<!--    >-->
+<!--      <div style="display: flex; justify-content: space-between; align-items: center">-->
+<!--        <p style="font-weight: bold; font-size: 1.1rem">{{ t('adminViews.payConfig.title') }}</p>-->
+<!--        <n-button-->
+<!--            type="primary"-->
+<!--            :bordered="false"-->
+<!--            class="add-btn"-->
+<!--            @click="addPaymentMethodClick"-->
+<!--        >-->
+<!--          {{ t('adminViews.payConfig.addPaymentMethod') }}-->
+<!--        </n-button>-->
+<!--      </div>-->
+<!--    </n-card>-->
+
+
 
     <n-alert
         type="warning"
@@ -280,17 +309,8 @@ export default {
         :title="t('adminViews.payConfig.attention.title')"
     >
       <n-ul>
-        <n-li style="font-weight: bold">
-          {{ t('adminViews.payConfig.attention.point1') }}
-        </n-li>
-        <n-li>
-          {{ t('adminViews.payConfig.attention.point2') }}
-        </n-li>
-<!--        <n-li>-->
-<!--          {{ t('adminViews.payConfig.attention.point3') }}-->
-<!--        </n-li>-->
-        <n-li>
-          {{ t('adminViews.payConfig.attention.point4') }}
+        <n-li :style="i == 1?{fontWeight: 'bold'}:null" v-for="i in 2" :key="i">
+          {{ t(`adminViews.payConfig.attention.point${i}`) }}
         </n-li>
       </n-ul>
     </n-alert>

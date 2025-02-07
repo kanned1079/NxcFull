@@ -69,109 +69,74 @@ export default {
 </script>
 
 <template>
-
   <n-card
       class="root"
       :embedded="true"
       :title="t('adminViews.systemConfig.inviteAndRebate.common.title')"
       :bordered="false"
   >
-    <!--    <n-alert title="Warning 警告" type="warning" style="margin-bottom: 30px" :bordered="false">-->
-    <!--      如果你更改了本页配置，需要对队列服务进行重启。&nbsp;另外本页配置优先级高于.env中邮件配置。-->
-    <!--    </n-alert>-->
+    <n-grid cols="1" responsive="screen" y-gap="16">
+      <n-grid-item v-for="setting in paymentSettings" :key="setting.model" class="grid-item">
+        <n-grid cols="1 s:1 m:2 l:2" responsive="screen" align-items="center">
+          <!-- 左侧：标题 + 描述 -->
+          <n-grid-item>
+            <div class="describe">
+              <p class="title">{{ t(setting.title) }}</p>
+              <p class="shallow">{{ t(setting.shallow) }}</p>
+            </div>
+          </n-grid-item>
 
-    <div
-        v-for="setting in paymentSettings"
-        :key="setting.model"
-        class="item"
-    >
-  <span class="l-content">
-    <div class="describe">
-      <p class="title">{{ t(setting.title) }}</p>
-      <p class="shallow">{{ t(setting.shallow) }}</p>
-    </div>
-  </span>
-
-      <span class="r-content to-right" v-if="setting.type === 'switch'">
-    <n-switch
-        size="medium"
-        v-model:value="settingStore.settings.invite[setting.model]"
-        @update:value="saveFiled(setting.model, settingStore.settings.invite[setting.model])"
-    />
-  </span>
-
-      <span class="r-content" v-if="setting.type === 'input-number'">
-    <n-input-number
-        size="large"
-        :placeholder="t(setting.placeholder || '')"
-        v-model:value="settingStore.settings.invite[setting.model]"
-        @blur="saveFiled(setting.model, settingStore.settings.invite[setting.model])"
-    />
-  </span>
-
-      <span class="r-content" v-if="setting.type === 'input'">
-    <n-input
-        size="large"
-        :placeholder="t(setting.placeholder || '')"
-        v-model:value="settingStore.settings.invite[setting.model]"
-        @blur="saveFiled(setting.model, settingStore.settings.invite[setting.model])"
-    />
-  </span>
-    </div>
+          <!-- 右侧：输入框 / 开关 -->
+          <n-grid-item>
+            <div v-if="setting.type === 'switch'" class="to-right">
+              <n-switch
+                  size="medium"
+                  v-model:value="settingStore.settings.invite[setting.model]"
+                  @update:value="saveFiled(setting.model, settingStore.settings.invite[setting.model])"
+              />
+            </div>
+            <n-input-number
+                v-else-if="setting.type === 'input-number'"
+                size="large"
+                :placeholder="t(setting.placeholder || '')"
+                v-model:value="settingStore.settings.invite[setting.model]"
+                @blur="saveFiled(setting.model, settingStore.settings.invite[setting.model])"
+            />
+            <n-input
+                v-else-if="setting.type === 'input'"
+                size="large"
+                :placeholder="t(setting.placeholder || '')"
+                v-model:value="settingStore.settings.invite[setting.model]"
+                @blur="saveFiled(setting.model, settingStore.settings.invite[setting.model])"
+            />
+          </n-grid-item>
+        </n-grid>
+      </n-grid-item>
+    </n-grid>
   </n-card>
 </template>
 
 <style lang="less" scoped>
 .root {
-  .warm {
-    background-color: #ffefd1;
-    height: 50px;
-    border: 0;
-    line-height: 50px;
-    text-align: left;
-
-    p {
-      color: #956d34;
-      margin-left: 20px;
-      font-size: 1rem;
-    }
-  }
+  margin: 0 auto;
 }
 
-.item {
-  height: 50px;
-  display: flex;
-  margin-bottom: 30px;
+.grid-item {
+  margin-bottom: 16px;
+}
 
-  .l-content {
-    flex: 1;
-
-    .describe {
-      .title {
-        font-weight: bold;
-      }
-
-      .shallow {
-        margin-top: 5px;
-        opacity: 0.5;
-      }
-    }
+.describe {
+  .title {
+    font-weight: bold;
   }
 
-  .r-content {
-    margin-left: 30px;
-    flex: 0.8;
-    justify-content: center;
-    line-height: 50px;
+  .shallow {
+    margin-top: 5px;
+    opacity: 0.5;
   }
 }
 
 .to-right {
   text-align: right;
 }
-
-//.n-card {
-//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-//  border: 0;
-//}
 </style>

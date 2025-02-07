@@ -72,7 +72,7 @@ const appSettings: AppSetting[] = [
     title: 'adminViews.systemConfig.site.appDescription.title',
     shallow: 'adminViews.systemConfig.site.appDescription.shallow',
     model: 'app_description',
-    type: 'input',
+    type: 'input-area',
     placeholder: 'adminViews.systemConfig.site.appDescription.placeholder'
   },
   {
@@ -233,347 +233,87 @@ export default {
         :title="t('adminViews.systemConfig.site.common.title')"
         :bordered="false"
     >
-      <div v-for="setting in appSettings" :key="setting.title" class="item">
-  <span class="l-content">
-    <div class="describe">
-      <p class="title">{{ t(setting.title) }}</p>
-      <p class="shallow">{{ t(setting.shallow) }}</p>
-    </div>
-  </span>
-        <span class="r-content" v-if="setting.type === 'input'">
-    <n-input
-        v-model:value="settingStore.settings.site[setting.model]"
-        type="text"
-        :placeholder="t(setting.placeholder || '')"
-        size="large"
-        @blur="saveFiled(setting.model, settingStore.settings.site[setting.model])"
-    />
-  </span>
-        <span class="r-content" v-if="setting.type === 'switch'" style="text-align: right">
-    <n-switch
-        size="medium"
-        v-model:value="settingStore.settings.site[setting.model]"
-        @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"
-    />
-  </span>
-        <span class="r-content" v-if="setting.type === 'select'">
-    <n-select
-        v-model:value="settingStore.settings.site[setting.model]"
-        size="large"
-        :options="subscribe_list"
-        @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"
-    />
-  </span>
-        <span class="r-content" v-if="setting.type === 'input-number'">
-    <n-input-number
-        v-model:value.number="settingStore.settings.site[setting.model]"
-        type="text"
-        :placeholder="t('adminViews.systemConfig.site.inputNumberPlaceholder')"
-        size="large"
-        @blur="saveFiled(setting.model, settingStore.settings.site[setting.model])"
-    />
-  </span>
-      </div>
+      <n-grid cols="1" responsive="screen" y-gap="16">
+        <n-grid-item v-for="setting in appSettings" :key="setting.title" class="grid-item">
+          <!-- 每个配置项内部使用 n-grid 实现响应式布局 -->
+          <n-grid cols="1 s:1 m:2 l:2" responsive="screen" align-items="center">
+            <!-- 左侧：标题 + 描述 -->
+            <n-grid-item>
+              <div class="describe">
+                <p class="title">{{ t(setting.title) }}</p>
+                <p class="shallow">{{ t(setting.shallow) }}</p>
+              </div>
+            </n-grid-item>
 
-      <!--      <div v-for="setting in appSettings" :key="setting.title" class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">{{ setting.title }}</p>-->
-      <!--            <p class="shallow">{{ setting.shallow }}</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content" v-if="setting.type === 'input'">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site[setting.model]"-->
-      <!--              type="text"-->
-      <!--              :placeholder="`${setting.placeholder}`"-->
-      <!--              size="large"-->
-      <!--              @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--        <span class="r-content" v-if="setting.type === 'switch'" style="text-align: right">-->
-      <!--          <n-switch-->
-      <!--              size="medium"-->
-      <!--              v-model:value="settingStore.settings.site[setting.model]"-->
-      <!--              @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--        <span class="r-content" v-if="setting.type === 'select'">-->
-      <!--          <n-select-->
-      <!--              v-model:value="settingStore.settings.site[setting.model]"-->
-      <!--              size="large"-->
-      <!--              :options="subscribe_list"-->
-      <!--              @update:value="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--        <span class="r-content" v-if="setting.type === 'input-number'">-->
-      <!--          <n-input-number-->
-      <!--              v-model:value.number="settingStore.settings.site[setting.model]"-->
-      <!--              type="text"-->
-      <!--              placeholder="请输入"-->
-      <!--              size="large"-->
-      <!--              @blur="settingStore.saveOption('site', setting.model, settingStore.settings.site[setting.model])"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">站点名称</p>-->
-      <!--            <p class="shallow">用于显示需要站点名称的地方。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site.app_name"-->
-      <!--              type="text"-->
-      <!--              placeholder="请输入站点名称"-->
-      <!--              size="large"-->
-      <!--              @blur="settingStore.saveOption('site','app_name', settingStore.settings.site.app_name)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">站点描述</p>-->
-      <!--            <p class="shallow">用于显示需要站点描述的地方。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site.app_description"-->
-      <!--              type="text"-->
-      <!--              placeholder="请输入站点描述"-->
-      <!--              size="large"-->
-      <!--              @blur="settingStore.saveOption('site','app_description', settingStore.settings.site.app_description)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">站点网址</p>-->
-      <!--            <p class="shallow">当前网站最新网址，将会在邮件等需要用于网址处体现。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site.app_url"-->
-      <!--              type="text"-->
-      <!--              placeholder="请输入站点网址"-->
-      <!--              size="large"-->
-      <!--              @blur="settingStore.saveOption('site','app_url', settingStore.settings.site.app_url)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">强制HTTPS</p>-->
-      <!--            <p class="shallow">当站点没有使用HTTPS，CDN或反代开启强制HTTPS时需要开启。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content" style="text-align: right">-->
-      <!--          <n-switch-->
-      <!--              size="medium"-->
-      <!--              v-model:value="settingStore.settings.site.force_https"-->
-      <!--              @update:value="settingStore.saveOption('site','force_https', settingStore.settings.site.force_https)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">LOGO</p>-->
-      <!--            <p class="shallow">用于显示需要LOGO的地方。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site.logo_url"-->
-      <!--              type="text"-->
-      <!--              placeholder="请输入logo的url地址"-->
-      <!--              size="large"-->
-      <!--              @blur="settingStore.saveOption('site','logo_url', settingStore.settings.site.logo_url)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">订阅URL</p>-->
-      <!--            <p class="shallow">用于订阅所使用，留空则为站点URL。如需多个订阅URL随机获取请使用逗号进行分割。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site.subscribe_url"-->
-      <!--              type="text"-->
-      <!--              placeholder="请输入订阅url"-->
-      <!--              size="large"-->
-      <!--              @blur="settingStore.saveOption('site','subscribe_url', settingStore.settings.site.subscribe_url)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">用户条款(TOS)URL</p>-->
-      <!--            <p class="shallow">用于跳转到用户条款(TOS)</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site.tos_url"-->
-      <!--              type="text"-->
-      <!--              placeholder="请输入用户条款地址"-->
-      <!--              size="large"-->
-      <!--              @blur="settingStore.saveOption('site','tos_url', settingStore.settings.site.tos_url)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">停止新用户注册</p>-->
-      <!--            <p class="shallow">开启后任何人都将无法进行注册。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content" style="text-align: right">-->
-      <!--          <n-switch-->
-      <!--              size="medium"-->
-      <!--              v-model:value="settingStore.settings.site.stop_register"-->
-      <!--              @update:value="settingStore.saveOption('site','stop_register', settingStore.settings.site.stop_register)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">注册试用</p>-->
-      <!--            <p class="shallow">选择需要试用的订阅，如果没有选项请先前往订阅管理添加。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-
-      <!--          <n-select-->
-      <!--              v-model:value="settingStore.settings.site.trial_subscribe"-->
-      <!--              size="large"-->
-      <!--              :options="subscribe_list"-->
-      <!--              @update:value="-->
-      <!--                console.log('选择的订阅id: ', settingStore.settings.site.trial_subscribe);-->
-      <!--                settingStore.saveOption('site','trial_subscribe', settingStore.settings.site.trial_subscribe)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">试用时间(小时)</p>-->
-      <!--            <p class="shallow">新用户注册时订阅试用事件。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-number-->
-      <!--              v-model:value.number="settingStore.settings.site.trial_time"-->
-      <!--              type="text"-->
-      <!--              placeholder="请输入"-->
-      <!--              size="large"-->
-      <!--              @update:value="settingStore.saveOption('site','trial_time', settingStore.settings.site.trial_time)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">货币单位</p>-->
-      <!--            <p class="shallow">仅用于展示使用，更改后系统中所有的货币单位都将发生变更。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site.currency"-->
-      <!--              type="text"-->
-      <!--              placeholder="CNY"-->
-      <!--              size="large"-->
-      <!--              @update:value="settingStore.saveOption('site','currency', settingStore.settings.site.currency)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
-      <!--      <div class="item" style="margin-bottom: 0">-->
-      <!--        <span class="l-content">-->
-      <!--          <div class="describe">-->
-      <!--            <p class="title">货币符号</p>-->
-      <!--            <p class="shallow">仅用于展示使用，更改后系统中所有的货币单位都将发生变更。</p>-->
-      <!--          </div>-->
-      <!--        </span>-->
-      <!--        <span class="r-content">-->
-      <!--          <n-input-->
-      <!--              v-model:value="settingStore.settings.site.currency_symbol"-->
-      <!--              type="text"-->
-      <!--              placeholder="¥"-->
-      <!--              size="large"-->
-      <!--              @update:value="settingStore.saveOption('site','currency_symbol', settingStore.settings.site.currency_symbol)"-->
-      <!--          />-->
-      <!--        </span>-->
-      <!--      </div>-->
-
+            <!-- 右侧：输入框 / 选择框 / 开关 -->
+            <n-grid-item>
+              <n-input
+                  v-if="setting.type === 'input'"
+                  v-model:value="settingStore.settings.site[setting.model]"
+                  type="text"
+                  :placeholder="t(setting.placeholder || '')"
+                  size="large"
+                  @blur="saveFiled(setting.model, settingStore.settings.site[setting.model])"
+              />
+              <n-input
+                  v-if="setting.type === 'input-area'"
+                  v-model:value="settingStore.settings.site[setting.model]"
+                  type="textarea"
+                  :rows="2"
+                  :placeholder="t(setting.placeholder || '')"
+                  size="large"
+                  @blur="saveFiled(setting.model, settingStore.settings.site[setting.model])"
+              />
+              <div
+                  v-else-if="setting.type === 'switch'"
+                  style="text-align: right"
+              >
+                <n-switch
+                    size="medium"
+                    v-model:value="settingStore.settings.site[setting.model]"
+                    @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"
+                />
+              </div>
+              <n-select
+                  v-else-if="setting.type === 'select'"
+                  v-model:value="settingStore.settings.site[setting.model]"
+                  size="large"
+                  :options="subscribe_list"
+                  @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"
+              />
+              <n-input-number
+                  v-else-if="setting.type === 'input-number'"
+                  v-model:value.number="settingStore.settings.site[setting.model]"
+                  type="text"
+                  :placeholder="t('adminViews.systemConfig.site.inputNumberPlaceholder')"
+                  size="large"
+                  @blur="saveFiled(setting.model, settingStore.settings.site[setting.model])"
+              />
+            </n-grid-item>
+          </n-grid>
+        </n-grid-item>
+      </n-grid>
     </n-card>
-
   </div>
 </template>
 
 <style lang="less" scoped>
 .root {
-  min-width: 900px;
-
   .security-panel {
-    .item {
-      height: 50px;
-      display: flex;
-      margin-bottom: 30px;
+    .grid-item {
+      margin-bottom: 16px;
+    }
 
-      .l-content {
-        flex: 1;
-
-        .describe {
-          .title {
-            font-weight: bold;
-          }
-
-          .shallow {
-            margin-top: 5px;
-            opacity: 0.5;
-          }
-        }
+    .describe {
+      .title {
+        font-weight: bold;
       }
 
-      .r-content {
-        margin-left: 30px;
-        flex: 0.8;
-        justify-content: center;
-        line-height: 50px;
+      .shallow {
+        margin-top: 5px;
+        opacity: 0.5;
       }
     }
   }
 }
-
-//.n-card {
-//  background-color: v-bind('themeStore.getTheme.globeTheme.cardBgColor');
-//  border: 0;
-//}
 </style>
