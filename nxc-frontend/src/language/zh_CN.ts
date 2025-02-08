@@ -86,6 +86,7 @@ export default {
             }
         },
         summary: {
+            cockpit: '儀表板',
             systemConfig: '系統設置',
             paymentConfig: '支付設置',
             planMgr: '訂閱管理',
@@ -93,6 +94,8 @@ export default {
             orderMgr: '訂單管理',
             keyMgr: '密鑰管理',
             incomeText: '昨日收入 / 當月收入',
+            pendingTicket: '您有 {nums} 條待處理工單',
+            toHandle: '去查看',
             userCard: {
                 title: '用戶概覽',
                 allRegisteredUsers: '總註冊用戶',
@@ -121,6 +124,7 @@ export default {
             }
         },
         queueMonit: {
+            title: '服務端監控',
             headerHint: '請勿長時間停留在此頁面，在網絡高峰時段頻繁查詢將些許影響網關性能和數據庫吞吐量。',
             latency: {
                 title: '服務器延遲',
@@ -200,6 +204,7 @@ export default {
             }
         },
         systemConfig: {
+            title: '系統設置',
             common: {
                 success: '更新配置成功',
                 err: '更新配置失敗 ',
@@ -615,17 +620,50 @@ export default {
             deleteBtnHint: '刪除',
         },
         docMgr: {
-            docId: '#',
-            isShow: '是否顯示',
-            sortAs: '排序',
-            lang: '語言',
-            category: '分類',
-            title: '標題',
-            createdAt: '創建時間',
-            updatedAt: '更新時間',
-            operate: '操作',
-            edit: '編輯',
-            delete: '刪除',
+            title: '知識庫管理',
+            description: '在這裡您可以編寫給用戶的說明文檔，它可以是軟件的設計說明書、使用教程或注意事項等，其文檔的內容支持Markdown格式。',
+            addDoc: '添加新文檔',
+            addSuccess: '添加新文檔成功',
+            addFailure: '添加文檔失敗',
+            titleNotEmpty: '文檔的標題不能為空',
+            table: {
+                docId: '#',
+                isShow: '是否顯示',
+                sortAs: '排序',
+                lang: '語言',
+                category: '分類',
+                title: '標題',
+                createdAt: '創建時間',
+                updatedAt: '更新時間',
+                operate: '操作',
+                edit: '編輯',
+                delete: '刪除',
+            },
+            form: {
+                add: '添加文檔',
+                edit: '編輯文檔',
+                cancel: '取消',
+                confirm: '確認',
+                addBtn :'添加',
+                editBtn: '修改',
+                title: {
+                    title: '文檔標題',
+                    placeholder: '輸入文檔的標題'
+                },
+                sort: {
+                    title: '排序',
+                    placeholder: '輸入文檔的排序級別 越高的數值代表優先級越高',
+                },
+                category: {
+                    title: '分類',
+                    placeholder: '文檔將按照該字段進行分類展示',
+                },
+                lang: {
+                    title: '文檔語言',
+                    placeholder: '選擇文檔語言',
+                }
+            }
+
         },
         planMgr: {
             title: '訂閱管理',
@@ -776,7 +814,10 @@ export default {
             keyMgr: '密鑰管理',
             enableKey: '啟用密鑰',
             disableKey: '禁用密鑰',
-        }
+        },
+        // docMgr: {
+        //
+        // },
     },
     userLogin: {
         loginToContinue: '登入以繼續',

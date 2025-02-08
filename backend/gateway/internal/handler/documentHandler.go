@@ -42,6 +42,13 @@ func HandleGetAllDocuments(context *gin.Context) {
 }
 
 func HandleAddNewDocument(context *gin.Context) {
+	/**
+	title: string,
+	    category: string,
+	    language: string,
+	    md_text: string,
+	    sort: number,
+	*/
 	var postData = &struct {
 		Title    string `json:"title"`
 		Category string `json:"category"`

@@ -34,6 +34,7 @@ interface Theme {
     contentPath: Ref<string>;
     menuSelected: Ref<string>;
     userPath: Ref<string>;
+    breadcrumb: Ref<string>;
     menuCollapsed: Ref<boolean>;
     menuIsFlippActive: Ref<boolean>;
 }
@@ -772,6 +773,8 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
     let contentPath = ref<string>('/admin/dashboard/summary')
     let menuSelected = ref<string>('dashboard')
 
+    let breadcrumb = ref<string>('')
+
     return {
         selectedTheme,
         enableDarkMode,
@@ -792,6 +795,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
         userPath,
         menuCollapsed,
         menuIsFlippActive,
+        breadcrumb
     }
 
 }, {

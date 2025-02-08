@@ -1,16 +1,25 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref} from "vue";
+import {computed, h, onBeforeMount, onMounted, ref} from "vue";
+// import useApiAddrStore from "@/stores/useApiAddrStore";
+import {type DataTableColumns, type DrawerPlacement, type FormInst, NButton, NIcon, NSwitch, useMessage} from "naive-ui"
 import {MdEditor} from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import useThemeStore from "@/stores/useThemeStore";
-// import useApiAddrStore from "@/stores/useApiAddrStore";
-import {type DrawerPlacement, type FormInst, NButton, NSwitch, useMessage} from 'naive-ui'
-import instance from "@/axios/index";
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
 import {formatDate} from "@/utils/timeFormat";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
+import {
+  handleAddNewDoc,
+  handleDeleteDocById,
+  handleEditDocById,
+  handleGetAllDoc,
+  handleUpdateDocShow
+} from "@/api/admin/doc";
 
-const {t} = useI18n()
+const i18nPrefix = 'adminViews.docMgr'
+const {t, locale} = useI18n()
 // const apiAddrStore = useApiAddrStore();
 const placement = ref<DrawerPlacement>('right')
 let editType = ref<'add' | 'edit'>('add')
@@ -59,9 +68,9 @@ let formValue = ref<{
   doc: {
     title: '',
     category: '',
-    language: '',
+    language: 'en_US',
     md_text: '',
-    sort: 0
+    sort: 1000
   }
 })
 
@@ -69,7 +78,6 @@ let rules = {
   doc: {
     title: {
       required: true,
-      message: '文档标题是必填的',
       trigger: 'blur'
     },
     category: {
@@ -80,10 +88,7 @@ let rules = {
       required: false,
       trigger: 'blur'
     },
-    sort: {
-      required: true,
-      trigger: 'blur'
-    }
+
   }
 }
 
@@ -97,13 +102,6 @@ let cancelAdd = () => {
 }
 
 let clearForm = () => {
-//   Object.keys(formValue.value.doc).forEach(key => {
-//     if (typeof formValue.value.doc[key] === 'string')
-//       formValue.value.doc[key] = ''
-//     if (typeof formValue.value.doc[key] === 'number')
-//       formValue.value.doc[key] = 0
-//   })
-
   Object.assign(formValue.value.doc, {
     title: '',
     category: '',
@@ -111,97 +109,93 @@ let clearForm = () => {
     md_text: '',
     sort: 0
   })
-
 }
 
-let submitDoc = async () => {
+// callHandleAddNewDoc 提交新的文档
+const callHandleAddNewDoc = async () => {
   if (formValue.value.doc.title !== '') {
     animated.value = false
     active.value = false
-    console.log(formValue.value)
-    let {data} = await instance.post('/api/admin/v1/document', {
-      ...formValue.value.doc
-    })
+    let data = await handleAddNewDoc(formValue.value.doc)
     if (data.code === 200) {
       console.log(data)
       animated.value = true
-      message.success('添加新的文档成功')
+      message.success(t(`${i18nPrefix}.addSuccess`))
       // 清除表单值
       clearForm()
-      await getAllDocumentList()
+      await callGetAllDocumentList()
     } else {
-      message.error('Add failure, please retry.')
-
+      message.error(t(`${i18nPrefix}.addFailure`))
     }
   } else {
-    message.error('文档标题不能为空')
+    message.error(t(`${i18nPrefix}.titleNotEmpty`))
   }
 }
 
 // -----修改---------------------------------------------------------
 
-const columns = [
+const columns = computed<DataTableColumns<DocumentItem>>(() => [
   {
-    title: computed(() => t('adminViews.docMgr.docId')).value,
+    title: t(`${i18nPrefix}.table.docId`),
     key: 'id',
     render(row: DocumentItem) {
       return h('p', {}, row.id);
     }
   },
   {
-    title: computed(() => t('adminViews.docMgr.isShow')).value,
+    title: t(`${i18nPrefix}.table.isShow`),
     key: 'show',
     render(row: DocumentItem) {
       return h(NSwitch, {
         value: row.show,
-        onUpdateValue: () => updateDocumentShow(row),
+        onUpdateValue: () => callUpdateDocumentShow(row),
       });
     }
   },
   {
-    title: computed(() => t('adminViews.docMgr.sortAs')).value,
+    title: t('adminViews.docMgr.table.sortAs'),
     key: 'title',
     render(row: DocumentItem) {
       return h('p', {}, row.sort);
     }
   },
   {
-    title: computed(() => t('adminViews.docMgr.lang')).value,
+    title: t('adminViews.docMgr.table.lang'),
     key: 'language',
     render(row: DocumentItem) {
       return h('p', {}, row.language);
     }
   },
   {
-    title: computed(() => t('adminViews.docMgr.category')).value,
+    title: t('adminViews.docMgr.table.category'),
     key: ' category',
     render(row: DocumentItem) {
       return h('p', {}, row.category);
     }
   },
   {
-    title: computed(() => t('adminViews.docMgr.title')).value,
+    title: t('adminViews.docMgr.table.title'),
     key: 'title',
     render(row: DocumentItem) {
       return h('p', {}, row.title);
     }
   },
   {
-    title: computed(() => t('adminViews.docMgr.createdAt')).value,
+    title: t('adminViews.docMgr.table.createdAt'),
     key: 'created_at',
     render(row: DocumentItem) {
       return h('p', {}, formatDate(row.created_at));
     }
   },
   {
-    title: computed(() => t('adminViews.docMgr.updatedAt')).value,
+    title: t('adminViews.docMgr.table.updatedAt'),
     key: 'updated_at',
     render(row: DocumentItem) {
       return h('p', {}, formatDate(row.updated_at));
     }
   },
   {
-    title: computed(() => t('adminViews.docMgr.operate')).value,
+    title: t('adminViews.docMgr.table.operate'),
     key: 'actions',
     render(row: DocumentItem) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
@@ -212,19 +206,19 @@ const columns = [
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => handleUpdateDocClick(row),
-        }, {default: () => computed(() => t('adminViews.docMgr.edit')).value,}),
+        }, {default: () => computed(() => t('adminViews.docMgr.table.edit')).value,}),
         h(NButton, {
           size: 'small',
           type: 'error',
           secondary: true,
           style: {marginLeft: '10px'},
           onClick: () => handleDeleteDoc(row)
-        }, {default: () => computed(() => t('adminViews.docMgr.delete')).value,})
+        }, {default: () => computed(() => t('adminViews.docMgr.table.delete')).value,})
       ]);
     },
     fixed: 'right',
   }
-];
+])
 
 let updateDocId = ref<number>(0)
 let handleUpdateDocClick = (row: DocumentItem) => {
@@ -239,88 +233,58 @@ let handleUpdateDocClick = (row: DocumentItem) => {
 }
 
 let updateDocument = async () => {
-  try {
-    let {data} = await instance.put('/api/admin/v1/document', {
-      id: updateDocId.value,  //  更新文档的id
-      ...formValue.value.doc  // 更新的内容
-    })
+  let data = await handleEditDocById(updateDocId.value, formValue.value.doc)
     if (data.code === 200) {
-      message.success('Updated ok')
-      await getAllDocumentList()
+      await callGetAllDocumentList()
       active.value = false
     } else {
       message.error('Updated failure ' + data.msg || '')
     }
-  } catch (error: any) {
-    message.error(error.toString)
+}
+
+let callUpdateDocumentShow = async (row: DocumentItem) => {
+  let data = await handleUpdateDocShow(row.id)
+  if (data.code === 200) {
+    await callGetAllDocumentList()
+  } else {
+    message.error('Updated failure ' + data.msg || '')
   }
 }
 
-let updateDocumentShow = async (row: DocumentItem) => {
-  try {
-    let {data} = await instance.patch('/api/admin/v1/document', {
-      id: row.id,
-    })
-    if (data.code === 200) {
-      message.success('Updated ok')
-      await getAllDocumentList()
-    } else {
-      message.error('Updated failure ' + data.msg || '')
-    }
-  } catch (error: any) {
-    message.error(error.toString)
-  }
-}
-
-let getAllDocumentList = async () => {
-  try {
-    // animated.value = false
-
-    let {data} = await instance.get('/api/admin/v1/document', {
-      params: {
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    })
-    console.log(data)
-    if (data.code === 200) {
-      documentItemList.value = []
-      data.documents.forEach((doc: DocumentItem) => documentItemList.value.push(doc))
-      pageCount.value = data.page_count as number
-      message.success('Updated ok')
-      animated.value = true
-    } else {
-      message.error('Updated failure ' + data.msg || '')
-    }
-  } catch (error: any) {
-    message.error(error.toString)
+let callGetAllDocumentList = async () => {
+  let data = await handleGetAllDoc(dataSize.value.page, dataSize.value.pageSize)
+  if (data.code === 200) {
+    documentItemList.value = []
+    data.documents.forEach((doc: DocumentItem) => documentItemList.value.push(doc))
+    pageCount.value = data.page_count as number
+    animated.value = true
+  } else {
+    message.error('Updated failure ' + data.msg || '')
   }
 }
 
 let handleDeleteDoc = async (row: DocumentItem) => {
-  try {
-    let {data} = await instance.delete('/api/admin/v1/document', {
-      params: {
-        id: row.id,
-      }
-    })
+  let data = await handleDeleteDocById(row.id)
     if (data.code === 200 && data.deleted) {
       message.success('Delete doc ok, id: ' + row.id)
-      await getAllDocumentList()
+      await callGetAllDocumentList()
     } else {
       message.error('Delete doc failure' + data.msg || '')
     }
-  } catch (error: any) {
-    message.error('unknown err: ' + error)
-  }
 }
 
-onMounted(async () => {
+onBeforeMount(() => {
   themeStore.menuSelected = 'doc-manager'
+  themeStore.breadcrumb = t('adminViews.docMgr.title')
+  formValue.value.doc.language = locale.value || 'en_US'
+})
+
+onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/document';
 
+
   // request
-  await getAllDocumentList()
+  await callGetAllDocumentList()
   setTimeout(() => animated.value = true, 50)
   // animated.value = true
 })
@@ -334,11 +298,32 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px 20px 0 20px">
-    <n-card class="body-card" hoverable :embedded="true" title="知识库管理" :bordered="false">
-      <n-button type="primary" :bordered="false" @click="editType='add'; activate('right')">添加文档</n-button>
-    </n-card>
-  </div>
+  <PageHead
+      :title="t(`${i18nPrefix}.title`)"
+      :description="t(`${i18nPrefix}.description`)"
+  >
+    <n-button
+        tertiary
+        type="primary"
+        size="medium"
+        class="btn-right"
+        @click="editType='add'; activate('right')">
+      <template #icon>
+        <n-icon>
+          <AddIcon/>
+        </n-icon>
+      </template>
+      {{ t(`${i18nPrefix}.addDoc`) }}
+    </n-button>
+
+  </PageHead>
+
+
+  <!--  <div style="padding: 20px 20px 0 20px">-->
+  <!--    <n-card class="body-card" hoverable :embedded="true" title="知识库管理" :bordered="false">-->
+  <!--      <n-button type="primary" :bordered="false" @click="editType='add'; activate('right')">添加文档</n-button>-->
+  <!--    </n-card>-->
+  <!--  </div>-->
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
@@ -359,56 +344,52 @@ export default {
           v-model:data-size="dataSize"
           v-model:page-count="pageCount"
           v-model:animated="animated"
-          :update-data="getAllDocumentList"
+          :update-data="callGetAllDocumentList"
       />
 
-<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="animated=false; getAllDocumentList()"-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 160px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="animated=false; dataSize.page = 1; getAllDocumentList()"-->
-<!--        />-->
-<!--      </div>-->
+
     </div>
   </transition>
 
 
-  <n-drawer v-model:show="active" width="80%" :placement="placement" @after-leave="clearForm()">
-    <n-drawer-content :title="editType==='add'?'新增文档':'修改文档'">
+  <n-drawer
+      v-model:show="active"
+      width="80%"
+      :placement="placement"
+      @after-leave="clearForm();"
+  >
+    <n-drawer-content :title="editType==='add'?t(`${i18nPrefix}.form.add`):t(`${i18nPrefix}.form.edit`)">
       <n-form
           ref="formRef"
           :model="formValue"
           :rules="rules"
+          :show-feedback="false"
       >
-        <n-form-item label="标题" path="doc.title">
-          <n-input v-model:value="formValue.doc.title" placeholder="输入文档标题"/>
+        <n-form-item class="form-bt-gap" :label="t(`${i18nPrefix}.form.title.title`)" path="doc.title">
+          <n-input v-model:value="formValue.doc.title" :placeholder="t(`${i18nPrefix}.form.title.placeholder`)"/>
         </n-form-item>
-        <n-form-item label="排序" path="doc.sort">
+        <n-form-item class="form-bt-gap" :label="t(`${i18nPrefix}.form.sort.title`)" path="doc.sort">
           <n-input-number style="width: 100%" v-model:value.number="formValue.doc.sort"
-                          placeholder="输入文档的排序级别"/>
+                          :placeholder="t(`${i18nPrefix}.form.sort.placeholder`)"/>
         </n-form-item>
-        <n-form-item label="分类" path="doc.category">
-          <n-input v-model:value="formValue.doc.category" placeholder="输入文档分类"/>
+        <n-form-item class="form-bt-gap" :label="t(`${i18nPrefix}.form.category.title`)" path="doc.category">
+          <n-input v-model:value="formValue.doc.category" :placeholder="t(`${i18nPrefix}.form.category.placeholder`)"/>
         </n-form-item>
-        <n-form-item label="语言" path="doc.language">
-          <n-input v-model:value="formValue.doc.language" placeholder="选择文档语言"/>
+        <n-form-item class="form-bt-gap" :label="t(`${i18nPrefix}.form.lang.title`)" path="doc.language">
+          <!--          <n-input v-model:value="formValue.doc.language" placeholder="选择文档语言"/>-->
+          <n-select
+              :options="[{label: '简体中文', value: 'zh_CN'},{label: '繁體中文', value: 'zh_HK'},{label: 'English', value: 'en_US'},{label: '日本語', value: 'ja_JP'},]"
+               v-model:value="formValue.doc.language" :placeholder="t(`${i18nPrefix}.form.lang.placeholder`)"/>
         </n-form-item>
         <MdEditor style="background-color: rgba(0,0,0,0.0)" v-model="formValue.doc.md_text"
                   :theme="themeStore.enableDarkMode?'dark':'light'"/>
       </n-form>
       <div style="display: flex; flex-direction: row; justify-content: right; margin-top: 20px">
-        <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">取消</n-button>
-        <n-button style="width: 80px" type="primary" @click="editType==='add'?submitDoc():updateDocument()">
-          {{ editType === 'add' ? '添加' : '修改' }}
+        <n-button style="margin-right: 15px;" @click="cancelAdd" secondary type="primary">
+          {{ t(`${i18nPrefix}.form.cancel`) }}
+        </n-button>
+        <n-button style="" type="primary" @click="editType==='add'?callHandleAddNewDoc():updateDocument()">
+          {{ editType === 'add' ? t(`${i18nPrefix}.form.addBtn`) : t(`${i18nPrefix}.form.editBtn`) }}
         </n-button>
       </div>
     </n-drawer-content>
@@ -417,6 +398,10 @@ export default {
 
 <style scoped lang="less">
 .root {
-  padding: 20px;
+  margin: 20px;
+}
+
+.form-bt-gap {
+  margin-bottom: 14px;
 }
 </style>

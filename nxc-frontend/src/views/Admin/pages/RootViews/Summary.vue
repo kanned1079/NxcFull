@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 import {onBeforeMount, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -8,6 +9,7 @@ import IncomeChart from "@/views/Admin/pages/RootViews/dashboard/IncomeChart.vue
 import instance from "@/axios";
 import {ChevronForwardOutline as toRightIcon,} from "@vicons/ionicons5"
 
+const {t} = useI18n()
 const userInfoStore = useUserInfoStore();
 const themeStore = useThemeStore();
 const router = useRouter();
@@ -38,6 +40,7 @@ let checkIsUserHaveOpenTickets = async () => {
 
 onBeforeMount(async () => {
   // await getAppOverview()
+  themeStore.breadcrumb = t('adminViews.summary.cockpit')
   await checkIsUserHaveOpenTickets()
 })
 
@@ -68,14 +71,14 @@ export default {
             type="warning"
         >
           <div style="display: flex; flex-direction: row; align-items: center">
-            {{ `您有${openingTicketCount}条待处理的工单` }}
+            {{ t('adminViews.summary.pendingTicket', {nums: openingTicketCount}) }}
             <n-button
                 style="margin-left: 5px"
                 text
                 type="warning"
                 @click="router.push({path: '/admin/dashboard/ticket'})"
             >
-              去查看
+              {{ t('adminViews.summary.toHandle') }}
               <n-icon>
                 <toRightIcon/>
               </n-icon>

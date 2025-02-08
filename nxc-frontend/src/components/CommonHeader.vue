@@ -133,7 +133,6 @@ const activateMenu = (place: DrawerPlacement) => {
 }
 
 let handleChangeTheme = () => {
-  console.log('修改主题颜色')
   themeStore.enableDarkMode = !themeStore.enableDarkMode;
   themeStore.saveEnableDarkMode();
 }
@@ -173,7 +172,7 @@ export default {
       </n-button>
 
       <p class="txt" v-if="!themeStore.menuCollapsed">
-        仪表板
+        {{ themeStore.breadcrumb }}
       </p>
     </div>
     <div class="r-content">

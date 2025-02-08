@@ -17,6 +17,7 @@ func (s *DocumentService) AddDocument(ctx context.Context, req *pb.AddDocumentRe
 		Category: req.Category,
 		Language: req.Language,
 		Body:     req.Body,
+		Sort:     req.Sort,
 	}
 	if err := dao.Db.Model(&model.Document{}).Create(&newDoc).Error; err != nil {
 		return &pb.AddDocumentResponse{

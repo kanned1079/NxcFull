@@ -295,6 +295,7 @@ onMounted(() => {
 })
 
 onBeforeMount(() => {
+  themeStore.breadcrumb = t('adminViews.queueMonit.title')
   themeStore.menuSelected = 'queue-monitor'
   // 调用接口获取数据
   // getSysInfo()
