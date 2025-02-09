@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue"
-import {type FormInst, NButton, NTag, useMessage, type DataTableColumns} from "naive-ui"
+import {type FormInst, NButton, NTag, useMessage, type DataTableColumns, NIcon} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {formatDate} from "@/utils/timeFormat";
 import {closeTicket, commitNewTicket, getAllMyTickets} from "@/api/user/tickets";
+import {AddOutline as AddIcon} from "@vicons/ionicons5"
+
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 let pageCount = ref<number>(0)
 let dataSize = ref<{ pageSize: number, page: number }>({
@@ -72,23 +75,21 @@ const rules = {
 
 let ticketList = ref<TicketItem[]>([])
 
-let formIsValid = ref<boolean>(false)
+// let formIsValid = ref<boolean>(false)
 
-
-let validateClick = () => {
-  formRef.value?.validate((errors) => {
-    if (!errors) {
-      // message.success('Valid')
-      formIsValid.value = true
-      // return true
-    } else {
-      console.log(errors)
-      // message.error('Invalid')
-      formIsValid.value = false
-      // return false
-    }
-  })
-}
+let validateClick = async (): Promise<boolean> => {
+  if (!formRef.value) return false;
+  try {
+    await formRef.value.validate(); // validate() 本身会抛出错误
+    // formIsValid.value = true;
+    return true;
+  } catch (errors) {
+    message.error(t('userTickets.checkForm'))
+    console.log(errors);
+    // formIsValid.value = false;
+    return false;
+  }
+};
 
 
 let urgencyOptions = computed<{
@@ -153,8 +154,8 @@ let callGetAllMyTickets = async () => {
 }
 
 let callCommitNewTicket = async () => {
-  validateClick()
-  if (formIsValid.value) {
+  if (await validateClick()) {
+    // if (formIsValid.value) {
     console.log('表單驗證通過')
     let data = await commitNewTicket(userInfoStore.thisUser.id, newTicket.value)
     if (data.code === 200 && data.created) {
@@ -188,23 +189,23 @@ const columns = computed<DataTableColumns<TicketItem>>(() => [
     key: 'id',
   },
   {
-    title: computed(() => t('userTickets.ticketSubject')).value,
+    title: t('userTickets.ticketSubject'),
     key: 'subject',
   },
   {
-    title: computed(() => t('userTickets.ticketUrgency')).value,
+    title: t('userTickets.ticketUrgency'),
     key: 'urgency',
     render(row: TicketItem, rowIndex: number) {
       let level = '';
       switch (row.urgency) {
         case 1:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.low')).value;
+          level = t('userTickets.ticketUrgencyLevel.low');
           break;
         case 2:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.med')).value;
+          level = t('userTickets.ticketUrgencyLevel.med');
           break;
         case 3:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.high')).value;
+          level = t('userTickets.ticketUrgencyLevel.high');
           break;
       }
       return h(
@@ -218,7 +219,7 @@ const columns = computed<DataTableColumns<TicketItem>>(() => [
     },
   },
   {
-    title: computed(() => t('userTickets.ticketStatus')).value,
+    title: t('userTickets.ticketStatus'),
     key: 'status',
     render(row: TicketItem, rowIndex: number) {
       return h(
@@ -230,30 +231,30 @@ const columns = computed<DataTableColumns<TicketItem>>(() => [
           {
             default: () =>
                 row.status !== 204
-                    ? computed(() => t('userTickets.ticketActive')).value
-                    : computed(() => t('userTickets.ticketInActive')).value,
+                    ? t('userTickets.ticketActive')
+                    : t('userTickets.ticketInActive'),
           }
       );
     },
   },
   {
-    title: computed(() => t('userTickets.ticketCreatedAt')).value,
+    title: t('userTickets.ticketCreatedAt'),
     key: 'created_at',
     render(row: TicketItem, rowIndex: number) {
       return formatDate(row.created_at);
     },
   },
   {
-    title: computed(() => t('userTickets.lastResponse')).value,
+    title: t('userTickets.lastResponse'),
     key: 'last_response',
     render(row: TicketItem, rowIndex: number) {
       return row.last_reply
           ? formatDate(row.last_reply)
-          : computed(() => t('userTickets.noReply')).value;
+          : t('userTickets.noReply');
     },
   },
   {
-    title: computed(() => t('userTickets.operate')).value,
+    title: t('userTickets.operate'),
     key: 'actions',
     fixed: 'right',
     render(row: TicketItem, rowIndex: number) {
@@ -271,7 +272,7 @@ const columns = computed<DataTableColumns<TicketItem>>(() => [
                   style: { marginLeft: '10px' },
                   onClick: () => openTicket(row),
                 },
-                { default: () => computed(() => t('userTickets.checkTicket')).value }
+                { default: () => t('userTickets.checkTicket') }
             ),
             h(
                 NButton,
@@ -283,7 +284,7 @@ const columns = computed<DataTableColumns<TicketItem>>(() => [
                   style: { marginLeft: '10px' },
                   onClick: () => callCloseTicket(row.id),
                 },
-                { default: () => computed(() => t('userTickets.closeTicket')).value }
+                { default: () => t('userTickets.closeTicket') }
             ),
           ]
       );
@@ -313,16 +314,37 @@ export default {
 </script>
 
 <template>
+
+  <PageHead
+      :title="t('userTickets.userTickets')"
+      :description="t('userTickets.description')"
+  >
+    <n-button
+        tertiary
+        type="primary"
+        size="medium"
+        class="btn-right"
+        @click="showNewTicketModal = true">
+      <template #icon>
+        <n-icon>
+          <AddIcon/>
+        </n-icon>
+      </template>
+
+      {{ t('userTickets.addTicket') }}
+    </n-button>
+  </PageHead>
+
   <div class="root">
-    <n-card class="tickets-history" :embedded="true" hoverable content-style="padding: 0;" :bordered="false">
-      <div class="header">
-        <p class="title">{{ t('userTickets.userTickets') }}</p>
-        <n-button :bordered="false" class="add-btn" type="primary" @click="showNewTicketModal = true">{{
-            t('userTickets.addTicket')
-          }}
-        </n-button>
-      </div>
-    </n-card>
+<!--    <n-card class="tickets-history" :embedded="true" hoverable content-style="padding: 0;" :bordered="false">-->
+<!--      <div class="header">-->
+<!--        <p class="title">{{ t('userTickets.userTickets') }}</p>-->
+<!--        <n-button :bordered="false" class="add-btn" type="primary" @click="showNewTicketModal = true">{{-->
+<!--            t('userTickets.addTicket')-->
+<!--          }}-->
+<!--        </n-button>-->
+<!--      </div>-->
+<!--    </n-card>-->
 
     <transition name="slide-fade">
       <div v-if="animated">
@@ -413,7 +435,7 @@ export default {
 
 <style scoped lang="less">
 .root {
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 
   .tickets-history {
     .header {

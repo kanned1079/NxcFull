@@ -1253,6 +1253,7 @@ export default {
         negativeClick: '取消',
     },
     userTickets: {
+        description: '如果您遇到使用上的問題，請在此處提交工單，我們的技術支持和客服看到後將會進行回覆並在下方表格處標出具體的回覆時間，您可以點擊查看工單和我們交流。',
         ticketId: '#',
         ticketSubject: '工單主題',
         ticketUrgency: '工單級別',
@@ -1278,6 +1279,7 @@ export default {
             ticketBody: '請輸入你想要解決的問題，盡量全面。',
             ticketNotFinished: '請補全工單的信息再試'
         },
+        checkForm: '請檢查表單是否完整',
         cancel: '取消',
         submit: '提交',
         commitNewTicketSuccess: '提交新的工單成功',
@@ -1285,7 +1287,18 @@ export default {
         noReply: '還沒有回覆',
         noTickets: '您還沒有提交過工單',
         ticketCloseSuccess: '工單關閉成功',
-        ticketCloseFailure: '工單關閉失敗'
+        ticketCloseFailure: '工單關閉失敗',
+        chatDialog: {
+            input: {
+                finished: '該工單已經結束',
+                inputHere: '輸入要發送的消息',
+            },
+            send: '發送',
+            missingToken: '不可以創建Websocket連接，因為缺少Token。',
+            msgEmptyNotAllowed: '消息的內容不可以為空',
+            accessNotPermit: '非法訪問',
+            sendSuccess: '發送消息成功',
+        }
     },
     userActivation: {
         activateLog: '激活紀錄',

@@ -6,6 +6,7 @@ import {onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import {useMessage} from "naive-ui"
 import {handleFetchAllAppDownloadList} from "@/api/user/app";
+import AppFrameIrasutoya from "@/views/utils/AppFrameIrasutoya.vue";
 
 const {t} = useI18n()
 const route = useRoute()
@@ -99,6 +100,9 @@ export default {
           </n-grid>
 
         </div>
+
+        <AppFrameIrasutoya platform="desktop"></AppFrameIrasutoya>
+        <AppFrameIrasutoya platform="mobile"></AppFrameIrasutoya>
 
 
       </div>

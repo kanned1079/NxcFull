@@ -40,7 +40,7 @@ let downloadClick = (platform: string) => {
 
 <script lang="ts">
 export default {
-  name: 'DesktopAppFrame',
+  name: 'AppFrame',
 }
 </script>
 

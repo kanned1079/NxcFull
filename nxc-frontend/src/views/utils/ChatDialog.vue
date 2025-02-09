@@ -4,16 +4,21 @@ import {computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref} from
 import {NScrollbar, useMessage,} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 import useThemeStore from "@/stores/useThemeStore";
-import useUserInfoStore from "@/stores/useUserInfoStore";
+// import useUserInfoStore from "@/stores/useUserInfoStore";
+import useAppInfosStore from "@/stores/useAppInfosStore"
+// import useAppInfosStore from "@/stores/useAppInfosStore";
 
 const themeStore = useThemeStore();
-const userInfoStore = useUserInfoStore();
+const appInfosStore = useAppInfosStore();
+// const userInfoStore = useUserInfoStore();
 const {t} = useI18n();
 const message = useMessage();
-
+const i18nPrefix: string = 'userTickets.chatDialog'
 const scrollbar = ref<HTMLElement | null>(null);
 
 let token = ref<string>(sessionStorage.getItem('token') || '');
+// let endpoint: string = ''
+// // appInfosStore.appCommonConfig.app_url // 这个的值是
 
 interface ChatHistoryItem {
   id: number
@@ -41,15 +46,10 @@ const createWebSocket = () => {
   socket.onmessage = (event: MessageEvent) => {
     try {
       const messageData = JSON.parse(event.data);
-      // console.log(messageData.type)
-      // 判断 Type 字段并根据类型执行不同操作
       if (messageData.type === "history") {
-        // 清空现有聊天记录并添加新记录
+
         let previousLength = chatHistory.value.length
-        // console.log('previousLength', previousLength)
-        chatHistory.value = [];
-        // console.log(messageData.history)
-        // let chatMsgItem = messageData.history
+        chatHistory.value = []; // 清空现有聊天记录并添加新记录
         messageData.history.forEach((chatMsgItem: ChatHistoryItem) => {
           chatHistory.value.push(chatMsgItem);
         });
@@ -66,13 +66,13 @@ const createWebSocket = () => {
         if (paramsData.value.status === 204) {
           if (socket && socket.readyState === WebSocket.OPEN) {
             socket.close();
-            console.log("WebSocket connection closed on unmount");
+            console.log("WebSocket connection closed");
           }
         }
 
       } else if (messageData.type === "check") {
         // 处理单一消息（或成功响应）
-        message.success("发送消息成功");
+        message.success(t(`${i18nPrefix}.sendSuccess`));
       } else {
         console.warn("Unknown message type received:", messageData.type);
       }
@@ -106,7 +106,7 @@ const sendWsMessage = (content: any) => {
   }
 };
 
-let isAuthed = ref<boolean>(userInfoStore.thisUser.isAdmin);
+// let isAuthed = ref<boolean>(userInfoStore.thisUser.isAdmin);
 
 // 处理主题色的逻辑
 interface ChatBobbleTheme {
@@ -117,27 +117,6 @@ interface ChatBobbleTheme {
   senderBgShallow: string;
   receiverBgShallow: string;
 }
-
-// let chatBobbleColorTheme = computed(
-//     () =>
-//         !themeStore.enableDarkMode
-//             ? {
-//               senderBgColor: "#5d8fc2",
-//               senderTextColor: "#fff",
-//               receiverBgColor: "#dadada",
-//               receiverTextColor: "#000",
-//               senderBgShallow: "rgba(93,143,193,0.5)",
-//               receiverBgShallow: "rgba(218,218,218,0.5)",
-//             }
-//             : {
-//               senderBgColor: "#486993",
-//               senderTextColor: "#fff",
-//               receiverBgColor: "#696969",
-//               receiverTextColor: "#fff",
-//               senderBgShallow: "rgba(30,45,58,0.5)",
-//               receiverBgShallow: "rgba(71,71,71,0.5)",
-//             }
-// ).value as ChatBobbleTheme;
 
 let chatBobbleColorTheme = computed(
     () =>
@@ -186,7 +165,7 @@ let handleSendMsgBtnClicked = () => {
     });
     msgInput.value = ''; // 清空输入框
   } else {
-    message.error("消息内容不能为空");
+    message.error(t(`${i18nPrefix}.msgEmptyNotAllowed`));
   }
 };
 
@@ -200,7 +179,7 @@ onBeforeMount(() => {
   let role = Number(urlParams.get("role"));
 
   if (user_id <= 0 || ticket_id <= 0) {
-    message.warning("非法訪問");
+    message.warning(t(`${i18nPrefix}.accessNotPermit`));
     setTimeout(() => window.close(), 2000)
   }
   paramsData.value.userId = user_id;
@@ -209,14 +188,14 @@ onBeforeMount(() => {
   paramsData.value.status = status;
   paramsData.value.role = role
 
-  console.log("params: ", paramsData)
+  // console.log("params: ", paramsData)
 });
 
 onMounted(() => {
   if (token.value) {
     createWebSocket();
   } else {
-    message.error("Token is missing. Cannot establish WebSocket connection.");
+    message.error(t(`${i18nPrefix}.missingToken`));
   }
 });
 
@@ -274,9 +253,9 @@ export default {
                 @keyup.enter="handleSendMsgBtnClicked"
                 :disabled="paramsData.status===204"
                 size="medium" class="text-input"
-                :placeholder="paramsData.status===204?'工单已经结束':'輸入要發送的消息'"
+                :placeholder="paramsData.status===204?t(`${i18nPrefix}.input.finished`):t(`${i18nPrefix}.input.inputHere`)"
                 v-model:value="msgInput"
-            ></n-input>
+            />
             <n-button
                 :disabled="paramsData.status===204"
                 :bordered="false"
@@ -285,7 +264,7 @@ export default {
                 class="send-btn"
                 @click="handleSendMsgBtnClicked"
             >
-              Send
+              {{ t(`${i18nPrefix}.send`) }}
             </n-button>
           </div>
         </n-card>
