@@ -99,7 +99,8 @@ func ProcessTicket(jsonData []byte) error {
 
 	// 缓存聊天记录到 Redis 列表（使用 LPush）
 	chatKey := fmt.Sprintf("ticket:%d:chats", messageData.TicketId)
-	if err := dao.Rdb.LPush(redisCtx, chatKey, chatMsgJson).Err(); err != nil {
+	//if err := dao.Rdb.LPush(redisCtx, chatKey, chatMsgJson).Err(); err != nil {
+	if err := dao.Rdb.RPush(redisCtx, chatKey, chatMsgJson).Err(); err != nil {
 		log.Println("缓存聊天消息到 Redis 失败:", err)
 	}
 
@@ -119,10 +120,4 @@ func ProcessTicket(jsonData []byte) error {
 	}
 
 	return nil
-}
-
-func ProcessErrorOrder(badOrder *model.Orders) {
-	if result := dao.Db.Model(&model.Orders{}).Create(badOrder); result.Error != nil {
-		log.Println(result.Error.Error())
-	}
 }

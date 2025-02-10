@@ -10,7 +10,6 @@ import (
 	pb "ticketHandleServices/api/proto"
 	"ticketHandleServices/internal/dao"
 	"ticketHandleServices/internal/model"
-	"time"
 )
 
 // CheckIsUserHaveOpeningTickets 检查用户是否有还没有关闭的工单 管理员和用户都可请求
@@ -37,7 +36,7 @@ func (s *TicketHandleServices) CheckIsUserHaveOpeningTickets(ctx context.Context
 	if isAdmin {
 		// 管理员：查询所有未关闭的工单
 		if err := dao.Db.Model(&model.Ticket{}).
-			Where("status != ?", 204). // 204 表示关闭的状态
+			Where("`status` != ?", 204). // 204 表示关闭的状态
 			Count(&ticketCount).Error; err != nil {
 			return &pb.CheckIsUserHaveOpeningTicketsResponse{
 				Code:        http.StatusInternalServerError,
@@ -49,7 +48,7 @@ func (s *TicketHandleServices) CheckIsUserHaveOpeningTickets(ctx context.Context
 	} else {
 		// 普通用户：查询该用户的未关闭工单
 		if err := dao.Db.Model(&model.Ticket{}).
-			Where("user_id = ? AND status != ?", request.UserId, 204).
+			Where("`user_id` = ? AND `status` != ?", request.UserId, 204).
 			Count(&ticketCount).Error; err != nil {
 			return &pb.CheckIsUserHaveOpeningTicketsResponse{
 				Code:        http.StatusInternalServerError,
@@ -238,12 +237,89 @@ func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, r
 //			Content: chatHistoryJson,
 //		}, nil
 //	}
+
+//func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.GetChatContentRequest) (*pb.GetChatContentResponse, error) {
+//	// log.Printf("查询聊天记录 用户%v 工单%v", request.UserId, request.TicketId)
+//
+//	// Redis 缓存的 key
+//	chatCacheKey := fmt.Sprintf("ticket:%d:chats", request.TicketId)
+//
+//	// 1. 先尝试从 Redis 获取聊天记录
+//	cachedChatHistory, err := dao.Rdb.LRange(ctx, chatCacheKey, 0, -1).Result()
+//	if err != nil {
+//		log.Println("从 Redis 获取聊天记录失败:", err)
+//	}
+//
+//	var chatHistory []model.Chat
+//
+//	if len(cachedChatHistory) > 0 {
+//		// 解析 Redis 存储的 JSON 数据（按顺序添加）
+//		for _, chatStr := range cachedChatHistory {
+//			var chatMsg model.Chat
+//			if err := json.Unmarshal([]byte(chatStr), &chatMsg); err != nil {
+//				log.Println("反序列化聊天记录失败:", err)
+//				return &pb.GetChatContentResponse{
+//					Code: http.StatusInternalServerError,
+//					Msg:  "转换聊天记录失败",
+//				}, nil
+//			}
+//			chatHistory = append(chatHistory, chatMsg)
+//		}
+//	} else {
+//		// 2. 如果 Redis 没有数据，从 MySQL 查询全部聊天记录
+//		log.Println("Redis 无缓存数据，从数据库查询")
+//		if result := dao.Db.Model(&model.Chat{}).Where("`ticket_id` = ?", request.TicketId).Order("sent_at ASC").Find(&chatHistory); result.Error != nil {
+//			log.Println("数据库查询聊天记录失败:", result.Error)
+//			return &pb.GetChatContentResponse{
+//				Code: http.StatusInternalServerError,
+//				Msg:  "获取聊天记录失败",
+//			}, nil
+//		}
+//
+//		if len(chatHistory) == 0 {
+//			log.Println("数据库无聊天记录")
+//			return &pb.GetChatContentResponse{
+//				Code: http.StatusNotFound,
+//				Msg:  "还没有聊天内容",
+//			}, nil
+//		}
+//
+//		// 3. 将查询到的 MySQL 数据缓存到 Redis
+//		go func() {
+//			cacheCtx, cacheCancel := context.WithTimeout(context.Background(), 5*time.Second)
+//			defer cacheCancel()
+//			pipe := dao.Rdb.Pipeline()
+//			for _, msg := range chatHistory {
+//				chatJson, _ := json.Marshal(msg)
+//				pipe.RPush(cacheCtx, chatCacheKey, chatJson) // 这里用 RPush，保证顺序和 MySQL 一致
+//			}
+//			// 设置 Redis 过期时间，防止长期占用
+//			pipe.Expire(cacheCtx, chatCacheKey, 24*time.Hour)
+//			if _, err := pipe.Exec(cacheCtx); err != nil {
+//				log.Println("cache in redis failure:", err)
+//			}
+//		}()
+//	}
+//
+//	// 4. 返回数据
+//	chatHistoryJson, err := json.Marshal(chatHistory)
+//	if err != nil {
+//		log.Println("failure on Marshal", err)
+//		return &pb.GetChatContentResponse{
+//			Code: http.StatusInternalServerError,
+//			Msg:  "failure",
+//		}, nil
+//	}
+//
+//	return &pb.GetChatContentResponse{
+//		Code:    http.StatusOK,
+//		Msg:     "success",
+//		Content: chatHistoryJson,
+//	}, nil
+//}
+
 func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.GetChatContentRequest) (*pb.GetChatContentResponse, error) {
 	log.Printf("查询聊天记录 用户%v 工单%v", request.UserId, request.TicketId)
-
-	// 创建带有超时的 context（用于 Redis 操作）
-	//redisCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	//defer cancel()
 
 	// Redis 缓存的 key
 	chatCacheKey := fmt.Sprintf("ticket:%d:chats", request.TicketId)
@@ -257,10 +333,10 @@ func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.G
 	var chatHistory []model.Chat
 
 	if len(cachedChatHistory) > 0 {
-		// 解析 Redis 存储的 JSON 数据
-		for i := len(cachedChatHistory) - 1; i >= 0; i-- { // 反转顺序
+		// 解析 Redis 存储的 JSON 数据（按顺序添加）
+		for _, chatStr := range cachedChatHistory {
 			var chatMsg model.Chat
-			if err := json.Unmarshal([]byte(cachedChatHistory[i]), &chatMsg); err != nil {
+			if err := json.Unmarshal([]byte(chatStr), &chatMsg); err != nil {
 				log.Println("反序列化聊天记录失败:", err)
 				return &pb.GetChatContentResponse{
 					Code: http.StatusInternalServerError,
@@ -272,7 +348,7 @@ func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.G
 	} else {
 		// 2. 如果 Redis 没有数据，从 MySQL 查询全部聊天记录
 		log.Println("Redis 无缓存数据，从数据库查询")
-		if result := dao.Db.Model(&model.Chat{}).Where("ticket_id = ?", request.TicketId).Order("sent_at DESC").Find(&chatHistory); result.Error != nil {
+		if result := dao.Db.Model(&model.Chat{}).Where("ticket_id = ?", request.TicketId).Order("sent_at ASC").Find(&chatHistory); result.Error != nil {
 			log.Println("数据库查询聊天记录失败:", result.Error)
 			return &pb.GetChatContentResponse{
 				Code: http.StatusInternalServerError,
@@ -289,20 +365,10 @@ func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.G
 		}
 
 		// 3. 将查询到的 MySQL 数据缓存到 Redis
-		go func() {
-			cacheCtx, cacheCancel := context.WithTimeout(context.Background(), 5*time.Second)
-			defer cacheCancel()
-			pipe := dao.Rdb.Pipeline()
-			for _, msg := range chatHistory {
-				chatJson, _ := json.Marshal(msg)
-				pipe.RPush(cacheCtx, chatCacheKey, chatJson)
-			}
-			// 设置 Redis 过期时间，防止长期占用
-			pipe.Expire(cacheCtx, chatCacheKey, 24*time.Hour)
-			if _, err := pipe.Exec(cacheCtx); err != nil {
-				log.Println("缓存聊天记录到 Redis 失败:", err)
-			}
-		}()
+		err := s.cacheChatHistoryToRedis(ctx, chatCacheKey, chatHistory)
+		if err != nil {
+			log.Println("缓存聊天记录到 Redis 失败:", err)
+		}
 	}
 
 	// 4. 返回数据

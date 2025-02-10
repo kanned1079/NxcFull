@@ -75,7 +75,7 @@ func (s *UserService) CreateNewTicket(ctx context.Context, request *pb.CreateNew
 	}, nil
 }
 
-func (s *UserService) SendChatMessage(context context.Context, request *pb.SendChatMessageRequest) (*pb.SendChatMessageResponse, error) {
+func (s *UserService) SendChatMessage(ctx context.Context, request *pb.SendChatMessageRequest) (*pb.SendChatMessageResponse, error) {
 	var msg = &struct {
 		UserId   int64  `json:"user_id"`
 		TicketId int64  `json:"ticket_id"`
