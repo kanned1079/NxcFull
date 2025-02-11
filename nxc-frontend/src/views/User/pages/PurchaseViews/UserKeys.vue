@@ -152,22 +152,7 @@ export default {
   <PageHead
       :title="t('userKeys.myKeys')"
       :description="t('userKeys.description')"
-  >
-<!--    <n-button-->
-<!--        tertiary-->
-<!--        type="primary"-->
-<!--        size="medium"-->
-<!--        class="btn-right"-->
-<!--        @click="addPaymentMethodClick">-->
-<!--      <template #icon>-->
-<!--        <n-icon>-->
-<!--          <AddIcon/>-->
-<!--        </n-icon>-->
-<!--      </template>-->
-
-<!--      {{ t('adminViews.payConfig.addPaymentMethod') }}-->
-<!--    </n-button>-->
-  </PageHead>
+  />
 
 <!--  <div style="padding: 20px 20px 0 20px">-->
 <!--    <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">-->

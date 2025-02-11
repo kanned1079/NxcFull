@@ -78,34 +78,72 @@ export default {
             v-if="downloadEnabled"
             style="width: 100%; display: flex; justify-content: center;"
         >
+<!--          <n-grid-->
+<!--              cols="1 s:1 m:2"-->
+<!--              responsive="screen"-->
+<!--              x-gap="20px"-->
+<!--              y-gap="20px"-->
+<!--              style="max-width: 1368px"-->
+<!--              v-if="false"-->
+<!--          >-->
+<!--            <n-grid-item>-->
+
+<!--              <AppFrame-->
+<!--                  platform="mobile"-->
+<!--              ></AppFrame>-->
+<!--            </n-grid-item>-->
+<!--            <n-grid-item>-->
+
+<!--              <AppFrame-->
+<!--                  platform="desktop"-->
+<!--              ></AppFrame>-->
+<!--            </n-grid-item>-->
+<!--          </n-grid>-->
+
           <n-grid
               cols="1 s:1 m:2"
               responsive="screen"
               x-gap="20px"
               y-gap="20px"
               style="max-width: 1368px"
+              v-if="true"
           >
             <n-grid-item>
 
-              <AppFrame
+              <AppFrameIrasutoya
                   platform="mobile"
-              ></AppFrame>
+              ></AppFrameIrasutoya>
             </n-grid-item>
             <n-grid-item>
 
-              <AppFrame
+              <AppFrameIrasutoya
                   platform="desktop"
-              ></AppFrame>
+              ></AppFrameIrasutoya>
             </n-grid-item>
           </n-grid>
 
         </div>
 
-        <AppFrameIrasutoya platform="desktop"></AppFrameIrasutoya>
-        <AppFrameIrasutoya platform="mobile"></AppFrameIrasutoya>
+<!--        <AppFrameIrasutoya platform="desktop"></AppFrameIrasutoya>-->
+<!--        <AppFrameIrasutoya platform="mobile"></AppFrameIrasutoya>-->
 
 
+
+
+        <div class="app-page-all-suffix">
+          <div class="suffix-hint-inner">
+            <p
+              v-for="item in 2"
+              :key="item"
+              class="suffix-font"
+            >
+              {{ t(`userAppDownload.suffix.p${item}`) }}
+            </p>
+          </div>
+        </div>
       </div>
+
+
     </transition>
   </div>
 </template>
@@ -121,10 +159,12 @@ export default {
 
     .up-title-root {
       text-align: center;
+
       .download-title {
         font-size: 1.5rem;
         margin: 20px;
       }
+
       .download-sub-title {
         font-size: 0.9rem;
         opacity: 0.7;
@@ -136,6 +176,26 @@ export default {
     .platform-card {
       margin-bottom: 20px;
     }
+
+    .app-page-all-suffix {
+      padding: 0 100px;
+    }
   }
 }
+
+.app-page-all-suffix{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 40px;
+  .suffix-hint-inner {
+    .suffix-font {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+  }
+}
+
+
 </style>

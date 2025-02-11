@@ -10,6 +10,7 @@ import {useRouter} from "vue-router";
 import {ChevronForwardOutline as toRight,} from "@vicons/ionicons5"
 import {handleGetAllMyActivateLog, handleUnbindById} from "@/api/user/record"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 interface ActivateRecord {
   id: number;
@@ -214,6 +215,7 @@ let handleCommitNewRemark = async () => {
 
 
 onBeforeMount(() => {
+  themeStore.breadcrumb = t('userActivation.activateLog')
   themeStore.userPath = '/dashboard/log'
   themeStore.menuSelected = 'user-activate-log'
 })
@@ -232,14 +234,21 @@ export default {
 </script>
 
 <template>
-  <div class="root-header">
-    <n-card
-        hoverable
-        :embedded="true"
-        :bordered="false"
-        :title="t('userActivation.activateLog')"
-    ></n-card>
-  </div>
+
+
+  <PageHead
+      :title="t('userActivation.activateLog')"
+      :description="t('userActivation.description')"
+  />
+
+<!--  <div class="root-header">-->
+<!--    <n-card-->
+<!--        hoverable-->
+<!--        :embedded="true"-->
+<!--        :bordered="false"-->
+<!--        :title="t('userActivation.activateLog')"-->
+<!--    ></n-card>-->
+<!--  </div>-->
   <transition name="slide-fade">
     <div class="root" v-if="animated">
       <n-card
@@ -350,12 +359,8 @@ export default {
 </template>
 
 <style scoped lang="less">
-.root-header {
-  padding: 20px 20px 0 20px;
-}
-
 .root {
-  padding: 15px 20px;
+  padding: 0 20px;
 }
 
 .details-item-detail {

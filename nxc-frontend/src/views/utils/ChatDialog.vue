@@ -222,7 +222,7 @@ export default {
       </n-card>
     </n-layout-header>
 
-    <n-layout-content class="content" style="margin: 60px 0 70px 0" content-style="padding: 0;">
+    <n-layout-content class="content" style="margin: 60px 0 0 0; margin-bottom: 70px" content-style="padding: 0;">
       <n-scrollbar class="sc" ref="scrollbar">
         <div class="message-p" v-for="msg in chatHistory" :key="msg.id">
           <div class="left" v-if=" paramsData.role===1?msg.sender_type === 'admin':msg.sender_type === 'user'">

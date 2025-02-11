@@ -108,7 +108,7 @@ func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, r
 
 	// 计算总记录数
 	if result := dao.Db.Model(&model.Ticket{}).Where("user_id = ?", request.UserId).Count(&total); result.Error != nil {
-		log.Println(result.Error)
+		//log.Println(result.Error)
 		return &pb.GetUserTicketsByUserIdResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "查找失败" + result.Error.Error(),
@@ -121,7 +121,7 @@ func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, r
 		Limit(int(request.Size)).
 		Order("`created_at` DESC").
 		Find(&tickets); result.Error != nil {
-		log.Println(result.Error)
+		//log.Println(result.Error)
 		return &pb.GetUserTicketsByUserIdResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "查询失败" + result.Error.Error(),
@@ -319,7 +319,7 @@ func (s *TicketHandleServices) GetUserTicketsByUserId(context context.Context, r
 //}
 
 func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.GetChatContentRequest) (*pb.GetChatContentResponse, error) {
-	log.Printf("查询聊天记录 用户%v 工单%v", request.UserId, request.TicketId)
+	//log.Printf("查询聊天记录 用户%v 工单%v", request.UserId, request.TicketId)
 
 	// Redis 缓存的 key
 	chatCacheKey := fmt.Sprintf("ticket:%d:chats", request.TicketId)
@@ -337,7 +337,7 @@ func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.G
 		for _, chatStr := range cachedChatHistory {
 			var chatMsg model.Chat
 			if err := json.Unmarshal([]byte(chatStr), &chatMsg); err != nil {
-				log.Println("反序列化聊天记录失败:", err)
+				//log.Println("反序列化聊天记录失败:", err)
 				return &pb.GetChatContentResponse{
 					Code: http.StatusInternalServerError,
 					Msg:  "转换聊天记录失败",
@@ -347,9 +347,9 @@ func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.G
 		}
 	} else {
 		// 2. 如果 Redis 没有数据，从 MySQL 查询全部聊天记录
-		log.Println("Redis 无缓存数据，从数据库查询")
+		//log.Println("Redis 无缓存数据，从数据库查询")
 		if result := dao.Db.Model(&model.Chat{}).Where("ticket_id = ?", request.TicketId).Order("sent_at ASC").Find(&chatHistory); result.Error != nil {
-			log.Println("数据库查询聊天记录失败:", result.Error)
+			//log.Println("数据库查询聊天记录失败:", result.Error)
 			return &pb.GetChatContentResponse{
 				Code: http.StatusInternalServerError,
 				Msg:  "获取聊天记录失败",
@@ -357,7 +357,7 @@ func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.G
 		}
 
 		if len(chatHistory) == 0 {
-			log.Println("数据库无聊天记录")
+			//log.Println("数据库无聊天记录")
 			return &pb.GetChatContentResponse{
 				Code: http.StatusNotFound,
 				Msg:  "还没有聊天内容",
@@ -374,7 +374,7 @@ func (s *TicketHandleServices) GetChatContent(ctx context.Context, request *pb.G
 	// 4. 返回数据
 	chatHistoryJson, err := json.Marshal(chatHistory)
 	if err != nil {
-		log.Println("转换聊天记录为 JSON 失败:", err)
+		//log.Println("转换聊天记录为 JSON 失败:", err)
 		return &pb.GetChatContentResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "转换失败",
@@ -419,7 +419,7 @@ func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb
 		Offset(int(pendingOffset)).
 		Limit(int(pendingLimit)).
 		Find(&pendingTickets); result.Error != nil {
-		log.Println(result.Error)
+		//log.Println(result.Error)
 		return &pb.GetAllTicketResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "查询活跃工单失败：" + result.Error.Error(),
@@ -433,7 +433,7 @@ func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb
 		Offset(int(finishedOffset)).
 		Limit(int(finishedLimit)).
 		Find(&finishedTickets); result.Error != nil {
-		log.Println(result.Error)
+		//log.Println(result.Error)
 		return &pb.GetAllTicketResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "查询已结束工单失败：" + result.Error.Error(),
@@ -445,7 +445,7 @@ func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb
 	if result := dao.Db.Model(&model.Ticket{}).
 		Where("status != ?", 204).
 		Count(&totalPendingTickets); result.Error != nil {
-		log.Println("无法计算活跃工单总数：", result.Error)
+		//log.Println("无法计算活跃工单总数：", result.Error)
 		return &pb.GetAllTicketResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "无法计算活跃工单总数：" + result.Error.Error(),
@@ -457,7 +457,7 @@ func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb
 	if result := dao.Db.Model(&model.Ticket{}).
 		Where("status = ?", 204).
 		Count(&totalFinishedTickets); result.Error != nil {
-		log.Println("无法计算已结束工单总数：", result.Error)
+		//log.Println("无法计算已结束工单总数：", result.Error)
 		return &pb.GetAllTicketResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "无法计算已结束工单总数：" + result.Error.Error(),
@@ -472,14 +472,14 @@ func (s *TicketHandleServices) GetAllTicket(context context.Context, request *pb
 
 	// 序列化工单数据
 	if pendingTicketsJson, err = json.Marshal(pendingTickets); err != nil {
-		log.Println("活跃工单序列化失败")
+		//log.Println("活跃工单序列化失败")
 		return &pb.GetAllTicketResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "活跃工单序列化失败：" + err.Error(),
 		}, nil
 	}
 	if finishedTicketsJson, err = json.Marshal(finishedTickets); err != nil {
-		log.Println("已结束工单序列化失败")
+		//log.Println("已结束工单序列化失败")
 		return &pb.GetAllTicketResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "已结束工单序列化失败：" + err.Error(),
