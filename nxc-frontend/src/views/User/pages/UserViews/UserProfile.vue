@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref} from "vue";
+import {computed, h, onMounted, onBeforeMount, ref} from "vue";
 import {useRouter} from "vue-router";
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -410,8 +410,14 @@ const callAlterUsername = async () => {
   }
 }
 
-onMounted(async () => {
+onBeforeMount(() => {
+  themeStore.breadcrumb = t('userProfile.title')
   themeStore.menuSelected = 'user-profile'
+
+
+})
+
+onMounted(async () => {
   themeStore.userPath = '/dashboard/profile'
 
   //

@@ -29,7 +29,7 @@ import bcrypt from 'bcryptjs';
 //     return hashedPassword.toString();
 // }
 
-let hashPassword = async (password: string): Promise<string> => {
+const hashPassword = async (password: string): Promise<string> => {
     const saltRounds = 10; // bcrypt 的计算强度
     const hashedPassword = await bcrypt.hash(password, saltRounds); // 直接使用密码和轮数生成哈希值
     console.log(hashedPassword);
@@ -38,12 +38,12 @@ let hashPassword = async (password: string): Promise<string> => {
 
 
 // 验证密码函数
-let comparePassword = async (password: string, hash: string): Promise<boolean> => {
+const comparePassword = async (password: string, hash: string): Promise<boolean> => {
     return await bcrypt.compare(password, hash); // 比较用户输入的密码与已存储的哈希值
 }
 
 // 明文转 Base64
-let encodeToBase64 = (plainText: string): string => {
+const encodeToBase64 = (plainText: string): string => {
     // 将明文转换为 Base64 编码
     return btoa(plainText);
 }

@@ -67,6 +67,7 @@ let keyDetails = ref<{
   key: '',
   created_at: '',
 })
+
 let showDetails = async (row: ActivateRecord) => {
   try {
     let {data} = await instance.get('/api/user/v1/key/details', {
@@ -234,8 +235,6 @@ export default {
 </script>
 
 <template>
-
-
   <PageHead
       :title="t('userActivation.activateLog')"
       :description="t('userActivation.description')"

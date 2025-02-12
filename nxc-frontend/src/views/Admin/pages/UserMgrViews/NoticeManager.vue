@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {useI18n} from "vue-i18n";
+import  {useI18n} from "vue-i18n";
 import {computed, h, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore"
 import instance from "@/axios";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
-import {NButton, NIcon, NSwitch, useMessage} from 'naive-ui'
+import {NButton, NIcon, NSwitch, useMessage, type DataTableColumns} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import {formatDate} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
@@ -12,6 +12,7 @@ import PageHead from "@/views/utils/PageHead.vue";
 
 // const apiAddrStore = useApiAddrStore();
 const {t} = useI18n()
+const i18nPrefix = 'adminViews.noticeMgr'
 const themeStore = useThemeStore()
 // const noticesStore = useNoticesStore()
 const message = useMessage()
@@ -126,16 +127,16 @@ let addNewNotice = async () => {
   }
 }
 
-const columns = [
+const columns = computed<DataTableColumns<Notice>>(() => [
   {
-    title: '#',
+    title: t(`${i18nPrefix}.table.id`),
     key: 'id',
     render(row: Notice) {
       return h('p', {}, row.id);
     }
   },
   {
-    title: '是否显示',
+    title: t(`${i18nPrefix}.table.show`),
     key: 'show',
     render(row: Notice) {
       return h(NSwitch, {
@@ -145,21 +146,21 @@ const columns = [
     }
   },
   {
-    title: '标题',
+    title: t(`${i18nPrefix}.table.title`),
     key: 'title',
     render(row: Notice) {
       return h('p', {}, row.title);
     }
   },
   {
-    title: '创建时间',
+    title: t(`${i18nPrefix}.table.createdAt`),
     key: 'created_at',
     render(row: Notice) {
       return h('p', {}, formatDate(row.created_at));
     }
   },
   {
-    title: '操作',
+    title: t(`${i18nPrefix}.table.action.title`),
     key: 'actions',
     fixed: 'right',
     render(row: Notice) {
@@ -171,18 +172,18 @@ const columns = [
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => handleEditNotice(row)
-        }, {default: () => '编辑'}),
+        }, {default: () => t(`${i18nPrefix}.table.action.edit`)}),
         h(NButton, {
           size: 'small',
           type: 'error',
           secondary: true,
           style: {marginLeft: '10px'},
           onClick: () => deleteNotice(row.id as number)
-        }, {default: () => '删除'})
+        }, {default: () => t(`${i18nPrefix}.table.action.delete`)})
       ]);
     },
   }
-];
+])
 
 // let pagination = {
 //   pageSize: 10
@@ -238,7 +239,13 @@ let deleteNotice = async (id: number) => {
           params: {notice_id: id,},
         },
     )
-    data.code === 200 ? message.success("删除成功") : message.error("出现错误")
+    if (data.code === 200) {
+      message.success("删除成功")
+      await getAllNotices()
+    } else {
+      message.error("出现错误")
+    }
+    // data.code === 200 ? message.success("删除成功") : message.error("出现错误")
   } catch (err) {
     message.error("未知错误" + err)
   }
@@ -292,8 +299,8 @@ export default {
 <template>
 
   <PageHead
-      :title="'公告管理'"
-      :description="t('adminViews.activation.description')"
+      :title="t(`${i18nPrefix}.title`)"
+      :description="t(`${i18nPrefix}.description`)"
   >
     <n-button
         tertiary
@@ -306,7 +313,7 @@ export default {
           <AddIcon/>
         </n-icon>
       </template>
-      {{ '添加公告' }}
+      {{ t(`${i18nPrefix}.addNotice`) }}
     </n-button>
 
   </PageHead>

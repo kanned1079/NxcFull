@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { defineProps, ref, computed, watch, defineEmits } from "vue";
+import { defineProps, ref, computed, watch, defineEmits, onMounted } from "vue";
 import { type CountOption } from "@/types";
 
 const { t } = useI18n();
@@ -47,6 +47,12 @@ watch(
     },
     { deep: true }
 );
+
+// const defaultCount = ref<number>(20)
+//
+// onMounted(() => {
+//   defaultCount.value = 50
+// })
 </script>
 
 <template>
@@ -65,7 +71,7 @@ watch(
     />
     <!-- 每页数量选择 -->
     <n-select
-        style="width: 260px; margin-left: 20px;"
+        style="margin-left: 20px; width: 300px"
         v-model:value="dataSize.pageSize"
         size="small"
         :options="dataCountOptions"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
-import {computed, h, onMounted, ref} from "vue";
+import {computed, h, onMounted, onBeforeMount, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
@@ -10,6 +10,7 @@ import {NButton, NTag, useMessage, type DataTableColumns} from "naive-ui"
 import {cancelOrder, getAllMyOrders} from "@/api/user/order";
 import {formatDate} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 const {t} = useI18n()
 const message = useMessage()
@@ -202,9 +203,14 @@ let callGetAllMyOrders = async () => {
   }
 }
 
+onBeforeMount(() => {
+  themeStore.breadcrumb = t('userOrders.myOrders')
+  themeStore.menuSelected = 'user-orders'
+
+})
+
 onMounted(async () => {
   themeStore.userPath = '/dashboard/orders'
-  themeStore.menuSelected = 'user-orders'
 
   await callGetAllMyOrders()
 
@@ -220,13 +226,17 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px 20px 0 20px">
-    <n-card :bordered="false" :embedded="true" hoverable :title="t('userOrders.myOrders')"></n-card>
-  </div>
+<!--  <div style="padding: 20px 20px 0 20px">-->
+<!--&lt;!&ndash;    <n-card :bordered="false" :embedded="true" hoverable :title="t('userOrders.myOrders')"></n-card>&ndash;&gt;-->
+
+<!--  </div>-->
+  <PageHead
+      :title="t('userOrders.myOrders')"
+      :description="t('userOrders.description')"
+  />
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-
       <n-card class="order-table" :bordered="false" :embedded="true" hoverable content-style="padding: 0;">
         <n-data-table
             striped
@@ -271,10 +281,9 @@ export default {
 <style scoped lang="less">
 .root {
   //padding: 20px;
-  padding: 0 20px 20px 20px;
+  padding: 0 20px 0px 20px;
 
   .order-table {
-    margin-top: 15px;
   }
 
 }

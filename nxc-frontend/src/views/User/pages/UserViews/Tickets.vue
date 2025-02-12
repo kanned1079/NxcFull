@@ -293,6 +293,7 @@ const columns = computed<DataTableColumns<TicketItem>>(() => [
 ]);
 
 onBeforeMount(() => {
+  themeStore.breadcrumb = t('userTickets.userTickets')
   themeStore.menuSelected = 'user-tickets'
 
 })

@@ -571,9 +571,10 @@ func HandleGetAllUsers(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{
-		"code":  resp.Code,
-		"msg":   resp.Msg,
-		"users": userMap,
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"users":      userMap,
+		"page_count": resp.PageCount,
 	})
 
 }
@@ -590,6 +591,21 @@ func HandleAddUserManuallyFromAdmin(context *gin.Context) {
 		})
 		return
 	}
+	resp, err := grpcClient.UserServiceClient.AddUserManually(sysContext.Background(), &pb.AddUserManuallyRequest{
+		Email:    postData.Email,
+		Password: postData.Password,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
 	//log.Println(postData)
 }
 

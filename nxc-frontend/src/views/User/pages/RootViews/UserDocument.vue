@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onBeforeMount, onMounted, ref, watch} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 import {formatDate} from "@/utils/timeFormat";
 import {type DrawerPlacement, useMessage} from 'naive-ui'
 import {getAllDocuments} from "@/api/user/doc";
 import {MdPreview} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
+import PageHead from "@/views/utils/PageHead.vue";
 
 const placement = ref<DrawerPlacement>('right')
 
 let animated = ref<boolean>(false)
 
-const {t} = useI18n()
+const {t, locale} = useI18n()
 const message = useMessage()
 
 let isEmpty = ref<boolean>(false)
@@ -56,7 +57,8 @@ let doc_list = ref<CategoryDocuments[]>([])
 
 let callGetAllDocuments = async () => {
   animated.value = false
-  let data = await getAllDocuments('zh_CN', search.value)
+  console.log(locale.value)
+  let data = await getAllDocuments(locale.value || 'en_US', search.value)
   if (data.code === 200) {
     doc_list.value = []
 
@@ -78,10 +80,17 @@ let callGetAllDocuments = async () => {
   }
 }
 
-onBeforeMount(() => {
-  themeStore.menuSelected = 'user-doc'
-  themeStore.userPath = '/dashboard/document'
+watch(() => locale.value, async () => {
+  await callGetAllDocuments() // 切换语言的时候重新获取文档
 })
+
+
+onBeforeMount(() => {
+  themeStore.breadcrumb = t('userDocument.title')
+  themeStore.menuSelected = 'user-doc'
+})
+
+themeStore.userPath = '/dashboard/document'
 
 onMounted(async () => {
   // getAllDocuments()
@@ -100,8 +109,12 @@ export default {
 </script>
 
 <template>
-  <transition name="slide-fade">
-    <div class="root" v-if="animated">
+  <div>
+    <PageHead
+        :title="t('userDocument.title')"
+        :description="t('userDocument.description')"
+    >
+
       <n-card
           hoverable
           :embedded="true"
@@ -118,7 +131,7 @@ export default {
               :placeholder="t('userDocument.searchPlaceholder')"
           ></n-input>
           <n-button
-              @click="getAllDocuments"
+              @click="callGetAllDocuments"
               strong
               :bordered="false"
               type="primary"
@@ -130,6 +143,12 @@ export default {
         </n-input-group>
       </n-card>
 
+    </PageHead>
+  </div>
+
+
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
       <n-card
           v-for="item in doc_list"
           :key="item.category"
@@ -192,7 +211,7 @@ export default {
 
 <style scoped lang="less">
 .root {
-  padding: 20px;
+  padding: 0 20px;
 
   .search-root {
     display: flex;

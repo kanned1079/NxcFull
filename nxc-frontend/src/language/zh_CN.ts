@@ -644,7 +644,7 @@ export default {
                 edit: '編輯文檔',
                 cancel: '取消',
                 confirm: '確認',
-                addBtn :'添加',
+                addBtn: '添加',
                 editBtn: '修改',
                 title: {
                     title: '文檔標題',
@@ -733,13 +733,70 @@ export default {
             }
         },
         couponMgr: {
-          title: '優惠券管理',
-          description: '在這裡您可以為一些特定的節日等添加一些優惠券，它允許用戶在下單的時候使用並按照您設置的比例進行抵折優惠。',
+            title: '優惠券管理',
+            description: '在這裡您可以為一些特定的節日等添加一些優惠券，它允許用戶在下單的時候使用並按照您設置的比例進行抵折優惠。',
             addNewCoupon: '添加新優惠券',
+            table: {
+                id: '#',
+                enabled: '是否啟用',
+                name: '名稱',
+                code: '券碼',
+                residue: '剩餘數量',
+                startTime: '啟用時間',
+                endTime: '結束時間',
+                actions: '操作',
+                edit: '編輯',
+                delete: '刪除'
+            },
+
         },
         orderMgr: {
-          title: '訂單管理',
+            title: '訂單管理',
             description: '在這裡您可以檢視所有訂閱計畫的訂單，篩選不同用戶的訂單、手動對用戶的訂單處理通過等。',
+            table: {
+               id: '#',
+               orderId: '訂單號',
+               email: '用戶郵箱',
+               status: {
+                   title: '類型',
+                   t1: '新購',
+                   t2: '續費',
+                   t3: '編輯',
+               },
+                planName: '計畫名稱',
+                period: '週期',
+                group: '權限組',
+                amount: '實付金額',
+                price: '原始價格',
+                isSuccess: {
+                   title: '訂單狀態',
+                    cancelOrder: '取消訂單',
+                    passOrder: '通過訂單',
+                },
+                createdAt: '訂單創建時間',
+                action: {
+                   title: '操作',
+                    showDetail: '顯示細節'
+                }
+            },
+            search: '查詢訂單',
+            resetSearch: '重置查詢',
+            searchModal: {
+                email: {
+                    title: '用戶郵箱',
+                    placeholder: '輸入用戶郵箱（模糊搜索）',
+                },
+                sort: {
+                    title: '排序算法',
+                    placeholder: '選擇排序算法',
+                    ASC: '升序',
+                    DESC: '降序',
+                }
+            },
+            tradeWaiting: '未支付',
+            tradeFailure: '交易失敗',
+            tradeSuccess: '成功',
+
         },
         userMgr: {
             userManager: "用戶管理",
@@ -815,6 +872,22 @@ export default {
             enableKey: '啟用密鑰',
             disableKey: '禁用密鑰',
         },
+        noticeMgr: {
+            title: '公告管理',
+            description: '在這裡可以對公告進行管理，啟用的公告將展示在用戶首頁的輪播圖中，可以設置的公告有優惠活動、節日通知、注意事項等。',
+            addNotice: '添加公告',
+            table: {
+                id: '#',
+                show: '是否顯示',
+                title: '標題',
+                createdAt: '創建時間',
+                action: {
+                    title: '操作',
+                    edit: '編輯',
+                    delete: '刪除'
+                }
+            }
+        }
         // docMgr: {
         //
         // },
@@ -900,6 +973,7 @@ export default {
         securityAndLaws: '該網站受hCaptcha保護和驗證，請遵守當地法律。',
     },
     userSummary: {
+        title: '儀表盤',
         myPlan: '我的訂閱',
         shortcut: '捷徑',
         timeLeft: '订阅有效，将在 {msg} 过期。',
@@ -925,12 +999,16 @@ export default {
         showAllKeys: '查看所有密鑰',
     },
     userDocument: {
+        title: '使用文檔',
+        description: '您可以在這裡查閱不同的文檔，包括但不限於網站的使用方法、注意事項、操作流程等，如果您發現文章中有錯誤，請提交工單。',
         searchPlaceholder: '請輸入要搜索的內容（模糊搜索）',
         searchBtn: '搜索',
         noContentTitle: '無結果',
-        noContentTitleHint: '嘗試換一個關鍵詞吧',
+        noContentTitleHint: '没有符合您搜索结果或语言的文档，嘗試換一個關鍵詞吧。',
     },
     newPurchase: {
+        title: '購買訂閱',
+        description: '您可以在這裡選擇最適合您的訂閱計畫，如果您的餘額不足請先充值，訂單將為您保留5分鐘。',
         headerPlaceholder: '選擇最適合您的計畫',
         purchaseBtn: '訂購',
         monthPay: '月付',
@@ -958,6 +1036,7 @@ export default {
     },
     // pass
     userProfile: {
+        title: '個人中心',
         myWallet: '我的錢包',
         walletSub: '帳戶餘額（僅用於消費）',
         alertPwd: '修改密鑰',
@@ -1104,6 +1183,7 @@ export default {
     },
     userOrders: {
         myOrders: '我的訂單',
+        description: '您所有的訂單將在此處展示，如果您有未支付的訂單將會展示在頂部，您可以點擊繼續支付或取消訂單，已經完成的訂單您可以在此處檢視訂單細節。',
         orderId: '#',
         planName: '訂閱名稱',
         planCycle: '訂閱週期',
@@ -1131,7 +1211,8 @@ export default {
     },
 
     userTopUp: {
-        topUp: '充值',
+        topUp: '帳戶充值',
+        description: '您可以在這裡進行帳戶充值，支持自定義充值金額，您也可以關注下方是否有優惠信息展示，使用提及的支付方式以獲得優惠。',
         chooseTopUpAmount: '選擇充值金額',
         quickSelect: '快速選擇',
         customAmount: '自定義金額',
@@ -1333,6 +1414,8 @@ export default {
         updateSuccess: '更新成功',
     },
     userAppDownload: {
+        title: 'APP下載',
+        description: '',
         common: {
             title: '下載我們的應用程序',
             shallow2: '為不同的客戶端獲取我們的應用程序',

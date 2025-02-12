@@ -8,6 +8,7 @@ import {useRouter} from "vue-router";
 import {MdPreview} from 'md-editor-v3';
 import usePaymentStore from "@/stores/usePaymentStore";
 import 'md-editor-v3/lib/preview.css';
+import PageHead from "@/views/utils/PageHead.vue";
 
 const {t} = useI18n();
 const hoveredIndex = ref<number | null>(null);
@@ -63,17 +64,18 @@ const cardClasses = (index: number) =>
       'is-not-hovered': hoveredIndex.value !== null && hoveredIndex.value !== index,
     })).value;
 
+onBeforeMount( async () => {
+  themeStore.breadcrumb = t('newPurchase.title')
+  themeStore.menuSelected = 'user-buy-plan'
+  await paymentStore.getAllPlans(0, 0)
+})
 
 onMounted(() => {
-  themeStore.menuSelected = 'user-buy-plan'
   themeStore.userPath = '/dashboard/purchase'
-
   animated.value = true
 })
 
-onBeforeMount(() => {
-  paymentStore.getAllPlans(0, 0)
-})
+
 
 </script>
 
@@ -84,9 +86,17 @@ export default {
 </script>
 
 <template>
-  <n-p style="font-size: 1.2rem; margin: 20px 0 0 25px; font-weight: 550; opacity: 0.7">
-    {{ t('newPurchase.headerPlaceholder') }}
-  </n-p>
+<!--  <n-p style="font-size: 1.2rem; margin: 20px 0 0 25px; font-weight: 550; opacity: 0.7">-->
+<!--    {{ t('newPurchase.headerPlaceholder') }}-->
+<!--  </n-p>-->
+
+  <div style="margin: 20px 20px 0 20px">
+    <PageHead
+        :title="t('newPurchase.title')"
+        :description="t('newPurchase.description')"
+    />
+  </div>
+
   <transition name="slide-fade">
     <div v-if="animated" style="padding: 20px">
       <n-grid cols="1 s:1 m:2 l:3" responsive="screen" x-gap="20px" y-gap="20px">

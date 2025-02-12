@@ -343,7 +343,7 @@ let handleBlock2UnblockUserById = async (row: User) => {
 let handleAddNewUser = async () => {
   try {
     animated.value = false
-    let hashedPwd = hashPassword(newUser.value.password)
+    let hashedPwd = await hashPassword(newUser.value.password)
     let {data} = await instance.post('/api/admin/v1/users', {
       email: newUser.value.email,
       password: hashedPwd,

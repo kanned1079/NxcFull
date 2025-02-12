@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, h, onMounted, onBeforeMount, ref} from "vue"
+import {computed, h, onBeforeMount, onMounted, ref, type ComputedRef} from "vue"
 import {useI18n} from "vue-i18n";
 import useThemeStore from "@/stores/useThemeStore";
 import {
@@ -9,9 +9,8 @@ import {
   RefreshOutline as refreshIcon,
   Search as searchIcon,
 } from "@vicons/ionicons5"
-import {AddOutline as AddIcon} from "@vicons/ionicons5"
 
-import {NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
+import {type DataTableColumns, NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
 import instance from "@/axios";
 import {formatDate} from "@/utils/timeFormat";
 import renderIcon from "@/utils/iconFormator";
@@ -46,6 +45,7 @@ interface PrivilegeGroup {
 }
 
 const {t} = useI18n()
+const i18nPrefix = 'adminViews.orderMgr'
 const themeStore = useThemeStore()
 const message = useMessage()
 
@@ -84,50 +84,50 @@ function getStatusColor(is_finished: boolean, is_success: boolean): string {
 }
 
 // 获取状态文本
-function getStatusText(is_finished: boolean, is_success: boolean): string {
+function getStatusText(is_finished: boolean, is_success: boolean): ComputedRef<string> {
   if (!is_success && !is_finished) {
-    return '未支付';
+    return computed(() => t(`${i18nPrefix}.tradeWaiting`));
   } else if (is_finished && !is_success) {
-    return '交易失败';
+    return  computed(() => t(`${i18nPrefix}.tradeFailure`));
   } else {
-    return '成功';
+    return  computed(() => t(`${i18nPrefix}.tradeSuccess`));
   }
 }
 
-const columns = [
+const i18nTablePrefix = 'adminViews.orderMgr.table'
+const columns = computed<DataTableColumns<Order>>(() => [
   {
-    title: '#',
+    title: t(`${i18nTablePrefix}.id`),
     key: 'id'
   },
   {
-    title: '订单号',
+    title: t(`${i18nTablePrefix}.orderId`),
     key: 'order_id'
   },
   {
-    title: '用户邮箱',
+    title: t(`${i18nTablePrefix}.email`),
     key: 'email'
   },
-
   {
-    title: '类型',
+    title: t(`${i18nTablePrefix}.status.title`),
     key: 'status',
     render(row: Order) {
       return h('p', {}, {
         default: () => {
           switch (row.status) {
             case 0:
-              return '新购'
+              return t(`${i18nTablePrefix}.status.t1`)
             case 1:
-              return '续费'
+              return t(`${i18nTablePrefix}.status.t2`)
             case 2:
-              return '修改'
+              return t(`${i18nTablePrefix}.status.t3`)
           }
         }
       })
     }
   },
   {
-    title: '计划名称',
+    title: t(`${i18nTablePrefix}.planName`),
     key: 'plan_name',
     render(row: Order) {
       return h(NTag, {
@@ -138,7 +138,7 @@ const columns = [
     }
   },
   {
-    title: '周期',
+    title: t(`${i18nTablePrefix}.period`),
     key: 'period',
     render(row: Order) {
       return h(NTag, {
@@ -149,20 +149,20 @@ const columns = [
         default: () => {
           switch (row.period) {
             case 'month':
-              return '月付'
+              return t('period.month')
             case 'quarter':
-              return '季付'
+              return t('period.quarter')
             case 'half-year':
-              return '半月付'
+              return t('period.halfYear')
             case 'year':
-              return '年付'
+              return t('period.year')
           }
         }
       })
     }
   },
   {
-    title: '权限组',
+    title: t(`${i18nTablePrefix}.group`),
     key: 'group_id',
     render(row: Order) {
       // 根据 group_id 找到对应的 name
@@ -178,7 +178,7 @@ const columns = [
     }
   },
   {
-    title: '实付金额',
+    title: t(`${i18nTablePrefix}.amount`),
     key: 'amount',
     render(row: Order) {
       return h('p', {}, {
@@ -187,7 +187,7 @@ const columns = [
     }
   },
   {
-    title: '原始价格',
+    title: t(`${i18nTablePrefix}.price`),
     key: 'price',
     render(row: Order) {
       return h('p', {}, {
@@ -196,7 +196,7 @@ const columns = [
     }
   },
   {
-    title: '订单状态',
+    title: t(`${i18nTablePrefix}.isSuccess.title`),
     key: 'is_success',
     width: 100,
     render(row: Order) {
@@ -223,21 +223,21 @@ const columns = [
             fontSize: '14px',
             color: '#666'
           }
-        }, getStatusText(row.is_finished, row.is_success)),
+        }, getStatusText(row.is_finished, row.is_success).value),
 
         // 判断订单状态，决定是否显示操作按钮
         !row.is_finished && !row.is_success
             ? h(NDropdown, {
               options: [
-                {label: '取消订单', key: 'cancel', icon: renderIcon(closeOrderIcon)},
-                {label: '通过订单', key: 'approve', icon: renderIcon(passOrderIcon)},
+                {label: t(`${i18nTablePrefix}.isSuccess.cancelOrder`), key: 'cancel', icon: renderIcon(closeOrderIcon)},
+                {label: t(`${i18nTablePrefix}.isSuccess.passOrder`), key: 'approve', icon: renderIcon(passOrderIcon)},
               ],
               onSelect: (key) => {
                 if (key === 'cancel') {
-                  console.log('取消订单', row.user_id, row.order_id);
+                  // console.log('取消订单', row.user_id, row.order_id);
                   handleManualCancelOrder(row.order_id, row.user_id);
                 } else if (key === 'approve') {
-                  console.log('通过订单', row.user_id, row.order_id);
+                  // console.log('通过订单', row.user_id, row.order_id);
                   handleManualPassOrder(row.order_id, row.user_id);
                 }
               },
@@ -268,7 +268,7 @@ const columns = [
     }
   },
   {
-    title: '创建时间',
+    title: t(`${i18nTablePrefix}.createdAt`),
     width: 160,
     key: 'created_at',
     render(row: Order) {
@@ -278,7 +278,7 @@ const columns = [
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.actions')).value,
+    title: t(`${i18nTablePrefix}.action.title`),
     fixed: 'right',
     key: 'actions', render(row: Order) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
@@ -294,11 +294,11 @@ const columns = [
                 message.info('查看订单详情' + row.id)
               },
             },
-            {default: () => '查看详情'}),
+            {default: () => t(`${i18nTablePrefix}.action.showDetail`)}),
       ]);
     },
   }
-];
+])
 
 let getAllOrders = async () => {
   try {
@@ -425,7 +425,7 @@ export default {
         </n-icon>
       </template>
 
-      {{ t('adminViews.userMgr.query') }}
+      {{ t(`${i18nPrefix}.search`) }}
     </n-button>
     <n-button
         tertiary
@@ -439,27 +439,27 @@ export default {
         </n-icon>
       </template>
 
-      {{ '重置搜索' }}
+      {{ t(`${i18nPrefix}.resetSearch`) }}
     </n-button>
   </PageHead>
 
-<!--  <div class="root">-->
-<!--    <n-card hoverable :bordered="false" :embedded="true" class="card1" :title="'订单管理'">-->
-<!--      <n-button class="btn" secondary type="primary" size="medium" @click="showSearchModal=true">-->
-<!--        <n-icon size="14" style="padding-right: 8px">-->
-<!--          <searchIcon/>-->
-<!--        </n-icon>-->
-<!--        {{ t('adminViews.userMgr.query') }}-->
-<!--      </n-button>-->
-<!--      <n-button class="btn" tertiary type="primary" size="medium"-->
-<!--                @click="searchForm.email=''; animated=false; getAllOrders()">-->
-<!--        <n-icon size="14" style="padding-right: 8px">-->
-<!--          <refreshIcon/>-->
-<!--        </n-icon>-->
-<!--        {{ '重置搜索' }}-->
-<!--      </n-button>-->
-<!--    </n-card>-->
-<!--  </div>-->
+  <!--  <div class="root">-->
+  <!--    <n-card hoverable :bordered="false" :embedded="true" class="card1" :title="'订单管理'">-->
+  <!--      <n-button class="btn" secondary type="primary" size="medium" @click="showSearchModal=true">-->
+  <!--        <n-icon size="14" style="padding-right: 8px">-->
+  <!--          <searchIcon/>-->
+  <!--        </n-icon>-->
+  <!--        {{ t('adminViews.userMgr.query') }}-->
+  <!--      </n-button>-->
+  <!--      <n-button class="btn" tertiary type="primary" size="medium"-->
+  <!--                @click="searchForm.email=''; animated=false; getAllOrders()">-->
+  <!--        <n-icon size="14" style="padding-right: 8px">-->
+  <!--          <refreshIcon/>-->
+  <!--        </n-icon>-->
+  <!--        {{ '重置搜索' }}-->
+  <!--      </n-button>-->
+  <!--    </n-card>-->
+  <!--  </div>-->
 
   <transition name="slide-fade">
     <div style="padding: 20px" v-if="animated">
@@ -475,22 +475,7 @@ export default {
             :scroll-x="1100"
         />
       </n-card>
-<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="animated=false; getAllOrders()"-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 160px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="animated=false; dataSize.page = 1; getAllOrders()"-->
-<!--        />-->
-<!--      </div>-->
+
       <DataTableSuffix
           v-model:data-size="dataSize"
           v-model:page-count="pageCount"
@@ -502,7 +487,7 @@ export default {
 
 
   <n-modal
-      :title="'搜索'"
+      :title="t(`${i18nPrefix}.search`)"
       v-model:show="showSearchModal"
       preset="dialog"
       :positive-text="t('adminViews.userMgr.query')"
@@ -524,9 +509,9 @@ export default {
     </n-form-item>
 
 
-    <n-form-item path="sort" :label="'排序算法'">
+    <n-form-item path="sort" :label="t(`${i18nPrefix}.searchModal.sort.title`)">
       <n-select
-          :options="[{label: '升序', value: 'ASC'},{label: '降序', value: 'DESC'}]"
+          :options="[{label: t(`${i18nPrefix}.searchModal.sort.ASC`), value: 'ASC'},{label: t(`${i18nPrefix}.searchModal.sort.DESC`), value: 'DESC'}]"
           :default-value="'DESC'"
           v-model:value="searchForm.sort"
       >

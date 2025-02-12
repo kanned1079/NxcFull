@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
 import useUserInfoStore from "@/stores/useUserInfoStore";
-import {CheckmarkOutline as copiedIcon, CopyOutline as copyIcon,} from "@vicons/ionicons5"
+import {
+  CheckmarkOutline as copiedIcon,
+  CopyOutline as copyIcon,
+  GiftOutline as giftIcon,
+  MedalOutline as rewardIcon,
+} from "@vicons/ionicons5"
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useI18n} from "vue-i18n";
 import useThemeStore from "@/stores/useThemeStore";
@@ -15,6 +20,7 @@ import {
 import {NButton, NIcon, NTag, useMessage, type DataTableColumns} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 const {t} = useI18n();
 const userInfoStore = useUserInfoStore();
@@ -141,14 +147,15 @@ const copyText = async (key: string, event: MouseEvent) => {
   }
 };
 
-onBeforeMount(() => {
-  callHandleGetInviteMsg()
+onBeforeMount(async () => {
+  themeStore.breadcrumb = t('userInvite.myInvite')
+  themeStore.menuSelected = 'user-invite'
+  await callHandleGetInviteMsg()
 })
 
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/invite'
-  themeStore.menuSelected = 'user-invite'
   // await handleGetInviteMsg()
   await callHandleGetMyInviteCode()
 
@@ -170,24 +177,33 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px 20px 15px 20px">
-    <n-card
-        hoverable
-        :embedded="true"
-        :bordered="false"
-        :title="t('userInvite.myInvite')"
-    ></n-card>
 
-    <n-collapse-transition :show="inviteMsg !== ''">
+  <PageHead
+      :title="t('userInvite.myInvite')"
+      :description="t('userActivation.description')"
+      style="margin: 20px 20px 0 20px"
+  />
+
+  <div style="padding: 0px 20px 14px 20px">
+<!--    <n-card-->
+<!--        hoverable-->
+<!--        :embedded="true"-->
+<!--        :bordered="false"-->
+<!--        :title="t('userInvite.myInvite')"-->
+<!--    ></n-card>-->
+
+    <n-collapse-transition :show="inviteMsg.trim() !== ''">
       <n-card
           hoverable
           :bordered="false"
           :embedded="true"
           content-style="padding: 0"
-          style="margin-top: 10px"
       >
-        <n-alert type="success" :bordered="false">
+        <n-alert type="warning" :bordered="false">
           {{ inviteMsg }}
+          <template #icon>
+            <n-icon><rewardIcon /></n-icon>
+          </template>
         </n-alert>
       </n-card>
     </n-collapse-transition>

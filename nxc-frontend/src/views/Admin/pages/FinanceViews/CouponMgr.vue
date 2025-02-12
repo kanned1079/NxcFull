@@ -1,13 +1,13 @@
 <script setup lang="ts">
 // import FormSuffix from "@/views/utils/FormSuffix.vue";
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref} from "vue";
+import {computed, h, onMounted, onBeforeMount, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
 
 import {type FormInst, NIcon} from 'naive-ui'
-import {NButton, NSwitch, NTag, useMessage} from 'naive-ui'
+import {NButton, NSwitch, NTag, useMessage, type DataTableColumns} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import instance from "@/axios";
 import {formatTimestamp} from "@/utils/timeFormat"
@@ -208,13 +208,14 @@ let deleteACoupon = async (id: number) => {
   }
 }
 
-const columns = [
+const i18nTablePrefix = 'adminViews.couponMgr.table'
+const columns = computed<DataTableColumns<Coupon>>(() => [
   {
-    title: '优惠券ID',
+    title: t(`${i18nTablePrefix}.id`),
     key: 'id'
   },
   {
-    title: '是否启用',
+    title: t(`${i18nTablePrefix}.enabled`),
     key: 'enabled',
     render(row: Coupon) {
       return h(NSwitch, {
@@ -224,36 +225,36 @@ const columns = [
     }
   },
   {
-    title: '名称',
+    title: t(`${i18nTablePrefix}.name`),
     key: 'name'
   },
   {
-    title: '优惠券码',
+    title: t(`${i18nTablePrefix}.code`),
     key: 'code',
     render(row: Coupon) {
       return h(NTag, {}, {default: () => row.code});
     }
   },
   {
-    title: '剩余使用次数',
+    title: t(`${i18nTablePrefix}.residue`),
     key: 'residue',
   },
   {
-    title: '启用时间',
+    title: t(`${i18nTablePrefix}.startTime`),
     key: 'start_time',
     render(row: Coupon) {
       return h('p', {}, {default: () => formatTimestamp(row.start_time)});
     }
   },
   {
-    title: '过期时间',
+    title: t(`${i18nTablePrefix}.endTime`),
     key: 'end_time',
     render(row: Coupon) {
       return h('p', {}, {default: () => formatTimestamp(row.end_time)});
     }
   },
   {
-    title: '操作',
+    title: t(`${i18nTablePrefix}.actions`),
     key: 'actions',
     render(row: Coupon) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
@@ -264,7 +265,7 @@ const columns = [
           bordered: false,
           style: {marginLeft: '10px'},
           onClick: () => updateACoupon(row)
-        }, {default: () => '编辑'}),
+        }, {default: () => t(`${i18nTablePrefix}.edit`)}),
         h(NButton, {
           size: 'small',
           type: 'error',
@@ -272,12 +273,12 @@ const columns = [
           disabled: false,
           style: {marginLeft: '10px'},
           onClick: () => deleteACoupon(row.id)
-        }, {default: () => '删除'})
+        }, {default: () => t(`${i18nTablePrefix}.delete`)})
       ]);
     },
     fixed: 'right',
   }
-];
+])
 
 
 let handleAddCoupon = () => {
@@ -306,13 +307,16 @@ let submitCoupon = async () => {
 let closeModal = () => {
   showModal.value = false
 }
+onBeforeMount(() => {
+  themeStore.breadcrumb = t('adminViews.couponMgr.title')
+  themeStore.menuSelected = 'coupon-mgr'
+})
 
 onMounted(async () => {
   console.log('couponMgr挂载')
   await getAllCoupons()
 
   themeStore.contentPath = '/admin/dashboard/coupon';
-  themeStore.menuSelected = 'coupon-mgr'
 
   animated.value = true
 

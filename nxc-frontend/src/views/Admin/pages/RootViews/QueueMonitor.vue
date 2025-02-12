@@ -248,7 +248,7 @@ const apiItems = computed<{
 ])
 
 const downloadCsv = () => {
-  tableRef.value?.downloadCsv({ fileName: 'data-table' })
+  tableRef.value?.downloadCsv({fileName: 'data-table'})
 }
 
 const callFetchServerStatus = async () => {
@@ -401,7 +401,7 @@ export default {
               :y-gap="15"
           >
             <n-grid-item v-for="(i, index) in apiItems" :key="index">
-              <n-statistic :label="t(i.title)"  tabular-nums>
+              <n-statistic :label="t(i.title)" tabular-nums>
                 <n-number-animation
                     :from="0"
                     :to="i.content"
@@ -431,8 +431,8 @@ export default {
                     :label="t('adminViews.queueMonit.api.items.login2reg.title')"
                 >
                   <n-number-animation
-                    :from="0"
-                    :to="apiReq.login_req">
+                      :from="0"
+                      :to="apiReq.login_req">
                   </n-number-animation>
                   <template #prefix>
                     <n-icon>
@@ -662,16 +662,19 @@ export default {
 
       .log-card-inner-r {
         flex: 1;
+
         .clear-btn {
           font-size: 1rem;
           font-weight: bold !important;
           text-decoration: underline;
         }
+
         .export-btn {
           font-size: 1rem;
           margin-left: 10px;
           text-decoration: underline;
         }
+
         .clear-hint {
           margin-top: 4px;
           opacity: .8;

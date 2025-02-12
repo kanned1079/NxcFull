@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
@@ -179,76 +180,251 @@ func (s *UserService) GetAllUsers(ctx context.Context, request *pb.GetAllUsersRe
 	}, nil
 }
 
-func (s *UserService) AddUserManually(context context.Context, request *pb.AddUserManuallyRequest) (*pb.AddUserManuallyResponse, error) {
+func (s *UserService) AddUserManually(ctx context.Context, request *pb.AddUserManuallyRequest) (*pb.AddUserManuallyResponse, error) {
+	// 检查 email 是否已存在
+	var existingUser model.User
+	if err := dao.Db.Where("email = ?", request.Email).First(&existingUser).Error; err == nil {
+		return &pb.AddUserManuallyResponse{
+			Code: http.StatusConflict,
+			Msg:  "user already exists",
+		}, nil
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) { // 其他数据库错误
+		log.Println("查询用户失败:", err)
+		return &pb.AddUserManuallyResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "查询用户失败",
+		}, err
+	}
 
+	// 开启事务
+	tx := dao.Db.Begin()
+	if tx.Error != nil {
+		log.Println("事务开启失败:", tx.Error)
+		return &pb.AddUserManuallyResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "数据库错误",
+		}, tx.Error
+	}
+
+	// 插入用户信息
+	user := model.User{
+		Email:   request.Email,
+		IsAdmin: false,
+		IsStaff: false,
+		Status:  true,
+	}
+	if err := tx.Create(&user).Error; err != nil {
+		tx.Rollback()
+		log.Println("创建用户失败:", err)
+		return &pb.AddUserManuallyResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "创建用户失败",
+		}, err
+	}
+
+	// 插入认证信息
+	auth := model.Auth{
+		Email:    request.Email,
+		Password: request.Password, // **注意**: 这里应该对密码进行哈希存储
+	}
+	if err := tx.Create(&auth).Error; err != nil {
+		tx.Rollback()
+		log.Println("创建认证信息失败:", err)
+		return &pb.AddUserManuallyResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "创建认证信息失败",
+		}, err
+	}
+
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		log.Println("事务提交失败:", err)
+		return &pb.AddUserManuallyResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "提交事务失败",
+		}, err
+	}
+
+	log.Println("用户创建成功:", request.Email)
 	return &pb.AddUserManuallyResponse{
 		Code: http.StatusOK,
+		Msg:  "用户创建成功",
 	}, nil
 }
 
 // 原始版本 无事务
-func (s *UserService) UpdateUserInfoAdmin(context context.Context, request *pb.UpdateUserInfoAdminRequest) (*pb.UpdateUserInfoAdminResponse, error) {
-	var user model.User
+//func (s *UserService) UpdateUserInfoAdmin(context context.Context, request *pb.UpdateUserInfoAdminRequest) (*pb.UpdateUserInfoAdminResponse, error) {
+//	var user model.User
+//
+//	if result := dao.Db.Model(&model.User{}).Where("id = ?", request.Id).First(&user); result.RowsAffected == 0 {
+//		return &pb.UpdateUserInfoAdminResponse{
+//			Code:    http.StatusNotFound,
+//			Success: false,
+//			Msg:     "user not found" + result.Error.Error(),
+//		}, nil
+//	}
+//	//user.Email = request.Email
+//	log.Println("previous", user)
+//	user.InviteCode = request.InviteCode
+//	user.IsAdmin = request.IsAdmin
+//	user.IsStaff = request.IsStaff
+//	user.Balance = request.Balance
+//
+//	log.Println("--------previous", user)
+//
+//	if dao.Db.Model(&model.User{}).Where("id = ?", request.Id).Save(&user).Error != nil {
+//		return &pb.UpdateUserInfoAdminResponse{
+//			Code:    http.StatusInternalServerError,
+//			Success: false,
+//			Msg:     "Update user data failure",
+//		}, nil
+//	}
+//
+//	if request.Password != "" {
+//		var userAuth model.Auth
+//
+//		//if result := dao.Db.Model(&model.Auth{}).Where("`id` = ?", request.Id).First(&userAuth); result.RowsAffected == 0 {
+//		if result := dao.Db.Model(&model.Auth{}).Where("`email` = ?", user.Email).First(&userAuth); result.RowsAffected == 0 {
+//			return &pb.UpdateUserInfoAdminResponse{
+//				Code:    http.StatusNotFound,
+//				Success: false,
+//				Msg:     "user not found" + result.Error.Error(),
+//			}, nil
+//		}
+//
+//		//userAuth.Email = request.Email
+//		userAuth.Password = request.Password
+//
+//		if err := dao.Db.Model(&model.Auth{}).Where("id = ?", request.Id).Save(&userAuth).Error; err != nil {
+//			return &pb.UpdateUserInfoAdminResponse{
+//				Code:    http.StatusInternalServerError,
+//				Success: false,
+//				Msg:     "Update user auth data failure" + err.Error(),
+//			}, nil
+//		}
+//	}
+//
+//	if utils.ClearUserCacheByEmail(user.Email) != nil {
+//		return &pb.UpdateUserInfoAdminResponse{
+//			Code:    http.StatusInternalServerError,
+//			Success: false,
+//			Msg:     "Flush user cache failure",
+//		}, nil
+//	}
+//
+//	return &pb.UpdateUserInfoAdminResponse{
+//		Code:    http.StatusOK,
+//		Success: true,
+//		Msg:     "Updated user successfully",
+//	}, nil
+//}
 
-	if result := dao.Db.Model(&model.User{}).Where("id = ?", request.Id).First(&user); result.RowsAffected == 0 {
+// UpdateUserInfoAdmin 更新用户信息 并启用事务确保一致性
+func (s *UserService) UpdateUserInfoAdmin(ctx context.Context, request *pb.UpdateUserInfoAdminRequest) (*pb.UpdateUserInfoAdminResponse, error) {
+	// 开启事务
+	tx := dao.Db.Begin()
+	if tx.Error != nil {
+		log.Println("事务开启失败:", tx.Error)
 		return &pb.UpdateUserInfoAdminResponse{
-			Code:    http.StatusNotFound,
+			Code:    http.StatusInternalServerError,
 			Success: false,
-			Msg:     "user not found" + result.Error.Error(),
-		}, nil
+			Msg:     "数据库事务开启失败",
+		}, tx.Error
 	}
-	//user.Email = request.Email
-	log.Println("previous", user)
+
+	var user model.User
+	if err := tx.Where("id = ?", request.Id).First(&user).Error; err != nil {
+		tx.Rollback()
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return &pb.UpdateUserInfoAdminResponse{
+				Code:    http.StatusNotFound,
+				Success: false,
+				Msg:     "用户不存在",
+			}, nil
+		}
+		log.Println("查询用户失败:", err)
+		return &pb.UpdateUserInfoAdminResponse{
+			Code:    http.StatusInternalServerError,
+			Success: false,
+			Msg:     "查询用户失败",
+		}, err
+	}
+
+	// 更新用户信息
 	user.InviteCode = request.InviteCode
 	user.IsAdmin = request.IsAdmin
 	user.IsStaff = request.IsStaff
 	user.Balance = request.Balance
 
-	log.Println("--------previous", user)
-
-	if dao.Db.Model(&model.User{}).Where("id = ?", request.Id).Save(&user).Error != nil {
+	if err := tx.Model(&model.User{}).Where("id = ?", request.Id).Updates(&user).Error; err != nil {
+		tx.Rollback()
+		log.Println("更新用户信息失败:", err)
 		return &pb.UpdateUserInfoAdminResponse{
 			Code:    http.StatusInternalServerError,
 			Success: false,
-			Msg:     "Update user data failure",
-		}, nil
+			Msg:     "更新用户信息失败",
+		}, err
 	}
 
+	// 更新密码（如果有）
 	if request.Password != "" {
 		var userAuth model.Auth
-
-		if result := dao.Db.Model(&model.Auth{}).Where("id = ?", request.Id).First(&userAuth); result.RowsAffected == 0 {
-			return &pb.UpdateUserInfoAdminResponse{
-				Code:    http.StatusNotFound,
-				Success: false,
-				Msg:     "user not found" + result.Error.Error(),
-			}, nil
-		}
-
-		//userAuth.Email = request.Email
-		userAuth.Password = request.Password
-
-		if err := dao.Db.Model(&model.Auth{}).Where("id = ?", request.Id).Save(&userAuth).Error; err != nil {
+		if err := tx.Where("email = ?", user.Email).First(&userAuth).Error; err != nil {
+			tx.Rollback()
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return &pb.UpdateUserInfoAdminResponse{
+					Code:    http.StatusNotFound,
+					Success: false,
+					Msg:     "用户认证信息不存在",
+				}, nil
+			}
+			log.Println("查询用户认证信息失败:", err)
 			return &pb.UpdateUserInfoAdminResponse{
 				Code:    http.StatusInternalServerError,
 				Success: false,
-				Msg:     "Update user auth data failure" + err.Error(),
-			}, nil
+				Msg:     "查询用户认证信息失败",
+			}, err
+		}
+
+		// 直接存储哈希后的密码
+		userAuth.Password = request.Password
+		if err := tx.Model(&model.Auth{}).Where("email = ?", user.Email).Updates(&userAuth).Error; err != nil {
+			tx.Rollback()
+			log.Println("更新用户认证信息失败:", err)
+			return &pb.UpdateUserInfoAdminResponse{
+				Code:    http.StatusInternalServerError,
+				Success: false,
+				Msg:     "更新用户认证信息失败",
+			}, err
 		}
 	}
 
-	if utils.ClearUserCacheByEmail(user.Email) != nil {
+	// 清理用户缓存
+	if err := utils.ClearUserCacheByEmail(user.Email); err != nil {
+		tx.Rollback()
+		log.Println("清理用户缓存失败:", err)
 		return &pb.UpdateUserInfoAdminResponse{
 			Code:    http.StatusInternalServerError,
 			Success: false,
-			Msg:     "Flush user cache failure",
-		}, nil
+			Msg:     "清理用户缓存失败",
+		}, err
 	}
 
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		log.Println("事务提交失败:", err)
+		return &pb.UpdateUserInfoAdminResponse{
+			Code:    http.StatusInternalServerError,
+			Success: false,
+			Msg:     "事务提交失败",
+		}, err
+	}
+
+	log.Println("用户信息更新成功:", user.Email)
 	return &pb.UpdateUserInfoAdminResponse{
 		Code:    http.StatusOK,
 		Success: true,
-		Msg:     "Updated user successfully",
+		Msg:     "用户信息更新成功",
 	}, nil
 }
 

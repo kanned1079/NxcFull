@@ -246,3 +246,7 @@ func (s *UserService) Register(ctx context.Context, req *pb.UserRegisterRequest)
 		IsRegistered: true,          // 标记注册状态为成功
 	}, nil
 }
+
+//func (s *UserService) AddUserManually ()  {
+//
+//}

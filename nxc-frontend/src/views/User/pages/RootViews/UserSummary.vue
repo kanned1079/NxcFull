@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from 'vue-i18n'
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onBeforeMount, ref} from "vue";
 import {useRouter} from "vue-router";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
@@ -144,9 +144,13 @@ let callGetActivePlanList = async () => {
 
 }
 
+onBeforeMount(() => {
+  themeStore.breadcrumb = t('userSummary.title')
+  themeStore.menuSelected = 'user-dashboard'
+})
+
 onMounted(async () => {
   themeStore.userPath = '/dashboard/summary'
-  themeStore.menuSelected = 'user-dashboard'
 
   await callGetAllNotices()
   await callGetActivePlanList()

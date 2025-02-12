@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ColoredRibbon from "@/views/utils/ColoredRibbon.vue"
-import {computed, onBeforeUnmount, onMounted, ref} from "vue"
+import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue"
 import {useRouter} from "vue-router";
 import {type MenuOption, useMessage} from "naive-ui"
 import {useI18n} from "vue-i18n";
@@ -22,6 +22,7 @@ import {
   LogoWechat,
 } from "@vicons/ionicons5"
 import instance from '@/axios/index'
+import PageHead from "@/views/utils/PageHead.vue";
 
 
 const {t} = useI18n();
@@ -282,9 +283,14 @@ let startQueryTopUpOrderStatusLoop = () => {
 
 let showRibbon = ref<boolean>(false)
 
+onBeforeMount(() => {
+  themeStore.breadcrumb = t('userTopUp.topUp')
+  themeStore.menuSelected = 'user-top-up'
+
+})
+
 onMounted(async () => {
   themeStore.userPath = '/dashboard/topup'
-  themeStore.menuSelected = 'user-top-up'
 
   await handleGetAllPaymentMethods()
 
@@ -308,17 +314,24 @@ export default {
 
 <template>
   <!--  <SnowFall :show="showRibbon"></SnowFall>-->
-  <ColoredRibbon :show="showRibbon"></ColoredRibbon>
+  <!--  <ColoredRibbon :show="showRibbon"></ColoredRibbon>-->
   <ColoredRibbon :show="topUpIsFinishedSuccess"></ColoredRibbon>
-  <div style="padding: 20px 20px 15px 20px">
-    <n-card
-        hoverable
-        :embedded="true"
-        :bordered="false"
-        :title="t('userTopUp.topUp')"
-    >
-    </n-card>
-  </div>
+<!--  <div style="padding: 20px 20px 15px 20px">-->
+<!--    <n-card-->
+<!--        hoverable-->
+<!--        :embedded="true"-->
+<!--        :bordered="false"-->
+<!--        :title="t('userTopUp.topUp')"-->
+<!--    >-->
+<!--    </n-card>-->
+<!--  </div>-->
+
+<div style="margin: 20px 20px 0 20px">
+  <PageHead
+      :title="t('userTopUp.topUp')"
+      :description="t('userTopUp.description')"
+  />
+</div>
 
   <transition name="slide-fade">
     <div class="main" v-if="animated">
@@ -342,7 +355,7 @@ export default {
                 v-if="discountMsg !== ''"
             >
               <template #icon>
-                <n-icon size="18">
+                <n-icon>
                   <giftIcon/>
                 </n-icon>
               </template>

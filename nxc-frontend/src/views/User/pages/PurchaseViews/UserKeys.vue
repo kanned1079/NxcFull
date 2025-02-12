@@ -127,13 +127,13 @@ const getKeyContentStyle = (isValid: boolean, expirationDateStamp: number) => {
 
 
 onBeforeMount(() => {
-
+  themeStore.breadcrumb = t('userKeys.myKeys')
+  themeStore.menuSelected = 'user-keys'
 
 })
 
 onMounted(async () => {
   themeStore.userPath = '/dashboard/keys'
-  themeStore.menuSelected = 'user-keys'
   await getAllMyKeys()
   animated.value = true
 })
@@ -337,14 +337,14 @@ export default {
 
 .root {
   //padding: 20px;
-  padding: 0 20px 0 20px;
+  padding: 0 20px;
 
   //.title {
   //
   //}
 
   .key-card {
-    margin-top: 15px;
+    margin-bottom: 16px;
 
     .key-item {
       padding: 20px;
