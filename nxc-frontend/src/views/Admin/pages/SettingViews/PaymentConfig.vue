@@ -630,7 +630,7 @@ export default {
       margin-right: 30px;
 
       .payment-item-card-inner-r-btn {
-        width: 80px;
+        width: auto;
       }
     }
   }

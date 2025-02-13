@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {type FormInst, NButton, NIcon, NTag, useMessage} from 'naive-ui'
-import {computed, h, onMounted, ref} from 'vue'
+import {computed, h, onMounted, onBeforeMount, ref} from 'vue'
 import {
   PeopleOutline as usersIcon,
   PersonAddOutline as addUserIcon,
@@ -382,8 +382,12 @@ let handleEditUserInfo = async () => {
   }
 }
 
-onMounted(async () => {
+onBeforeMount(() => {
+  themeStore.breadcrumb = t('adminViews.userMgr.userManager')
   themeStore.menuSelected = 'user-manager'
+})
+
+onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/usermanager'
   await getAllUsers()
   animated.value = true
@@ -629,10 +633,10 @@ export default {
         </n-form-item>
 
         <div style="display: flex; justify-content: flex-end; margin-top: 20px">
-          <n-button style="width: 80px; margin-right: 15px" @click="cancelEdit" type="primary" secondary>
+          <n-button style="width: auto; margin-right: 15px" @click="cancelEdit" type="primary" secondary>
             {{ t('adminViews.userMgr.cancel') }}
           </n-button>
-          <n-button style="width: 80px" type="primary" @click="submitForm">
+          <n-button style="width: auto" type="primary" @click="submitForm">
             {{ t('adminViews.userMgr.submit') }}
           </n-button>
         </div>

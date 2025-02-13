@@ -15,6 +15,7 @@ import PageHead from "@/views/utils/PageHead.vue";
 // import {MdEditor} from "md-editor-v3";
 
 const {t} = useI18n();
+const i18nPrefix = 'adminViews.planMgr'
 let animated = ref<boolean>(false)
 
 const notification = useNotification()
@@ -170,7 +171,8 @@ let submitNewPlan = async () => {
       ...formValue.value.plan,
     })
     if (data.code === 200) {
-      notify('success', '成功', '成功添加新的订阅')
+      // notify('success', '成功', '成功添加新的订阅')
+      message.success(t(`${i18nPrefix}.mention.addSuccess`))
       let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       if (success) {
         pageCount.value = page_count as number
@@ -178,7 +180,9 @@ let submitNewPlan = async () => {
         console.log('pull failure')
       }
     } else {
-      notify('error', '添加出错', data.error)
+      // notify('error', '添加出错', data.error)
+      message.success(t(`${i18nPrefix}.mention.addFailure`))
+
     }
   } catch (error) {
     console.log(error)
@@ -226,15 +230,14 @@ let getAllGroups = async () => {
   }
 }
 
-let notify = (type: NotificationType, title: string, meta?: string) => {
-  notification[type]({
-    content: title,
-    meta: meta,
-    duration: 2500,
-    keepAliveOnHover: true
-  })
-}
-
+// const notify = (type: NotificationType, title: string, meta?: string) => {
+//   notification[type]({
+//     content: title,
+//     meta: meta,
+//     duration: 2500,
+//     keepAliveOnHover: true
+//   })
+// }
 
 const columns = computed<DataTableColumns<Plan>>(() => [
   {
@@ -361,7 +364,8 @@ let updatePlan = async () => {
       // ...row
     })
     if (data.code === 200) {
-      notify('success', '成功', '修改订阅成功')
+      // notify('success', '成功', '修改订阅成功')
+      message.success(t(`${i18nPrefix}.updateSuccess`))
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       // pageCount.value = page_count as number
@@ -370,13 +374,17 @@ let updatePlan = async () => {
         animated.value = false
         active.value = false
       } else {
-        message.error('更新失败')
+        // message.error('更新失败')
+        message.success(t(`${i18nPrefix}.updateFailure`))
+
       }
       animated.value = true
 
     } else {
       // notify('error', '修改出错', data.error)
-      message.error('修改出错' + data.msg || '')
+      // message.error('修改出错' + data.msg || '')
+      message.success(t(`${i18nPrefix}.updateFailure`) + data.msg || '')
+
     }
   } catch (error) {
     console.log(error)
@@ -402,7 +410,8 @@ let handleDelete = async (planId: number) => {
       }
     })
     if (data.code === 200) {
-      notify('success', '成功', '删除成功')
+      // notify('success', '成功', '删除成功')
+      message.success(t(`${i18nPrefix}.deleteSuccess`))
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize) ? animated.value = true : setTimeout(() => animated.value = true, 3000)
       let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       // pageCount.value = page_count as number
@@ -412,7 +421,9 @@ let handleDelete = async (planId: number) => {
       }
 
     } else {
-      notify('error', '删除失败', data.error)
+      // notify('error', '删除失败', data.error)
+      message.success(t(`${i18nPrefix}.deleteFailure`))
+
     }
   } catch (error) {
     console.log(error)
@@ -427,12 +438,15 @@ let updateRowIsSale = async (id: number, val: boolean) => {
       is_sale: val,
     })
     if (data.code === 200) {
-      notify('success', '更新成功')
+      // notify('success', '更新成功')
+      message.success(t(`${i18nPrefix}.updateSuccess`))
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       pageCount.value = page_count as number
     } else {
-      notify('error', '更新失败')
+      // notify('error', '更新失败')
+      message.success(t(`${i18nPrefix}.updateFailure`))
+
 
     }
   } catch (error: any) {
@@ -448,13 +462,14 @@ let updateRowRenew = async (id: number, val: boolean) => {
       is_renew: val,
     })
     if (data.code === 200) {
-      notify('success', '更新成功')
+      message.success(t(`${i18nPrefix}.updateSuccess`))
+      // notify('success', '更新成功')
       // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
       pageCount.value = page_count as number
     } else {
-      notify('error', '更新失败')
-
+      message.success(t(`${i18nPrefix}.updateFailure`))
+      // notify('error', '更新失败')
     }
   } catch (error: any) {
     console.log(error)
@@ -469,9 +484,12 @@ let reloadPlanList = async () => {
   success ? animated.value = true : setTimeout(() => animated.value = true, 2000)
 }
 
+onBeforeMount(async () => {
+  themeStore.breadcrumb = t('adminViews.planMgr.title')
+  themeStore.menuSelected = 'subscription-manager'
+})
 
 onMounted(async () => {
-  themeStore.menuSelected = 'subscription-manager'
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
   await getAllGroups()
   // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
@@ -483,10 +501,7 @@ onMounted(async () => {
   // themeStore.
 })
 
-onBeforeMount(async () => {
 
-
-})
 
 </script>
 

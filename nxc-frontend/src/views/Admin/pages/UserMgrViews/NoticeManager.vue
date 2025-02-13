@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import  {useI18n} from "vue-i18n";
-import {computed, h, onMounted, ref} from "vue";
+import {computed, h, onMounted, onBeforeMount, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore"
 import instance from "@/axios";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
@@ -271,12 +271,16 @@ let editNotice = async () => {
   }
 }
 
+onBeforeMount(() => {
+  themeStore.breadcrumb = t(`${i18nPrefix}.title`)
+  themeStore.menuSelected = 'notice-manager'
+
+})
 
 onMounted(async () => {
   // 保存历史记录
-  themeStore.menuSelected = 'notice-manager'
   themeStore.contentPath = '/admin/dashboard/noticemanager'
-  console.log('NoticeManager挂载')
+  // console.log('NoticeManager挂载')
   await getAllNotices()
   // console.log(noticesStore.noticesArr)
   // noticesStore.aa()

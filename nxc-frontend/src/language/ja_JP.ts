@@ -988,6 +988,10 @@ export default {
             title: '續費訂閱',
             content: '對您當前的訂閱進行續費',
         },
+        // appDown: {
+        //     title: 'APP下載',
+        //     content: '下載我們不同平台的應用程序以獲得更好的體驗',
+        // },
         support: {
             title: '遇到問題',
             content: '遇到問題可以通過工單與我們的人機溝通',

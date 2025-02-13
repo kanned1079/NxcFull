@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import {computed, h, onMounted, ref} from "vue"
+import {computed, h, onMounted, onBeforeMount, ref} from "vue"
 import {useI18n} from "vue-i18n";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
-import {NButton, NTag, useMessage} from "naive-ui";
+import {NButton, NTag, useMessage, type DataTableColumns} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 import instance from "@/axios";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import PageHead from "@/views/utils/PageHead.vue";
 
 const {t} = useI18n()
+const i18nPrefix = 'adminViews.adminTicket'
 const message = useMessage()
 const userInfoStore = useUserInfoStore()
 const appInfoStore = useAppInfosStore()
@@ -45,7 +47,7 @@ let pendingTicketList = ref<TicketItem[]>([])
 
 // 点击打开工单后 单独打开一个聊天窗口
 let openTicket = (ticket: TicketItem) => {
-  message.info(`查看工单：${ticket.subject}`);
+  // message.info(`查看工单：${ticket.subject}`);
   const chatDialogWindow = window.open(
       `${appInfoStore.appCommonConfig.app_url}/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=0`,
       '111111',
@@ -57,32 +59,30 @@ let openTicket = (ticket: TicketItem) => {
 
 }
 
-// ----------------------
-
 // 定义表格的列
-const columns = ref([
+const columns = computed<DataTableColumns<TicketItem>>( () => [
   {
-    title: computed(() => t('userTickets.ticketId')).value,
+    title: t('userTickets.ticketId'),
     key: 'id'
   },
   {
-    title: computed(() => t('userTickets.ticketSubject')).value,
+    title: t('userTickets.ticketSubject'),
     key: 'subject'
   },
   {
-    title: computed(() => t('userTickets.ticketUrgency')).value,
+    title: t('userTickets.ticketUrgency'),
     key: 'urgency',
     render(row: TicketItem) {
       let level = '';
       switch (row.urgency) {
         case 1:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.low')).value
+          level = t('userTickets.ticketUrgencyLevel.low')
           break;
         case 2:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.med')).value
+          level = t('userTickets.ticketUrgencyLevel.med')
           break;
         case 3:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.high')).value
+          level = t('userTickets.ticketUrgencyLevel.high')
           break;
       }
       return h(NTag, {
@@ -92,31 +92,31 @@ const columns = ref([
     }
   },
   {
-    title: computed(() => t('userTickets.ticketStatus')).value,
+    title: t('userTickets.ticketStatus'),
     key: 'status',
     render(row: TicketItem) {
       return h(NTag, {
         type: row.status !== 204 ? 'info' : 'default',
         bordered: false,
-      }, {default: () => row.status !== 204 ? computed(() => t('userTickets.ticketActive')).value : computed(() => t('userTickets.ticketInActive')).value});
+      }, {default: () => row.status !== 204 ? t('userTickets.ticketActive') : t('userTickets.ticketInActive')});
     }
   },
   {
-    title: computed(() => t('userTickets.ticketCreatedAt')),
+    title: t('userTickets.ticketCreatedAt'),
     key: 'created_at',
     render(row: TicketItem) {
       return formatDate(row.created_at)
     }
   },
   {
-    title: computed(() => t('userTickets.lastResponse')),
+    title: t('userTickets.lastResponse'),
     key: 'last_response',
     render(row: TicketItem) {
-      return row.last_reply ? formatDate(row.last_reply) : computed(() => t('userTickets.noReply')).value
+      return row.last_reply ? formatDate(row.last_reply) : t('userTickets.noReply')
     }
   },
   {
-    title: computed(() => t('userTickets.operate')).value,
+    title: t('userTickets.operate'),
     key: 'actions', fixed: 'right',
     render(row: TicketItem) {
       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
@@ -129,7 +129,7 @@ const columns = ref([
           style: {marginLeft: '10px'},
           onClick: () => openTicket(row)
         }, {
-          default: () => computed(() => t('userTickets.checkTicket')).value
+          default: () => t('userTickets.checkTicket')
         }),
         h(NButton, {
           size: 'small',
@@ -139,7 +139,7 @@ const columns = ref([
           style: {marginLeft: '10px'},
           onClick: () => closeTicket(row.id)
         }, {
-          default: () => computed(() => t('userTickets.closeTicket')).value
+          default: () => t('userTickets.closeTicket')
         })
       ]);
     }
@@ -147,92 +147,92 @@ const columns = ref([
 ])
 
 // 定义表格的列
-const pendingColumns = ref([
-  {
-    title: computed(() => t('userTickets.ticketId')).value,
-    key: 'id'
-  },
-  {
-    title: computed(() => t('userTickets.ticketSubject')).value,
-    key: 'subject'
-  },
-  {
-    title: computed(() => t('userTickets.ticketUrgency')).value,
-    key: 'urgency',
-    render(row: TicketItem) {
-      let level = '';
-      switch (row.urgency) {
-        case 1:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.low')).value
-          break;
-        case 2:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.med')).value
-          break;
-        case 3:
-          level = computed(() => t('userTickets.ticketUrgencyLevel.high')).value
-          break;
-      }
-      return h(NTag, {
-        type: row.urgency === 3 ? 'error' : row.urgency === 2 ? 'warning' : 'success',
-        bordered: false,
-      }, {default: () => level});
-    }
-  },
-  {
-    title: computed(() => t('userTickets.ticketStatus')).value,
-    key: 'status',
-    render(row: TicketItem) {
-      return h(NTag, {
-        type: row.status ? 'info' : 'default',
-        bordered: false,
-      }, {default: () => row.status ? computed(() => t('userTickets.ticketActive')).value : computed(() => t('userTickets.ticketInActive')).value});
-    }
-  },
-  {
-    title: computed(() => t('userTickets.ticketCreatedAt')),
-    key: 'created_at',
-    render(row: TicketItem) {
-      return formatDate(row.created_at)
-    }
-  },
-  {
-    title: computed(() => t('userTickets.lastResponse')),
-    key: 'last_response',
-    render(row: TicketItem) {
-      return row.last_reply ? formatDate(row.last_reply) : computed(() => t('userTickets.noReply')).value
-    }
-  },
-  {
-    title: computed(() => t('userTickets.operate')).value,
-    key: 'actions',
-    fixed: 'right',
-    render(row: TicketItem) {
-      return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
-        h(NButton, {
-          size: 'small',
-          type: 'primary',
-          secondary: true,
-          bordered: false,
-          disabled: false,
-          style: {marginLeft: '10px'},
-          onClick: () => openTicket(row)
-        }, {
-          default: () => computed(() => t('userTickets.checkTicket')).value
-        }),
-        h(NButton, {
-          size: 'small',
-          type: 'error',
-          secondary: true,
-          disabled: row.status === 204,
-          style: {marginLeft: '10px'},
-          onClick: () => closeTicket(row.id)
-        }, {
-          default: () => computed(() => t('userTickets.closeTicket')).value
-        })
-      ]);
-    }
-  }
-])
+// const pendingColumns = ref([
+//   {
+//     title: computed(() => t('userTickets.ticketId')).value,
+//     key: 'id'
+//   },
+//   {
+//     title: computed(() => t('userTickets.ticketSubject')).value,
+//     key: 'subject'
+//   },
+//   {
+//     title: computed(() => t('userTickets.ticketUrgency')).value,
+//     key: 'urgency',
+//     render(row: TicketItem) {
+//       let level = '';
+//       switch (row.urgency) {
+//         case 1:
+//           level = computed(() => t('userTickets.ticketUrgencyLevel.low')).value
+//           break;
+//         case 2:
+//           level = computed(() => t('userTickets.ticketUrgencyLevel.med')).value
+//           break;
+//         case 3:
+//           level = computed(() => t('userTickets.ticketUrgencyLevel.high')).value
+//           break;
+//       }
+//       return h(NTag, {
+//         type: row.urgency === 3 ? 'error' : row.urgency === 2 ? 'warning' : 'success',
+//         bordered: false,
+//       }, {default: () => level});
+//     }
+//   },
+//   {
+//     title: computed(() => t('userTickets.ticketStatus')).value,
+//     key: 'status',
+//     render(row: TicketItem) {
+//       return h(NTag, {
+//         type: row.status ? 'info' : 'default',
+//         bordered: false,
+//       }, {default: () => row.status ? computed(() => t('userTickets.ticketActive')).value : computed(() => t('userTickets.ticketInActive')).value});
+//     }
+//   },
+//   {
+//     title: computed(() => t('userTickets.ticketCreatedAt')),
+//     key: 'created_at',
+//     render(row: TicketItem) {
+//       return formatDate(row.created_at)
+//     }
+//   },
+//   {
+//     title: computed(() => t('userTickets.lastResponse')),
+//     key: 'last_response',
+//     render(row: TicketItem) {
+//       return row.last_reply ? formatDate(row.last_reply) : computed(() => t('userTickets.noReply')).value
+//     }
+//   },
+//   {
+//     title: computed(() => t('userTickets.operate')).value,
+//     key: 'actions',
+//     fixed: 'right',
+//     render(row: TicketItem) {
+//       return h('div', {style: {display: 'flex', flexDirection: 'row'}}, [
+//         h(NButton, {
+//           size: 'small',
+//           type: 'primary',
+//           secondary: true,
+//           bordered: false,
+//           disabled: false,
+//           style: {marginLeft: '10px'},
+//           onClick: () => openTicket(row)
+//         }, {
+//           default: () => computed(() => t('userTickets.checkTicket')).value
+//         }),
+//         h(NButton, {
+//           size: 'small',
+//           type: 'error',
+//           secondary: true,
+//           disabled: row.status === 204,
+//           style: {marginLeft: '10px'},
+//           onClick: () => closeTicket(row.id)
+//         }, {
+//           default: () => computed(() => t('userTickets.closeTicket')).value
+//         })
+//       ]);
+//     }
+//   }
+// ])
 
 
 let getAllTicket = async () => {
@@ -279,9 +279,12 @@ let closeTicket = async (ticket_id: number) => {
   }
 }
 
+onBeforeMount(() => {
+  themeStore.menuSelected = 'ticket-mgr'
+  themeStore.breadcrumb = t(`${i18nPrefix}.ticketMgr`)
+})
 
 onMounted(async () => {
-  themeStore.menuSelected = 'ticket-mgr'
   themeStore.contentPath = '/admin/dashboard/ticket'
 
   await getAllTicket()
@@ -299,19 +302,26 @@ export default {
 </script>
 
 <template>
-  <div style="padding: 20px 20px 0 20px">
-    <n-card class="title-card" :embedded="true" :bordered="false" hoverable :title="t('adminTicket.ticketMgr')">
-    </n-card>
-  </div>
+<!--  <div style="padding: 20px 20px 0 20px">-->
+<!--    <n-card class="title-card" :embedded="true" :bordered="false" hoverable :title="t('adminTicket.ticketMgr')">-->
+<!--    </n-card>-->
+<!--  </div>-->
+
+  <PageHead
+      :title="t(`${i18nPrefix}.ticketMgr`)"
+      :description="t(`${i18nPrefix}.description`)"
+  />
+
   <transition name="slide-fade">
     <div class="root" v-if="animated">
 
-
       <n-card style="margin-top: 20px" :embedded="true" hoverable content-style="padding: 0;" :bordered="false"
-              title="待处理工单">
+              :title="t(`${i18nPrefix}.pendingTicket`)">
         <n-data-table
             class="table"
-            :columns="pendingColumns"
+            size="medium"
+            striped
+            :columns="columns"
             :data="pendingTicketList"
             :pagination="false"
             :bordered="true"
@@ -350,10 +360,12 @@ export default {
           :bordered="false"
           hoverable
           content-style="padding: 0"
-          title="已完成工单"
+          :title="t(`${i18nPrefix}.finishedTicket`)"
       >
         <n-data-table
             class="table"
+            size="medium"
+            striped
             :columns="columns"
             :data="ticketList"
             :pagination="false"

@@ -65,8 +65,8 @@ let helpData:{
   },
   {
     id: 2,
-    title: 'userSummary.renewPlan.title',
-    content: 'userSummary.renewPlan.content',
+    title: 'userSummary.appDown.title',
+    content: 'userSummary.appDown.content',
     icon_id: 3,
   },
   {
@@ -340,8 +340,6 @@ export default {
           content-style="padding: 0;"
           :bordered="false"
       >
-
-
         <div
             :class="themeStore.enableDarkMode?'help-day':'help-night'"
             v-for="item in helpData"

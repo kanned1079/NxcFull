@@ -693,6 +693,9 @@ export default {
                 addFailure: '添加新訂閱失敗',
                 updateSuccess: '更新訂閱成功',
                 updateFailure: '更新訂閱失敗',
+                deleteSuccess: '計畫刪除成功',
+                deleteFailure: '計畫刪除失敗'
+                // TVNTG-VFJQ3-FQXFP-DVCP6-D3VJ8
             },
             form: {
                 title: '添加訂閱',
@@ -887,10 +890,16 @@ export default {
                     delete: '刪除'
                 }
             }
-        }
+        },
         // docMgr: {
         //
         // },
+        adminTicket: {
+            ticketMgr: '工單管理',
+            description: '您可以在此處檢視到所有用戶提交的工單，工單有三個緊急程度，推薦您從緊急工單開始處理。',
+            pendingTicket: '待處理工單',
+            finishedTicket: '已完成工單',
+        },
     },
     userLogin: {
         loginToContinue: '登入以繼續',
@@ -989,6 +998,10 @@ export default {
         renewPlan: {
             title: '續費訂閱',
             content: '對您當前的訂閱進行續費',
+        },
+        appDown: {
+            title: '應用下載',
+            content: '下載我們不同平台的應用程序以獲得更好的體驗',
         },
         support: {
             title: '遇到問題',
@@ -1237,8 +1250,6 @@ export default {
         orClickToApp: '或點擊條轉到App繼續',
         topUpSuccess: '充值成功',
         thankU: '感謝您的支持'
-
-
     },
     userConfirmOrder: {
         switchPlan: '切換訂閱',
@@ -1490,9 +1501,7 @@ export default {
             filingsCode: '備案號 {code}',
         }
     },
-    adminTicket: {
-        ticketMgr: '工單管理',
-    },
+
     pagination: {
         perPage10: '10 條數據/頁',
         perPage20: '20 條數據/頁',
