@@ -1,7 +1,6 @@
 import {computed, type ComputedRef, type Ref, ref} from 'vue'
 import {defineStore} from "pinia";
 import {darkTheme, type GlobalThemeOverrides} from 'naive-ui';
-import useSettingStore from "@/stores/useSettingStore"
 import useAppInfosStore from "@/stores/useAppInfosStore";
 
 interface CustomThemeConfig {
@@ -22,6 +21,7 @@ interface Theme {
     darkBlueDay: Ref<CustomThemeConfig>;
     milkGreenDay?: Ref<CustomThemeConfig>;
     biliPink: Ref<CustomThemeConfig>;
+    grayTheme: Ref<CustomThemeConfig>;
     bambooGreen?: Ref<CustomThemeConfig>;
     allTheme?: Ref<Record<string, Ref<GlobalThemeOverrides>>>;
     // getTheme: ComputedRef<CustomThemeConfig>;
@@ -718,6 +718,116 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
         } as GlobalThemeOverrides)
     })
 
+    const grayTheme = ref({
+        topLogoBgColor: computed(() => enableDarkMode.value ? '#4f4f4f' : '#b0b0b0'),
+        topLogoTextColor: '#dbe9f3',
+        topHeaderBgColor: computed(() => enableDarkMode.value ? '#3c3c3c' : '#a1a1a1'),
+        topHeaderTextColor: '#fff',
+        globeTheme, // 通用部分
+        selfOverride: computed(() => enableDarkMode.value ? {
+            // 深色模式
+            common: {
+                primaryColor: '#8a8a8a',  // 主题灰色
+                primaryColorPressed: '#707070',
+                bodyColor: '#2d2d2d',
+                modalColor: '#2d2d2d',
+                tableColorStriped: 'rgba(40, 41, 41, 1)',
+                tableColor: 'rgba(40, 41, 41, 1)',
+                tableHeaderColor: 'rgba(40, 41, 41, 1)',
+                tableColorHover: 'rgba(40, 41, 41, 0.5)',
+            },
+            Button: {
+                color: '#8a8a8a',
+                colorFocusPrimary: '#707070',
+                colorHoverPrimary: '#707070',
+                colorPressedPrimary: '#707070',
+                textColorPrimary: '#fff',
+                textColorHoverPrimary: '#fff',
+                textColorPressedPrimary: '#fff',
+                textColorFocusPrimary: '#fff',
+                textColorError: '#ffe3e3',
+                textColorHoverError: '#ffe3e3',
+                textColorPressedError: '#ffe3e3',
+                textColorFocusError: '#ffe3e3',
+                textColorTextPrimary: '#fff',
+                textColorTextHoverPrimary: '#707070',
+            },
+            Input: {
+                borderHover: '1px solid #8a8a8a',
+                borderFocus: '1px solid #8a8a8a',
+            },
+            Card: {
+                colorEmbedded: 'rgba(40, 41, 41, 1)',
+            },
+            Switch: {
+                railColorActive: '#8a8a8a',
+            },
+            DataTable: {
+                thColor: 'rgba(40, 41, 41, 1)',
+                tdColor: 'rgba(40, 41, 41, 1)',
+                borderRadius: '3px',
+            },
+            Notification: {
+                color: 'rgba(40, 45, 47, 1)',
+            },
+            Menu: {
+                itemTextColorActive: '#a1a1a1',
+                itemTextColorActiveHover: '#8a8a8a',
+                itemIconColorActive: '#a1a1a1',
+                itemIconColorActiveHover: '#8a8a8a',
+                itemTextColorChildActive: '#a1a1a1',
+                itemTextColorChildActiveHover: '#8a8a8a',
+                arrowColorChildActive: '#a1a1a1',
+                arrowColorChildActiveHover: '#8a8a8a',
+            },
+            Dropdown: {
+                color: '#252525',
+            },
+        } as GlobalThemeOverrides : {
+            // 浅色模式
+            common: {
+                primaryColor: '#8a8a8a',  // 主题灰色
+                primaryColorPressed: '#707070',
+                bodyColor: '#f0f0f0',
+                modalColor: '#f0f0f0',
+                tableColor: '#f0f0f0',
+            },
+            Button: {
+                color: '#8a8a8a',
+                colorFocusPrimary: '#707070',
+                colorHoverPrimary: '#707070',
+                colorPressedPrimary: '#707070',
+                textColorPrimary: '#fff',
+                textColorHoverPrimary: '#fff',
+                textColorPressedPrimary: '#fff',
+                textColorFocusPrimary: '#fff',
+                colorTextPrimary: '#8a8a8a',
+                colorTextHoverPrimary: '#707070',
+                textColorTextHoverPrimary: '#707070',
+                textColorPrimaryDisabled: '#fff',
+            },
+            Input: {
+                borderHover: '1px solid #8a8a8a',
+                borderFocus: '1px solid #8a8a8a',
+            },
+            Card: {
+                colorEmbedded: '#fff',  // 比bodyColor略深的颜色
+            },
+            Switch: {
+                railColorActive: '#8a8a8a',
+            },
+            DataTable: {
+                borderRadius: '3px',
+            },
+            Notification: {
+                color: 'rgba(255, 255, 255, 1)',
+                bordered: '1px solid #8a8a8a',
+            },
+            Dropdown: {
+                color: '#fff',
+            },
+        } as GlobalThemeOverrides)
+    })
 
     // 主题配置 默认
     const defaultDay = ref({
@@ -740,27 +850,29 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
     // getTheme 这个是覆盖的主题
     const getTheme = computed(() => {
         switch (selectedTheme.value) {
-            case 'darkBlueDay': {
+            case 'darkBlueDay':
                 return darkBlueDay.value;
-            }
-            case 'milkGreenDay': {
+
+            case 'milkGreenDay':
                 return milkGreenDay.value;
-            }
-            case 'biliPink': {
+
+            case 'biliPink':
                 return biliPink.value;
-            }
-            case 'bambooGreen': {
+
+            case 'bambooGreen':
                 return bambooGreen.value;
-            }
-            case 'mistyPine': {
+
+            case 'mistyPine':
                 return mistyPine.value;
-            }
-            case 'glacierBlue': {
+
+            case 'glacierBlue':
                 return glacierBlue.value;
-            }
-            default: {
+
+            case 'grayTheme':
+                return grayTheme.value;
+            default:
                 return darkBlueDay.value;
-            }
+
         }
     }) as ComputedRef<CustomThemeConfig>
 
@@ -795,7 +907,8 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
         userPath,
         menuCollapsed,
         menuIsFlippActive,
-        breadcrumb
+        breadcrumb,
+        grayTheme
     }
 
 }, {

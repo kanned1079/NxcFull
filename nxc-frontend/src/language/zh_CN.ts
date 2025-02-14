@@ -80,6 +80,7 @@ export default {
                 adminNotExist: '管理员不存在',
                 authPassed: '验证通过',
                 authFailure: '验证失败',
+                otherErr: '其他錯誤',
                 pathCheckPassed: '安全路径检查通过',
                 pathCheckFailure: '安全路径不正确',
                 rememberSecureMention: '为了保证后台管理的安全性，如果这不是您的私人电脑请不要勾选。'
@@ -339,6 +340,7 @@ export default {
                     bambooGreen: '若竹',
                     mistyPine: '雾松',
                     glacierBlue: '冰川蓝',
+                    grayTheme: '灰色'
                 },
                 sidebarStyle: {
                     title: '边栏风格',

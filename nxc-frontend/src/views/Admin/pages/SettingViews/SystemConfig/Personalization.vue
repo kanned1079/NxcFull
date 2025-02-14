@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { ref } from "vue";
-import { useMessage } from "naive-ui";
+import {useI18n} from "vue-i18n";
+import {ref} from "vue";
+import {useMessage} from "naive-ui";
 import useThemeStore from "@/stores/useThemeStore";
 import useSettingStore from "@/stores/useSettingStore";
+import {handleFetchRootRuntimeEnvConfig} from "@/api/common/env"
 
-const { t } = useI18n();
+const {t} = useI18n();
 const message = useMessage();
 const themeStore = useThemeStore();
 const settingStore = useSettingStore();
@@ -17,12 +18,15 @@ interface ColorItem {
 }
 
 const options = ref<ColorItem[]>([
-  { label: t('adminViews.systemConfig.frontend.themePropColor.default'), value: "defaultDay", disabled: false },
-  { label: t('adminViews.systemConfig.frontend.themePropColor.darkBlueDay'), value: "darkBlueDay", disabled: false },
-  { label: t('adminViews.systemConfig.frontend.themePropColor.milkGreenDay'), value: "milkGreenDay", disabled: false },
-  { label: t('adminViews.systemConfig.frontend.themePropColor.bambooGreen'), value: "bambooGreen", disabled: false },
-  { label: t('adminViews.systemConfig.frontend.themePropColor.mistyPine'), value: "mistyPine", disabled: false },
-  { label: t('adminViews.systemConfig.frontend.themePropColor.glacierBlue'), value: "glacierBlue", disabled: false },
+  {label: t('adminViews.systemConfig.frontend.themePropColor.default'), value: "defaultDay", disabled: false},
+  {label: t('adminViews.systemConfig.frontend.themePropColor.darkBlueDay'), value: "darkBlueDay", disabled: false},
+  {label: t('adminViews.systemConfig.frontend.themePropColor.milkGreenDay'), value: "milkGreenDay", disabled: false},
+  {label: t('adminViews.systemConfig.frontend.themePropColor.bambooGreen'), value: "bambooGreen", disabled: false},
+  {label: t('adminViews.systemConfig.frontend.themePropColor.mistyPine'), value: "mistyPine", disabled: false},
+  {label: t('adminViews.systemConfig.frontend.themePropColor.glacierBlue'), value: "glacierBlue", disabled: false},
+  // grayTheme
+  {label: t('adminViews.systemConfig.frontend.themePropColor.grayTheme'), value: "grayTheme", disabled: false},
+
 ]);
 
 type FrontendModel =
@@ -78,6 +82,16 @@ const saveFiled = async (k: string, v: any) => {
     message.error(t('adminViews.systemConfig.common.err') + updateResponse.msg || '')
 }
 
+// const refreshTheme = () => location.reload()
+
+const refreshTheme = async (fieldName: string) => {
+  if (fieldName === 'frontend_theme') {
+    await handleFetchRootRuntimeEnvConfig()
+    // setTimeout(() => themeStore.setThemeFromSetting(), 1000)
+    location.reload() // 直接刷新页面
+  }
+}
+
 </script>
 
 <script lang="ts">
@@ -127,7 +141,7 @@ export default {
                   :options="options"
                   :placeholder="t(setting.placeholder || '')"
                   v-model:value="settingStore.settings.frontend[setting.model]"
-                  @update:value="saveFiled(setting.model, settingStore.settings.frontend[setting.model])"
+                  @update:value="saveFiled(setting.model, settingStore.settings.frontend[setting.model]); refreshTheme(setting.model)"
               />
               <div v-else-if="setting.type === 'switch'" class="to-right">
                 <n-switch

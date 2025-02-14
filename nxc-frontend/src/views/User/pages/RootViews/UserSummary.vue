@@ -43,7 +43,7 @@ interface Notice {
 
 let thisNotices = ref<Notice[]>([])
 
-let helpData:{
+const helpData:{
   id: number,
   title: string,
   content: string,

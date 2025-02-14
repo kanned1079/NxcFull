@@ -14,13 +14,12 @@ import {
   useMessage,
   useNotification
 } from 'naive-ui'
-import {encodeToBase64} from '@/utils/encryptor'
-import instance from "@/axios";
 import {
   ChevronBackOutline as BackIcon,
   ChevronBackOutline as backIcon,
   LogInOutline as loginIcon
 } from "@vicons/ionicons5"
+import {handleAdminLoginFunc} from "@/api/admin/auth";
 
 const {t} = useI18n()
 const notification = useNotification()
@@ -122,44 +121,48 @@ let handleLoginClick = async (e: MouseEvent) => {
   e.preventDefault()
   await userFormInstance.value?.validate((errors) => {
     if (errors) {
-     return message.error(computed(() => t('adminViews.login.card.formNotPassed')).value)
+      return message.error(computed(() => t('adminViews.login.card.formNotPassed')).value)
     } else {
       submitLogin()
     }
   })
 }
 
-let submitLogin = async () => {
+const submitLogin = async () => {
   enableLogin.value = false
-  try {
-    // let hashedPwd =  hashPassword(password.value.trim())
-    let {data} = await instance.post('http://localhost:8081/api/admin/v1/login', {
-      email: userFormData.value.username,
-      password: encodeToBase64(userFormData.value.password),
-      role: 'admin', // 限制权限
-    })
-    console.log(data)
-    if (data.code === 200 && data.isAuthed === true) {
-      // 验证通过 保存token
-      sessionStorage.setItem('token', data.token)
-      // 保存验证状态
-      userInfoStore.setAndSaveAuthStatus(true)
-      notifyPass('success');
-      bindUserInfo(data)
-      console.log(userInfoStore.thisUser)
-      await router.push({path: '/admin/dashboard/summary'});
-    } else {
-      enableLogin.value = true
-      switch (data.msg) {
-        case 'incorrect_password':
-          return notifyErr('error', computed(() => t('adminViews.login.message.passwordErr')).value)
-        case 'user_not_exist':
-          return notifyErr('error', computed(() => t('adminViews.login.message.adminNotExist')).value)
-      }
+  // try {
+  //   // let hashedPwd =  hashPassword(password.value.trim())
+  //   let {data} = await instance.post('http://localhost:8081/api/admin/v1/login', {
+  //     email: userFormData.value.username,
+  //     password: encodeToBase64(userFormData.value.password),
+  //     role: 'admin', // 限制权限
+  //   })
+
+  let data = await handleAdminLoginFunc(userFormData.value.username, userFormData.value.password, 'admin')
+  // console.log(data)
+  if (data.code === 200 && data.isAuthed === true) {
+    // 验证通过 保存token
+    sessionStorage.setItem('token', data.token)
+    // 保存验证状态
+    userInfoStore.setAndSaveAuthStatus(true)
+    notifyPass('success');
+    bindUserInfo(data)
+    console.log(userInfoStore.thisUser)
+    await router.push({path: '/admin/dashboard/summary'});
+  } else {
+    enableLogin.value = true
+    switch (data.code) {
+      case 401:
+        return notifyErr('error', t('adminViews.login.message.passwordErr'))
+      case 404:
+        return notifyErr('error', t('adminViews.login.message.adminNotExist'))
+      default:
+        return notifyErr('error', t('adminViews.login.message.otherErr.'))
     }
-  } catch (error) {
-    console.log(error)
   }
+  // } catch (error) {
+  //   console.log(error)
+  // }
 }
 
 let handleForgetPassword = () => {
@@ -215,7 +218,8 @@ let showStartupNotification = () => {
       ]);
     },
     // meta: new Date().toLocaleString(),
-    onClose: () => {},
+    onClose: () => {
+    },
   });
 };
 
@@ -336,7 +340,8 @@ export default {
                         :bordered="true"
                     />
                   </n-form-item>
-                  <n-form-item path="password" style="margin-top: 20px" :label="t('adminViews.login.card.passwordInputArea.title')">
+                  <n-form-item path="password" style="margin-top: 20px"
+                               :label="t('adminViews.login.card.passwordInputArea.title')">
                     <n-input
                         v-model:value="userFormData.password"
                         type="password"
@@ -399,15 +404,15 @@ export default {
           {{ t('adminViews.login.secureCard.hint') }}
         </n-p>
         <n-form-item
-          :label="t('adminViews.login.secureCard.securePath')"
-          :show-require-mark="true"
-          style="margin-top: 20px"
-          :show-feedback="false"
-          :rule="{trigger: ['blur', 'input'],validator:() => thisSecurePath!==''} as FormRules"
+            :label="t('adminViews.login.secureCard.securePath')"
+            :show-require-mark="true"
+            style="margin-top: 20px"
+            :show-feedback="false"
+            :rule="{trigger: ['blur', 'input'],validator:() => thisSecurePath!==''} as FormRules"
         >
           <n-input
-            :placeholder="t('adminViews.login.secureCard.placeholder')"
-            v-model:value="thisSecurePath"
+              :placeholder="t('adminViews.login.secureCard.placeholder')"
+              v-model:value="thisSecurePath"
           />
         </n-form-item>
 
@@ -415,21 +420,21 @@ export default {
             :show-require-mark="true"
         >
           <n-button
-            type="primary"
-            secondary
-            :bordered="false"
-            style="width: 100%"
-            :disabled="checkSecureBtnDisabled"
-            @click="checkSecurePath"
+              type="primary"
+              secondary
+              :bordered="false"
+              style="width: 100%"
+              :disabled="checkSecureBtnDisabled"
+              @click="checkSecurePath"
           >
             检查
           </n-button>
         </n-form-item>
 
 
-<!--        <template #footer>-->
-<!--          <p style="font-weight: bold; opacity: 0.3">{{ appInfoStore.appCommonConfig.app_sub_name }}</p>-->
-<!--        </template>-->
+        <!--        <template #footer>-->
+        <!--          <p style="font-weight: bold; opacity: 0.3">{{ appInfoStore.appCommonConfig.app_sub_name }}</p>-->
+        <!--        </template>-->
       </n-modal>
 
     </div>
