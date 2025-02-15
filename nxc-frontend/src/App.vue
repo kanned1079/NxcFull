@@ -16,7 +16,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (ev
   themeStore.enableDarkMode = event.matches;
 });
 
-let isDark = computed(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
+const isDark = computed(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
 
 // onMounted(() => {
 //   themeStore.enableDarkMode = isDark.value;
@@ -65,7 +65,7 @@ onBeforeUnmount(() => {
     <n-message-provider>
       <n-notification-provider>
         <n-dialog-provider>
-          <RouterView></RouterView>
+          <RouterView />
         </n-dialog-provider>
       </n-notification-provider>
     </n-message-provider>

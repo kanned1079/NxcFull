@@ -69,6 +69,7 @@ export default {
 
 
             <div
+                v-if="false"
                 style="height: 100%;width: 100%; pointer-events: none; transform: translate(0); z-index: 1000; position: absolute; top: 0; left: 0;">
               <n-float-button
                   :bottom="100"

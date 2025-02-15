@@ -217,3 +217,48 @@ func HandleDeleteCoupon(context *gin.Context) {
 		"msg":  "删除成功",
 	})
 }
+
+func HandleUpdateCoupons(context *gin.Context) {
+	postData := &struct {
+		Id           int64   `json:"id"`
+		Name         string  `json:"name"`
+		Code         string  `json:"code"`
+		PercentOff   float64 `json:"percent_off"`
+		Capacity     int64   `json:"capacity"`
+		PerUserLimit int64   `json:"per_user_limit"`
+		PlanLimit    int64   `json:"plan_limit"`
+		StartTime    int64   `json:"start_time"`
+		EndTime      int64   `json:"end_time"`
+	}{}
+	if err := context.ShouldBind(&postData); err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"code":  http.StatusInternalServerError,
+			"msg":   "绑定数据失败",
+			"error": err.Error(),
+		})
+		return
+	}
+	//log.Println(postData)
+	resp, err := grpcClient.CouponServiceClient.UpdateCoupon(sysContext.Background(), &pb.UpdateCouponRequest{
+		Id:           postData.Id,
+		Name:         postData.Name,
+		Code:         postData.Code,
+		PercentOff:   float32(postData.PercentOff),
+		Capacity:     postData.Capacity,
+		PerUserLimit: postData.PerUserLimit,
+		PlanLimit:    postData.PlanLimit,
+		StartTime:    postData.StartTime,
+		EndTime:      postData.EndTime,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+	})
+}

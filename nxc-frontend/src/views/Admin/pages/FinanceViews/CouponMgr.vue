@@ -1,20 +1,27 @@
 <script setup lang="ts">
 // import FormSuffix from "@/views/utils/FormSuffix.vue";
 import {useI18n} from "vue-i18n";
-import {computed, h, onMounted, onBeforeMount, ref} from "vue";
+import {computed, h, onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
 
-import {type FormInst, NIcon} from 'naive-ui'
-import {NButton, NSwitch, NTag, useMessage, type DataTableColumns} from 'naive-ui'
+import {type DataTableColumns, type FormInst, type FormRules, NButton, NIcon, NSwitch, NTag, useMessage} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import instance from "@/axios";
 import {formatTimestamp} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import {
+  handleActivateCouponById,
+  handleDeleteCouponById,
+  handleGetAllCoupon,
+  handleUpdateCoupon
+} from "@/api/admin/coupon";
+import {handleFetchPlanKv} from "@/api/admin/plan";
 
 const {t} = useI18n();
+const i18nPrefix: string = 'adminViews.couponMgr';
 // const apiAddrStore = useApiAddrStore();
 
 
@@ -62,6 +69,7 @@ let formValue = ref({
     capacity: null,
     plan_limit: null,
   } as {
+    id?: number
     name: string
     code: string
     percent_off: number | null
@@ -73,38 +81,64 @@ let formValue = ref({
   }
 })
 
-let rules = {
-  name: {
-    required: true,
-    message: '优惠券名是必须的',
-    trigger: 'blur'
+const rules = computed<FormRules>(() => {
+  return {
+    coupon: {
+      name: {
+        required: true,
+        trigger: 'blur',
+        message: t(`${i18nPrefix}.modal.emptyNotAllow`),
+      },
+      code: {
+        required: false,
+      },
+      percent_off: {
+        required: true,
+        trigger: 'blur',
+        message: t(`${i18nPrefix}.modal.emptyNotAllow`),
+      },
+      capacity: {
+        required: true,
+        trigger: 'blur',
+        message: t(`${i18nPrefix}.modal.emptyNotAllow`),
+      },
+      per_user_limit: {
+        required: true,
+        trigger: 'blur',
+        message: t(`${i18nPrefix}.modal.emptyNotAllow`),
+      }
+    }
   }
-}
+})
+
 
 // noticesStore.getAllNotices()
 
 let showLoading = ref<boolean>(false)
-
 // 显示表单
 let showModal = ref(false)
-let range = ref<[number, number]>([1183135260000, Date.now()])
+let range = ref<[number, number]>([new Date().setMonth(new Date().getMonth() - 1), new Date().getTime()])
 let plans = ref<{ label: string, value: number }[]>([])
+let editType = ref<'create' | 'edit'>('create')
 
 // 订阅计划的键值
 let getPlanKV = async () => {
   plans.value = []
-  try {
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/plan/kv')
-    if (data.code === 200) {
-      console.log(data)
-      data.plans.forEach((item: { id: number, name: string }) => plans.value.push({
-        label: item.name,
-        value: item.id,
-      }))
-    }
-  } catch (error) {
-    console.log(error)
+  // try {
+  // let {data} = await instance.get('http://localhost:8081/api/admin/v1/plan/kv')
+  let data = await handleFetchPlanKv()
+  if (data && data.code === 200) {
+    console.log(data)
+    data.plans.forEach((item: { id: number, name: string }) => plans.value.push({
+      label: item.name,
+      value: item.id,
+    }))
+  } else {
+    message.error(t(`${i18nPrefix}.fetchPlanKvFailure`))
   }
+  // } catch (error) {
+  //   console.log(error)
+  // }
 
 }
 
@@ -119,93 +153,102 @@ let couponList = ref<Coupon[]>([])
 let getAllCoupons = async () => {
   showLoading.value = true
   // 这里是使用get方法 获取所有的优惠券列表
-  // 请求地址 /admin/v1/coupon/fetch
-  try {
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/coupon', {
-      params: {
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    });
-    if (data.code === 200) {
-      couponList.value = []
+  let data = await handleGetAllCoupon(dataSize.value.page, dataSize.value.pageSize)
+  if (data && data.code === 200) {
+    couponList.value = []
 
-      // couponList.value = data.coupons;
-      data.coupon_list.forEach((item: Coupon) => {
-        couponList.value.push(item)
-      })
-      pageCount.value = data.page_count
-    } else {
-      message.error('获取优惠券列表失败');
-    }
-    showLoading.value = false
-  } catch (error) {
-    console.error(error);
-    message.error('请求优惠券列表失败');
+    // couponList.value = data.coupons;
+    data.coupon_list.forEach((item: Coupon) => {
+      couponList.value.push(item)
+    })
+    pageCount.value = data.page_count
+    animated.value = true
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure'));
   }
+  showLoading.value = false
 }
 
 let activateACoupon = async (id: number, value: boolean) => {
-  console.log(id, value)
+  // console.log(id, value)
   // 这里是使用post方法 当switch改变时调用来启用或关闭优惠券
   // 请求地址 /admin/v1/coupon/status/update
   // 请求体 {优惠券id， 状态}
-  try {
-    let {data} = await instance.put('http://localhost:8081/api/admin/v1/coupon/status', {
-      id: id,
-      status: value
-    });
-    if (data.code === 200) {
-      message.success('优惠券状态更新成功');
-    } else {
-      message.error('更新优惠券状态失败');
-    }
-    await getAllCoupons();
-  } catch (error) {
-    console.error(error);
-    message.error('请求更新优惠券状态失败');
+  // try {
+  //   let {data} = await instance.put('http://localhost:8081/api/admin/v1/coupon/status', {
+  //     id: id,
+  //     status: value
+  //   });
+  let data = await handleActivateCouponById(id, value)
+  if (data && data.code === 200) {
+    // message.success('优惠券状态更新成功');
+    message.success(t('adminViews.common.updateSuccess'));
+    await getAllCoupons()
+  } else {
+    // message.error('更新优惠券状态失败');
+    message.error(t('adminViews.common.updateFailure'));
   }
+  await getAllCoupons();
+  // } catch (error) {
+  //   console.error(error);
+  //   message.error(t('adminViews.common.updateFailure'));
+  //   // message.error('请求更新优惠券状态失败');
+  // }
 }
 
-let updateACoupon = async (row: Coupon) => {
+const updateCouponClick = async (row: Coupon) => {
+  Object.assign(formValue.value.coupon, row)
+  range.value = [row.start_time, row.end_time]
+  editType.value = 'edit'
+  await getPlanKV()
+  showModal.value = true // 修改好後再顯示
+}
+
+let updateACoupon = async () => {
   // 这里是点击编辑一个优惠券后 使用post方法保存到服务器
   // 请求地址 /admin/v1/coupon/update
   // 请求体 {优惠券id， 该优惠券结构}
-  try {
-    let {data} = await instance.put('http://localhost:8081/api/admin/v1/coupon', row);
-    if (data.code === 200) {
-      message.success('优惠券更新成功');
-      await getAllCoupons(); // 更新成功后刷新列表
-    } else {
-      message.error('更新优惠券失败');
-    }
-  } catch (error) {
-    console.error(error);
-    message.error('请求更新优惠券失败');
+  formValue.value.coupon.start_time = range.value[0]
+  formValue.value.coupon.end_time = range.value[1]
+  // try {
+  animated.value = false
+  // let {data} = await instance.put('http://localhost:8081/api/admin/v1/coupon', formValue.value.coupon);
+  let data = await handleUpdateCoupon(formValue.value.coupon)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.updateSuccess'));
+    await getAllCoupons(); // 更新成功后刷新列表
+  } else {
+    message.error(t('adminViews.common.updateFailure'));
   }
+  // } catch (error) {
+  //   console.error(error);
+  //   message.error(t('adminViews.common.updateFailure'));
+  // }
 }
 
 let deleteACoupon = async (id: number) => {
   // 点击删除后 使用post方法 用于删除一个优惠券
   // 请求地址 /admin/v1/coupon/delete
   // 请求体 {优惠券id}
-  console.log(id)
-  try {
-    let {data} = await instance.delete('http://localhost:8081/api/admin/v1/coupon', {
-      params: {
-        coupon_id: id,
-      }
-    });
-    if (data.code === 200) {
-      message.success('优惠券删除成功');
-      await getAllCoupons(); // 删除成功后刷新列表
-    } else {
-      message.error('删除优惠券失败');
-    }
-  } catch (error) {
-    console.error(error);
-    message.error('请求删除优惠券失败');
+  // console.log(id)
+  // try {
+  animated.value = false
+  // let {data} = await instance.delete('http://localhost:8081/api/admin/v1/coupon', {
+  //   params: {
+  //     coupon_id: id,
+  //   }
+  // });
+  let data = await handleDeleteCouponById(id)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.deleteSuccess'));
+    await getAllCoupons(); // 删除成功后刷新列表
+  } else {
+    message.error(t('adminViews.common.deleteFailure'));
   }
+  // } catch (error) {
+  //   console.error(error);
+  //   message.error(t('adminViews.common.deleteFailure'));
+  // }
 }
 
 const i18nTablePrefix = 'adminViews.couponMgr.table'
@@ -264,7 +307,7 @@ const columns = computed<DataTableColumns<Coupon>>(() => [
           secondary: true,
           bordered: false,
           style: {marginLeft: '10px'},
-          onClick: () => updateACoupon(row)
+          onClick: () => updateCouponClick(row)
         }, {default: () => t(`${i18nTablePrefix}.edit`)}),
         h(NButton, {
           size: 'small',
@@ -281,12 +324,28 @@ const columns = computed<DataTableColumns<Coupon>>(() => [
 ])
 
 
-let handleAddCoupon = () => {
-  getPlanKV()
+let handleAddCoupon = async () => {
+  // await getPlanKV()
+  Object.assign(formValue.value.coupon, {
+    name: '',
+    code: '',
+    percent_off: null,
+    start_time: null,
+    end_time: null,
+    per_user_limit: null,
+    capacity: null,
+    plan_limit: null,
+  });
+  let nowDate: Date = new Date()
+  range.value = [new Date().setMonth(nowDate.getMonth() - 1), nowDate.getTime()];
+  // range.value = [new Date().getTime(), new Date().getTime()];
+  editType.value = 'create';
+  await getPlanKV()
   showModal.value = true
 }
 
 let submitCoupon = async () => {
+  animated.value = false
   formValue.value.coupon.start_time = range.value[0]
   formValue.value.coupon.end_time = range.value[1]
   console.log(formValue.value)
@@ -296,11 +355,13 @@ let submitCoupon = async () => {
     })
     if (data.code === 200) {
       message.success('添加优惠券成功')
+      message.success(t('adminViews.common.addSuccess'))
+      await getAllCoupons();
     } else {
-      console.log(data.msg)
+      message.error(t('adminViews.common.addSuccess') + data.msg || '')
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -313,7 +374,7 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-  console.log('couponMgr挂载')
+  // console.log('couponMgr挂载')
   await getAllCoupons()
 
   themeStore.contentPath = '/admin/dashboard/coupon';
@@ -347,16 +408,9 @@ export default {
         </n-icon>
       </template>
 
-      {{ t('adminViews.couponMgr.addNewCoupon') }}
+      {{ t(`${i18nPrefix}.modal.newCoupon`) }}
     </n-button>
   </PageHead>
-<!--  <div style="padding: 20px 20px 0 20px">-->
-<!--&lt;!&ndash;    <n-card title="优惠券管理" hoverable :embedded="true" class="card-root" :bordered="false">&ndash;&gt;-->
-<!--&lt;!&ndash;      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddCoupon">添加优惠券</n-button>&ndash;&gt;-->
-<!--&lt;!&ndash;    </n-card>&ndash;&gt;-->
-
-<!--  </div>-->
-
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
@@ -377,23 +431,6 @@ export default {
 
       </n-card>
 
-<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="getAllCoupons"-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 160px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="dataSize.page = 1; getAllCoupons()"-->
-<!--        />-->
-<!--      </div>-->
-
       <DataTableSuffix
           v-model:data-size="dataSize"
           v-model:page-count="pageCount"
@@ -406,13 +443,13 @@ export default {
 
 
   <n-modal
-      title="新建优惠券"
+      :title="editType === 'create'?t(`${i18nPrefix}.modal.newCoupon`):t(`${i18nPrefix}.modal.editCoupon`) + ` #${formValue.coupon.id}`"
       v-model:show="showModal"
       preset="dialog"
-      positive-text="确认添加"
-      negative-text="算了"
+      :positive-text="editType === 'create'?t(`${i18nPrefix}.modal.confirmAdd`):t(`${i18nPrefix}.modal.confirmEdit`)"
+      :negative-text="t(`${i18nPrefix}.modal.cancel`)"
       style="width: 480px;"
-      @positive-click="submitCoupon"
+      @positive-click="editType === 'create'?submitCoupon():updateACoupon()"
       @negative-click="closeModal"
       :show-icon="false"
   >
@@ -423,50 +460,49 @@ export default {
         ref="formRef"
         :model="formValue"
         :rules="rules"
+        :show-feedback="true"
     >
-      <n-form-item label="优惠券名称" path="coupon.name">
-        <n-input v-model:value="formValue.coupon.name" placeholder="输入优惠券名称"/>
+      <n-form-item :label="t(`${i18nPrefix}.modal.name.title`)" path="coupon.name">
+        <n-input v-model:value="formValue.coupon.name" :placeholder="t(`${i18nPrefix}.modal.name.placeholder`)"/>
       </n-form-item>
-      <n-form-item label="优惠券码" path="coupon.code">
-        <n-input v-model:value="formValue.coupon.code" placeholder="自定义优惠券码（留空随机生成）"/>
+      <n-form-item :label="t(`${i18nPrefix}.modal.code.title`)" path="coupon.code">
+        <n-input v-model:value="formValue.coupon.code" :placeholder="t(`${i18nPrefix}.modal.code.placeholder`)"/>
       </n-form-item>
-      <n-form-item label="优惠信息（百分比）" path="coupon.percent_off">
+      <n-form-item :label="t(`${i18nPrefix}.modal.percentOff.title`)" path="coupon.percent_off">
         <n-input-number
             :style="{width: '100%'}"
             v-model:value.number="formValue.coupon.percent_off"
-            placeholder="输入优惠百分比"
+            :placeholder="t(`${i18nPrefix}.modal.percentOff.placeholder`)"
+            :max="100"
+            :min="0"
         />
       </n-form-item>
-      <n-form-item label="优惠券有效期" path="coupon.name">
-        <n-date-picker v-model:value="range" type="daterange" style="width: 100%" clearable/>
+      <n-form-item :label="t(`${i18nPrefix}.modal.activeRange.title`)" path="coupon.name">
+        <n-date-picker v-model:value="range" type="datetimerange" style="width: 100%" clearable/>
       </n-form-item>
-      <n-form-item label="最大使用次数" path="coupon.capacity">
+      <n-form-item :label="t(`${i18nPrefix}.modal.capacity.title`)" path="coupon.capacity">
         <n-input-number
             :style="{width: '100%'}"
             v-model:value.number="formValue.coupon.capacity"
-            placeholder="限制最大使用限制，用完则无法使用（为空则不限制）"
+            :placeholder="t(`${i18nPrefix}.modal.capacity.placeholder`)"
         />
       </n-form-item>
-      <n-form-item label="每个用户可使用次数" path="coupon.per_user_limit">
+      <n-form-item :label="t(`${i18nPrefix}.modal.perUserLimit.title`)" path="coupon.per_user_limit">
         <n-input-number
             :style="{width: '100%'}"
             v-model:value.number="formValue.coupon.per_user_limit"
-            placeholder="限制每个用户可使用次数（为空则不限制）"
+            :placeholder="t(`${i18nPrefix}.modal.perUserLimit.placeholder`)"
         />
       </n-form-item>
-      <n-form-item label="指定订阅" path="coupon.per_user_limit">
+      <n-form-item :label="t(`${i18nPrefix}.modal.planLimit.title`)" path="coupon.per_user_limit">
         <n-select
             :options="plans"
             v-model:value.number="formValue.coupon.plan_limit"
-            placeholder="限制指定订阅可使用优惠（为空则不限制）"
+            :placeholder="t(`${i18nPrefix}.modal.planLimit.placeholder`)"
         />
       </n-form-item>
     </n-form>
     <!--          pass-->
-    <template #footer>
-      尾部
-    </template>
-
 
   </n-modal>
 </template>

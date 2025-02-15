@@ -97,6 +97,7 @@ func StartApiGateways() {
 
 		adminAuthorized.POST("/coupon", handler.HandleAddNewCoupon)       // 新建优惠券
 		adminAuthorized.GET("/coupon", handler.HandleGetAllCoupons)       // 获取优惠券列表
+		adminAuthorized.PUT("/coupon", handler.HandleUpdateCoupons)       // 修改優惠券
 		adminAuthorized.PUT("/coupon/status", handler.HandleActiveCoupon) // 按照id开启或关闭优惠券
 		adminAuthorized.DELETE("/coupon", handler.HandleDeleteCoupon)     // 删除指定id的优惠券
 

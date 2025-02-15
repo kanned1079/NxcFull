@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func HandleGetAllMyKeys(context *gin.Context) {
@@ -180,8 +181,15 @@ func HandleBindKeyToThirdExternalApp(context *gin.Context) {
 		OsType        string `json:"os_type"`
 		Remark        string `json:"remark"`
 	}{}
-
 	if err := context.ShouldBind(postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "Bad Request",
+		})
+		return
+	}
+
+	if strings.Trim(postData.Email, " ") == "" || strings.Trim(postData.Password, " ") == "" {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusBadRequest,
 			"msg":  "Bad Request",

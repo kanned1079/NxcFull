@@ -46,6 +46,16 @@ export default {
         }
     },
     adminViews: {
+        common: {
+            fetchDataSuccess: '獲取數據成功',
+            fetchDataFailure: '獲取數據失敗請稍後再試',
+            addSuccess: '添加成功',
+            addFailure: '添加失敗請稍後嘗試',
+            updateSuccess: '修改成功',
+            updateFailure: '修改失敗請稍後再試',
+            deleteSuccess: '刪除成功',
+            deleteFailure: '刪除失敗請稍後再試',
+        },
         login: {
             secureCard: {
                 title: '安全检查',
@@ -740,7 +750,9 @@ export default {
         couponMgr: {
             title: '優惠券管理',
             description: '在這裡您可以為一些特定的節日等添加一些優惠券，它允許用戶在下單的時候使用並按照您設置的比例進行抵折優惠。',
-            addNewCoupon: '添加新優惠券',
+            // addNewCoupon: '添加新優惠券',
+            fetchErr: '獲取數據失敗請重試',
+            fetchPlanKvFailure: '獲取訂閱計畫列表失敗',
             table: {
                 id: '#',
                 enabled: '是否啟用',
@@ -753,34 +765,69 @@ export default {
                 edit: '編輯',
                 delete: '刪除'
             },
+            modal: {
+                newCoupon: '添加新優惠券',
+                editCoupon: '修改優惠券信息',
+                confirmAdd: '確認添加',
+                confirmEdit: '確認修改',
+                emptyNotAllow: '該項目是必填的',
+                cancel: '取消',
+                name: {
+                    title: '優惠券名稱',
+                    placeholder: '請輸入優惠券名稱',
+                },
+                code: {
+                    title: '券碼',
+                    placeholder: '自定義優惠券碼（留空隨即生成）',
+                },
+                percentOff: {
+                    title: '優惠信息（百分比）',
+                    placeholder: '輸入優惠百分比（如-12%OFF）',
+                },
+                activeRange: {
+                    title: '優惠券可使用的有效期範圍',
+                },
+                capacity: {
+                    title: '優惠券最大使用次數',
+                    placeholder: '限制最大使用限制（為空則不限制）',
+                },
+                perUserLimit: {
+                    title: '每個用戶可使用優惠券的次數',
+                    placeholder: '限制每個用戶可使用的次數（為空則不限制）'
+                },
+                planLimit: {
+                    title: '指定訂閱計畫',
+                    placeholder: '限制指定訂閱計畫可以使用優惠（為空則不限制）'
+                }
+            }
 
         },
         orderMgr: {
             title: '訂單管理',
             description: '在這裡您可以檢視所有訂閱計畫的訂單，篩選不同用戶的訂單、手動對用戶的訂單處理通過等。',
             table: {
-               id: '#',
-               orderId: '訂單號',
-               email: '用戶郵箱',
-               status: {
-                   title: '類型',
-                   t1: '新購',
-                   t2: '續費',
-                   t3: '編輯',
-               },
+                id: '#',
+                orderId: '訂單號',
+                email: '用戶郵箱',
+                status: {
+                    title: '類型',
+                    t1: '新購',
+                    t2: '續費',
+                    t3: '編輯',
+                },
                 planName: '計畫名稱',
                 period: '週期',
                 group: '權限組',
                 amount: '實付金額',
                 price: '原始價格',
                 isSuccess: {
-                   title: '訂單狀態',
+                    title: '訂單狀態',
                     cancelOrder: '取消訂單',
                     passOrder: '通過訂單',
                 },
                 createdAt: '訂單創建時間',
                 action: {
-                   title: '操作',
+                    title: '操作',
                     showDetail: '顯示細節'
                 }
             },

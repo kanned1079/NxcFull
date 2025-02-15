@@ -242,6 +242,7 @@ let handleGetPaymentMethodDetailsBySystemName = async (system: string) => {
 }
 
 onBeforeMount(() => {
+  themeStore.breadcrumb = t('adminViews.payConfig.title')
   themeStore.menuSelected = 'payment-config'
 })
 
@@ -304,15 +305,15 @@ export default {
 
     <n-alert
         type="warning"
-        :bordered="true"
+        :bordered="!themeStore.enableDarkMode"
         style="margin: 15px 0 0 0"
         :title="t('adminViews.payConfig.attention.title')"
     >
-      <n-ul>
-        <n-li :style="i == 1?{fontWeight: 'bold'}:null" v-for="i in 2" :key="i">
+<!--      <n-ul>-->
+        <p :style="i == 1?{fontWeight: 'bold'}:null" v-for="i in 2" :key="i">
           {{ t(`adminViews.payConfig.attention.point${i}`) }}
-        </n-li>
-      </n-ul>
+        </p>
+<!--      </n-ul>-->
     </n-alert>
   </div>
 

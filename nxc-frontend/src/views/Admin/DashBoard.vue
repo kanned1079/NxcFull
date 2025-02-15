@@ -26,11 +26,11 @@ export default {
     </n-layout-sider>
     <n-layout>
       <n-layout-header style="position: fixed; z-index: 1001;">
-        <CommonHeader></CommonHeader>
+        <CommonHeader />
       </n-layout-header>
-      <n-layout-content content-style="padding: 0" class="content">
-        <n-scrollbar style="max-height: 100vh">
-          <RouterView></RouterView>
+      <n-layout-content content-style="padding: 0;" class="content">
+        <n-scrollbar style="max-height: 100vh;">
+          <RouterView />
           <div style="height: 3rem"></div>
         </n-scrollbar>
       </n-layout-content>

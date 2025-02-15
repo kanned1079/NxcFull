@@ -4,6 +4,27 @@ package coupon;
 
 option go_package = "./proto";
 
+// 定义 gRPC 服务
+service CouponService {
+  // 新增优惠券
+  rpc AddNewCoupon(AddNewCouponRequest) returns (AddNewCouponResponse);
+
+  // 验证优惠券
+  rpc VerifyCoupon(VerifyCouponRequest) returns (VerifyCouponResponse);
+
+  // 获取所有优惠券
+  rpc GetAllCoupons(GetAllCouponsRequest) returns (GetAllCouponsResponse);
+
+  // 启用/禁用优惠券
+  rpc ActivateCoupon(ActivateCouponRequest) returns (ActivateCouponResponse);
+
+  // 删除优惠券
+  rpc DeleteCoupon(DeleteCouponRequest) returns (DeleteCouponResponse);
+
+  rpc UpdateCoupon(UpdateCouponRequest) returns (UpdateCouponResponse);
+}
+
+
 message Timestamp2 {
   int64 seconds = 1;
   int32 nanos = 2;
@@ -99,20 +120,20 @@ message DeleteCouponResponse {
   string msg = 2;
 }
 
-// 定义 gRPC 服务
-service CouponService {
-  // 新增优惠券
-  rpc AddNewCoupon(AddNewCouponRequest) returns (AddNewCouponResponse);
-
-  // 验证优惠券
-  rpc VerifyCoupon(VerifyCouponRequest) returns (VerifyCouponResponse);
-
-  // 获取所有优惠券
-  rpc GetAllCoupons(GetAllCouponsRequest) returns (GetAllCouponsResponse);
-
-  // 启用/禁用优惠券
-  rpc ActivateCoupon(ActivateCouponRequest) returns (ActivateCouponResponse);
-
-  // 删除优惠券
-  rpc DeleteCoupon(DeleteCouponRequest) returns (DeleteCouponResponse);
+message UpdateCouponRequest {
+  int64 id = 1;
+  string name = 2;
+  string code = 3;
+  float percent_off = 4;
+  int64 capacity = 5;
+  int64 per_user_limit = 6;
+  int64 plan_limit = 7;
+  int64 start_time = 8;  // 时间用字符串表示
+  int64 end_time = 9;    // 时间用字符串表示
 }
+
+message UpdateCouponResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
