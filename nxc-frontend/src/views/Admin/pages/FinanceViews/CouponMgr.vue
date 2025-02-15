@@ -93,16 +93,19 @@ const rules = computed<FormRules>(() => {
         required: false,
       },
       percent_off: {
+        type: 'number',
         required: true,
         trigger: 'blur',
         message: t(`${i18nPrefix}.modal.emptyNotAllow`),
       },
       capacity: {
+        type: 'number',
         required: true,
         trigger: 'blur',
         message: t(`${i18nPrefix}.modal.emptyNotAllow`),
       },
       per_user_limit: {
+        type: 'number',
         required: true,
         trigger: 'blur',
         message: t(`${i18nPrefix}.modal.emptyNotAllow`),
