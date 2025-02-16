@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {type DataTableColumns, type DataTableInst, NButton, NIcon, NTag, useMessage} from "naive-ui"
+import {type DataTableColumns, type DataTableInst, NButton, NIcon, NTag, useDialog, useMessage} from "naive-ui"
 import {computed, h, onBeforeMount, onMounted, onUnmounted, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {handleDeletePreviousLog, handleFetchServerStatus, handleTestServerLatency} from "@/api/admin/server";
@@ -18,6 +18,7 @@ import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 
 const {t} = useI18n();
 const message = useMessage()
+const dialog = useDialog()
 const themeStore = useThemeStore()
 const tableRef = ref<DataTableInst>()
 let animated = ref<boolean>(false)
@@ -278,12 +279,47 @@ const callDeletePreviousLog = async () => {
   }
 }
 
+const confirmDeleteLogWarn = () => {
+  dialog.warning({
+    title: t('adminViews.queueMonit.log.warn.title'),
+    content: t('adminViews.queueMonit.log.warn.description'),
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+     marginTop: '20px',
+    },
+    onPositiveClick: () => callDeletePreviousLog(),
+  })
+  // callDeletePreviousLog
+}
+
+const confirmExportLogMention = () => {
+  dialog.info({
+    title: t('adminViews.queueMonit.log.export.title'),
+    content: t('adminViews.queueMonit.log.export.description'),
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+      marginTop: '20px',
+    },
+    onPositiveClick: () => downloadCsv(),
+  })
+  // callDeletePreviousLog
+}
+
+
+
 onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/monitor'
-
-
   callTestConnLatency()
-
   animated.value = true
   // setTimeout(() => reloadCharts(), 1000)
   // reloadCharts()
@@ -331,7 +367,6 @@ export default {
           {{ t('adminViews.queueMonit.headerHint') }}
         </n-alert>
       </n-collapse-transition>
-
 
       <n-card
           hoverable
@@ -424,7 +459,6 @@ export default {
               </n-statistic>
             </n-grid-item>
 
-
             <n-grid-item>
               <div style="display: flex; flex-direction: row">
                 <n-statistic
@@ -515,7 +549,7 @@ export default {
                 text
                 size="small"
                 type="warning"
-                @click="callDeletePreviousLog"
+                @click="confirmDeleteLogWarn"
                 class="clear-btn"
             >
               {{ t('adminViews.queueMonit.log.deleteLog') }}
@@ -524,7 +558,7 @@ export default {
                 text
                 size="small"
                 type="primary"
-                @click="downloadCsv"
+                @click="confirmExportLogMention"
                 class="export-btn"
             >
               {{ t('adminViews.queueMonit.log.exportCsv') }}

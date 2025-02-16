@@ -55,6 +55,8 @@ export default {
             updateFailure: '修改失敗請稍後再試',
             deleteSuccess: '刪除成功',
             deleteFailure: '刪除失敗請稍後再試',
+            confirm: '確認',
+            cancel: '取消',
         },
         login: {
             secureCard: {
@@ -203,6 +205,14 @@ export default {
                 deleteLog: '刪除日誌',
                 exportCsv: '導出CSV',
                 deleteLogHint: '這將執行刪除前一周前所有的日誌，刪除方式為硬刪除，所有被刪除的日誌將無法恢復，建議先保存備份。',
+                warn: {
+                    title: '您確認要刪除日誌嗎？',
+                    description: '將立即刪除條目，您不能撤銷此操作。',
+                },
+                export: {
+                    title: '導出csv文件',
+                    description: '這將會導出下面的表格為csv文件並下載到本地，如果您沒有開啟下載權限，下載有可能會失敗，點擊確認按鈕以執行導出。',
+                },
                 table: {
                     id: '#',
                     method: '請求方式',
@@ -1581,5 +1591,11 @@ export default {
         confirm: '确认',
         update: '更新',
         add: '添加'
+    },
+    notFound: {
+        title: '404 頁面不存在',
+        description: '我們無法找到您請求的頁面，它可能已經被刪除或連結有誤。如果您認為這是一個錯誤，請提交工單以練習我們。',
+        p1: '將在 {sec}s  後返回主頁，如果您的瀏覽器沒有響應，請點擊以下按鈕。',
+        manualBack: '返回主頁',
     }
 }
