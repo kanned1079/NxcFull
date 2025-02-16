@@ -23,7 +23,7 @@ const themeStore = useThemeStore()
 const tableRef = ref<DataTableInst>()
 let animated = ref<boolean>(false)
 
-let searchCode = ref<number>(0)
+// let searchCode = ref<number>(0)
 let pageCount = ref<number>(0)
 let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 20,
@@ -203,6 +203,7 @@ const columns = computed<DataTableColumns<ApiLog>>(() => [
 
 interface ApiReq {
   status200: number,
+  status401: number,
   status404: number,
   status500: number,
   login_req: number,
@@ -216,6 +217,7 @@ interface ApiReq {
 let apiLogList = ref<ApiLog[]>([])
 let apiReq = ref<ApiReq>({
   status200: 0,
+  status401: 0,
   status404: 0,
   status500: 0,
   login_req: 0,
@@ -242,9 +244,9 @@ const apiItems = computed<{
     unit: 'adminViews.queueMonit.api.items.notFound.unit',
   },
   {
-    title: 'adminViews.queueMonit.api.items.internalErr.title',
-    content: apiReq.value.status500,
-    unit: 'adminViews.queueMonit.api.items.internalErr.unit',
+    title: 'adminViews.queueMonit.api.items.unAuthorized.title',
+    content: apiReq.value.status401,
+    unit: 'adminViews.queueMonit.api.items.unAuthorized.unit',
   },
 ])
 
@@ -486,7 +488,7 @@ export default {
                       :to="apiReq.reg_req">
                   </n-number-animation>
                   <template #suffix>
-                    {{ t('adminViews.queueMonit.api.items.internalErr.unit') }}
+                    {{ t('adminViews.queueMonit.api.items.login2reg.unit') }}
                   </template>
                 </n-statistic>
               </div>

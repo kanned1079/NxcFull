@@ -680,6 +680,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 bodyColor: '#eff2f7',
                 modalColor: '#eff2f7',
                 tableColor: '#eff2f7',
+                primaryColorHover: '#6390b9',
             },
             Button: {
                 color: '#6390b9',
@@ -713,7 +714,13 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 bordered: '1px solid #6390b9',
             },
             Dropdown: {
-                color: '#fff'
+                color: '#fff',
+                borderFocus: '1px solid #6390b9',
+                borderHover: '1px solid #6390b9',
+            },
+            Select: {
+                borderFocus: '1px solid #6390b9',
+                borderHover: '1px solid #6390b9',
             }
         } as GlobalThemeOverrides)
     })

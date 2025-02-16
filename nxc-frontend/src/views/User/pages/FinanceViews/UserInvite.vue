@@ -17,7 +17,7 @@ import {
   handleGetMyInviteCode,
   handleGetMyInvitedUserList
 } from "@/api/user/invite";
-import {NButton, NIcon, NTag, useMessage, type DataTableColumns} from "naive-ui";
+import {NButton, NIcon, NTag, useMessage, type DataTableColumns, useDialog} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
@@ -27,6 +27,7 @@ const userInfoStore = useUserInfoStore();
 const appInfoStore = useAppInfosStore();
 const themeStore = useThemeStore();
 const message = useMessage();
+const dialog = useDialog();
 
 let animated = ref<boolean>(false);
 let listAnimated = ref<boolean>(false)
@@ -69,12 +70,31 @@ const columns = computed<DataTableColumns<MyInvitedUser>>(() => [
   },
 ]);
 
+let createMyCodeClick = () => {
+  dialog.info({
+    title: t('userInvite.generateCodeConfirm'),
+    content: t('userInvite.generateCodeHint'),
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+      marginTop: '20px',
+    },
+    onPositiveClick: () => callHandleCreateMyInviteCode(),
+  })
+}
+
 let callHandleCreateMyInviteCode = async () => {
   let data = await handleCreateMyInviteCode(userInfoStore.thisUser.id)
   if (data.code === 200) {
     console.log('created ok.');
     await callHandleGetMyInviteCode()
     await callHandleGetMyInvitedUserList()
+    // showCreateInviteCodeMention.value = false
+
   } else {
     message.error('创建失败' + data.msg || '');
   }
@@ -87,7 +107,6 @@ let callHandleGetInviteMsg = async () => {
     inviteMsg.value = data.invite_msg || ''
     // animated.value = true
   } else if (data.code === 404) {
-    console.log('无')
   } else {
     console.log(data.msg)
   }
@@ -101,7 +120,6 @@ let callHandleGetMyInviteCode = async () => {
     animated.value = true
     showTableLoading.value = false
   } else if (data.code === 404) {
-    console.log('无')
   } else {
     console.log(data.msg)
   }
@@ -109,7 +127,7 @@ let callHandleGetMyInviteCode = async () => {
 
 let callHandleGetMyInvitedUserList = async () => {
   let data = await handleGetMyInvitedUserList(userInfoStore.thisUser.id, dataSize.value.page, dataSize.value.pageSize);
-  if (data.code === 200) {
+  if (data && data.code === 200 && data.user_list) {
     listAnimated.value = true
     myInvitedUserList.value = []
     // console.log(data)
@@ -117,10 +135,11 @@ let callHandleGetMyInvitedUserList = async () => {
     data.user_list.forEach((item: MyInvitedUser) => myInvitedUserList.value.push(item))
     animated.value = true
   } else if (data.code === 404) {
-    console.log('无')
   } else {
     console.log(data.msg)
   }
+  // listAnimated.value = true
+
 }
 
 let faLink = computed(() => `${appInfoStore.appCommonConfig.app_url}/register?code=${myFaCode.value}`)
@@ -227,7 +246,7 @@ export default {
               type="primary"
               secondary
               size="small"
-              @click="showCreateInviteCodeMention=true"
+              @click="createMyCodeClick"
           >
             {{ myFaCode === '' ? t('userInvite.generateFaCode') : t('userInvite.flushFaCode') }}
           </n-button>
@@ -334,16 +353,16 @@ export default {
     </div>
   </transition>
 
-  <n-modal
-      v-model:show="showCreateInviteCodeMention"
-      preset="dialog"
-      :title="t('userInvite.generateCodeConfirm')"
-      :content="t('userInvite.generateCodeHint')"
-      :positive-text="t('userInvite.positiveClick')"
-      :negative-text="t('userInvite.negativeClick')"
-      @positive-click="callHandleCreateMyInviteCode"
-      @negative-click="showCreateInviteCodeMention=false"
-  />
+<!--  <n-modal-->
+<!--      v-model:show="showCreateInviteCodeMention"-->
+<!--      preset="dialog"-->
+<!--      :title="t('userInvite.generateCodeConfirm')"-->
+<!--      :content="t('userInvite.generateCodeHint')"-->
+<!--      :positive-text="t('userInvite.positiveClick')"-->
+<!--      :negative-text="t('userInvite.negativeClick')"-->
+<!--      @positive-click="callHandleCreateMyInviteCode"-->
+<!--      @negative-click="showCreateInviteCodeMention=false"-->
+<!--  />-->
 
 </template>
 

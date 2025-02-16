@@ -72,8 +72,6 @@ const settings: FrontendSetting[] = [
   },
 ];
 
-// TODO: 完善全球化 日文英文翻譯 保存函數統一使用saveField()方法
-
 const saveFiled = async (k: string, v: any) => {
   let updateResponse = await settingStore.saveOption('frontend', k, v)
   if (updateResponse.code === 200)

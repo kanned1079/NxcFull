@@ -603,12 +603,16 @@ export default {
 
         <!-- 密码 选填 -->
         <n-form-item :label="t('adminViews.userMgr.password')" path="password">
-          <n-input type="password" v-model:value="editUser.password"></n-input>
+          <n-input
+              :autofocus="false"
+              showPasswordOn="click"
+              type="password"
+              v-model:value="editUser.password" />
         </n-form-item>
 
         <!-- 用户邀请码 选填 -->
         <n-form-item :label="t('adminViews.userMgr.inviteCode')" path="invite_code">
-          <n-input v-model:value="editUser.invite_code"></n-input>
+          <n-input clearable v-model:value="editUser.invite_code"></n-input>
         </n-form-item>
 
         <!-- 是否将用户设置为管理员 必填 -->

@@ -56,14 +56,15 @@ message GetServerLiveStatusRequest {
 message GetServerLiveStatusResponse {
   int32 code = 1;
   int64 status200 = 2;
-  int64 status404 = 3;
-  int64 status500 = 4;
-  int64 login_req = 5;
-  int64 register_req = 6;
-  bytes api_log_list = 7;
-  int64 page_size = 8;
-  float table_size = 9;
-  int64 log_table_rows_count = 10;
+  int64 status401 = 3;
+  int64 status404 = 4;
+  int64 status500 = 5;
+  int64 login_req = 6;
+  int64 register_req = 7;
+  bytes api_log_list = 8;
+  int64 page_size = 9;
+  float table_size = 10;
+  int64 log_table_rows_count = 11;
 }
 
 message ClearPreviousApiLogRequest {

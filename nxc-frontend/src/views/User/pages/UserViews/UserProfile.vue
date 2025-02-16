@@ -204,7 +204,7 @@ let saveNewPasswordClick = async (e: MouseEvent) => {
   })
   if (await verifyOldPassword(userInfoStore.thisUser.email, modelRef.value.old_password.trim())) { // 等待验证旧密码的结果
     let data = await saveNewPassword(userInfoStore.thisUser.email, modelRef.value.new_password.trim())
-    if (data.code === 200 && data.updated as boolean) {
+    if (data && data.code === 200 && data.updated as boolean) {
       modelRef.value.old_password = ''
       modelRef.value.new_password = ''
       modelRef.value.new_password_again = ''
@@ -230,7 +230,7 @@ let callHandleSetup2FA = async () => {
   //     email: userInfoStore.thisUser.email,
   //   })
   let data = await handleSetup2FA(userInfoStore.thisUser.id, userInfoStore.thisUser.email)
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     console.log(data)
     url.value = data.url
     showModal.value = true
@@ -248,7 +248,7 @@ let twoFaCode = ref<string>('')
 // handleTest2FA 测试2FA可用性 如果可用则写入进数据库
 let callHandleTest2FA = async () => {
   let data = await handleTest2FA(userInfoStore.thisUser.id, userInfoStore.thisUser.email, twoFaCode.value.trim())
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     console.log('绑定2fa成功', data)
     showModal.value = false
     message.success('绑定两步验证成功')
@@ -261,7 +261,7 @@ let callHandleTest2FA = async () => {
 // handleCancelSetup2FA 删除redis中的新建临时2FA数据
 let callHandleCancelSetup2FA = async () => {
   let data = await handleCancelSetup2FA(userInfoStore.thisUser.email)
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     message.info(t('userProfile.disable2FaCancelled'))
   } else {
     message.error(t('userProfile.unknownErr') + data.msg || '')
@@ -273,7 +273,7 @@ let twoFAEnabled = ref<boolean>(false)
 // handleGet2FAStatus 测试2FA可用性 如果可用则写入进数据库
 let callHandleGet2FAStatus = async () => {
   let data = await handleGet2FAStatus(userInfoStore.thisUser.id)
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     twoFAEnabled.value = data.enabled as boolean
   } else {
     message.error(data.msg)
@@ -304,7 +304,7 @@ let handleCalTime = () => {
 
 let callHandleDisable2FA = async () => {
   let data = await handleDisable2FA(userInfoStore.thisUser.email)
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     message.info(t('userProfile.closed2FaHint'))
     // 再次查询2fa状态
     // await handleGet2FAStatus()
@@ -323,7 +323,7 @@ let handleClickToTopUp = () => {
 
 let callHandleDeleteMyAccount = async () => {
   let data = await handleDeleteMyAccount(userInfoStore.thisUser.id, true)
-  if (data.code === 200 && data.deleted) {
+  if (data && data.code === 200 && data.deleted) {
     message.success(computed(() => t('userProfile.deletedSuccessMsg')).value)
     setTimeout(() => {
       userInfoStore.logout()
@@ -358,7 +358,7 @@ let callCustomUploadAvatar = async ({
     onProgress({percent: 30})
 
     let data = await handleUploadAvatar(userInfoStore.thisUser.id, file.name, compressedFile)
-    if (data.code === 200) {
+    if (data && data.code === 200) {
       message.success(t('userProfile.secondary.mention.alterAvatarSuccess'))
       onProgress({percent: 95})
       setTimeout(() => {
@@ -378,7 +378,7 @@ let avatarData = ref<any>()
 let callGetUserAvatarByUserId = async () => {
   let data = await handleGetUserAvatar(userInfoStore.thisUser.id)
   if (data.code === 404) return message.warning('no avatar')
-  else if (data.code === 200) {
+  else if (data && data.code === 200) {
     avatarData.value = `data:image/jpeg;base64,${data.file_data}`
     // data.file_data 是头像的 Base64 编码，所以将其拼接成 data:image/jpeg;base64,xxx 的格式，以 Base64 URL 方式存入 avatarData.value。
   } else {
@@ -400,7 +400,7 @@ const callAlterUsername = async () => {
   if (newNameIsValid.value) {
   } else return message.warning(t('userProfile.secondary.mention.newNameIsNotValid'))
   let data = await handleAlterMyName(userInfoStore.thisUser.id, newName.value)
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     message.success(t('userProfile.secondary.mention.alterNameSuccess'))
     let isUpdated = await userInfoStore.updateUserInfo()
     console.log(isUpdated)

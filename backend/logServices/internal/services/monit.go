@@ -134,7 +134,7 @@ func (s *LogService) GetServerLiveStatus(ctx context.Context, request *pb.GetSer
 	oneWeekAgo := time.Now().AddDate(0, 0, -7).Format("2006-01-02 15:04:05")
 
 	// 定义计数变量
-	var status200count, status404count, status500count, loginReq, regReq, logTableRowsCount, totalCount int64
+	var status200count, status401count, status404count, status500count, loginReq, regReq, logTableRowsCount, totalCount int64
 	var tableSize float64
 
 	// 定义查询条件和对应的计数变量
@@ -145,6 +145,7 @@ func (s *LogService) GetServerLiveStatus(ctx context.Context, request *pb.GetSer
 	}{
 		{"status_code = ? AND created_at >= ?", []interface{}{http.StatusOK, oneWeekAgo}, &status200count},
 		{"status_code = ? AND created_at >= ?", []interface{}{http.StatusNotFound, oneWeekAgo}, &status404count},
+		{"status_code = ? AND created_at >= ?", []interface{}{http.StatusUnauthorized, oneWeekAgo}, &status401count},
 		{"status_code = ? AND created_at >= ?", []interface{}{http.StatusInternalServerError, oneWeekAgo}, &status500count},
 		{"path IN (?, ?) AND created_at >= ?", []interface{}{"/api/admin/v1/login", "/api/user/v1/login", oneWeekAgo}, &loginReq},
 		{"path = ? AND created_at >= ?", []interface{}{"/api/user/v1/register/register", oneWeekAgo}, &regReq},
@@ -204,6 +205,7 @@ func (s *LogService) GetServerLiveStatus(ctx context.Context, request *pb.GetSer
 	return &pb.GetServerLiveStatusResponse{
 		Code:              http.StatusOK,
 		Status200:         status200count,
+		Status401:         status401count,
 		Status404:         status404count,
 		Status500:         status500count,
 		LoginReq:          loginReq,

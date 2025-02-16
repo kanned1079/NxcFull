@@ -14,7 +14,7 @@ const i18nPrefix: string = 'notFound';
 const userInfoStore = useUserInfoStore();
 const router = useRouter();
 
-let secLeft = ref<number>(1000);
+let secLeft = ref<number>(5);
 let timer: number | undefined = undefined
 
 const callBack = () => {

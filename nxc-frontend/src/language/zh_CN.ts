@@ -182,10 +182,14 @@ export default {
                         title: '状态路径错误 (404)',
                         unit: '次',
                     },
-                    internalErr: {
-                        title: '服务器内部错误 (500)',
+                    unAuthorized: {
+                        title: '未授权访问 (401)',
                         unit: '次',
                     },
+                    // internalErr: {
+                    //     title: '服务器内部错误 (500)',
+                    //     unit: '次',
+                    // },
                     login2reg: {
                         title: '登录 / 注册',
                         unit: '次'
@@ -762,7 +766,7 @@ export default {
             description: '在這裡您可以為一些特定的節日等添加一些優惠券，它允許用戶在下單的時候使用並按照您設置的比例進行抵折優惠。',
             // addNewCoupon: '添加新優惠券',
             fetchErr: '獲取數據失敗請重試',
-            fetchPlanKvFailure: '獲取訂閱計畫列表失敗',
+            fetchPlanKvFailurese    : '獲取訂閱計畫列表失敗',
             table: {
                 id: '#',
                 enabled: '是否啟用',

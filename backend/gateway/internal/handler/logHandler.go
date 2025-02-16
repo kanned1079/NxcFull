@@ -43,6 +43,7 @@ func HandleGetSystemStatus(context *gin.Context) {
 		"code":                 http.StatusOK,
 		"msg":                  "success",
 		"status200":            resp.Status200,
+		"status401":            resp.Status401,
 		"status404":            resp.Status404,
 		"status500":            resp.Status500,
 		"login_req":            resp.LoginReq,
