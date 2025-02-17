@@ -1,7 +1,7 @@
 <LocalConfig>
   <rpc_config>
     <rpc_name>settingServices</rpc_name>
-    <listen_addr>localhost</listen_addr>
+    <listen_addr>0.0.0.0</listen_addr>
     <listen_port>50007</listen_port>
   </rpc_config>
   <etcd_config>

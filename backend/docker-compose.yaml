@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  couponservices:
+    image: couponservices:${TAG}
+    container_name: couponservices
+    network_mode: host
+
+  documentservices:
+    image: documentservices:${TAG}
+    container_name: documentservices
+    network_mode: host
+
+  groupservices:
+    image: groupservices:${TAG}
+    container_name: groupservices
+    network_mode: host
+
+  mailservices:
+    image: mailservices:${TAG}
+    container_name: mailservices
+    network_mode: host
+
+  noticeservices:
+    image: noticeservices:${TAG}
+    container_name: noticeservices
+    network_mode: host
+
+  subscribeservices:
+    image: subscribeservices:${TAG}
+    container_name: subscribeservices
+    network_mode: host
+
+  systemservices:
+    image: systemservices:${TAG}
+    container_name: systemservices
+    network_mode: host
+
+  userservices:
+    image: userservices:${TAG}
+    container_name: userservices
+    network_mode: host
+
+  orderservices:
+    image: orderservices:${TAG}
+    container_name: orderservices
+    network_mode: host
+
+  orderhandleservices:
+    image: orderhandleservices:${TAG}
+    container_name: orderhandleservices
+    network_mode: host
+
+  keyservices:
+    image: keyservices:${TAG}
+    container_name: keyservices
+    network_mode: host
+
+  tickethandleservices:
+    image: tickethandleservices:${TAG}
+    container_name: tickethandleservices
+    network_mode: host
+
+  logservices:
+    image: logservices:${TAG}
+    container_name: logservices
+    network_mode: host
+
+  gateway:
+    image: gateway:${TAG}
+    container_name: gateway
+    network_mode: host
+    depends_on:
+      - couponservices
+      - documentservices
+      - groupservices
+      - mailservices
+      - noticeservices
+      - subscribeservices
+      - systemservices
+      - userservices
+      - orderservices
+      - orderhandleservices
+      - keyservices
+      - tickethandleservices
+      - logservices
+    restart: always
+
+networks:
+  default:
+    external:
+      name: host

@@ -1,20 +1,26 @@
-# 使用轻量级 Alpine 镜像
+# 使用轻量级的基础镜像
 FROM alpine:latest
-
-# 设置时区（可选）
-RUN apk add --no-cache tzdata
 
 # 设置工作目录
 WORKDIR /app
 
-# 将本地编译的可执行文件复制到镜像中
-COPY ./build/gateway_linux_arm64 .
+# 定义构建时参数
+#ARG BINARY_NAME=services_platform_arch
+ARG PLATFORM_DIR=linux-arm64
 
-# 复制配置文件
-COPY ./config/config.yaml /app/config/config.yaml
+RUN echo "dir name is: ${PLATFORM_DIR}"
 
-# 暴露服务端口
-EXPOSE 8081
+# 复制编译好的二进制文件到容器
+COPY ./build/${PLATFORM_DIR}/exec /app/
 
-# 运行可执行文件
-CMD ["./gateway_linux_arm64"]
+# 复制配置文件到容器中
+#COPY ./config/config.xml /app/config/config.xml
+
+RUN ls -l .
+
+# 暴露端口
+#EXPOSE ${PORT}
+
+# 启动应用程序
+#CMD ["./${BINARY_NAME}"]
+CMD ["./exec"]

@@ -1,27 +1,27 @@
-# 使用 Go 官方镜像
-FROM golang:1.22-alpine
+# 使用轻量级的基础镜像
+FROM alpine:latest
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制 go.mod 和 go.sum 文件到工作目录中
-COPY ../../go.mod ../../go.sum ./
-#RUN
+# 定义构建时参数
+#ARG BINARY_NAME=services_platform_arch
+ARG PLATFORM_DIR=linux-arm64
+ARG PORT=50000
 
-# 下载依赖
-RUN go mod download
+RUN echo "dir name is: ${PLATFORM_DIR}"
 
-# 复制项目的所有文件到工作目录中
-COPY . .
+# 复制编译好的二进制文件到容器
+COPY ./build/${PLATFORM_DIR}/exec /app/
 
-# 将配置文件也复制到容器中
-COPY config/config.yaml /app/config/config.yaml
+# 复制配置文件到容器中
+COPY ./config/config.xml /app/config/config.xml
 
-# 编译应用程序
-RUN CGO_ENABLED=0 GOOS=linux go build -o couponservice ./command/server/main.go
+RUN ls -l .
 
-# 暴露端口（假设服务在8080端口上运行）
-EXPOSE 50006
+# 暴露端口
+EXPOSE ${PORT}
 
-# 启动微服务
-CMD ["./couponservice"]
+# 启动应用程序
+#CMD ["./${BINARY_NAME}"]
+CMD ["./exec"]
