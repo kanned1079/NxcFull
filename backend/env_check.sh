@@ -18,7 +18,7 @@ required_version="1.22.2"
 # 使用 `sort` 来比较版本号
 if [[ $(echo -e "$version_number\n$required_version" | sort -V | head -n1) == "$required_version" ]]; then
     echo "Golang version is greater than or equal to 1.22.2. Version: $version_number"
-    go run quickStartServices.go
+    # 接下来操作
 else
     echo "Golang version is less than 1.22.2. Version: $version_number"
     exit 2

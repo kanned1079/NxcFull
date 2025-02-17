@@ -20,12 +20,16 @@ const (
 )
 
 func init() {
-	if err := config.LocalCfg.Get("./config/db_credential.yaml"); err != nil {
+	//if err := config.LocalCfg.Get("./config/db_credential.yaml"); err != nil {
+	//	log.Println(err)
+	//	return
+	//}
+	if err := config.LocalCfg.GetFromArgs(); err != nil {
 		log.Println(err)
 		return
 	}
 	utils.ShowOK()
-	fmt.Println("Successfully loaded ./config/db_credential.yaml")
+	fmt.Println("Successfully filled or loaded ./config/db_credential.yaml")
 }
 
 func main() {
