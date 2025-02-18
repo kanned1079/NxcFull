@@ -5,7 +5,7 @@ import useThemeStore from "@/store/useThemeStore";
 import CommonHeader from "@/components/CommonHeader.vue"
 import CommonAside from "@/components/CommonAside.vue";
 import CommonContent from "@/components/CommonContent.vue";
-import {darkTheme, GlobalThemeOverrides, NConfigProvider} from 'naive-ui'
+import {darkTheme, type GlobalThemeOverrides, NConfigProvider} from 'naive-ui'
 // import {instance} from "@/axios";
 
 const themeOverrides: GlobalThemeOverrides = {

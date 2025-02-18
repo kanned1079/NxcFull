@@ -1,11 +1,6 @@
 // 创建一个路由并暴露
 import {createRouter, createWebHistory} from "vue-router";
 // 引入要呈现的组件
-import EtcdOptions from "@/views/EtcdOptions.vue";
-import MysqlOptions from "@/views/MysqlOptions.vue";
-import RedisOptions from "@/views/RedisOptions.vue";
-import MqOptions from "@/views/MqOptions.vue";
-import ApiOptions from "@/views/ApiOptions.vue";
 // 创建路由器
 const router = createRouter({
     // 配置对象
@@ -17,23 +12,23 @@ const router = createRouter({
         },
         {
             path: '/etcd',
-            component: EtcdOptions,
+            component: () => import("@/views/EtcdOptions.vue"),
         },
         {
             path: '/mysql',
-            component: MysqlOptions,
+            component: () => import("@/views/MysqlOptions.vue"),
         },
         {
             path: '/redis',
-            component: RedisOptions,
+            component: () => import("@/views/RedisOptions.vue"),
         },
         {
             path: '/api',
-            component: ApiOptions,
+            component: () => import("@/views/ApiOptions.vue"),
         },
         {
             path: '/mq',
-            component: MqOptions,
+            component: () => import("@/views/MqOptions.vue"),
         }
     ]
 })

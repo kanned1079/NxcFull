@@ -17,7 +17,7 @@ const router = useRouter()
 
 // const initialled = configStore.etcdClientIsInitialized as boolean
 
-let renderIcon = (icon: Component) => {
+let renderIcon = (icon: any) => {
   return () =>
       h('div', {style: {marginRight: '20px', display: 'flex', alignItems: 'center'}}, [
         h(NIcon, null, {default: () => h(icon)})
