@@ -9,6 +9,10 @@ import (
 // ClearTable 清除某一个表
 func ClearTable(tableName string) (err error) {
 	err = dao.Db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", tableName)).Error
+	if err == nil {
+		ShowOK()
+		fmt.Printf("Successfully cleared table %s.\n", tableName)
+	}
 	return
 }
 

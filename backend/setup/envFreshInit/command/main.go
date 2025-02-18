@@ -20,14 +20,14 @@ const (
 )
 
 func init() {
-	//if err := config.LocalCfg.Get("./config/db_credential.yaml"); err != nil {
-	//	log.Println(err)
-	//	return
-	//}
-	if err := config.LocalCfg.GetFromArgs(); err != nil {
+	if err := config.LocalCfg.Get("./config/db_credential.yaml"); err != nil {
 		log.Println(err)
 		return
 	}
+	//if err := config.LocalCfg.GetFromArgs(); err != nil {
+	//	log.Println(err)
+	//	return
+	//}
 	utils.ShowOK()
 	fmt.Println("Successfully filled or loaded ./config/db_credential.yaml")
 }
@@ -120,6 +120,15 @@ func main() {
 		utils.ShowOK()
 		fmt.Println("Successfully inserted settings to database.")
 	}
+	if err := setup.SetupPaymentSettings(); err != nil {
+		utils.ShowFailure()
+		log.Println("Failed to setup payment settings, please check the database configuration.")
+		return
+	} else {
+		utils.ShowOK()
+		fmt.Println("Successfully setup payment settings to database.")
+	}
+
 	utils.ShowOK()
 	fmt.Println("Congratulations on completing the first step of creating a database. Next, you need to create a default administrator.")
 	fmt.Println("ENTER STEP2---------->")
