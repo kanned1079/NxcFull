@@ -19,7 +19,21 @@ const (
 	ResetStyle = "\033[0m"    // 重置样式
 )
 
+var width int
+var err error
+
 func init() {
+	width, err = utils.GetTerminalWidthUnix()
+	if err != nil {
+		fmt.Printf("无法获取终端宽度: %v\n", err)
+		return
+	}
+
+	utils.ShowFigure("Setup", "1.0.2", "kanned1079")
+	//for i := 0; i < width/2; i++ {
+	//	fmt.Print("=")
+	//}
+	//fmt.Println()
 	if err := config.LocalCfg.Get("./config/db_credential.yaml"); err != nil {
 		log.Println(err)
 		return
@@ -34,11 +48,6 @@ func init() {
 
 func main() {
 
-	width, err := utils.GetTerminalWidthUnix()
-	if err != nil {
-		fmt.Printf("无法获取终端宽度: %v\n", err)
-		return
-	}
 	// 0.选择中文还是英文
 	//lang := chooseLanguage()
 
