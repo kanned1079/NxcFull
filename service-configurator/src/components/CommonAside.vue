@@ -89,7 +89,7 @@ export default {
 
 <template>
   <div class="root">
-    <n-card :embedded="true" :bordered="false" hoverable title="配置项" class="aside-card1"
+    <n-card :embedded="true" :bordered="true" hoverable title="配置项" class="aside-card1"
             content-style="padding: 5px">
       <n-menu
           v-model:value="themeStore.menuSelected"
@@ -101,7 +101,7 @@ export default {
     </n-card>
     <!--    <n-icon><mysqlIcon/></n-icon>-->
 
-    <n-card :embedded="true" :bordered="false" hoverable title="本地配置项" class="aside-card2"
+    <n-card :embedded="true" :bordered="true" hoverable title="本地配置项" class="aside-card2"
             content-style="padding: 5px">
       <div class="left-btn-items">
         <n-form-item label="启用深色" label-placement="left">

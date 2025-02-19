@@ -63,6 +63,8 @@ service SettingsService {
   rpc GetAppDownloadLink(GetAppDownloadLinkRequest) returns (GetAppDownloadLinkResponse);
 
   rpc GetServerLiveStatus(GetServerLiveStatusRequest) returns (GetServerLiveStatusResponse);
+
+  rpc GetAdminDashboardShowMessage(GetAdminDashboardShowMessageRequest) returns (GetAdminDashboardShowMessageResponse);
 }
 
 // 更新单个设置项的请求
@@ -373,4 +375,13 @@ message GetServerLiveStatusResponse {
   int64 register_req = 6;
   bytes api_log_list = 7;
   int64 page_size = 8;
+}
+
+message GetAdminDashboardShowMessageRequest {
+
+}
+
+message GetAdminDashboardShowMessageResponse {
+  int32 code = 1;
+  string msg = 2;
 }

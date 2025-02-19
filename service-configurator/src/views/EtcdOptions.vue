@@ -39,13 +39,13 @@ export default {
 
 <template>
   <div class="root" style="">
-    <n-card class="card-bg" :embedded="true" :bordered="false" hoverable title="Etcd配置"></n-card>
+    <n-card class="card-bg" :embedded="true" :bordered="true" hoverable title="Etcd配置"></n-card>
 
-    <n-alert :bordered="false" type="info" style="margin: 20px 0">
+    <n-alert :bordered="true" type="info" style="margin: 20px 0">
       Etcd的配置仅保存在本地LocalStorage，配置其他选项需要先提交Etcd配置进行初始化。
     </n-alert>
 
-    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="false" hoverable>
+    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="true" hoverable>
 
 
       <div class="item">
@@ -84,7 +84,7 @@ export default {
           <span class="describe">如果启用了认证，则需要提供密码以通过认证</span>
         </div>
         <div class="r-content">
-          <n-input v-model:value="configStore.etcdConfig.password" class="inp" size="large" placeholder="输入密码（非必填）"></n-input>
+          <n-input type="password" v-model:value="configStore.etcdConfig.password" class="inp" size="large" placeholder="输入密码（非必填）"></n-input>
         </div>
       </div>
 

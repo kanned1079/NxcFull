@@ -53,9 +53,9 @@ export default {
 
 <template>
   <div class="root">
-    <n-card class="card-bg" :embedded="true" :bordered="false" hoverable title="ApiServer"></n-card>
+    <n-card class="card-bg" :embedded="true" :bordered="true" hoverable title="ApiServer"></n-card>
 
-    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="false" hoverable>
+    <n-card class="card-bg" style="margin-top: 20px" :embedded="true" :bordered="true" hoverable>
 
       <div class="item">
         <div class="l-content">

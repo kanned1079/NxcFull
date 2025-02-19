@@ -25,11 +25,11 @@ var err error
 func init() {
 	width, err = utils.GetTerminalWidthUnix()
 	if err != nil {
-		fmt.Printf("无法获取终端宽度: %v\n", err)
+		fmt.Printf("failure get width of terminal: %v\n", err)
 		return
 	}
 
-	utils.ShowFigure("Setup", "1.0.2", "kanned1079")
+	utils.ShowFigure("env setup", "1.0.2", "kanned1079")
 	//for i := 0; i < width/2; i++ {
 	//	fmt.Print("=")
 	//}

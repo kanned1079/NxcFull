@@ -297,26 +297,51 @@ let reloadCharts = () => {
   }
 }
 
-let usersInfo = ref<{ name: string; data: number }[]>([
+interface MiscellaneousConfig {
+  userAll: number;
+  userActive: number;
+  userInactive: number;
+  userBlocked: number;
+  serverTime: string;
+  apiServerStatus: boolean;
+  mysqlServerStatus: boolean;
+  osType: string;
+  osArch: string;
+}
+
+let miscellaneousConfig = ref<MiscellaneousConfig>({
+  userAll: 0,
+  userActive: 0,
+  userInactive: 0,
+  userBlocked: 0,
+  serverTime: '',
+  apiServerStatus: true,
+  mysqlServerStatus: true,
+  osType: '',
+  osArch: '',
+})
+
+// TODO
+let usersInfo = computed<{ name: string; data: number }[]>(() => [
   {
     name: '总注册用户数',
-    data: 2642,
+    data: miscellaneousConfig.value.userAll,
   },
   {
     name: '活跃用户数',
-    data: 82,
+    data: miscellaneousConfig.value.userActive,
   },
   {
     name: '非活跃用户数',
-    data: 24,
+    data: miscellaneousConfig.value.userInactive,
   },
   {
     name: '封禁或注销',
-    data: 13,
+    data: miscellaneousConfig.value.userInactive,
   }
 ])
 
-let generalInfo = ref<{ name: string; data: string }[]>([
+let generalInfo = computed<{ name: string; data: string }[]>( () => [
   {
     name: '浏览器时间',
     data: computed(() => {
