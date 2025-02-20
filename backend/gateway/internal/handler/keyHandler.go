@@ -297,3 +297,44 @@ func GetAllActivateLogByAdmin(context *gin.Context) {
 		"page_count": resp.PageCount,
 	})
 }
+
+func HandleGetAllKeysByAdmin(context *gin.Context) {
+	err, page, size := GetPage2SizeFromQuery(context)
+	keyContent := context.Query("key_content")
+	keyId, err := strconv.ParseInt(context.Query("key_id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "Bad Request",
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.GetAllKeysByAdminDesc(sysContext.Background(), &pb.GetAllKeysByAdminDescRequest{
+		Page:             page,
+		Size:             size,
+		SearchKeyId:      keyId,
+		SearchKeyContent: keyContent,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	var keysMap []map[string]any
+	err = json.Unmarshal(resp.Keys, &keysMap)
+	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"keys":       keysMap,
+		"page_count": resp.PageCount,
+	})
+}

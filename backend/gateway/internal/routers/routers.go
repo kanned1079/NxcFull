@@ -119,6 +119,7 @@ func StartApiGateways() {
 		adminAuthorized.PATCH("payment", handler.HandleSwitchPaymentMethodEnableBySystemName)     // 切换是否启用支付方式
 
 		adminAuthorized.GET("activation", handler.GetAllActivateLogByAdmin)
+		adminAuthorized.GET("keys", handler.HandleGetAllKeysByAdmin)
 
 	}
 

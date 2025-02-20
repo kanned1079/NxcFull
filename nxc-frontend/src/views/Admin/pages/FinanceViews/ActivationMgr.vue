@@ -261,7 +261,7 @@ const columns = computed<DataTableColumns<ActivateRecord>>(() => [
           secondary: true,
           type: 'primary',
           bordered: false,
-          onClick: () => showDetails(row),
+          onClick: () => router.push({name: 'adminKeysMgr', params: {key_id: row.key_id}}),
         }, {
           default: () => t('adminViews.activation.turn2keyPage'),
         }),
@@ -385,7 +385,7 @@ export default {
           <refreshIcon/>
         </n-icon>
       </template>
-      {{ '重置搜索' }}
+      {{ t('adminViews.orderMgr.resetSearch') }}
     </n-button>
   </PageHead>
 

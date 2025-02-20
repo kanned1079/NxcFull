@@ -42,7 +42,8 @@ onMounted(() => {
 });
 
 onBeforeMount(() => {
-  themeStore.setThemeFromSetting()
+  document.title = appInfosStore.appCommonConfig.app_name || 'App'  // 先设置页面标题
+  themeStore.setThemeFromSetting()  // 再应用主题
 })
 
 onBeforeUnmount(() => {

@@ -128,7 +128,8 @@ const adminRoutes: RouteRecordRaw[] = [
                 component: () => import("@/views/Admin/pages/FinanceViews/ActivationMgr.vue"),
             },
             {
-                path: 'key',
+                name: 'adminKeysMgr',
+                path: 'key/:key_id?',
                 component: () => import("@/views/Admin/pages/FinanceViews/KeyMgr.vue"),
             }
 

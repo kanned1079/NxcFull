@@ -1,0 +1,18 @@
+import instance from "@/axios/index"
+
+export const handleGetAllKeysByAdmin = async (page: number, size: number, search_key_id?: number, search_key_content?: string) => {
+    try {
+        let {data} = await instance.get('/api/admin/v1/keys', {
+            params: {
+                page: page,
+                size: size,
+                key_id: search_key_id || 0,
+                key_content: search_key_content || '',
+            }
+        })
+        return data
+    } catch (err: any) {
+        console.error(err)
+        return false
+    }
+}

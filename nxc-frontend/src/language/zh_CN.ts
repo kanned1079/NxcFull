@@ -937,6 +937,25 @@ export default {
             keyMgr: '密鑰管理',
             enableKey: '啟用密鑰',
             disableKey: '禁用密鑰',
+            table: {
+                isValid: '是否有效',
+                isUsed: '是否使用',
+                yes: '是',
+                no: '否',
+                ok: '正常',
+                blocked: '禁用狀態',
+                unUsed: '未使用',
+                used: '已使用',
+            },
+            searchModal: {
+                searchMethod: '查詢方式',
+                byId: '通過ID進行查詢',
+                byContent: '通過密鑰進行查詢（模糊）',
+                keyId: '密鑰ID',
+                idPlaceholder:'在這裡輸入密鑰的ID',
+                keyContent: '密鑰碼',
+                contentPlaceholder: '在這裡輸入密鑰的部分內容'
+            }
         },
         noticeMgr: {
             title: '公告管理',

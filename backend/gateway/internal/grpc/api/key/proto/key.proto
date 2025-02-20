@@ -165,7 +165,8 @@ message AlterKeyBindRemarkResponse {
 message GetAllKeysByAdminDescRequest {
   int64 page = 1;
   int64 size = 2;
-  string email = 3;
+  int64 search_key_id = 3;
+  string search_key_content = 4;
 }
 
 message GetAllKeysByAdminDescResponse {
