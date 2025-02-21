@@ -339,6 +339,7 @@ let handleCommitNewRemark = async () => {
 
 
 onBeforeMount(() => {
+  themeStore.breadcrumb = t('adminViews.activation.activateLog')
   themeStore.userPath = '/dashboard/activation'
   themeStore.menuSelected = 'activate-manager'
 })
@@ -433,7 +434,7 @@ export default {
             :data="activateRecordList"
             :pagination="false"
             :bordered="true"
-            :scroll-x="1000"
+            :scroll-x="1600"
         />
       </n-card>
       <DataTableSuffix

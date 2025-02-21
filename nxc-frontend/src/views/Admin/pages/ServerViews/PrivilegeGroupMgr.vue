@@ -224,6 +224,7 @@ let submitUpdate = async () => {
 }
 
 onBeforeMount(() => {
+  themeStore.breadcrumb = t('adminViews.groupMgr.title')
   themeStore.menuSelected = 'privilege-group-mgr'
 })
 

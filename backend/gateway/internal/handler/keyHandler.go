@@ -53,15 +53,15 @@ func HandleGetAllMyKeys(context *gin.Context) {
 		})
 		return
 	}
-	log.Println("Unmarshal")
-	var keyMap []map[string]any
-	if json.Unmarshal(resp.Keys, &keyMap) != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//log.Println("Unmarshal")
+	//var keyMap []map[string]any
+	//if json.Unmarshal(resp.Keys, &keyMap) != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	//log.Println(keyMap)
 	//for k, v := range keyMap {
 	//	log.Println(k, v)
@@ -69,7 +69,7 @@ func HandleGetAllMyKeys(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
 		"msg":        resp.Msg,
-		"my_keys":    keyMap,
+		"my_keys":    json.RawMessage(resp.Keys),
 		"page_count": resp.PageCount,
 	})
 
@@ -281,19 +281,19 @@ func GetAllActivateLogByAdmin(context *gin.Context) {
 		})
 		return
 	}
-	var logMap []map[string]any
-	err = json.Unmarshal(resp.Log, &logMap)
-	if err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var logMap []map[string]any
+	//err = json.Unmarshal(resp.Log, &logMap)
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
 		"msg":        resp.Msg,
-		"log":        logMap,
+		"log":        json.RawMessage(resp.Log),
 		"page_count": resp.PageCount,
 	})
 }
@@ -322,9 +322,39 @@ func HandleGetAllKeysByAdmin(context *gin.Context) {
 		})
 		return
 	}
-	var keysMap []map[string]any
-	err = json.Unmarshal(resp.Keys, &keysMap)
+	//var keysMap []map[string]any
+	//err = json.Unmarshal(resp.Keys, &keysMap)
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "gateway " + err.Error(),
+	//	})
+	//	return
+	//}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"msg":        resp.Msg,
+		"keys":       json.RawMessage(resp.Keys),
+		"page_count": resp.PageCount,
+	})
+}
+
+func HandleAlterKeyIsValidByAdmin(context *gin.Context) {
+	userId, err := strconv.ParseInt(context.Query("user_id"), 10, 64)
+	keyId, err := strconv.ParseInt(context.Query("key_id"), 10, 64)
 	if err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest,
+			"msg":  "Bad Request: " + err.Error(),
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.AlterKeyIsValidByAdmin(sysContext.Background(), &pb.AlterKeyIsValidByAdminRequest{
+		UserId: userId,
+		KeyId:  keyId,
+	})
+
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
@@ -332,9 +362,7 @@ func HandleGetAllKeysByAdmin(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{
-		"code":       resp.Code,
-		"msg":        resp.Msg,
-		"keys":       keysMap,
-		"page_count": resp.PageCount,
+		"code": resp.Code,
+		"msg":  resp.Msg,
 	})
 }

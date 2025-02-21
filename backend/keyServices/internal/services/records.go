@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"gorm.io/gorm"
 	pb "keyServices/api/proto"
 	"keyServices/internal/dao"
 	"keyServices/internal/model"
@@ -304,5 +305,21 @@ func (s *KeyServices) AlterKeyBindRemark(ctx context.Context, request *pb.AlterK
 	return &pb.AlterKeyBindRemarkResponse{
 		Code: code,
 		Msg:  msg,
+	}, nil
+}
+
+func (s *KeyServices) AlterKeyIsValidByAdmin(ctx context.Context, request *pb.AlterKeyIsValidByAdminRequest) (*pb.AlterKeyIsValidByAdminResponse, error) {
+	if result := dao.Db.Model(&model.ActiveOrders{}).
+		Where("`key_id` = ?", request.KeyId).
+		Update("is_valid", gorm.Expr("NOT `is_valid`")); result.RowsAffected == 0 {
+		return &pb.AlterKeyIsValidByAdminResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "error: " + result.Error.Error(),
+		}, nil
+	}
+	utils.ClearUserKeyCache(request.UserId)
+	return &pb.AlterKeyIsValidByAdminResponse{
+		Code: http.StatusOK,
+		Msg:  "success",
 	}, nil
 }

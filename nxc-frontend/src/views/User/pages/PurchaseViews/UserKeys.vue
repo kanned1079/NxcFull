@@ -284,7 +284,7 @@ export default {
         class="details-card"
         :title="t('userKeys.keyDetail')"
         :bordered="false"
-        size="huge"
+        size="medium"
         role="dialog"
         aria-modal="true"
     >

@@ -31,6 +31,7 @@ const (
 	KeyService_GetActivateLogByAdmin_FullMethodName       = "/key.KeyService/GetActivateLogByAdmin"
 	KeyService_AlterKeyValidInfoByAdmin_FullMethodName    = "/key.KeyService/AlterKeyValidInfoByAdmin"
 	KeyService_GetAllKeysByAdminDesc_FullMethodName       = "/key.KeyService/GetAllKeysByAdminDesc"
+	KeyService_AlterKeyIsValidByAdmin_FullMethodName      = "/key.KeyService/AlterKeyIsValidByAdmin"
 )
 
 // KeyServiceClient is the client API for KeyService service.
@@ -57,6 +58,7 @@ type KeyServiceClient interface {
 	AlterKeyValidInfoByAdmin(ctx context.Context, in *AlterKeyValidInfoByAdminRequest, opts ...grpc.CallOption) (*AlterKeyValidInfoByAdminResponse, error)
 	// Admin
 	GetAllKeysByAdminDesc(ctx context.Context, in *GetAllKeysByAdminDescRequest, opts ...grpc.CallOption) (*GetAllKeysByAdminDescResponse, error)
+	AlterKeyIsValidByAdmin(ctx context.Context, in *AlterKeyIsValidByAdminRequest, opts ...grpc.CallOption) (*AlterKeyIsValidByAdminResponse, error)
 }
 
 type keyServiceClient struct {
@@ -187,6 +189,16 @@ func (c *keyServiceClient) GetAllKeysByAdminDesc(ctx context.Context, in *GetAll
 	return out, nil
 }
 
+func (c *keyServiceClient) AlterKeyIsValidByAdmin(ctx context.Context, in *AlterKeyIsValidByAdminRequest, opts ...grpc.CallOption) (*AlterKeyIsValidByAdminResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlterKeyIsValidByAdminResponse)
+	err := c.cc.Invoke(ctx, KeyService_AlterKeyIsValidByAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KeyServiceServer is the server API for KeyService service.
 // All implementations must embed UnimplementedKeyServiceServer
 // for forward compatibility.
@@ -211,6 +223,7 @@ type KeyServiceServer interface {
 	AlterKeyValidInfoByAdmin(context.Context, *AlterKeyValidInfoByAdminRequest) (*AlterKeyValidInfoByAdminResponse, error)
 	// Admin
 	GetAllKeysByAdminDesc(context.Context, *GetAllKeysByAdminDescRequest) (*GetAllKeysByAdminDescResponse, error)
+	AlterKeyIsValidByAdmin(context.Context, *AlterKeyIsValidByAdminRequest) (*AlterKeyIsValidByAdminResponse, error)
 	mustEmbedUnimplementedKeyServiceServer()
 }
 
@@ -256,6 +269,9 @@ func (UnimplementedKeyServiceServer) AlterKeyValidInfoByAdmin(context.Context, *
 }
 func (UnimplementedKeyServiceServer) GetAllKeysByAdminDesc(context.Context, *GetAllKeysByAdminDescRequest) (*GetAllKeysByAdminDescResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllKeysByAdminDesc not implemented")
+}
+func (UnimplementedKeyServiceServer) AlterKeyIsValidByAdmin(context.Context, *AlterKeyIsValidByAdminRequest) (*AlterKeyIsValidByAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AlterKeyIsValidByAdmin not implemented")
 }
 func (UnimplementedKeyServiceServer) mustEmbedUnimplementedKeyServiceServer() {}
 func (UnimplementedKeyServiceServer) testEmbeddedByValue()                    {}
@@ -494,6 +510,24 @@ func _KeyService_GetAllKeysByAdminDesc_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KeyService_AlterKeyIsValidByAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AlterKeyIsValidByAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).AlterKeyIsValidByAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: KeyService_AlterKeyIsValidByAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).AlterKeyIsValidByAdmin(ctx, req.(*AlterKeyIsValidByAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // KeyService_ServiceDesc is the grpc.ServiceDesc for KeyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -548,6 +582,10 @@ var KeyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllKeysByAdminDesc",
 			Handler:    _KeyService_GetAllKeysByAdminDesc_Handler,
+		},
+		{
+			MethodName: "AlterKeyIsValidByAdmin",
+			Handler:    _KeyService_AlterKeyIsValidByAdmin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

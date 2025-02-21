@@ -333,7 +333,7 @@ func (s *UserService) UpdateUserInfoAdmin(ctx context.Context, request *pb.Updat
 	}
 
 	var user model.User
-	if err := tx.Where("id = ?", request.Id).First(&user).Error; err != nil {
+	if err := tx.Where("`id` = ?", request.Id).First(&user).Error; err != nil {
 		tx.Rollback()
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return &pb.UpdateUserInfoAdminResponse{
@@ -356,7 +356,13 @@ func (s *UserService) UpdateUserInfoAdmin(ctx context.Context, request *pb.Updat
 	user.IsStaff = request.IsStaff
 	user.Balance = request.Balance
 
-	if err := tx.Model(&model.User{}).Where("id = ?", request.Id).Updates(&user).Error; err != nil {
+	//if err := tx.Model(&model.User{}).Where("`id` = ?", request.Id).Updates(&user).Error; err != nil {
+	if err := tx.Model(&model.User{}).Where("`id` = ?", request.Id).Updates(map[string]any{
+		"invite_code": user.InviteCode,
+		"is_admin":    user.IsAdmin,
+		"is_staff":    user.IsStaff,
+		"balance":     user.Balance,
+	}).Error; err != nil {
 		tx.Rollback()
 		log.Println("更新用户信息失败:", err)
 		return &pb.UpdateUserInfoAdminResponse{
@@ -369,7 +375,7 @@ func (s *UserService) UpdateUserInfoAdmin(ctx context.Context, request *pb.Updat
 	// 更新密码（如果有）
 	if request.Password != "" {
 		var userAuth model.Auth
-		if err := tx.Where("email = ?", user.Email).First(&userAuth).Error; err != nil {
+		if err := tx.Where("`email` = ?", user.Email).First(&userAuth).Error; err != nil {
 			tx.Rollback()
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return &pb.UpdateUserInfoAdminResponse{

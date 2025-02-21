@@ -33,27 +33,28 @@ let dataSize = ref<{ pageSize: number, page: number }>({
 let retryTestLatency = ref<boolean>(false)
 let latencyTestIntervalId = ref<undefined | number>(undefined)
 let latency = ref<number>(-1)
+let testStartTime: Date | null | undefined = null;
+let testEndTime: Date | null | undefined = null;
+
 const callTestConnLatency = async () => {
   retryTestLatency.value = false;
-  let testStartTime: Date | null | undefined = null;
-  let testEndTime: Date | null | undefined = null;
-
   // 使用一个标志来避免请求堆积
   let isTesting = false;
-
-  // 定时器 每隔 3 秒测试连接并更新延迟
-  latencyTestIntervalId.value = setInterval(async () => {
-    if (isTesting) return; // 如果上一个请求还没有完成，跳过当前请求
-    isTesting = true;
-
-    testStartTime = new Date(); // 每次请求前记录开始时间
-
+  const runTest = async () => {
     if (await handleTestServerLatency()) {
       testEndTime = new Date();
       latency.value = testEndTime.getTime() - testStartTime.getTime(); // 计算请求的延迟时间（毫秒）
     } else {
       latency.value = -1; // 如果请求失败，设置延迟为 -1
     }
+  }
+  // 定时器 每隔 3 秒测试连接并更新延迟
+  latencyTestIntervalId.value = setInterval(async () => {
+    if (isTesting) return; // 如果上一个请求还没有完成，跳过当前请求
+    isTesting = true;
+
+    testStartTime = new Date(); // 每次请求前记录开始时间
+    await runTest()
 
     isTesting = false; // 请求完成，允许下一次请求
   }, 1500);
@@ -250,9 +251,7 @@ const apiItems = computed<{
   },
 ])
 
-const downloadCsv = () => {
-  tableRef.value?.downloadCsv({fileName: 'data-table'})
-}
+const downloadCsv = () => tableRef.value?.downloadCsv({fileName: 'data-table'})
 
 const callFetchServerStatus = async () => {
   animated.value = false
@@ -292,7 +291,7 @@ const confirmDeleteLogWarn = () => {
       marginTop: '20px',
     },
     contentStyle: {
-     marginTop: '20px',
+      marginTop: '20px',
     },
     onPositiveClick: () => callDeletePreviousLog(),
   })
@@ -318,7 +317,6 @@ const confirmExportLogMention = () => {
 }
 
 
-
 onMounted(() => {
   themeStore.contentPath = '/admin/dashboard/monitor'
   callTestConnLatency()
@@ -340,6 +338,7 @@ onBeforeMount(() => {
   // intervalId.value = setInterval(() => {
   //   getSysInfo()
   // }, 3000)
+
 })
 
 onUnmounted(() => {

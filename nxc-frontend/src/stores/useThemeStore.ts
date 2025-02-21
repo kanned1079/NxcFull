@@ -624,6 +624,7 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
                 tableColor: 'rgba(40, 41, 41, 1)',
                 tableHeaderColor: 'rgba(40, 41, 41, 1)',
                 tableColorHover: 'rgba(40, 41, 41, 0.5)',
+                primaryColorHover: '#4f7698',
             },
             Button: {
                 color: '#4f7698',

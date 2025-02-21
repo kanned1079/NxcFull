@@ -19,7 +19,7 @@ export default {
         v-show="!themeStore.menuCollapsed"
         content-style="padding: 0px;"
         :collapsed-width="64"
-        :width="240"
+        style="width: auto"
         :collapsed="themeStore.menuCollapsed"
     >
       <CommonAside></CommonAside>

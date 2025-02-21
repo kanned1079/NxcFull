@@ -561,19 +561,19 @@ func HandleGetAllUsers(context *gin.Context) {
 		})
 		return
 	}
-	var userMap []map[string]interface{}
-	err = json.Unmarshal(resp.Users, &userMap)
-	if err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var userMap []map[string]interface{}
+	//err = json.Unmarshal(resp.Users, &userMap)
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
 		"msg":        resp.Msg,
-		"users":      userMap,
+		"users":      json.RawMessage(resp.Users),
 		"page_count": resp.PageCount,
 	})
 
@@ -627,6 +627,7 @@ func HandleUpdateUserInfoByIdFromAdmin(context *gin.Context) {
 		})
 		return
 	}
+	//log.Println(postData)
 	//log.Println(postData)
 	resp, err := grpcClient.UserServiceClient.UpdateUserInfoAdmin(sysContext.Background(), &pb.UpdateUserInfoAdminRequest{
 		Id:         postData.Id,

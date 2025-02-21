@@ -2,6 +2,7 @@
 import {defineComponent} from 'vue'
 import {useRouter} from 'vue-router'
 import useThemeStore from '@/stores/useThemeStore'
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import theme from "@/stores/useThemeStore";
 
 const router = useRouter()
@@ -27,7 +28,7 @@ export default {
 <div class="root" @click="backDashBoard">
   <div class="txt-root">
     <button class="btn">
-      <p class="txt">Nxc Networks</p>
+      <p class="txt">{{ useAppInfosStore().appCommonConfig.app_name }}</p>
     </button>
   </div>
 </div>

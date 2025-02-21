@@ -120,6 +120,7 @@ func StartApiGateways() {
 
 		adminAuthorized.GET("activation", handler.GetAllActivateLogByAdmin)
 		adminAuthorized.GET("keys", handler.HandleGetAllKeysByAdmin)
+		adminAuthorized.DELETE("keys", handler.HandleAlterKeyIsValidByAdmin)
 
 	}
 

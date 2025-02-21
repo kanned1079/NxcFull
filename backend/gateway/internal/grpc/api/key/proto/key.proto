@@ -30,6 +30,7 @@ service KeyService {
 
   // Admin
   rpc GetAllKeysByAdminDesc(GetAllKeysByAdminDescRequest) returns (GetAllKeysByAdminDescResponse);
+  rpc AlterKeyIsValidByAdmin(AlterKeyIsValidByAdminRequest) returns (AlterKeyIsValidByAdminResponse);
 
 }
 
@@ -185,6 +186,18 @@ message AlterKeyValidInfoByAdminRequest {
 }
 
 message AlterKeyValidInfoByAdminResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+//
+
+message AlterKeyIsValidByAdminRequest {
+  int64 key_id = 1;
+  int64 user_id = 2;
+}
+
+message AlterKeyIsValidByAdminResponse {
   int32 code = 1;
   string msg = 2;
 }

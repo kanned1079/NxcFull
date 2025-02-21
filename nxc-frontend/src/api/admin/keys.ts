@@ -16,3 +16,18 @@ export const handleGetAllKeysByAdmin = async (page: number, size: number, search
         return false
     }
 }
+
+export const handleBlockKeyById = async (userId: number, keyId: number) => {
+    try {
+        let {data} = await instance.delete('/api/admin/v1/keys', {
+            params: {
+                user_id: userId,
+                key_id: keyId,
+            }
+        })
+        return data
+    } catch (err: any) {
+        console.error(err)
+        return false
+    }
+}

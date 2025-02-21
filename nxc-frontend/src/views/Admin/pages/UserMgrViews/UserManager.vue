@@ -489,7 +489,7 @@ export default {
             :bordered="false"
             :columns="columns"
             :data="users"
-            :scroll-x="1000"
+            :scroll-x="1600"
         />
       </n-card>
 

@@ -331,6 +331,7 @@ func (s *KeyServices) GetAllKeysByAdminDesc(ctx context.Context, request *pb.Get
 	var responseDataList []struct {
 		OrderId             string    `json:"order_id"`
 		Email               string    `json:"email"`
+		UserId              int64     `json:"user_id"`
 		KeyId               int64     `json:"key_id"`
 		Key                 string    `json:"key"`
 		IsValid             bool      `json:"is_valid"`
@@ -345,8 +346,8 @@ func (s *KeyServices) GetAllKeysByAdminDesc(ctx context.Context, request *pb.Get
 
 	// 构建查询的基本条件
 	query := dao.Db.Table(activeOrdersTable).
-		Select(fmt.Sprintf("%s.order_id, %s.email, %s.key_id, %s.plan_id, %s.client_id, %s.key, %s.is_valid, %s.is_used, %s.created_at, %s.expiration_date, %s.name AS plan_name",
-			activeOrdersTable, activeOrdersTable, activeOrdersTable, activeOrdersTable, keysTable, keysTable, activeOrdersTable, activeOrdersTable, keysTable,
+		Select(fmt.Sprintf("%s.user_id, %s.order_id, %s.email, %s.key_id, %s.plan_id, %s.client_id, %s.key, %s.is_valid, %s.is_used, %s.created_at, %s.expiration_date, %s.name AS plan_name",
+			activeOrdersTable, activeOrdersTable, activeOrdersTable, activeOrdersTable, activeOrdersTable, keysTable, keysTable, activeOrdersTable, activeOrdersTable, keysTable,
 			activeOrdersTable, plansTable)).
 		Joins(fmt.Sprintf("JOIN `%s` ON %s.key_id = `%s`.id", keysTable, activeOrdersTable, keysTable)).
 		Joins(fmt.Sprintf("JOIN `%s` ON %s.plan_id = `%s`.id", plansTable, activeOrdersTable, plansTable)).
@@ -358,7 +359,7 @@ func (s *KeyServices) GetAllKeysByAdminDesc(ctx context.Context, request *pb.Get
 		query = query.Where(fmt.Sprintf("%s.key_id = ?", activeOrdersTable), request.SearchKeyId)
 	} else if len(request.SearchKeyContent) > 0 {
 		// 如果 SearchKeyContent 不为空，则进行模糊查询
-		query = query.Where(fmt.Sprintf("%s.key LIKE ?", activeOrdersTable), "%"+request.SearchKeyContent+"%")
+		query = query.Where(fmt.Sprintf("%s.key LIKE ?", keysTable), "%"+request.SearchKeyContent+"%")
 	}
 
 	// 分页查询
@@ -371,6 +372,16 @@ func (s *KeyServices) GetAllKeysByAdminDesc(ctx context.Context, request *pb.Get
 		return &pb.GetAllKeysByAdminDescResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "查询错误" + result.Error.Error(),
+		}, nil
+	}
+
+	// 如果查询结果为空，返回空数组
+	if len(responseDataList) == 0 {
+		return &pb.GetAllKeysByAdminDescResponse{
+			Code:      http.StatusOK,
+			Msg:       "success",
+			Keys:      []byte("[]"), // 返回空数组
+			PageCount: 0,
 		}, nil
 	}
 

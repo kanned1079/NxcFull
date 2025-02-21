@@ -428,7 +428,7 @@ export default {
               :data="couponList"
               :pagination="false"
               :bordered="true"
-              :scroll-x="1000"
+              :scroll-x="1600"
           />
         </n-spin>
 

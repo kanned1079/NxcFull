@@ -381,7 +381,7 @@ export default {
       @positive-click="submitModal"
       @negative-click="closeModal"
       :show-icon="false"
-      :block-scroll="1000"
+      :block-scroll="1600"
   >
     <!--          pass-->
     <div style="margin-top: 30px"></div>

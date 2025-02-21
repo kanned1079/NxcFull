@@ -549,7 +549,7 @@ export default {
             size="medium"
             :columns="columns"
             :data="paymentStore.plan_list"
-            scroll-x="1000"
+            :scroll-x="1600"
         />
       </n-card>
 

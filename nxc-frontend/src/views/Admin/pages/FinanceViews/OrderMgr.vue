@@ -376,7 +376,6 @@ let getAllGroups = async () => {
   try {
     let {data} = await instance.get('/api/admin/v1/groups/kv',)
     if (data.code === 200) {
-      console.log('获取到的权限组列表', data)
       privilegeGroupList.value = []
       // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
       data.group_list.forEach((group: PrivilegeGroup) => privilegeGroupList.value.push(group))
@@ -390,6 +389,7 @@ let getAllGroups = async () => {
 
 onBeforeMount(() => {
   themeStore.menuSelected = 'order-manager'
+  themeStore.breadcrumb = t('adminViews.orderMgr.title')
 })
 
 onMounted(async () => {
@@ -472,7 +472,7 @@ export default {
             :pagination="false"
             :bordered="true"
             style=""
-            :scroll-x="1100"
+            :scroll-x="1600"
         />
       </n-card>
 

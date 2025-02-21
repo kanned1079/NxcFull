@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
-import {NButton, NIcon, NTag, useMessage} from "naive-ui"
+import {NButton, NIcon, NTag, useMessage, type DataTableColumns} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 // import instance from "@/axios";
 import {useRoute, useRouter} from "vue-router";
-import {handleGetAllKeysByAdmin} from "@/api/admin/keys";
+import {handleBlockKeyById, handleGetAllKeysByAdmin} from "@/api/admin/keys";
 import PageHead from "@/views/utils/PageHead.vue";
 import {RefreshOutline as refreshIcon, Search as searchIcon,} from "@vicons/ionicons5"
+import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import {formatDate} from "../../../../utils/timeFormat";
 
 
 interface KeyItem {
   key_id: number;
+  user_id: number;
   client_id: string
   is_valid: boolean;
   is_used: boolean;
@@ -20,6 +23,8 @@ interface KeyItem {
   order_id: string;
   plan_name: string;
   email: string;
+  created_at: string;
+  expiration_date: string;
   expiration_date_stamp: number
 }
 
@@ -36,8 +41,10 @@ let searchForm = ref<{
 const {t} = useI18n();
 const router = useRouter();
 const route = useRoute()
-
+const nowDate = new Date().getTime();
 let showSearchModal = ref<boolean>(false)
+let showDetailModal = ref<boolean>(false)
+let detailKeyIndex = ref<number>(0)
 
 let paramsKeyId: number = 0
 const keyIdParam = route.params.key_id as string;
@@ -51,7 +58,7 @@ if (keyIdParam) {
     paramsKeyId = 0; // 确保无效时默认为 0
   }
 } else {
-  console.error('key_id is missing or invalid');
+  console.error('key_id is missing or invalid, skip');
   paramsKeyId = 0
 }
 
@@ -67,25 +74,6 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   pageSize: 10,
   page: 1,
 })
-
-let dataCountOptions = [
-  {
-    label: computed(() => t('pagination.perPage10')).value,
-    value: 10,
-  },
-  {
-    label: computed(() => t('pagination.perPage20')).value,
-    value: 20,
-  },
-  {
-    label: computed(() => t('pagination.perPage50')).value,
-    value: 50,
-  },
-  {
-    label: computed(() => t('pagination.perPage100')).value,
-    value: 100,
-  },
-]
 
 let keyDetails = ref<{
   id: number;
@@ -115,62 +103,54 @@ let keyDetails = ref<{
 //   }
 // }
 
-const columns = [
+const columns = computed<DataTableColumns<KeyItem>>(() => [
   {
-    title: computed(() => t('userActivation.id')).value,
+    title: t('userActivation.id'),
     key: 'key_id',
   },
-  // {
-  //   title: computed(() => t('userActivation.keyId')).value,
-  //   key: 'key_id',
-  //   render(row: KeyItem) {
-  //     return h('p', {}, {default: () => '# ' + row.key_id});
-  //   }
-  // },
-  // {
-  //   title: computed(() => t('userActivation.isBind')).value,
-  //   key: 'is_bind',
-  //   render(row: KeyItem) {
-  //     return h(
-  //         NTag,
-  //         {
-  //           size: 'small',
-  //           bordered: false,
-  //           type: row.is_bind ? 'success' : 'error',
-  //         },
-  //         {
-  //           default: () => row.is_bind ? t('userActivation.active') : t('userActivation.inactive')
-  //         });
-  //   }
-  // },
   {
-    title: computed(() => t('userActivation.orderId')).value,
+    title: t('userActivation.orderId'),
     key: 'order_id',
   },
   {
-    title: computed(() => '邮箱地址').value,
+    title: t('adminViews.keysMgr.table.email'),
     key: 'email',
   },
   {
-    title: '密钥',
+    title: t('adminViews.keysMgr.table.key'),
     key: 'key',
     render(row: KeyItem) {
-      return h(NTag, {size: 'small', bordered: false, type: 'primary'}, {default: () => row.key})
+      return h(NTag, {size: 'small', bordered: false, type: row.is_valid && row.expiration_date_stamp >= nowDate?row.is_used?'success':'primary':'error'}, {default: () => row.key})
     },
   },
   {
-    title: computed(() => t('adminViews.keysMgr.table.isValid')).value,
+    title: t('adminViews.keysMgr.table.isValid'),
     key: 'os_type',
     render(row: KeyItem) {
       return h(NTag, {
         size: 'small',
         bordered: false,
-        type: row.is_valid ? 'success' : 'default'
+        type: row.is_valid ? 'success' : 'error'
       }, {default: () => row.is_valid ? t('adminViews.keysMgr.table.ok') : t('adminViews.keysMgr.table.blocked')});
     }
   },
   {
-    title: computed(() => t('adminViews.keysMgr.table.isUsed')).value,
+    title: t('adminViews.keysMgr.table.isExpired'),
+    key: 'os_type',
+    render(row: KeyItem) {
+      return h(NTag, {
+        size: 'small',
+        bordered: false,
+        type: row.expiration_date_stamp >= nowDate? 'success' : 'default',
+        style: {textDecoration: row.expiration_date_stamp >= nowDate?'none':'line-through'}
+      }, {default: () => {
+          // row.is_used ? t('adminViews.keysMgr.table.used') : t('adminViews.keysMgr.table.unUsed')
+          return row.expiration_date_stamp >= nowDate?t('adminViews.keysMgr.table.active'):t('adminViews.keysMgr.table.inactive')
+        }});
+    }
+  },
+  {
+    title: t('adminViews.keysMgr.table.isUsed'),
     key: 'os_type',
     render(row: KeyItem) {
       return h(NTag, {
@@ -180,27 +160,6 @@ const columns = [
       }, {default: () => row.is_used ? t('adminViews.keysMgr.table.used') : t('adminViews.keysMgr.table.unUsed')});
     }
   },
-  // {
-  //   title: computed(() => t('userActivation.osType')).value,
-  //   key: 'os_type',
-  //   render(row: KeyItem) {
-  //     return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.os_type});
-  //   }
-  // },
-  {
-    title: computed(() => t('userActivation.requestAt')).value,
-    key: 'request_at',
-    render(row: KeyItem) {
-      return h('span', {}, {default: () => row.expiration_date_stamp});
-    },
-  },
-  // {
-  //   title: computed(() => t('userActivation.createdAt')).value,
-  //   key: 'created_at',
-  //   render(row: ActivateRecord) {
-  //     return h('span', {}, {default: () => formatDate(row.created_at)});
-  //   },
-  // },
   {
     title: computed(() => t('userActivation.actions')).value,
     key: 'actions',
@@ -212,44 +171,48 @@ const columns = [
           secondary: true,
           type: 'primary',
           bordered: false,
-          onClick: () => console.log('ssss'),
+          onClick: () => {
+            // 查找 keyList 中与 row.key_id 相等的元素下标
+            const index = keyList.value.findIndex((item: KeyItem) => item.key_id === row.key_id);
+            // 如果找到了匹配的项，则设置 detailKeyIndex
+            if (index !== -1) {
+              detailKeyIndex.value = index;
+              showDetailModal.value = true;
+            } else {
+              message.error('err')
+            }
+            console.log(keyList.value[detailKeyIndex.value])
+          },
         }, {
-          default: () => computed(() => '转到密钥').value,
+          default: () => t('adminViews.keysMgr.table.showDetail'),
         }),
-        // h(NButton, {
-        //   size: 'small',
-        //   secondary: true,
-        //   type: 'warning',
-        //   style: {marginLeft: '10px'},
-        //   bordered: false,
-        //   disabled: !row.is_bind,
-        //   onClick: () => handleUnbindById(row),
-        // }, {
-        //   default: () => computed(() => t('userActivation.cancelBind')).value,
-        // }),
+        h(NButton, {
+          size: 'small',
+          secondary: true,
+          type: row.is_valid?'warning' : 'success',
+          style: {marginLeft: '10px'},
+          bordered: false,
+          onClick: () => callBlockKeyByKeyId(row),
+        }, {
+          default: () => row.is_valid?t('adminViews.keysMgr.table.blockKey'):t('adminViews.keysMgr.table.unblockKey')
+        }),
       ]);
     },
 
   }
-];
-
-let callGetAllActivateLog = async () => {
-  // TODO: fix fetch keys
-  // let data = await handleGetAllActivationLog(dataSize.value.page, dataSize.value.pageSize)
-  // if (data.code === 200) {
-  //   activateRecordList.value = []
-  //   data.log.forEach((log: ActivateRecord) => activateRecordList.value.push(log))
-  //   pageCount.value = data.page_count
-  //   animated.value = true
-  // }
-}
+])
 
 const callGetAllKeys = async () => {
-  let data = await handleGetAllKeysByAdmin(dataSize.value.page, dataSize.value.pageSize, paramsKeyId)
+  let data = await handleGetAllKeysByAdmin(
+      dataSize.value.page,
+      dataSize.value.pageSize,
+      searchForm.value.keyId > 0 ? searchForm.value.keyId : paramsKeyId > 0 ? paramsKeyId : 0,
+      searchForm.value.keyContent || '',
+  )
   if (data && data.code === 200) {
+    keyList.value = []
     console.log(data)
     if (data.keys) {
-      keyList.value = []
       data.keys.forEach((i: KeyItem) => keyList.value.push(i))
       pageCount.value = data.page_count
     } else {
@@ -262,6 +225,58 @@ const callGetAllKeys = async () => {
   animated.value = true
 
 }
+
+const callBlockKeyByKeyId = async (row: KeyItem) => {
+  let data = await handleBlockKeyById(row.user_id, row.key_id)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.keysMgr.mention.blockOk', {id: row.key_id}))
+    await callGetAllKeys()
+  } else {
+    // TODO
+    message.error(t('adminViews.common.failure'))
+  }
+}
+
+type KeyDetailKey = 'user_id' | 'plan_name' | 'expiration_date' | 'created_at'
+
+interface KeyDetail {
+  title: string;
+  key: KeyDetailKey
+}
+
+const keyDetailItems: KeyDetail[] = [
+  {
+    title: 'adminViews.keysMgr.detailModal.userId',
+    key: 'user_id',
+  },
+  {
+    title: 'adminViews.keysMgr.detailModal.planName',
+    key: 'plan_name',
+  },
+  {
+    title: 'adminViews.keysMgr.detailModal.expiredAt',
+    key: 'expiration_date',
+  },
+  {
+    title: 'adminViews.keysMgr.detailModal.keyGeneratedAt',
+    key: 'created_at',
+  },
+]
+
+const formatDetailString = (key: string): string => {
+  if (key === 'expiration_date' || key === 'created_at') {
+    return formatDate(keyList.value[detailKeyIndex.value][key as KeyDetailKey] as string)
+  } else if (key === 'user_id') {
+    return `# ${keyList.value[detailKeyIndex.value][key as KeyDetailKey].toString()}`
+  } else {
+    return keyList.value[detailKeyIndex.value][key as KeyDetailKey].toString()
+  }
+}
+
+// const showKeyDetailById = () => {
+//   showDetailModal
+// }
+
 
 
 // let handleUnbindById = async (row: ActivateRecord) => {
@@ -283,7 +298,7 @@ const callGetAllKeys = async () => {
 //   }
 // }
 
-let enableAlterRemark = ref<boolean>(false)
+// let enableAlterRemark = ref<boolean>(false)
 
 // let handleCommitNewRemark = async () => {
 //   enableAlterRemark.value = false
@@ -305,6 +320,7 @@ let enableAlterRemark = ref<boolean>(false)
 
 
 onBeforeMount(() => {
+  themeStore.breadcrumb = t('adminViews.keysMgr.keyMgr')
   themeStore.userPath = '/dashboard/key'
   themeStore.menuSelected = 'key-manager'
 })
@@ -348,7 +364,7 @@ export default {
           type="primary"
           size="medium"
           class="btn-right"
-          @click="Object.assign(searchForm, {KeyId: 0, keyContent: ''}); callGetAllKeys()">
+          @click="Object.assign(searchForm, {keyId: 0, keyContent: ''}); animated=false ;callGetAllKeys()">
         <template #icon>
           <n-icon>
             <refreshIcon/>
@@ -373,25 +389,15 @@ export default {
             :data="keyList"
             :pagination="false"
             :bordered="true"
-            :scroll-x="1000"
+            :scroll-x="1600"
         />
       </n-card>
-      <div style="margin-top: 15px; display: flex; flex-direction: row; justify-content: right;">
-        <n-pagination
-            size="medium"
-            v-model:page.number="dataSize.page"
-            :page-count="pageCount"
-            @update:page="animated=false; callGetAllActivateLog()"
-        />
-        <n-select
-            style="width: 200px; margin-left: 20px"
-            v-model:value.number="dataSize.pageSize"
-            size="small"
-            :options="dataCountOptions"
-            :remote="true"
-            @update:value="animated=false; dataSize.page = 1; callGetAllActivateLog()"
-        />
-      </div>
+     <DataTableSuffix
+         :data-size="dataSize"
+         :page-count="pageCount"
+         :animated="animated"
+         :update-data="callGetAllKeys"
+     />
     </div>
   </transition>
 
@@ -442,8 +448,32 @@ export default {
           v-model:value="searchForm.keyContent"
       ></n-input>
     </n-form-item>
-
   </n-modal>
+
+  <n-modal
+      v-model:show="showDetailModal"
+      class="custom-card"
+      preset="card"
+      style="width: 600px"
+      :style="{paddingBottom: '30px'}"
+      :title="t('adminViews.keysMgr.detailModal.title')"
+      size="medium"
+      :bordered="false"
+  >
+
+
+    <div class="details-root" v-for="i in keyDetailItems" :key="i.title">
+      <p class="detail-title">{{ t(i.title || '') }}</p>
+      <p class="detail-content">{{ formatDetailString(i.key) }}</p>
+    </div>
+
+<!--    <template #footer>-->
+<!--      尾部-->
+<!--    </template>-->
+  </n-modal>
+
+
+
 
 </template>
 
@@ -453,7 +483,7 @@ export default {
 }
 
 .root {
-  padding: 0 0 20px 20px;
+  padding: 0 20px 20px 20px;
 }
 
 .details-item-detail {
@@ -495,5 +525,18 @@ export default {
 
 .btn-right {
   margin-right: 20px;
+}
+
+.details-root {
+  margin-top: 16px;
+  .detail-title {
+    font-size: 1rem;
+    font-weight: bold;
+    opacity: 0.7;
+  }
+  .detail-content {
+    font-size: 1.1rem;
+    margin-top: 4px;
+  }
 }
 </style>
