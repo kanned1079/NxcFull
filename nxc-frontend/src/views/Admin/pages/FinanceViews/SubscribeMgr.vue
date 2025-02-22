@@ -485,7 +485,7 @@ let reloadPlanList = async () => {
 }
 
 onBeforeMount(async () => {
-  themeStore.breadcrumb = t('adminViews.planMgr.title')
+  themeStore.breadcrumb = 'adminViews.planMgr.title'
   themeStore.menuSelected = 'subscription-manager'
 })
 

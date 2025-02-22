@@ -372,7 +372,7 @@ let closeModal = () => {
   showModal.value = false
 }
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('adminViews.couponMgr.title')
+  themeStore.breadcrumb = 'adminViews.couponMgr.title'
   themeStore.menuSelected = 'coupon-mgr'
 })
 

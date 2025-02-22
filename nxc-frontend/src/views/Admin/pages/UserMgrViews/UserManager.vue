@@ -383,7 +383,7 @@ let handleEditUserInfo = async () => {
 }
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('adminViews.userMgr.userManager')
+  themeStore.breadcrumb = 'adminViews.userMgr.userManager'
   themeStore.menuSelected = 'user-manager'
 })
 

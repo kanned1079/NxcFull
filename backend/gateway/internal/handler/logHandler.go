@@ -31,14 +31,14 @@ func HandleGetSystemStatus(context *gin.Context) {
 		})
 		return
 	}
-	var apiLogList []map[string]interface{}
-	if err = json.Unmarshal(resp.ApiLogList, &apiLogList); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusOK,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var apiLogList []map[string]interface{}
+	//if err = json.Unmarshal(resp.ApiLogList, &apiLogList); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusOK,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.SecureJSON(http.StatusOK, gin.H{
 		"code":                 http.StatusOK,
 		"msg":                  "success",
@@ -48,7 +48,7 @@ func HandleGetSystemStatus(context *gin.Context) {
 		"status500":            resp.Status500,
 		"login_req":            resp.LoginReq,
 		"reg_req":              resp.RegisterReq,
-		"api_log_list":         apiLogList,
+		"api_log_list":         json.RawMessage(resp.ApiLogList),
 		"page_count":           resp.PageSize,
 		"log_table_size":       resp.TableSize,
 		"log_table_rows_count": resp.LogTableRowsCount,

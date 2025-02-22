@@ -172,7 +172,7 @@ export default {
       </n-button>
 
       <p class="txt" v-if="!themeStore.menuCollapsed">
-        {{ themeStore.breadcrumb }}
+        {{ t(themeStore.breadcrumb) }}
       </p>
     </div>
     <div class="r-content">

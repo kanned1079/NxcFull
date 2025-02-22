@@ -132,6 +132,7 @@ export default {
                 :theme="themeStore.enableDarkMode?'dark':'light'"
                 :editorId="`preview-${index}`"
                 :modelValue="item.describe || ''"
+                :preview-theme="'github'"
             />
             <n-button
                 @click=""

@@ -40,7 +40,7 @@ let checkIsUserHaveOpenTickets = async () => {
 
 onBeforeMount(async () => {
   // await getAppOverview()
-  themeStore.breadcrumb = t('adminViews.summary.cockpit')
+  themeStore.breadcrumb = 'adminViews.summary.cockpit'
   await checkIsUserHaveOpenTickets()
 })
 

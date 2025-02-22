@@ -281,7 +281,7 @@ let closeTicket = async (ticket_id: number) => {
 
 onBeforeMount(() => {
   themeStore.menuSelected = 'ticket-mgr'
-  themeStore.breadcrumb = t(`${i18nPrefix}.ticketMgr`)
+  themeStore.breadcrumb = `${i18nPrefix}.ticketMgr`
 })
 
 onMounted(async () => {

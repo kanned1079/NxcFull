@@ -786,18 +786,24 @@ export default {
                 "planName": "計画名",
                 "period": "サイクル",
                 "group": "権利グループ",
-                "amount": "実際の支払い額",
+                "amount": "実際の",
                 "price": "元の価格",
                 "isSuccess": {
-                    "title": "ステータスを注文します",
+                    "title": "ステータス",
                     "cancelOrder": "注文をキャンセルします",
                     "passOrder": "注文によって"
                 },
-                "createdAt": "作成時間を注文します",
+                "createdAt": "作成時間",
                 "action": { "title": "動作します", "showDetail": "詳細を表示します" }
             },
+            "failureReason": "失敗の原因",
+            "tradeSuccess": "注文成功",
+            "couponId": "クーポンID",
+            "couponName": "クーポン名",
+            "noEntry": "なし",
             "search": "お問い合わせ注文",
             "resetSearch": "クエリをリセットします",
+            "orderDetail": "注文詳細",
             "searchModal": {
                 "email": {
                     "title": "ユーザーメールボックス",
@@ -810,8 +816,8 @@ export default {
                     "DESC": "降順"
                 }
             },
-            "tradeWaiting": "支払われていません",
-            "tradeFailure": "トランザクションは失敗しました",
+            "tradeWaiting": "支払中",
+            "tradeFailure": "失敗",
             "tradeSuccess": "成功"
         },
         "userMgr": {
@@ -1265,7 +1271,7 @@ export default {
         "alipay": "支払い",
         "apple": "Apple Pay",
         "yourAmount": "あなたの金額",
-        "discount": "申し出",
+        "discount": "割引",
         "accountBalance": "アカウント残高",
         "balanceResult": "バランスの量",
         "commitTopUp": "提出する",

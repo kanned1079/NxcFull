@@ -57,7 +57,7 @@ export default {
             "confirm": "確認",
             "cancel": "取消",
             "success": "操作成功",
-            "failure": "操作失敗"
+            "failure": "操作失敗",
         },
         "login": {
             "secureCard": {
@@ -844,6 +844,12 @@ export default {
             },
             "search": "查詢訂單",
             "resetSearch": "重置查詢",
+            "failureReason": "失敗原因",
+            "tradeSuccess": "訂單成功",
+            "couponId": "優惠券ID",
+            "couponName": "優惠券名稱",
+            "noEntry": "無",
+            "orderDetail": "訂單詳情",
             "searchModal": {
                 "email": {
                     "title": "用戶郵箱",
@@ -987,6 +993,25 @@ export default {
                     "title": "操作",
                     "edit": "編輯",
                     "delete": "刪除"
+                }
+            },
+            "modal": {
+                "addNew": "新建公告",
+                "title": {
+                    "title": "公告標題",
+                    "placeholder": "作為大標題顯示在輪播圖中",
+                },
+                "content": {
+                    "title": "公告內容",
+                    "placeholder": "編寫公告的主要內容",
+                },
+                "tag": {
+                    "title": "公告標籤",
+                    "placeholder": "輸入公告的標籤",
+                },
+                "img": {
+                    "title": "背景圖片URL",
+                    "placeholder": "不填寫則使用默認背景",
                 }
             }
         },
@@ -1634,8 +1659,8 @@ export default {
     },
     "notFound": {
         "title": '404 頁面不存在',
-        "description": '我們無法找到您請求的頁面，它可能已經被刪除或連結有誤。如果您認為這是一個錯誤，請提交工單以練習我們。',
-        "p1": '將在 {sec}s  後返回主頁，如果您的瀏覽器沒有響應，請點擊以下按鈕。',
+        "description": '我們無法找到您請求的頁面，它可能已經被刪除或連結有誤。如果您認為這是一個錯誤，請提交工單以聯繫我們。',
+        "p1": '將在 {sec}s 後返回主頁，如果您的瀏覽器沒有響應，請點擊以下按鈕。',
         "manualBack": '返回主頁',
     }
 }

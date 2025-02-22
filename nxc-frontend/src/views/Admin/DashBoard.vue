@@ -52,7 +52,7 @@ export default {
 
 @media screen and (min-width: 768px) {
   .n-layout-header {
-    width: calc(100% - 240px);
+    width: calc(100% - 272px);
   }
 }
 

@@ -181,7 +181,7 @@ const columns = computed<DataTableColumns<KeyItem>>(() => [
             } else {
               message.error('err')
             }
-            console.log(keyList.value[detailKeyIndex.value])
+            // console.log(keyList.value[detailKeyIndex.value])
           },
         }, {
           default: () => t('adminViews.keysMgr.table.showDetail'),
@@ -320,13 +320,13 @@ const formatDetailString = (key: string): string => {
 
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('adminViews.keysMgr.keyMgr')
-  themeStore.userPath = '/dashboard/key'
   themeStore.menuSelected = 'key-manager'
+  themeStore.breadcrumb = 'adminViews.keysMgr.keyMgr'
 })
 
 onMounted(async () => {
   // await callGetAllActivateLog()
+  themeStore.userPath = '/dashboard/key'
 
   await callGetAllKeys()
   animated.value = true
@@ -460,16 +460,11 @@ export default {
       size="medium"
       :bordered="false"
   >
-
-
     <div class="details-root" v-for="i in keyDetailItems" :key="i.title">
       <p class="detail-title">{{ t(i.title || '') }}</p>
       <p class="detail-content">{{ formatDetailString(i.key) }}</p>
     </div>
 
-<!--    <template #footer>-->
-<!--      尾部-->
-<!--    </template>-->
   </n-modal>
 
 
@@ -524,7 +519,7 @@ export default {
 }
 
 .btn-right {
-  margin-right: 20px;
+  margin-right: 10px;
 }
 
 .details-root {

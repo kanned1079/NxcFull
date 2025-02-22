@@ -42,31 +42,24 @@ func HandleGetAllMyOrders(context *gin.Context) {
 		Page:   page,
 		Size:   size,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "rpc服务调用出错" + err.Error(),
+			"msg":  err.Error(),
 		})
 		return
 	}
-	if resp == nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "rpc调用错误无返回值",
-		})
-		return
-	}
-	var orders []map[string]any
-	if err := json.Unmarshal(resp.OrderList, &orders); err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "转换数据格式失败" + err.Error(),
-		})
-		return
-	}
+	//var orders []map[string]any
+	//if err := json.Unmarshal(resp.OrderList, &orders); err != nil {
+	//	context.JSON(http.StatusInternalServerError, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "转换数据格式失败" + err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":       http.StatusOK,
-		"order_list": orders,
+		"order_list": json.RawMessage(resp.OrderList),
 		"page_count": resp.PageCount,
 	})
 }
@@ -94,17 +87,10 @@ func HandleCommitNewOrder(context *gin.Context) {
 		Period:   postData.Period,
 		CouponId: postData.CouponId,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "rpc服务调用出错" + err.Error(),
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "rpc调用错误无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -137,37 +123,30 @@ func HandleCheckOrderStatus(context *gin.Context) {
 		OrderId: orderId,
 		UserId:  userId,
 	})
-	if err != nil {
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "rpc服务调用出错" + err.Error(),
+			"msg":  err.Error(),
 		})
 		return
 	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusNotFound,
-			"msg":  "rpc调用失败无返回值",
-		})
-		return
-	}
-	var orderInfoKvData map[string]interface{}
-	if resp.Code == 200 {
-		if err := json.Unmarshal(resp.OrderInfo, &orderInfoKvData); err != nil {
-			context.JSON(http.StatusOK, gin.H{
-				"code": http.StatusInternalServerError,
-				"msg":  "格式化失败",
-			})
-			return
-		}
-	}
+	//var orderInfoKvData map[string]interface{}
+	//if resp.Code == 200 {
+	//	if err := json.Unmarshal(resp.OrderInfo, &orderInfoKvData); err != nil {
+	//		context.JSON(http.StatusOK, gin.H{
+	//			"code": http.StatusInternalServerError,
+	//			"msg":  "格式化失败",
+	//		})
+	//		return
+	//	}
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":           resp.Code,
 		"msg":            resp.Msg,
 		"is_finished":    resp.IsFinished,
 		"is_success":     resp.IsSuccess,
 		"failure_reason": resp.FailureReason,
-		"order_info":     orderInfoKvData,
+		"order_info":     json.RawMessage(resp.OrderInfo),
 	})
 }
 
@@ -254,17 +233,17 @@ func HandleGetAllOrderByAdmin(context *gin.Context) {
 		})
 		return
 	}
-	var orderMap []map[string]interface{}
-	if json.Unmarshal(resp.Orders, &orderMap) != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var orderMap []map[string]interface{}
+	//if json.Unmarshal(resp.Orders, &orderMap) != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
-		"orders":     orderMap,
+		"orders":     json.RawMessage(resp.Orders),
 		"msg":        resp.Msg,
 		"page_count": resp.PageCount,
 	})

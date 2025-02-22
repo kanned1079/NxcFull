@@ -4,7 +4,7 @@ import {computed, h, onMounted, onBeforeMount, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore"
 import instance from "@/axios";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
-import {NButton, NIcon, NSwitch, useMessage, type DataTableColumns} from 'naive-ui'
+import {NButton, NIcon, NSwitch, useMessage, type DataTableColumns, type FormInst, type FormRules} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import {formatDate} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
@@ -37,12 +37,32 @@ interface formData {
   img_url?: string
 }
 
+let formRef = ref<img_url | null>(null)
 let formData = ref<formData>({
   title: '',
   content: '',
   tags: '',
   img_url: '',
 })
+
+const rules: FormRules = {
+  title: {
+    required: true,
+    trigger: 'blur',
+    type: 'string',
+    validator() {
+      return formData.value.title.trim()?true:new Error('empty not allowed')
+    }
+  },
+  content: {
+    required: true,
+    trigger: 'blur',
+    type: 'string',
+    validator() {
+      return formData.value.content.trim()?true:new Error('empty not allowed')
+    }
+  },
+}
 
 // noticesStore.getAllNotices()
 
@@ -97,18 +117,24 @@ let closeModal = () => {
 }
 
 // 这里是按钮按下
-let submitModal = () => {
-  console.log('submit')
-  console.log(formData.value)
-  switch (editType.value) {
-    case 'add': {
-      addNewNotice()
-      break
-    }
-    case 'edit': {
-      editNotice()
-      break
-    }
+let submitModal = async () => {
+  if (formRef.value) {
+   await formRef.value.validate(async (err: any) => {
+      if (!err) {
+        switch (editType.value) {
+          case 'add': {
+            await addNewNotice()
+            break
+          }
+          case 'edit': {
+            await editNotice()
+            break
+          }
+        }
+      } else {
+        message.warning(t('userLogin.checkForm'))
+      }
+    })
   }
 }
 
@@ -272,7 +298,7 @@ let editNotice = async () => {
 }
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t(`${i18nPrefix}.title`)
+  themeStore.breadcrumb = `${i18nPrefix}.title`
   themeStore.menuSelected = 'notice-manager'
 
 })
@@ -372,11 +398,11 @@ export default {
 
 
   <n-modal
-      title="新建通知"
+      :title="t(`${i18nPrefix}.modal.addNew`)"
       v-model:show="showModal"
       preset="dialog"
-      :positive-text="editType === 'add'?'确认添加':'确认修改'"
-      negative-text="算了"
+      :positive-text="t('adminViews.common.confirm')"
+      :negative-text="t('adminViews.common.cancel')"
       style="width: 480px"
       @positive-click="submitModal"
       @negative-click="closeModal"
@@ -386,27 +412,34 @@ export default {
     <!--          pass-->
     <div style="margin-top: 30px"></div>
 
-    <n-form-item path="age" label="标题">
-      <n-input @keydown.enter.prevent placeholder="输入通知标题" v-model:value="formData.title"/>
-    </n-form-item>
+    <n-form
+      :show-feedback="false"
+      :show-label="true"
+      :show-require-mark="true"
+      :model="formData"
+      :rules="rules"
+      size="medium"
+      ref="formRef"
+    >
 
-    <n-form-item path="age" label="公告内容">
-      <n-input type="textarea" placeholder="输入公告内容" :rows="8" show-count v-model:value="formData.content"/>
-    </n-form-item>
+      <n-form-item class="form-gap-btn" path="title" :label="t(`${i18nPrefix}.modal.title.title`)">
+        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.title.placeholder`)" v-model:value="formData.title"/>
+      </n-form-item>
 
-    <n-form-item path="age" label="公告标签">
-      <n-input @keydown.enter.prevent placeholder="输入公告的标签" v-model:value="formData.tags"/>
-    </n-form-item>
+      <n-form-item class="form-gap-btn" path="content" :label="t(`${i18nPrefix}.modal.content.title`)">
+        <n-input type="textarea" :placeholder="t(`${i18nPrefix}.modal.content.placeholder`)" :rows="8" show-count v-model:value="formData.content"/>
+      </n-form-item>
 
-    <n-form-item path="age" label="图片URL">
-      <n-input @keydown.enter.prevent placeholder="输入背景图片的URL" v-model:value="formData.img_url"/>
-    </n-form-item>
+      <n-form-item class="form-gap-btn" path="tags" :label="t(`${i18nPrefix}.modal.tag.title`)">
+        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.tag.placeholder`)" v-model:value="formData.tags"/>
+      </n-form-item>
+
+      <n-form-item class="form-gap-btn" path="img_url" :label="t(`${i18nPrefix}.modal.img.title`)">
+        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.img.placeholder`)" v-model:value="formData.img_url"/>
+      </n-form-item>
+    </n-form>
 
 
-    <!--          pass-->
-    <!--    <template #footer>-->
-    <!--      尾部-->
-    <!--    </template>-->
   </n-modal>
 </template>
 
@@ -438,6 +471,10 @@ export default {
       width: 30px;
     }
   }
+}
+
+.form-gap-btn {
+  margin-bottom: 20px;
 }
 
 </style>

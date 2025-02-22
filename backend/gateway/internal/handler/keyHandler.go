@@ -97,8 +97,15 @@ func HandleGetAllMyActivationLogs(context *gin.Context) {
 		})
 		return
 	}
-	var recordsMap []map[string]any
-	if err := json.Unmarshal(resp.Log, &recordsMap); err != nil {
+	//var recordsMap []map[string]any
+	//if err := json.Unmarshal(resp.Log, &recordsMap); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
@@ -108,7 +115,7 @@ func HandleGetAllMyActivationLogs(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
 		"msg":        resp.Msg,
-		"log":        recordsMap,
+		"log":        json.RawMessage(resp.Log),
 		"page_count": resp.PageCount,
 	})
 }
@@ -132,19 +139,19 @@ func HandleGetKeyDetailsById(context *gin.Context) {
 		})
 		return
 	}
-	var detailsMap map[string]any
-	err = json.Unmarshal(resp.Details, &detailsMap)
-	if err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var detailsMap map[string]any
+	//err = json.Unmarshal(resp.Details, &detailsMap)
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":    resp.Code,
 		"msg":     resp.Msg,
-		"details": detailsMap,
+		"details": json.RawMessage(resp.Details),
 	})
 }
 

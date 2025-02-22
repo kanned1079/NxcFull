@@ -2,6 +2,7 @@
 import {computed, h, onBeforeMount, onMounted, ref, type ComputedRef} from "vue"
 import {useI18n} from "vue-i18n";
 import useThemeStore from "@/stores/useThemeStore";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 import {
   CheckmarkDoneOutline as passOrderIcon,
   ChevronDownOutline as downIcon,
@@ -33,6 +34,7 @@ interface Order {
   is_finished: boolean
   price: number
   amount: number
+  discount_amount: number
   paid_at: string
   payment_method: string
   created_at: string
@@ -47,11 +49,14 @@ interface PrivilegeGroup {
 const {t} = useI18n()
 const i18nPrefix = 'adminViews.orderMgr'
 const themeStore = useThemeStore()
+const appInfosStore = useAppInfosStore()
 const message = useMessage()
 
 let animated = ref<boolean>(false)
 
 let showSearchModal = ref<boolean>(false)
+let showDetailModal = ref<boolean>(false)
+let detailKeyIndex = ref<number>(-1)
 
 let orderList = ref<Order[]>([])
 let privilegeGroupList = ref<PrivilegeGroup[]>([])
@@ -108,24 +113,24 @@ const columns = computed<DataTableColumns<Order>>(() => [
     title: t(`${i18nTablePrefix}.email`),
     key: 'email'
   },
-  {
-    title: t(`${i18nTablePrefix}.status.title`),
-    key: 'status',
-    render(row: Order) {
-      return h('p', {}, {
-        default: () => {
-          switch (row.status) {
-            case 0:
-              return t(`${i18nTablePrefix}.status.t1`)
-            case 1:
-              return t(`${i18nTablePrefix}.status.t2`)
-            case 2:
-              return t(`${i18nTablePrefix}.status.t3`)
-          }
-        }
-      })
-    }
-  },
+  // {
+  //   title: t(`${i18nTablePrefix}.status.title`),
+  //   key: 'status',
+  //   render(row: Order) {
+  //     return h('p', {}, {
+  //       default: () => {
+  //         switch (row.status) {
+  //           case 0:
+  //             return t(`${i18nTablePrefix}.status.t1`)
+  //           case 1:
+  //             return t(`${i18nTablePrefix}.status.t2`)
+  //           case 2:
+  //             return t(`${i18nTablePrefix}.status.t3`)
+  //         }
+  //       }
+  //     })
+  //   }
+  // },
   {
     title: t(`${i18nTablePrefix}.planName`),
     key: 'plan_name',
@@ -291,7 +296,17 @@ const columns = computed<DataTableColumns<Order>>(() => [
                 // 编辑用户
                 // Object.assign(editUser.value, row)
                 // showEditUserDrawer.value = true
-                message.info('查看订单详情' + row.id)
+                // message.info('查看订单详情' + row.id)
+                // 查找 keyList 中与 row.key_id 相等的元素下标
+                const index = orderList.value.findIndex((item: Order) => item.id === row.id);
+                // 如果找到了匹配的项，则设置 detailKeyIndex
+                if (index !== -1) {
+                  detailKeyIndex.value = index;
+                  showDetailModal.value = true;
+                } else {
+                  message.error('err')
+                }
+                // console.log(orderList.value[detailKeyIndex.value])
               },
             },
             {default: () => t(`${i18nTablePrefix}.action.showDetail`)}),
@@ -387,9 +402,71 @@ let getAllGroups = async () => {
   }
 }
 
+let showOrderDetailsByIdClick = () => {
+  showDetailModal.value = true
+}
+
+type OrderDetailKey = 'user_id' | 'plan_name' | 'expiration_date' | 'created_at'
+
+interface OrderDetail {
+  title: string;
+  key: OrderDetailKey
+}
+
+const orderDetailItems: KeyDetail[] = [
+  {
+    title: 'adminViews.keysMgr.detailModal.userId',
+    key: 'user_id',
+  },
+  {
+    title: `${i18nTablePrefix}.email`,
+    key: 'email',
+  },
+  {
+    title: 'userTopUp.discount',
+    key: 'discount_amount'
+  },
+  {
+    title: "adminViews.orderMgr.couponId",
+    key: 'coupon_id',
+  },
+  {
+    title: "adminViews.orderMgr.couponName",
+    key: 'coupon_name',
+  },
+  {
+    title: 'adminViews.orderMgr.failureReason',
+    key: 'failure_reason',
+  },
+  // {
+  //   title: 'adminViews.keysMgr.detailModal.keyGeneratedAt',
+  //   key: 'created_at',
+  // },
+]
+
+const formatDetailString = (key: string): string => {
+  if (key === 'expiration_date' || key === 'created_at') {
+    return formatDate(orderList.value[detailKeyIndex.value][key as OrderDetailKey] as string)
+  } else if (key === 'user_id') {
+    return `# ${orderList.value[detailKeyIndex.value][key as OrderDetailKey].toString()}`
+  } else if (key === 'coupon_id') {
+    return orderList.value[detailKeyIndex.value][key as OrderDetailKey] > 0?`# ${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}`:t('adminViews.orderMgr.noEntry')
+  } else if (key == 'failure_reason') {
+    if (orderList.value[detailKeyIndex.value].is_success && orderList.value[detailKeyIndex.value].is_finished)
+      return t('adminViews.orderMgr.tradeSuccess')
+    else
+      return orderList.value[detailKeyIndex.value][key as OrderDetailKey].toString()
+  } else if (key === 'discount_amount') {
+    if (orderList.value[detailKeyIndex.value].discount_amount > 0) return `${orderList.value[detailKeyIndex.value].discount_amount.toFixed(2)} ${appInfosStore.appCommonConfig.currency}`
+    else return  t('adminViews.orderMgr.noEntry')
+  } else {
+    return orderList.value[detailKeyIndex.value][key as OrderDetailKey].toString() || t('adminViews.orderMgr.noEntry')
+  }
+}
+
 onBeforeMount(() => {
   themeStore.menuSelected = 'order-manager'
-  themeStore.breadcrumb = t('adminViews.orderMgr.title')
+  themeStore.breadcrumb = 'adminViews.orderMgr.title'
 })
 
 onMounted(async () => {
@@ -520,6 +597,23 @@ export default {
 
   </n-modal>
 
+  <n-modal
+      v-model:show="showDetailModal"
+      class="custom-card"
+      preset="card"
+      style="width: 600px"
+      :style="{paddingBottom: '30px'}"
+      :title="t('adminViews.orderMgr.orderDetail')"
+      size="medium"
+      :bordered="false"
+  >
+    <div class="details-root" v-for="i in orderDetailItems" :key="i.title">
+      <p class="detail-title">{{ t(i.title || '') }}</p>
+      <p class="detail-content">{{ formatDetailString(i.key) }}</p>
+    </div>
+
+  </n-modal>
+
 </template>
 
 <style scoped lang="less">
@@ -537,4 +631,16 @@ export default {
   margin-right: 10px;
 }
 
+.details-root {
+  margin-top: 16px;
+  .detail-title {
+    font-size: 1rem;
+    font-weight: bold;
+    opacity: 0.7;
+  }
+  .detail-content {
+    font-size: 1.1rem;
+    margin-top: 4px;
+  }
+}
 </style>

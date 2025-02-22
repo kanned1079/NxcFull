@@ -21,17 +21,10 @@ func HandleGetAllGroups(context *gin.Context) {
 		Page: pageData.Page,
 		Size: pageData.Size,
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  resp.Msg,
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -46,18 +39,10 @@ func HandleGetAllGroups(context *gin.Context) {
 
 func HandleGetAllGroupsKv(context *gin.Context) {
 	resp, err := grpcClient.GroupServiceClient.GetAllGroupsKv(sysContext.Background(), &pb.GetAllGroupsKvRequest{})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc方法错误" + err.Error(),
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc方法错误无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -83,17 +68,10 @@ func HandleAddNewGroup(context *gin.Context) {
 	resp, err := grpcClient.GroupServiceClient.AddNewGroup(sysContext.Background(), &pb.AddNewGroupRequest{
 		GroupName: postData.GroupName,
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  resp.Msg,
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -135,17 +113,10 @@ func HandleUpdateGroup(context *gin.Context) {
 		Id:   putData.Id,
 		Name: putData.Name,
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  resp.Msg,
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -167,17 +138,10 @@ func HandleDeleteGroup(context *gin.Context) {
 	resp, err := grpcClient.GroupServiceClient.DeleteGroup(sysContext.Background(), &pb.DeleteGroupRequest{
 		Id: delData.Id,
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  resp.Msg,
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}

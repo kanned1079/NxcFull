@@ -18,7 +18,7 @@ const settingStore = useSettingStore()
 const themeStore = useThemeStore();
 
 onBeforeMount(async () => {
-  themeStore.breadcrumb = t('adminViews.systemConfig.title')
+  themeStore.breadcrumb = 'adminViews.systemConfig.title'
   themeStore.menuSelected = 'system-config'
   await settingStore.loadSetting()
 })

@@ -242,7 +242,7 @@ let handleGetPaymentMethodDetailsBySystemName = async (system: string) => {
 }
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('adminViews.payConfig.title')
+  themeStore.breadcrumb = 'adminViews.payConfig.title'
   themeStore.menuSelected = 'payment-config'
 })
 

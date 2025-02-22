@@ -42,6 +42,11 @@ let dataSize = ref<{ pageSize: number, page: number }>({
   page: 1,
 })
 
+const mdTheme = computed(() => themeStore.enableDarkMode?'dark':'light')
+const codeTheme: string = 'github'
+
+let previewTheme = ref<string>('github')
+
 interface DocumentItem {
   id: number
   show: boolean
@@ -275,7 +280,7 @@ let handleDeleteDoc = async (row: DocumentItem) => {
 
 onBeforeMount(() => {
   themeStore.menuSelected = 'doc-manager'
-  themeStore.breadcrumb = t('adminViews.docMgr.title')
+  themeStore.breadcrumb = 'adminViews.docMgr.title'
   formValue.value.doc.language = locale.value || 'en_US'
 })
 
@@ -381,8 +386,13 @@ export default {
               :options="[{label: '简体中文', value: 'zh_CN'},{label: '繁體中文', value: 'zh_HK'},{label: 'English', value: 'en_US'},{label: '日本語', value: 'ja_JP'},]"
                v-model:value="formValue.doc.language" :placeholder="t(`${i18nPrefix}.form.lang.placeholder`)"/>
         </n-form-item>
-        <MdEditor style="background-color: rgba(0,0,0,0.0)" v-model="formValue.doc.md_text"
-                  :theme="themeStore.enableDarkMode?'dark':'light'"/>
+        <MdEditor
+            v-model="formValue.doc.md_text"
+            :theme="mdTheme"
+            :code-theme="codeTheme"
+            :preview-theme="previewTheme"
+
+        />
       </n-form>
       <div style="display: flex; flex-direction: row; justify-content: right; margin-top: 20px">
         <n-button style="margin-right: 15px;" @click="cancelAdd" secondary type="primary">
@@ -404,4 +414,16 @@ export default {
 .form-bt-gap {
   margin-bottom: 14px;
 }
+
+.md-editor-dark, .md-editor-modal-container[data-theme='light'] {
+  background-color: #f1f1f1;
+}
+
+
+.md-editor-dark, .md-editor-modal-container[data-theme='dark'] {
+  background-color: #252525;
+}
+
+
+
 </style>

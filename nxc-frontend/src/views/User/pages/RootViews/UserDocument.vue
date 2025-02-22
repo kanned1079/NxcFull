@@ -200,6 +200,7 @@ export default {
               :theme="themeStore.enableDarkMode?'dark':'light'"
               style="background-color: rgba(0,0,0,0.0)"
               v-model="drawBody"
+              :preview-theme="'github'"
           ></MdPreview>
         </n-drawer-content>
       </n-drawer>

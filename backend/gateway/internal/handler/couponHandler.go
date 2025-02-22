@@ -36,16 +36,23 @@ func HandleAddNewCoupon(context *gin.Context) {
 		StartTime:    postData.StartTime,
 		EndTime:      postData.EndTime,
 	})
-	if err != nil {
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//}
+	//if resp == nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "调用rpc服务器失败无返回值",
+	//	})
+	//	return
+	//}
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -81,20 +88,27 @@ func HandleVerifyCoupon(context *gin.Context) {
 		PlanId:     postData.PlanId,
 		UserId:     postData.UserId,
 	})
-	if err != nil {
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//}
+	//if resp == nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "调用rpc服务器失败无返回值",
+	//	})
+	//	return
+	//}
+	//log.Println(resp)
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
-		})
 		return
 	}
-	log.Println(resp)
 	//// 验证通过，返回优惠信息
 	context.JSON(http.StatusOK, gin.H{
 		"code":        resp.Code,
@@ -119,16 +133,10 @@ func HandleGetAllCoupons(context *gin.Context) {
 		Page: pageData.Page,
 		Size: pageData.Size,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -163,16 +171,10 @@ func HandleActiveCoupon(context *gin.Context) {
 		Id:     postData.Id,
 		Status: postData.Status,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -199,16 +201,10 @@ func HandleDeleteCoupon(context *gin.Context) {
 	resp, err := grpcClient.CouponServiceClient.DeleteCoupon(sysContext.Background(), &pb.DeleteCouponRequest{
 		CouponId: int64(deleteCoupon.CouponId),
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}

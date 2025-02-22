@@ -25,19 +25,19 @@ func HandleGetAllDocuments(context *gin.Context) {
 		})
 	}
 
-	var docMap []map[string]interface{}
-
-	if err := json.Unmarshal(resp.Documents, &docMap); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "Unmarshal failure" + err.Error(),
-		})
-	}
+	//var docMap []map[string]interface{}
+	//
+	//if err := json.Unmarshal(resp.Documents, &docMap); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "Unmarshal failure" + err.Error(),
+	//	})
+	//}
 
 	context.JSON(http.StatusOK, gin.H{
 		"code":     resp.Code,
 		"msg":      resp.Msg,
-		"doc_list": docMap,
+		"doc_list": json.RawMessage(resp.Documents),
 	})
 }
 
@@ -71,8 +71,8 @@ func HandleAddNewDocument(context *gin.Context) {
 		Body:     postData.MdText,
 		Sort:     postData.Sort,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
@@ -182,18 +182,19 @@ func HandleGetAllDocumentsAdmin(context *gin.Context) {
 		})
 		return
 	}
-	var documentsMap []map[string]any
-	if err := json.Unmarshal(resp.Documents, &documentsMap); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "Unmarshal failure " + err.Error(),
-		})
-		return
-	}
+	//var documentsMap []map[string]any
+	//if err := json.Unmarshal(resp.Documents, &documentsMap); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "Unmarshal failure " + err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
-		"code":       resp.Code,
-		"msg":        resp.Msg,
-		"documents":  documentsMap,
+		"code": resp.Code,
+		"msg":  resp.Msg,
+		//"documents":  documentsMap,
+		"documents":  json.RawMessage(resp.Documents),
 		"page_count": resp.PageCount,
 	})
 

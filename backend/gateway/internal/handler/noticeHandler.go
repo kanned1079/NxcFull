@@ -27,41 +27,30 @@ func HandleGetAllNotices(context *gin.Context) {
 		Size:   queryData.Size,
 		IsUser: queryData.IsUser,
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
 		return
 	}
-
-	// 检查返回是否为 nil
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
-		})
-		return
-	}
-
-	// 反序列化 notices
-	var notices []map[string]interface{}
-	//log.Println(string(resp.Notices))
-	err = json.Unmarshal(resp.Notices, &notices)
-	if err != nil {
-		log.Println("反序列化通知列表失败:", err)
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "通知列表反序列化失败: " + err.Error(),
-		})
-		return
-	}
+	//// 反序列化 notices
+	//var notices []map[string]interface{}
+	////log.Println(string(resp.Notices))
+	//err = json.Unmarshal(resp.Notices, &notices)
+	//if err != nil {
+	//	log.Println("反序列化通知列表失败:", err)
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "通知列表反序列化失败: " + err.Error(),
+	//	})
+	//	return
+	//}
 
 	// 返回响应给前端
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
-		"notices":    notices, // 返回反序列化后的通知数据
+		"notices":    json.RawMessage(resp.Notices), // 返回反序列化后的通知数据
 		"msg":        resp.Msg,
 		"page_count": resp.PageCount, // 总页数
 	})
@@ -95,17 +84,10 @@ func HandleAddNotice(context *gin.Context) {
 		Tags:    formData.Tags,
 		ImgUrl:  formData.ImgUrl,
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -138,17 +120,10 @@ func HandleUpdateNotice(context *gin.Context) {
 		Tags:    formData.Tags,
 		ImgUrl:  formData.ImgUrl,
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -175,17 +150,10 @@ func HandleUpdateNoticeStatus(context *gin.Context) {
 		Id:     postData.Id,
 		IsShow: postData.IsShow,
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -213,17 +181,10 @@ func HandleDeleteNotice(context *gin.Context) {
 	resp, err := grpcClient.NoticeServiceClient.DeleteNotice(sysContext.Background(), &pb.DeleteNoticeRequest{
 		NoticeId: int64(deleteNotice.NoticeId),
 	})
-	if err != nil {
-		log.Println(err)
+	if err = failOnRpcError(err, context.Request.RequestURI); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
