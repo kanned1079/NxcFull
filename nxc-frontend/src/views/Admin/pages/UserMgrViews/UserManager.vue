@@ -486,7 +486,7 @@ export default {
         <n-data-table
             striped
             size="large"
-            :bordered="false"
+            :bordered="true"
             :columns="columns"
             :data="users"
             :scroll-x="1600"

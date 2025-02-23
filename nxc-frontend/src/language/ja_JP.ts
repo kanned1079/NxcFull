@@ -797,7 +797,6 @@ export default {
                 "action": { "title": "動作します", "showDetail": "詳細を表示します" }
             },
             "failureReason": "失敗の原因",
-            "tradeSuccess": "注文成功",
             "couponId": "クーポンID",
             "couponName": "クーポン名",
             "noEntry": "なし",

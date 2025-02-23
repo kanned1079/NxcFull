@@ -845,7 +845,6 @@ export default {
             "search": "查詢訂單",
             "resetSearch": "重置查詢",
             "failureReason": "失敗原因",
-            "tradeSuccess": "訂單成功",
             "couponId": "優惠券ID",
             "couponName": "優惠券名稱",
             "noEntry": "無",

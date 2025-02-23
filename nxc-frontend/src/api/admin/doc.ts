@@ -31,7 +31,8 @@ export const handleAddNewDoc = async (doc_data: DocItem) => {
         })
         return data
     } catch (err: any) {
-
+        console.error(err)
+        return false
     }
 }
 

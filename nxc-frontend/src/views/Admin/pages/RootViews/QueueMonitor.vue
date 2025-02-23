@@ -43,7 +43,7 @@ const callTestConnLatency = async () => {
   const runTest = async () => {
     if (await handleTestServerLatency()) {
       testEndTime = new Date();
-      latency.value = testEndTime.getTime() - testStartTime.getTime(); // 计算请求的延迟时间（毫秒）
+      latency.value = (testStartTime && testEndTime)?testEndTime.getTime() - testStartTime.getTime():-1  // 计算请求的延迟时间（毫秒）
     } else {
       latency.value = -1; // 如果请求失败，设置延迟为 -1
     }

@@ -23,6 +23,7 @@ func HandleGetAllDocuments(context *gin.Context) {
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
+		return
 	}
 
 	//var docMap []map[string]interface{}

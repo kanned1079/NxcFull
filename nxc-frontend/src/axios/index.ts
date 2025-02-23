@@ -8,20 +8,45 @@ const instance = axios.create( {
     timeout: 10000 // 设置超时时间
 });
 
-// 这里使用sessionStorage存储Token
-// 请求拦截器
+
+// instance.interceptors.request.use(config => {
+//     const token = sessionStorage.getItem('token');
+//     // console.log(token)
+//     if (token) {
+//         config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+// }, error => {
+//     return Promise.reject(error);
+// });
+
+// 响应拦截器
+// instance.interceptors.response.use(response => {
+//     return response;
+// }, error => {
+//     if (error.response && error.response.status === 401) {
+//         let userInfoStore = useUserInfoStore();
+//         // token 过期
+//         console.error('Token expired or invalid. Please log in again.');
+//         userInfoStore.logout() // 登出操作
+//
+//     }
+//     return Promise.reject(error);
+// });
+
 instance.interceptors.request.use(config => {
-    const token = sessionStorage.getItem('token');
+    const userInfoStore = useUserInfoStore()
     // console.log(token)
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    if (userInfoStore.thisUser.token) {
+        config.headers.Authorization = `Bearer ${userInfoStore.thisUser.token}`;
+    } else {
+        userInfoStore.logout()
     }
     return config;
 }, error => {
     return Promise.reject(error);
 });
 
-// 响应拦截器
 instance.interceptors.response.use(response => {
     return response;
 }, error => {
@@ -29,9 +54,7 @@ instance.interceptors.response.use(response => {
         let userInfoStore = useUserInfoStore();
         // token 过期
         console.error('Token expired or invalid. Please log in again.');
-        // 登出操作
-        userInfoStore.logout()
-
+        userInfoStore.logout() // 登出操作
     }
     return Promise.reject(error);
 });

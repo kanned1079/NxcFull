@@ -28,7 +28,7 @@ interface Order {
   plan_name: string
   period: string
   coupon_id: number
-  coupon_number: string
+  coupon_name: string
   status: number // 0新购 1续费 2修改订阅
   is_success: boolean
   is_finished: boolean
@@ -406,14 +406,14 @@ let showOrderDetailsByIdClick = () => {
   showDetailModal.value = true
 }
 
-type OrderDetailKey = 'user_id' | 'plan_name' | 'expiration_date' | 'created_at'
+type OrderDetailKey = 'user_id' | 'email' | 'discount_amount' | 'coupon_id' | 'coupon_name' | 'failure_reason';
 
 interface OrderDetail {
   title: string;
   key: OrderDetailKey
 }
 
-const orderDetailItems: KeyDetail[] = [
+const orderDetailItems: OrderDetail[] = [
   {
     title: 'adminViews.keysMgr.detailModal.userId',
     key: 'user_id',
@@ -446,11 +446,11 @@ const orderDetailItems: KeyDetail[] = [
 
 const formatDetailString = (key: string): string => {
   if (key === 'expiration_date' || key === 'created_at') {
-    return formatDate(orderList.value[detailKeyIndex.value][key as OrderDetailKey] as string)
+    return formatDate(`${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}`)
   } else if (key === 'user_id') {
     return `# ${orderList.value[detailKeyIndex.value][key as OrderDetailKey].toString()}`
   } else if (key === 'coupon_id') {
-    return orderList.value[detailKeyIndex.value][key as OrderDetailKey] > 0?`# ${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}`:t('adminViews.orderMgr.noEntry')
+    return parseInt(`${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}`) > 0?`# ${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}`:t('adminViews.orderMgr.noEntry')
   } else if (key == 'failure_reason') {
     if (orderList.value[detailKeyIndex.value].is_success && orderList.value[detailKeyIndex.value].is_finished)
       return t('adminViews.orderMgr.tradeSuccess')

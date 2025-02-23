@@ -7,6 +7,7 @@ import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import renderIcon from "@/utils/iconFormator";
 import CommonLogo from "@/components/CommonLogo.vue";
+import {type MenuOption} from "naive-ui"
 import {
   BookOutline as manualIcon,
   CardOutline as paymentIcon,
@@ -43,42 +44,42 @@ const userInfoStore = useUserInfoStore();
 const router = useRouter();
 
 // 管理员 ----------------------------------
-let MenuOption = ref([
+let MenuOption = ref<MenuOption[]>([
   {
-    label: computed(() => t('commonAside.admin.dashboard')),
+    label: t('commonAside.admin.dashboard'),
     key: 'dashboard',
-    icon: renderIcon(dashboardIcon)
+    icon: renderIcon(dashboardIcon),
   },
   {
-    label: computed(() => t('commonAside.admin.queueMonit')),
+    label: t('commonAside.admin.queueMonit'),
     key: 'queue-monitor',
     icon: renderIcon(queueIcon)
   },
   {
-    label: computed(() => t('commonAside.admin.settings')),
+    label: t('commonAside.admin.settings'),
     key: 'pinball-1973',
     // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
       {
-        label: computed(() => t('commonAside.admin.systemConfig')),
+        label: t('commonAside.admin.systemConfig'),
         key: 'system-config',
         icon: renderIcon(settingIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.paymentConfig')),
+        label: t('commonAside.admin.paymentConfig'),
         key: 'payment-config',
         icon: renderIcon(paymentIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.themeConfig')),
+        label: t('commonAside.admin.themeConfig'),
         key: 'theme-config',
         icon: renderIcon(themeIcon),
       },
     ]
   },
   {
-    label: computed(() => t('commonAside.admin.server')),
+    label: t('commonAside.admin.server'),
     key: 'server',
     // icon: renderIcon(BookIcon),
     disabled: false,
@@ -89,7 +90,7 @@ let MenuOption = ref([
       //   icon: renderIcon(nodeIcon),
       // },
       {
-        label: computed(() => t('commonAside.admin.privilege')),
+        label: t('commonAside.admin.privilege'),
         key: 'privilege-group-mgr',
         icon: renderIcon(privilegeIcon),
       },
@@ -101,61 +102,61 @@ let MenuOption = ref([
     ]
   },
   {
-    label: computed(() => t('commonAside.admin.finance')),
+    label: t('commonAside.admin.finance'),
     key: 'finance',
     // icon: renderIcon(BookIcon),
     disabled: false,
     children: [
       {
-        label: computed(() => t('commonAside.admin.subscription')),
+        label: t('commonAside.admin.subscription'),
         key: 'subscription-manager',
         icon: renderIcon(subscriptionIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.coupon')),
+        label: t('commonAside.admin.coupon'),
         key: 'coupon-mgr',
         icon: renderIcon(ticketIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.order')),
+        label: t('commonAside.admin.order'),
         key: 'order-manager',
         icon: renderIcon(orderIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.activate')),
+        label: t('commonAside.admin.activate'),
         key: 'activate-manager',
         icon: renderIcon(historyIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.key')),
+        label: t('commonAside.admin.key'),
         key: 'key-manager',
         icon: renderIcon(keyIcon),
       },
     ]
   },
   {
-    label: computed(() => t('commonAside.admin.user')),
+    label: t('commonAside.admin.user'),
     key: 'users',
     // icon: renderIcon(BookIcon),
     disabled: false,
     children: [
       {
-        label: computed(() => t('commonAside.admin.userMgr')),
+        label: t('commonAside.admin.userMgr'),
         key: 'user-manager',
         icon: renderIcon(usersIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.notice')),
+        label: t('commonAside.admin.notice'),
         key: 'notice-manager',
         icon: renderIcon(noticeIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.ticket')),
+        label: t('commonAside.admin.ticket'),
         key: 'ticket-mgr',
         icon: renderIcon(helpIcon),
       },
       {
-        label: computed(() => t('commonAside.admin.doc')),
+        label: t('commonAside.admin.doc'),
         key: 'doc-manager',
         icon: renderIcon(knowledgeIcon),
       },
@@ -188,81 +189,78 @@ let adminUpdate = (key: string) => {
 
 
 // 普通用户 ----------------------------------
-let UserMenuOption = ref([
+let UserMenuOption = ref<MenuOption[]>([
   {
-    label: computed(() => t('commonAside.user.dashboard')),
+    label: t('commonAside.user.dashboard'),
     key: 'user-dashboard',
     icon: renderIcon(dashboardIcon)
   },
   {
-    label: computed(() => t('commonAside.user.document')),
+    label: t('commonAside.user.document'),
     key: 'user-doc',
     icon: renderIcon(manualIcon)
   },
   {
-    label: computed(() => t('commonAside.user.app')),
+    label: t('commonAside.user.app'),
     key: 'user-app-download',
     icon: renderIcon(downloadIcon)
   },
   {
-    label: computed(() => t('commonAside.user.subscription')),
+    label: t('commonAside.user.subscription'),
     key: 'user-sub',
-    // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
       {
-        label: computed(() => t('commonAside.user.purchase')),
+        label: t('commonAside.user.purchase'),
         key: 'user-buy-plan',
         icon: renderIcon(buyIcon),
       },
       {
-        label: computed(() => t('commonAside.user.surplus')),
+        label: t('commonAside.user.surplus'),
         key: 'user-keys',
         icon: renderIcon(keyIcon),
       },
       {
-        label: computed(() => t('commonAside.user.activateLog')),
+        label: t('commonAside.user.activateLog'),
         key: 'user-activate-log',
         icon: renderIcon(historyIcon),
       },
     ]
   },
   {
-    label: computed(() => t('commonAside.user.fiance')),
+    label: t('commonAside.user.fiance'),
     key: 'user-fiance',
-    // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
       {
-        label: computed(() => t('commonAside.user.topUp')),
+        label: t('commonAside.user.topUp'),
         key: 'user-top-up',
         icon: renderIcon(paymentIcon),
       },
       {
-        label: computed(() => t('commonAside.user.myOrder')),
+        label: t('commonAside.user.myOrder'),
         key: 'user-orders',
         icon: renderIcon(myOrderIcon),
       },
       {
-        label: computed(() => t('commonAside.user.myInvite')),
+        label: t('commonAside.user.myInvite'),
         key: 'user-invite',
         icon: renderIcon(inviteIcon),
       },
     ]
   },
   {
-    label: computed(() => t('commonAside.user.user')),
+    label: t('commonAside.user.user'),
     key: 'my-profile',
-    // icon: renderIcon(settingIcon),
     disabled: false,
     children: [
       {
-        label: computed(() => t('commonAside.user.profile')),
+        label: t('commonAside.user.profile'),
         key: 'user-profile',
         icon: renderIcon(profileIcon),
       },
       {
-        label: computed(() => t('commonAside.user.support')),
+        label: t('commonAside.user.support'),
         key: 'user-tickets',
         icon: renderIcon(supportIcon),
       },
@@ -270,7 +268,6 @@ let UserMenuOption = ref([
     ]
   },
 ])
-
 
 let userUpdate = (key: string) => {
   themeStore.menuIsFlippActive = false

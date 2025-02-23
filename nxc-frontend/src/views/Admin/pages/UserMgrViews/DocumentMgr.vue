@@ -116,27 +116,6 @@ let clearForm = () => {
   })
 }
 
-// callHandleAddNewDoc 提交新的文档
-const callHandleAddNewDoc = async () => {
-  if (formValue.value.doc.title !== '') {
-    animated.value = false
-    active.value = false
-    let data = await handleAddNewDoc(formValue.value.doc)
-    if (data.code === 200) {
-      console.log(data)
-      animated.value = true
-      message.success(t(`${i18nPrefix}.addSuccess`))
-      // 清除表单值
-      clearForm()
-      await callGetAllDocumentList()
-    } else {
-      message.error(t(`${i18nPrefix}.addFailure`))
-    }
-  } else {
-    message.error(t(`${i18nPrefix}.titleNotEmpty`))
-  }
-}
-
 // -----修改---------------------------------------------------------
 
 const columns = computed<DataTableColumns<DocumentItem>>(() => [
@@ -237,44 +216,64 @@ let handleUpdateDocClick = (row: DocumentItem) => {
   active.value = true
 }
 
-let updateDocument = async () => {
-  let data = await handleEditDocById(updateDocId.value, formValue.value.doc)
-    if (data.code === 200) {
+// callHandleAddNewDoc 提交新的文档
+const callHandleAddNewDoc = async () => {
+  if (formValue.value.doc.title !== '') {
+    animated.value = false
+    active.value = false
+    let data = await handleAddNewDoc(formValue.value.doc)
+    if (data && data.code === 200) {
+      animated.value = true
+      message.success(t('adminViews.common.addSuccess'))
+      // 清除表单值
+      clearForm()
       await callGetAllDocumentList()
-      active.value = false
     } else {
-      message.error('Updated failure ' + data.msg || '')
+      message.error(t('adminViews.common.addFailure'))
     }
-}
-
-let callUpdateDocumentShow = async (row: DocumentItem) => {
-  let data = await handleUpdateDocShow(row.id)
-  if (data.code === 200) {
-    await callGetAllDocumentList()
   } else {
-    message.error('Updated failure ' + data.msg || '')
+    message.error(t(`${i18nPrefix}.titleNotEmpty`))
   }
 }
 
 let callGetAllDocumentList = async () => {
   let data = await handleGetAllDoc(dataSize.value.page, dataSize.value.pageSize)
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     documentItemList.value = []
-    data.documents.forEach((doc: DocumentItem) => documentItemList.value.push(doc))
+    data.documents?.forEach((doc: DocumentItem) => documentItemList.value.push(doc))
     pageCount.value = data.page_count as number
     animated.value = true
   } else {
-    message.error('Updated failure ' + data.msg || '')
+    message.error(t('adminViews.common.fetchDataFailure') + data.msg || '')
+  }
+}
+
+let updateDocument = async () => {
+  let data = await handleEditDocById(updateDocId.value, formValue.value.doc)
+    if (data && data.code === 200) {
+      await callGetAllDocumentList()
+      active.value = false
+    } else {
+      message.error(t('adminViews.common.updateFailure') + data.msg || '')
+    }
+}
+
+let callUpdateDocumentShow = async (row: DocumentItem) => {
+  let data = await handleUpdateDocShow(row.id)
+  if (data && data.code === 200) {
+    await callGetAllDocumentList()
+  } else {
+    message.error(t('adminViews.common.updateFailure') + data.msg || '')
   }
 }
 
 let handleDeleteDoc = async (row: DocumentItem) => {
   let data = await handleDeleteDocById(row.id)
-    if (data.code === 200 && data.deleted) {
-      message.success('Delete doc ok, id: ' + row.id)
+    if (data && data.code === 200 && data.deleted) {
+      message.success(t('adminViews.common.deleteSuccess'))
       await callGetAllDocumentList()
     } else {
-      message.error('Delete doc failure' + data.msg || '')
+      message.error(t('adminViews.common.deleteFailure') + data.msg || '')
     }
 }
 

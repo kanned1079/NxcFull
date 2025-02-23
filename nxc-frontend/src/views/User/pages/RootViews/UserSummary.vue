@@ -209,7 +209,7 @@ export default {
       <!--      </n-collapse-transition>-->
 
       <n-card content-style="padding: 0;" :embedded="true" hoverable :bordered="false">
-        <n-carousel show-arrow autoplay style="border-radius: 3px">
+        <n-carousel show-arrow autoplay style="border-radius: 6px">
           <n-card
               v-for="item in thisNotices"
               :key="item.id"

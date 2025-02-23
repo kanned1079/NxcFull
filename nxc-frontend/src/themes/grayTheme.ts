@@ -1,55 +1,55 @@
 import {type GlobalThemeOverrides} from "naive-ui"
 
-export const darkBlueDayLight: GlobalThemeOverrides = {
+export const grayThemeLight: GlobalThemeOverrides = {
     common: {
-        primaryColor: '#4f7da6',
-        primaryColorPressed: '#4f7da6',
+        primaryColor: '#9c9c9c',
+        primaryColorPressed: '#9c9c9c',
         bodyColor: '#eff2f7',
         modalColor: '#eff2f7',
         tableColor: '#eff2f7',
-        primaryColorHover: '#4f7da6',
+        primaryColorHover: '#9c9c9c',
         borderRadius: '6px',
     },
     Button: {
-        color: '#4f7da6',
-        colorFocusPrimary: '#3c6f92',
-        colorHoverPrimary: '#3c6f92',
-        colorPressedPrimary: '#3c6f92',
+        color: '#9c9c9c',
+        colorFocusPrimary: '#858585',
+        colorHoverPrimary: '#858585',
+        colorPressedPrimary: '#858585',
         textColorPrimary: '#fff',
         textColorHoverPrimary: '#fff',
         textColorPressedPrimary: '#fff',
         textColorFocusPrimary: '#fff',
-        colorTextPrimary: '#4f7da6',
-        colorTextHoverPrimary: '#3c6f92',
-        textColorTextHoverPrimary: '#3c6f92',
+        colorTextPrimary: '#9c9c9c',
+        colorTextHoverPrimary: '#858585',
+        textColorTextHoverPrimary: '#858585',
         textColorPrimaryDisabled: '#fff',
     },
     Input: {
-        borderHover: '1px solid #4f7da6',
-        borderFocus: '1px solid #4f7da6',
+        borderHover: '1px solid #9c9c9c',
+        borderFocus: '1px solid #9c9c9c',
     },
     Card: {
-        colorEmbedded: '#fff',
+        colorEmbedded: '#fff',  // 比bodyColor略深的颜色
         borderRadius: '6px',
     },
     Switch: {
-        railColorActive: '#4f7da6',
+        railColorActive: '#9c9c9c',
     },
     DataTable: {
         borderRadius: '6px !important',
     },
     Notification: {
         color: 'rgba(255, 255, 255, 1)',
-        bordered: '1px solid #4f7da6',
+        bordered: '1px solid #9c9c9c',
     },
     Dropdown: {
         color: '#fff',
-        borderFocus: '1px solid #4f7da6',
-        borderHover: '1px solid #4f7da6',
+        borderFocus: '1px solid #9c9c9c',
+        borderHover: '1px solid #9c9c9c',
     },
     Select: {
-        borderFocus: '1px solid #4f7da6',
-        borderHover: '1px solid #4f7da6',
+        borderFocus: '1px solid #9c9c9c',
+        borderHover: '1px solid #9c9c9c',
     },
     Carousel: {
         borderRadius: '6px',
@@ -59,24 +59,24 @@ export const darkBlueDayLight: GlobalThemeOverrides = {
     },
 }
 
-export const darkBlueDayNight: GlobalThemeOverrides = {
+export const grayThemeNight: GlobalThemeOverrides = {
     common: {
-        primaryColor: '#2f4f6d',
-        primaryColorPressed: '#2f4f6d',
-        bodyColor: '#2d2f2f',
-        modalColor: '#2d2f2f',
+        primaryColor: '#707070',   // 更深的灰色
+        primaryColorPressed: '#707070',
+        bodyColor: '#2d2f2f',      // 更深的灰色
+        modalColor: '#2d2f2f',     // 更深的灰色
         tableColorStriped: 'rgba(40, 41, 41, 1)',
         tableColor: 'rgba(40, 41, 41, 1)',
         tableHeaderColor: 'rgba(40, 41, 41, 1)',
         tableColorHover: 'rgba(40, 41, 41, 0.5)',
-        primaryColorHover: '#2f4f6d',
+        primaryColorHover: '#707070',
         borderRadius: '6px',
     },
     Button: {
-        color: '#2f4f6d',
-        colorFocusPrimary: '#3e6d8f',
-        colorHoverPrimary: '#3e6d8f',
-        colorPressedPrimary: '#3e6d8f',
+        color: '#707070',
+        colorFocusPrimary: '#8d8d8d',
+        colorHoverPrimary: '#8d8d8d',
+        colorPressedPrimary: '#8d8d8d',
         textColorPrimary: '#fff',
         textColorHoverPrimary: '#fff',
         textColorPressedPrimary: '#fff',
@@ -86,18 +86,18 @@ export const darkBlueDayNight: GlobalThemeOverrides = {
         textColorPressedError: '#ffe3e3',
         textColorFocusError: '#ffe3e3',
         textColorTextPrimary: '#fff',
-        textColorTextHoverPrimary: '#3e6d8f',
+        textColorTextHoverPrimary: '#8d8d8d',
     },
     Input: {
-        borderHover: '1px solid #2f4f6d',
-        borderFocus: '1px solid #2f4f6d',
+        borderHover: '1px solid #707070',
+        borderFocus: '1px solid #707070',
     },
     Card: {
         colorEmbedded: 'rgba(40, 41, 41, 1)',
         borderRadius: '6px',
     },
     Switch: {
-        railColorActive: '#2f4f6d',
+        railColorActive: '#707070',
     },
     DataTable: {
         thColor: 'rgba(40, 41, 41, 1)',
@@ -108,14 +108,14 @@ export const darkBlueDayNight: GlobalThemeOverrides = {
         color: 'rgba(40, 45, 47, 1)',
     },
     Menu: {
-        itemTextColorActive: '#4f7da6',
-        itemTextColorActiveHover: '#385894',
-        itemIconColorActive: '#4f7da6',
-        itemIconColorActiveHover: '#385894',
-        itemTextColorChildActive: '#4f7da6',
-        itemTextColorChildActiveHover: '#385894',
-        arrowColorChildActive: '#4f7da6',
-        arrowColorChildActiveHover: '#385894',
+        itemTextColorActive: '#9c9c9c',
+        itemTextColorActiveHover: '#8a8a8a',
+        itemIconColorActive: '#9c9c9c',
+        itemIconColorActiveHover: '#8a8a8a',
+        itemTextColorChildActive: '#9c9c9c',
+        itemTextColorChildActiveHover: '#8a8a8a',
+        arrowColorChildActive: '#9c9c9c',
+        arrowColorChildActiveHover: '#8a8a8a',
     },
     Dropdown: {
         color: '#252525',

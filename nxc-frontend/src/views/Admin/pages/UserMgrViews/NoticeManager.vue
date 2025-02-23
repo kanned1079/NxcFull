@@ -9,6 +9,7 @@ import {NButton, NIcon, NSwitch, useMessage, type DataTableColumns, type FormIns
 import {formatDate} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import {handleFetchAllNotices} from "@/api/admin/notice";
 
 // const apiAddrStore = useApiAddrStore();
 const {t} = useI18n()
@@ -37,7 +38,7 @@ interface formData {
   img_url?: string
 }
 
-let formRef = ref<img_url | null>(null)
+let formRef = ref<FormInst | null>(null)
 let formData = ref<formData>({
   title: '',
   content: '',
@@ -217,25 +218,27 @@ const columns = computed<DataTableColumns<Notice>>(() => [
 
 // 获取所有的通知
 let getAllNotices = async () => {
-  try {
-    let {data} = await instance.get('/api/admin/v1/notice', {
-      params: {
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-        is_user: false,
-      }
-    })
-    if (data.code === 200) {
+  // try {
+  //   let {data} = await instance.get('/api/admin/v1/notice', {
+  //     params: {
+  //       page: dataSize.value.page,
+  //       size: dataSize.value.pageSize,
+  //       is_user: false,
+  //     }
+  //   })
+  let data = await handleFetchAllNotices(dataSize.value.page, dataSize.value.pageSize, false)
+    if (data && data.code === 200) {
       noticesArr.value = []
+      // console.log(1111)
       data.notices.forEach((notice: Notice) => noticesArr.value.push(notice))
       pageCount.value = data.page_count
       animated.value = true
     } else {
       message.error('获取失败')
     }
-  } catch (err) {
-    message.error('未知错误 ' + err)
-  }
+  // } catch (err) {
+  //   message.error('未知错误 ' + err)
+  // }
 }
 
 let updateNoticeEnabled = async (id: number, enabled: boolean) => {

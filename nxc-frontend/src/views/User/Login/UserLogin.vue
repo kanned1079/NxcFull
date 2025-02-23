@@ -534,7 +534,6 @@ export default {
 
     .username {
       margin-top: 20px;
-      border-radius: 3px;
       align-items: center;
       //background-color: #f2fafd;
       //box-shadow: rgba(242,251,254,0.5) 0 1px 10px 0;
@@ -542,7 +541,6 @@ export default {
 
     .password {
       margin-top: 30px;
-      border-radius: 3px;
       align-items: center;
       //background-color: #f2fafd;
     }
@@ -555,7 +553,6 @@ export default {
 
       .no-account-prefix {
         font-size: 1rem;
-        margin-right: 3px;
         opacity: 0.8;
       }
 

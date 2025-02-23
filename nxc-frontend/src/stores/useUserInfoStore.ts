@@ -51,6 +51,7 @@ const useUserInfoStore = defineStore('userInfoS',() => {
 
     // logout 登出 设置状态false 写入session 转回登陆页面
     let logout = () => {
+        console.log('logout')
         setAndSaveAuthStatus(false)
         let isAdminBak = thisUser.value.isAdmin
         sessionStorage.removeItem('token')
@@ -70,12 +71,11 @@ const useUserInfoStore = defineStore('userInfoS',() => {
             // licenseId: 0,
             token: '',
         });
-        console.log('是否是管理员:', isAdminBak)
+        // console.log('是否是管理员:', isAdminBak)
         router.push(isAdminBak ? '/admin/login' : '/login').catch(err => {
             console.error('Failed to navigate:', err);
         });
     }
-
 
     let updateUserInfo = async ():Promise<boolean> => {
         try {
