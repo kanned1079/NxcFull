@@ -58,6 +58,7 @@ export default {
             "cancel": "取消",
             "success": "操作成功",
             "failure": "操作失敗",
+            "NotAllowed": "非法格式",
         },
         "login": {
             "secureCard": {

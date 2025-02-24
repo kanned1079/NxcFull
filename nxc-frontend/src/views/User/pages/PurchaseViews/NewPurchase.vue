@@ -65,7 +65,7 @@ const cardClasses = (index: number) =>
     })).value;
 
 onBeforeMount( async () => {
-  themeStore.breadcrumb = t('newPurchase.title')
+  themeStore.breadcrumb = 'newPurchase.title'
   themeStore.menuSelected = 'user-buy-plan'
   await paymentStore.getAllPlans(0, 0)
 })

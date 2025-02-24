@@ -15,7 +15,9 @@ func (s *SettingServices) GetAppDownloadLink(ctx context.Context, request *pb.Ge
 		"download_enabled", // 是否启用下载
 		"win_download",     // Windows 下载链接
 		"osx_download",     // macOS 下载链接
+		"linux_download",
 		"android_download", // Android 下载链接
+		"ios_download",
 	}
 
 	// 存储下载链接的结构体，AppItem 用于存放每个平台的下载链接
@@ -41,7 +43,7 @@ func (s *SettingServices) GetAppDownloadLink(ctx context.Context, request *pb.Ge
 				log.Printf("Failed to unmarshal key %s value: %v", key, err)
 				failedKeys = append(failedKeys, key)
 			}
-		case "win_download", "osx_download", "android_download":
+		case "win_download", "osx_download", "android_download", "linux_download", "ios_download":
 			// 处理下载链接配置项
 			var platform string
 			var downloadLink string
@@ -56,7 +58,9 @@ func (s *SettingServices) GetAppDownloadLink(ctx context.Context, request *pb.Ge
 			platformMap := map[string]string{
 				"win_download":     "Windows",
 				"osx_download":     "macOS",
+				"linux_download":   "Linux",
 				"android_download": "Android",
+				"ios_download":     "IOS",
 			}
 
 			platform, ok := platformMap[key]

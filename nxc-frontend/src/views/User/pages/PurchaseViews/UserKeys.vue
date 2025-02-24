@@ -14,6 +14,7 @@ import {
 } from "@vicons/ionicons5"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import {handleGetAllMyKeys} from "@/api/user/keys";
 
 const {t} = useI18n();
 const message = useMessage()
@@ -58,28 +59,20 @@ let myKeys = ref<Key[]>([])
 let getAllMyKeys = async () => {
   showSkeleton.value = true
   animated.value = false
-  try {
-    let {data} = await instance.get('/api/user/v1/keys', {
-      params: {
-        user_id: userInfoStore.thisUser.id,
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    })
-    if (data.code === 200) {
-      myKeys.value = []
-      showSkeleton.value = false
+  let data = await handleGetAllMyKeys(userInfoStore.thisUser.id, dataSize.value.page, dataSize.value.pageSize)
+  if (data && data.code === 200) {
+    myKeys.value = []
+    showSkeleton.value = false
+    if (data.my_keys && data.my_keys.length >= 0)
       data.my_keys.forEach((key: Key) => myKeys.value.push(key))
-      pageCount.value = data.page_count
-      if (myKeys.value.length === 0) {
-        message.info(t('userKeys.noKeys'))
-      }
-      animated.value = true
-      //
+    pageCount.value = data.page_count
+    if (myKeys.value.length === 0) {
+      message.info(t('userKeys.noKeys'))
     }
-  } catch (error) {
-    console.log(error)
+    animated.value = true
+    //
   }
+
 }
 
 // isKeyExpired 根据expired时间戳判断是否过期
@@ -127,7 +120,7 @@ const getKeyContentStyle = (isValid: boolean, expirationDateStamp: number) => {
 
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('userKeys.myKeys')
+  themeStore.breadcrumb = 'userKeys.myKeys'
   themeStore.menuSelected = 'user-keys'
 
 })
@@ -154,10 +147,10 @@ export default {
       :description="t('userKeys.description')"
   />
 
-<!--  <div style="padding: 20px 20px 0 20px">-->
-<!--    <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">-->
-<!--    </n-card>-->
-<!--  </div>-->
+  <!--  <div style="padding: 20px 20px 0 20px">-->
+  <!--    <n-card class="title" :embedded="true" hoverable :bordered="false" :title="t('userKeys.myKeys')">-->
+  <!--    </n-card>-->
+  <!--  </div>-->
   <transition name="slide-fade">
     <div class="root" v-if="animated">
       <n-card :embedded="true" hoverable :bordered="false" style="margin-top: 30px" v-if="myKeys.length === 0">
@@ -258,23 +251,23 @@ export default {
           :update-data="getAllMyKeys"
       />
 
-<!--      <div v-if="myKeys.length >= 10 || dataSize.page !== 1"-->
-<!--           style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="getAllMyKeys() "-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 160px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="dataSize.page = 1; getAllMyKeys()"-->
-<!--        />-->
-<!--      </div>-->
+      <!--      <div v-if="myKeys.length >= 10 || dataSize.page !== 1"-->
+      <!--           style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
+      <!--        <n-pagination-->
+      <!--            size="medium"-->
+      <!--            v-model:page.number="dataSize.page"-->
+      <!--            :page-count="pageCount"-->
+      <!--            @update:page="getAllMyKeys() "-->
+      <!--        />-->
+      <!--        <n-select-->
+      <!--            style="width: 160px; margin-left: 20px"-->
+      <!--            v-model:value.number="dataSize.pageSize"-->
+      <!--            size="small"-->
+      <!--            :options="dataCountOptions"-->
+      <!--            :remote="true"-->
+      <!--            @update:value="dataSize.page = 1; getAllMyKeys()"-->
+      <!--        />-->
+      <!--      </div>-->
     </div>
   </transition>
 

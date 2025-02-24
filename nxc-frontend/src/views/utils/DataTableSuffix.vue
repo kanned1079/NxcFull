@@ -2,8 +2,10 @@
 import { useI18n } from "vue-i18n";
 import { defineProps, ref, computed, watch, defineEmits, onMounted } from "vue";
 import { type CountOption } from "@/types";
+import useAppInfosStore from "@/stores/useAppInfosStore";
 
 const { t } = useI18n();
+const appInfoStore = useAppInfosStore()
 
 // 定义 Props 和 Emits
 const props = defineProps<{
@@ -81,6 +83,7 @@ watch(
         emit('update:data-size', { ...dataSize });
         emit('update:animated', false);
         props.updateData();
+        appInfoStore.updatePaginationSize(newSize)
       }"
     />
   </div>

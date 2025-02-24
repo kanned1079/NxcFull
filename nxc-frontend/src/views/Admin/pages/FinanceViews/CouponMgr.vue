@@ -19,6 +19,7 @@ import {
   handleUpdateCoupon
 } from "@/api/admin/coupon";
 import {handleFetchPlanKv} from "@/api/admin/plan";
+import useTablePagination from "@/hooks/useTablePagination";
 
 const {t} = useI18n();
 const i18nPrefix: string = 'adminViews.couponMgr';
@@ -33,11 +34,13 @@ let animated = ref<boolean>(false)
 
 const formRef = ref<FormInst | null>(null)
 
-let pageCount = ref(10)
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+// let pageCount = ref(10)
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
+
+let [dataSize, pageCount] = useTablePagination()
 
 
 // 从服务器拉取的优惠券列表
@@ -137,7 +140,8 @@ let getPlanKV = async () => {
       value: item.id,
     }))
   } else {
-    message.error(t(`${i18nPrefix}.fetchPlanKvFailure`))
+    message.error(t('adminViews.common.fetchDataFailure'))
+    // message.error(t(`${i18nPrefix}.fetchPlanKvFailure`))
   }
   // } catch (error) {
   //   console.log(error)
@@ -159,11 +163,9 @@ let getAllCoupons = async () => {
   let data = await handleGetAllCoupon(dataSize.value.page, dataSize.value.pageSize)
   if (data && data.code === 200) {
     couponList.value = []
-
     // couponList.value = data.coupons;
-    data.coupon_list.forEach((item: Coupon) => {
-      couponList.value.push(item)
-    })
+    if (data.coupon_list)
+      data.coupon_list.forEach((item: Coupon) => couponList.value.push(item))
     pageCount.value = data.page_count
     animated.value = true
   } else {
@@ -357,11 +359,10 @@ let submitCoupon = async () => {
       ...formValue.value.coupon
     })
     if (data.code === 200) {
-      message.success('添加优惠券成功')
       message.success(t('adminViews.common.addSuccess'))
       await getAllCoupons();
     } else {
-      message.error(t('adminViews.common.addSuccess') + data.msg || '')
+      message.error(t('adminViews.common.addFailure') + data.msg || '')
     }
   } catch (error) {
     console.error(error)

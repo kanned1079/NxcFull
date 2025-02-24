@@ -204,7 +204,7 @@ let callGetAllMyOrders = async () => {
 }
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('userOrders.myOrders')
+  themeStore.breadcrumb = 'userOrders.myOrders'
   themeStore.menuSelected = 'user-orders'
 
 })

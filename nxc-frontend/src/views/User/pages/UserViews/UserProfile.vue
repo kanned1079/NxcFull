@@ -411,7 +411,7 @@ const callAlterUsername = async () => {
 }
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('userProfile.title')
+  themeStore.breadcrumb = 'userProfile.title'
   themeStore.menuSelected = 'user-profile'
 
 

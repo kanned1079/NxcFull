@@ -159,18 +159,18 @@ func HandleGetAllPaymentMethodKv(context *gin.Context) {
 		})
 		return
 	}
-	var confMap []map[string]interface{}
-	if err := json.Unmarshal(resp.Config, &confMap); err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var confMap []map[string]interface{}
+	//if err := json.Unmarshal(resp.Config, &confMap); err != nil {
+	//	context.JSON(http.StatusInternalServerError, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":         resp.Code,
 		"msg":          resp.Msg,
-		"conf":         confMap,
+		"conf":         json.RawMessage(resp.Config),
 		"discount_msg": resp.DiscountMsg,
 	})
 }
@@ -194,18 +194,18 @@ func HandleGetPaymentMethodDetailsBySystemName(context *gin.Context) {
 		})
 		return
 	}
-	var detailsMap map[string]interface{}
-	if err := json.Unmarshal(resp.Details, &detailsMap); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var detailsMap map[string]interface{}
+	//if err := json.Unmarshal(resp.Details, &detailsMap); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":    resp.Code,
 		"msg":     resp.Msg,
-		"details": detailsMap,
+		"details": json.RawMessage(resp.Details),
 	})
 }
 
@@ -390,19 +390,19 @@ func HandleGetAppRuntimeEnv(context *gin.Context) {
 		})
 		return
 	}
-	var config map[string]any
-	err = json.Unmarshal(resp.Config, &config)
-	if err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var config map[string]any
+	//err = json.Unmarshal(resp.Config, &config)
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":   resp.Code,
 		"msg":    resp.Msg,
-		"config": config,
+		"config": json.RawMessage(resp.Config),
 	})
 }
 

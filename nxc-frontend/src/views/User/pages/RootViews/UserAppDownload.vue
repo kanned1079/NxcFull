@@ -36,7 +36,7 @@ let callFetchAllDownloadLink = async () => {
 }
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('userAppDownload.title')
+  themeStore.breadcrumb = 'userAppDownload.title'
   themeStore.menuSelected = 'user-app-download'
   themeStore.userPath = route.fullPath
 })

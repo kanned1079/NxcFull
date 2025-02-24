@@ -86,7 +86,7 @@ watch(() => locale.value, async () => {
 
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('userDocument.title')
+  themeStore.breadcrumb = 'userDocument.title'
   themeStore.menuSelected = 'user-doc'
 })
 

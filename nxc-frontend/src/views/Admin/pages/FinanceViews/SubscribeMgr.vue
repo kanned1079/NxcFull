@@ -12,6 +12,8 @@ import {AddOutline as AddIcon} from "@vicons/ionicons5"
 import instance from "@/axios";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import useTablePagination from "@/hooks/useTablePagination";
+import {handleSubmitNewPlan} from "@/api/admin/plan";
 // import {MdEditor} from "md-editor-v3";
 
 const {t} = useI18n();
@@ -27,11 +29,13 @@ const message = useMessage()
 
 let editType = ref<'add' | 'update'>('add') // 这里可以选择的是add和update
 
-let pageCount = ref(10)
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+// let pageCount = ref(10)
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
+
+const [dataSize, pageCount] = useTablePagination()
 
 interface Plan {
   id: number | null
@@ -74,12 +78,12 @@ let rules = {
   plan: {
     name: {
       required: true,
-      message: '文档标题是必填的',
+      message: '',
       trigger: 'blur'
     },
     describe: {
       required: true,
-      message: '描述区域是必填的',
+      message: '',
       trigger: 'blur'
     },
     is_sale: {
@@ -93,7 +97,7 @@ let rules = {
     },
     capacity_limit: {
       required: true,
-      message: '文档标题是必填的',
+      message: '',
       trigger: 'changed'
     },
     month_price: {
@@ -113,7 +117,6 @@ let rules = {
     }
   }
 }
-
 
 let groupOptions = ref<{ label: string, value: number }[]>([])
 
@@ -165,27 +168,16 @@ let cancelAdd = () => {
 // }
 
 let submitNewPlan = async () => {
-  console.log(formValue.value)
-  try {
-    let {data} = await instance.post('/api/admin/v1/plan', {
-      ...formValue.value.plan,
-    })
-    if (data.code === 200) {
-      // notify('success', '成功', '成功添加新的订阅')
-      message.success(t(`${i18nPrefix}.mention.addSuccess`))
-      let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      if (success) {
-        pageCount.value = page_count as number
-      } else {
-        console.log('pull failure')
-      }
-    } else {
-      // notify('error', '添加出错', data.error)
-      message.success(t(`${i18nPrefix}.mention.addFailure`))
+  animated.value = false
+  if (!formValue.value.plan.name.trim()) return message.error(t('adminViews.common.formatNotAllowed'))
+  let data = await handleSubmitNewPlan(formValue.value.plan)
+  if (data && data.code === 200) {
+    active.value = false
+    message.success(t('adminViews.common.addSuccess'))
 
-    }
-  } catch (error) {
-    console.log(error)
+    await reloadPlanList()
+  } else {
+    message.success(t('adminViews.common.addFailure'))
   }
 }
 
@@ -481,7 +473,9 @@ let reloadPlanList = async () => {
   // data?animated.value = true:message.error('Fetch failure.');
   let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
   pageCount.value = page_count as number
-  success ? animated.value = true : setTimeout(() => animated.value = true, 2000)
+  // success ? null : setTimeout(() => animated.value = true, 2000)
+  if (!success) message.error('adminViews.common.fetchDataFailure')
+  animated.value = true
 }
 
 onBeforeMount(async () => {
@@ -493,14 +487,14 @@ onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
   await getAllGroups()
   // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-  let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-  pageCount.value = page_count as number
+  // let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
+  // pageCount.value = page_count as number
+  await reloadPlanList()
 
   animated.value = true
 
   // themeStore.
 })
-
 
 
 </script>
@@ -537,9 +531,9 @@ export default {
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-<!--      <n-card class="card" hoverable :embedded="true" :title="t('adminViews.planMgr.title')" :bordered="false">-->
-<!--        <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>-->
-<!--      </n-card>-->
+      <!--      <n-card class="card" hoverable :embedded="true" :title="t('adminViews.planMgr.title')" :bordered="false">-->
+      <!--        <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>-->
+      <!--      </n-card>-->
 
       <n-card :embedded="true" :bordered="false" hoverable content-style="padding: 0;" style="margin-top: 20px">
         <!--      在此处放置表格-->
@@ -569,15 +563,19 @@ export default {
               :scroll-x="800"
           >
             <n-form-item :label="t('adminViews.planMgr.form.items.name.title')" path="plan.name">
-              <n-input v-model:value="formValue.plan.name" :placeholder="t('adminViews.planMgr.form.items.name.placeholder')"/>
+              <n-input v-model:value="formValue.plan.name"
+                       :placeholder="t('adminViews.planMgr.form.items.name.placeholder')"/>
             </n-form-item>
             <n-form-item :label="t('adminViews.planMgr.form.items.describe.title')" path="plan.describe">
-              <n-input type="textarea" :rows="8" v-model:value="formValue.plan.describe" :placeholder="t('adminViews.planMgr.form.items.describe.placeholder')"/>
+              <n-input type="textarea" :rows="8" v-model:value="formValue.plan.describe"
+                       :placeholder="t('adminViews.planMgr.form.items.describe.placeholder')"/>
             </n-form-item>
-            <n-form-item v-if="editType==='add'" :label="t('adminViews.planMgr.form.items.isSale.title')" path="plan.is_sale">
+            <n-form-item v-if="editType==='add'" :label="t('adminViews.planMgr.form.items.isSale.title')"
+                         path="plan.is_sale">
               <n-switch v-model:value="formValue.plan.is_sale"/>
             </n-form-item>
-            <n-form-item v-if="editType==='add'" :label="t('adminViews.planMgr.form.items.isRenew.title')" path="plan.is_renew">
+            <n-form-item v-if="editType==='add'" :label="t('adminViews.planMgr.form.items.isRenew.title')"
+                         path="plan.is_renew">
               <n-switch v-model:value="formValue.plan.is_renew"/>
             </n-form-item>
             <n-form-item :label="t('adminViews.planMgr.form.items.group.title')" path="plan.group_id">
@@ -610,7 +608,8 @@ export default {
             </n-form-item>
           </n-form>
           <div style="display: flex; flex-direction: row; justify-content: right; margin-top: 20px">
-            <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">{{ t('operate.cancel') }}
+            <n-button style="margin-right: 15px; width: 80px" @click="cancelAdd" secondary type="primary">
+              {{ t('operate.cancel') }}
             </n-button>
             <n-button style="width: 80px" type="primary" @click="submitPlan">{{
                 editType === 'add' ? t('operate.update') : t('operate.add')

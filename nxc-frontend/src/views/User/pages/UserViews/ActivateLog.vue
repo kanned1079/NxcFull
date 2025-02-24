@@ -216,7 +216,7 @@ let handleCommitNewRemark = async () => {
 
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('userActivation.activateLog')
+  themeStore.breadcrumb = 'userActivation.activateLog'
   themeStore.userPath = '/dashboard/log'
   themeStore.menuSelected = 'user-activate-log'
 })

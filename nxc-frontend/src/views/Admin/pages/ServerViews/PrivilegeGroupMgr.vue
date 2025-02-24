@@ -6,29 +6,26 @@ import {
   type FormInst,
   NButton,
   NIcon,
-  type NotificationType,
   useMessage,
   useNotification
 } from "naive-ui";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
 import useThemeStore from "@/stores/useThemeStore";
-import instance from "@/axios";
 import {BarChartOutlined, UserOutlined} from '@vicons/antd'
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
-import PageHead from "@/views/utils/PageHead.vue"; // 引入所需圖標
+import PageHead from "@/views/utils/PageHead.vue";
+import {handleDeleteGroup, handleGetAllGroups, handleSubmitNewGroup, handleUpdateGroup} from "@/api/admin/groups"; // 引入所需圖標
+import useTablePagination from "@/hooks/useTablePagination";
 
 const {t} = useI18n()
 const message = useMessage()
 
 let modifyFunc = ref<string>('add')
 let modifyId = ref<number | null>(null)
-let pageCount = ref(10)
 let showLoading = ref<boolean>(false)
 let animated = ref<boolean>(false)
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+
+const [dataSize, pageCount] = useTablePagination()
 
 const formRef = ref<FormInst | null>(null)
 const notification = useNotification();
@@ -114,14 +111,18 @@ const editGroup = (row: GroupItem) => {
 // 刪除組操作
 const deleteGroup = async (id: number) => {
   animated.value = false
-  let {data} = await instance.delete('http://localhost:8081/api/admin/v1/groups', {
-    data: {
-      id,
-    }
-  })
-  if (data.code === 200) {
-    message.success(t('adminViews.groupMgr.common.delSuccess'))
+  // let {data} = await instance.delete('http://localhost:8081/api/admin/v1/groups', {
+  //   data: {
+  //     id,
+  //   }
+  // })
+  let data = await handleDeleteGroup(id)
+  if (data && data.code === 200) {
+    message.success(t('default.adminViews.common.deleteSuccess'))
     await getAllGroups()
+  } else {
+    message.error(t('default.adminViews.common.deleteFailure'))
+
   }
 }
 
@@ -136,22 +137,13 @@ let formValue = ref({
 let rules = {
   privilege_group: {
     required: true,
-    message: '权限组名称是必填的',
+    message: '',
     trigger: 'blur'
   }
 }
 
 
 let newGroupName = ref<string>('')
-
-let notify = (type: NotificationType, title: string, meta?: string) => {
-  notification[type]({
-    content: title,
-    meta: meta,
-    duration: 2500,
-    keepAliveOnHover: true
-  })
-}
 
 let handleAddGroup = async () => {
   modifyFunc.value = 'add'
@@ -160,17 +152,15 @@ let handleAddGroup = async () => {
 }
 
 let submitNewGroup = async () => {
-  try {
-    let {data} = await instance.post('http://localhost:8081/api/admin/v1/groups', {
-      group_name: newGroupName.value
-    })
-    if (data.code === 200) {
-      message.success(t('adminViews.groupMgr.common.addSuccess'))
-    } else {
-      message.error(t('adminViews.groupMgr.common.addFailure') + data.msg || '')
-    }
-  } catch (error) {
-    console.log(error)
+  animated.value = false
+  if (newGroupName.value.trim().length <= 0)
+    return message.error(t('default.adminViews.common.formatNotAllowed'))
+  let data = await handleSubmitNewGroup(newGroupName.value.trim())
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.addSuccess'))
+    await getAllGroups()
+  } else {
+    message.error(t('default.adminViews.common.addFailure') + data.msg || '')
   }
 }
 
@@ -178,27 +168,16 @@ let closeModal = () => {
   showModal.value = false
 }
 
-// let groupList = ref<PrivilegeGroup>([])
-
 let getAllGroups = async () => {
   showLoading.value = true
-  try {
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/groups', {
-      params: {
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-      }
-    })
-    if (data.code === 200) {
-      groupList.value = []
-      showLoading.value = false
+  let data = await handleGetAllGroups(dataSize.value.page, dataSize.value.pageSize)
+  if (data && data.code === 200) {
+    groupList.value = []
+    showLoading.value = false
+    if (data.group_list)
       data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
-      pageCount.value = data.page_count
-      // groupList.value = data.group_list
-      animated.value = true
-    }
-  } catch (error) {
-    console.log(error)
+    pageCount.value = data.page_count || 0
+    animated.value = true
   }
 }
 
@@ -212,14 +191,11 @@ let submit = async () => {
 }
 
 let submitUpdate = async () => {
-  let {data} = await instance.put('/api/admin/v1/groups', {
-    id: modifyId.value,
-    name: newGroupName.value,
-  })
-  if (data.code === 200) {
-    message.success(t('adminViews.groupMgr.common.delSuccess'))
+  let data = await handleUpdateGroup(modifyId.value, newGroupName.value.trim())
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.updateSuccess'))
   } else {
-    message.error(t('adminViews.groupMgr.common.delFailure'))
+    message.error(t('adminViews.common.updateFailure'))
   }
 }
 
@@ -243,11 +219,6 @@ export default {
 </script>
 
 <template>
-  <!--  <div style="padding: 20px 20px 0 20px">-->
-  <!--    <n-card hoverable :embedded="true" :title="t('adminViews.groupMgr.title')" :bordered="false">-->
-  <!--      <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddGroup">{{ t('adminViews.groupMgr.common.addNewGroup') }}</n-button>-->
-  <!--    </n-card>-->
-  <!--  </div>-->
 
   <PageHead
       :title="t('adminViews.groupMgr.title')"

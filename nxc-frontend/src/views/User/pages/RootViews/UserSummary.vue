@@ -145,7 +145,7 @@ let callGetActivePlanList = async () => {
 }
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('userSummary.title')
+  themeStore.breadcrumb = 'userSummary.title'
   themeStore.menuSelected = 'user-dashboard'
 })
 

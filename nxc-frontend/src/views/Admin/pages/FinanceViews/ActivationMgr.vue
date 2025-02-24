@@ -18,6 +18,7 @@ import {AddOutline as AddIcon} from "@vicons/ionicons5"
 import {handleGetAllActivationLog} from "@/api/admin/activation";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import useTablePagination from "@/hooks/useTablePagination";
 
 interface ActivateRecord {
   id: number;
@@ -71,12 +72,14 @@ const themeStore = useThemeStore()
 const userInfoStore = useUserInfoStore()
 
 let animated = ref<boolean>(false);
-let pageCount = ref(10)
+// let pageCount = ref(10)
+//
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
 
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+const [dataSize, pageCount] = useTablePagination()
 
 // let dataCountOptions = [
 //   {

@@ -167,7 +167,7 @@ const copyText = async (key: string, event: MouseEvent) => {
 };
 
 onBeforeMount(async () => {
-  themeStore.breadcrumb = t('userInvite.myInvite')
+  themeStore.breadcrumb = 'userInvite.myInvite'
   themeStore.menuSelected = 'user-invite'
   await callHandleGetInviteMsg()
 })

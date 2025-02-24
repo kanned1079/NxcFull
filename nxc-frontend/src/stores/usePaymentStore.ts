@@ -62,11 +62,12 @@ const usePaymentStore = defineStore('paymentStore', () => {
             }
         } else {
             console.log('err:', data.msg)
+            return {
+                success: false,
+                page_count: 0,
+            }
         }
-        return {
-            success: false,
-            page_count: 0,
-        }
+
     }
 
     let plan_id_selected = ref<number>(-1)

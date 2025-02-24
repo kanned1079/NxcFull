@@ -284,7 +284,7 @@ let startQueryTopUpOrderStatusLoop = () => {
 let showRibbon = ref<boolean>(false)
 
 onBeforeMount(() => {
-  themeStore.breadcrumb = t('userTopUp.topUp')
+  themeStore.breadcrumb = 'userTopUp.topUp'
   themeStore.menuSelected = 'user-top-up'
 
 })

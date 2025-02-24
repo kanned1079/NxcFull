@@ -17,6 +17,7 @@ import {formatDate} from "@/utils/timeFormat";
 import renderIcon from "@/utils/iconFormator";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import useTablePagination from "@/hooks/useTablePagination";
 
 interface Order {
   id: number
@@ -70,12 +71,14 @@ let searchForm = ref<{
 })
 
 
-let pageCount = ref(10)
+// let pageCount = ref(10)
+//
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
 
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+const [dataSize, pageCount] = useTablePagination()
 
 // 获取状态颜色
 function getStatusColor(is_finished: boolean, is_success: boolean): string {

@@ -11,6 +11,7 @@ import PageHead from "@/views/utils/PageHead.vue";
 import {RefreshOutline as refreshIcon, Search as searchIcon,} from "@vicons/ionicons5"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import {formatDate} from "../../../../utils/timeFormat";
+import useTablePagination from "@/hooks/useTablePagination";
 
 
 interface KeyItem {
@@ -68,12 +69,14 @@ const themeStore = useThemeStore()
 const userInfoStore = useUserInfoStore()
 
 let animated = ref<boolean>(false);
-let pageCount = ref(10)
+// let pageCount = ref(10)
 
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
+
+const [dataSize, pageCount] = useTablePagination()
 
 let keyDetails = ref<{
   id: number;

@@ -27,6 +27,21 @@ const isDark = computed(() => window.matchMedia('(prefers-color-scheme: dark)').
 //   themeStore.enableDarkMode = true
 // })
 
+
+let readDefaultPaginationFromStorage = () => {
+  let paginationDataStr = localStorage.getItem('pagination')
+  let pagination: {page: number, size: number} = {page: 1, size: 10}
+  if (paginationDataStr) {
+    pagination = JSON.parse(paginationDataStr)
+    console.log(pagination)
+    appInfosStore.defaultTablePagination.page = pagination.page || 1
+    appInfosStore.defaultTablePagination.size = pagination.size || 10
+  } else {
+    localStorage.setItem('pagination', JSON.stringify({page: 1, size: 11}))
+  }
+}
+
+
 onMounted(() => {
   handleResize(); // 初始时根据当前宽度设置状
   window.addEventListener('resize', handleResize); // 动态监听窗口大小
@@ -37,8 +52,11 @@ onMounted(() => {
   // 监听深色模式的变化
   // console.log(isDark.value)
   themeStore.enableDarkMode = isDark.value;
-
   appInfosStore.appVersion = 'v0.7.9_patch4'
+
+  readDefaultPaginationFromStorage()
+
+
 });
 
 onBeforeMount(() => {
