@@ -9,44 +9,18 @@ const instance = axios.create( {
 });
 
 
-// instance.interceptors.request.use(config => {
-//     const token = sessionStorage.getItem('token');
-//     // console.log(token)
-//     if (token) {
-//         config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-// }, error => {
-//     return Promise.reject(error);
-// });
-
-// 响应拦截器
-// instance.interceptors.response.use(response => {
-//     return response;
-// }, error => {
-//     if (error.response && error.response.status === 401) {
-//         let userInfoStore = useUserInfoStore();
-//         // token 过期
-//         console.error('Token expired or invalid. Please log in again.');
-//         userInfoStore.logout() // 登出操作
-//
-//     }
-//     return Promise.reject(error);
-// });
-
 instance.interceptors.request.use(config => {
-    const userInfoStore = useUserInfoStore()
+    const token = sessionStorage.getItem('token');
     // console.log(token)
-    if (userInfoStore.thisUser.token) {
-        config.headers.Authorization = `Bearer ${userInfoStore.thisUser.token}`;
-    } else {
-        userInfoStore.logout()
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
 }, error => {
     return Promise.reject(error);
 });
 
+// 响应拦截器
 instance.interceptors.response.use(response => {
     return response;
 }, error => {
@@ -55,9 +29,35 @@ instance.interceptors.response.use(response => {
         // token 过期
         console.error('Token expired or invalid. Please log in again.');
         userInfoStore.logout() // 登出操作
+
     }
     return Promise.reject(error);
 });
+
+// instance.interceptors.request.use(config => {
+//     const userInfoStore = useUserInfoStore()
+//     // console.log(token)
+//     if (userInfoStore.thisUser.token) {
+//         config.headers.Authorization = `Bearer ${userInfoStore.thisUser.token}`;
+//     } else {
+//         userInfoStore.logout()
+//     }
+//     return config;
+// }, error => {
+//     return Promise.reject(error);
+// });
+//
+// instance.interceptors.response.use(response => {
+//     return response;
+// }, error => {
+//     if (error.response && error.response.status === 401) {
+//         let userInfoStore = useUserInfoStore();
+//         // token 过期
+//         console.error('Token expired or invalid. Please log in again.');
+//         userInfoStore.logout() // 登出操作
+//     }
+//     return Promise.reject(error);
+// });
 
 // 请求拦截器
 // instance.interceptors.request.use(config => {
