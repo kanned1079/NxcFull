@@ -36,10 +36,11 @@ message AddNewCouponRequest {
   string code = 2;
   float percent_off = 3;
   int64 capacity = 4;
-  int64 per_user_limit = 5;
-  int64 plan_limit = 6;
-  int64 start_time = 7;  // 时间用字符串表示
-  int64 end_time = 8;    // 时间用字符串表示
+  int64 residue = 5;
+  int64 per_user_limit = 6;
+  int64 plan_limit = 7;
+  int64 start_time = 8;  // 时间用字符串表示
+  int64 end_time = 9;    // 时间用字符串表示
 }
 
 // 定义 AddNewCoupon 响应
@@ -74,7 +75,8 @@ message GetAllCouponsRequest {
 // 定义 GetAllCoupons 响应
 message GetAllCouponsResponse {
   int32 code = 1;
-  repeated CouponInfo coupon_list = 2;
+//  repeated CouponInfo coupon_list = 2;
+  bytes coupon_list = 2;
   string msg = 3;
   int64 page_count = 4;
 }
@@ -126,10 +128,11 @@ message UpdateCouponRequest {
   string code = 3;
   float percent_off = 4;
   int64 capacity = 5;
-  int64 per_user_limit = 6;
-  int64 plan_limit = 7;
-  int64 start_time = 8;  // 时间用字符串表示
-  int64 end_time = 9;    // 时间用字符串表示
+  int64 residue = 6;
+  int64 per_user_limit = 7;
+  int64 plan_limit = 8;
+  int64 start_time = 9;  // 时间用字符串表示
+  int64 end_time = 10;    // 时间用字符串表示
 }
 
 message UpdateCouponResponse {

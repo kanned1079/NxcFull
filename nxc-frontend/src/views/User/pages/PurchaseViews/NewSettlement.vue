@@ -36,7 +36,7 @@ interface Plan {
   is_renew?: boolean
   is_sale?: boolean
   name: string
-  capacity: number
+  capacity_limit: number
   describe?: string
   month_price?: number
   quarter_price?: number
@@ -248,6 +248,7 @@ export default {
                 :theme="themeStore.enableDarkMode?'dark':'light'"
                 :editorId="id"
                 :modelValue="plan.describe"
+                :preview-theme="'github'"
             />
           </n-card>
           <n-card class="l-info-btn" :embedded="true" hoverable content-style="padding: 0;">

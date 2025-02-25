@@ -11,7 +11,8 @@ export interface Plan {
     is_renew?: boolean
     is_sale?: boolean
     name: string
-    capacity: number
+    capacity_limit: number
+    residue: number
     describe?: string
     month_price?: number
     quarter_price?: number

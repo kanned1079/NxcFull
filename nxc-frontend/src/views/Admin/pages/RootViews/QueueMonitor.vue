@@ -15,6 +15,7 @@ import {
 } from "@vicons/ionicons5"
 import {formatDate} from "@/utils/timeFormat";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
+import useTablePagination from "@/hooks/useTablePagination";
 
 const {t} = useI18n();
 const message = useMessage()
@@ -22,13 +23,7 @@ const dialog = useDialog()
 const themeStore = useThemeStore()
 const tableRef = ref<DataTableInst>()
 let animated = ref<boolean>(false)
-
-// let searchCode = ref<number>(0)
-let pageCount = ref<number>(0)
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 20,
-  page: 1,
-})
+let [dataSize, pageCount] = useTablePagination()
 
 let retryTestLatency = ref<boolean>(false)
 let latencyTestIntervalId = ref<undefined | number>(undefined)

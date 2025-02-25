@@ -6,7 +6,7 @@ import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
 
-import {type DataTableColumns, type FormInst, type FormRules, NButton, NIcon, NSwitch, NTag, useMessage} from 'naive-ui'
+import {type DataTableColumns, type FormInst, type FormRules, NButton, NIcon, NSwitch, NTag, useMessage, useDialog} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import instance from "@/axios";
 import {formatTimestamp} from "@/utils/timeFormat"
@@ -20,19 +20,19 @@ import {
 } from "@/api/admin/coupon";
 import {handleFetchPlanKv} from "@/api/admin/plan";
 import useTablePagination from "@/hooks/useTablePagination";
+import {handleDeleteGroup} from "@/api/admin/groups";
 
 const {t} = useI18n();
 const i18nPrefix: string = 'adminViews.couponMgr';
 // const apiAddrStore = useApiAddrStore();
 
-
 const themeStore = useThemeStore()
 // const noticesStore = useNoticesStore()
 const message = useMessage()
+const dialog = useDialog()
 
 let animated = ref<boolean>(false)
 
-const formRef = ref<FormInst | null>(null)
 
 // let pageCount = ref(10)
 // let dataSize = ref<{ pageSize: number, page: number }>({
@@ -56,10 +56,12 @@ interface Coupon {
   capacity: number  // 总共优惠券数量
   residue: number // 剩余数量
   plan_limit: number  // 限制可以使用的订阅计划id
-  created_at: string  // gorm创建日期
-  updated_at: string  // gorm更新日期
-  deleted_at?: string  // gorm删除标记
+  created_at: number  // gorm创建日期
+  updated_at: number  // gorm更新日期
+  deleted_at?: number  // gorm删除标记
 }
+
+const formRef = ref<FormInst | null>(null)
 
 let formValue = ref({
   coupon: {
@@ -70,6 +72,7 @@ let formValue = ref({
     end_time: null,
     per_user_limit: null,
     capacity: null,
+    residue: null,
     plan_limit: null,
   } as {
     id?: number
@@ -80,6 +83,7 @@ let formValue = ref({
     end_time: number | null
     per_user_limit: number | null
     capacity: number | null
+    residue: number | null
     plan_limit: number | null
   }
 })
@@ -105,6 +109,12 @@ const rules = computed<FormRules>(() => {
         type: 'number',
         required: true,
         trigger: 'blur',
+        message: t(`${i18nPrefix}.modal.emptyNotAllow`),
+      },
+      residue: {
+        type: 'number',
+        required: true,
+        trigger: ['blur', 'input'],
         message: t(`${i18nPrefix}.modal.emptyNotAllow`),
       },
       per_user_limit: {
@@ -167,11 +177,11 @@ let getAllCoupons = async () => {
     if (data.coupon_list)
       data.coupon_list.forEach((item: Coupon) => couponList.value.push(item))
     pageCount.value = data.page_count
-    animated.value = true
   } else {
     message.error(t('adminViews.common.fetchDataFailure'));
   }
   showLoading.value = false
+  animated.value = true
 }
 
 let activateACoupon = async (id: number, value: boolean) => {
@@ -188,7 +198,8 @@ let activateACoupon = async (id: number, value: boolean) => {
 
 const updateCouponClick = async (row: Coupon) => {
   Object.assign(formValue.value.coupon, row)
-  range.value = [row.start_time, row.end_time]
+  if (row.plan_limit === 0) formValue.value.coupon.plan_limit = null
+  range.value = [Date.parse(row.start_time), Date.parse(row.end_time)]
   editType.value = 'edit'
   await getPlanKV()
   showModal.value = true // 修改好後再顯示
@@ -216,30 +227,48 @@ let updateACoupon = async () => {
   // }
 }
 
-let deleteACoupon = async (id: number) => {
-  // 点击删除后 使用post方法 用于删除一个优惠券
-  // 请求地址 /admin/v1/coupon/delete
-  // 请求体 {优惠券id}
-  // console.log(id)
-  // try {
-  animated.value = false
-  // let {data} = await instance.delete('http://localhost:8081/api/admin/v1/coupon', {
-  //   params: {
-  //     coupon_id: id,
-  //   }
-  // });
-  let data = await handleDeleteCouponById(id)
-  if (data && data.code === 200) {
-    message.success(t('adminViews.common.deleteSuccess'));
-    await getAllCoupons(); // 删除成功后刷新列表
-  } else {
-    message.error(t('adminViews.common.deleteFailure'));
-  }
-  // } catch (error) {
-  //   console.error(error);
-  //   message.error(t('adminViews.common.deleteFailure'));
-  // }
+let deleteACoupon = async (row: Coupon) => {
+  dialog.error({
+    title: t('adminViews.common.dialog.delete'),
+    content: () => {
+      return h('div', {}, [
+        h('p', {style: {fontWeight: 'weight', fontSize: '1rem', opacity: '0.8'}}, row.name),
+        h('p', {style: {marginTop: '4px'}}, t('adminViews.couponMgr.modal.delMention'))
+      ])
+    },
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+      marginTop: '20px',
+    },
+    onPositiveClick: async () => {
+      animated.value = false
+      let data = await handleDeleteCouponById(row.id)
+      if (data && data.code === 200) {
+        message.success(t('adminViews.common.deleteSuccess'));
+        await getAllCoupons(); // 删除成功后刷新列表
+      } else {
+        message.error(t('adminViews.common.deleteFailure'));
+      }
+    }
+  })
 }
+
+// 复制文本的函数
+const copyText = async (key: string, event: MouseEvent) => {
+  event.stopPropagation()
+  try {
+    await navigator.clipboard.writeText(key);
+    // message.success(t('userKeys.copiedSuccessMessage'))
+    message.success(t('userKeys.hoverCopiedSuccessMention'))
+  } catch (err) {
+    console.error(t('userKeys.copyFailure'), err);
+  }
+};
 
 const i18nTablePrefix = 'adminViews.couponMgr.table'
 const columns = computed<DataTableColumns<Coupon>>(() => [
@@ -265,8 +294,26 @@ const columns = computed<DataTableColumns<Coupon>>(() => [
     title: t(`${i18nTablePrefix}.code`),
     key: 'code',
     render(row: Coupon) {
-      return h(NTag, {}, {default: () => row.code});
+      return h(NTag, {
+        type: 'default',
+        bordered: false,
+        checkable: true,
+        style: {textDecoration: 'underline'},
+        strong: true,
+        onClick: (e: MouseEvent) => copyText(row.code, e)
+      }, {default: () => row.code});
     }
+  },
+  {
+    title: t(`${i18nTablePrefix}.percentOff`),
+    key: 'percent_off',
+    render(row: Coupon) {
+      return h(NTag, {type: 'primary', bordered: false, size: 'small'}, {default: () => `-${row.percent_off}% OFF`});
+    }
+  },
+  {
+    title: t(`${i18nTablePrefix}.capacity`),
+    key: 'capacity',
   },
   {
     title: t(`${i18nTablePrefix}.residue`),
@@ -305,7 +352,7 @@ const columns = computed<DataTableColumns<Coupon>>(() => [
           secondary: true,
           disabled: false,
           style: {marginLeft: '10px'},
-          onClick: () => deleteACoupon(row.id)
+          onClick: () => deleteACoupon(row)
         }, {default: () => t(`${i18nTablePrefix}.delete`)})
       ]);
     },
@@ -351,6 +398,18 @@ let submitCoupon = async () => {
     }
   } catch (error) {
     console.error(error)
+  }
+}
+
+let submitClick = async () => {
+  if (formRef.value) {
+    await formRef.value.validate(async (err: any) => {
+      if (!err) {
+        editType.value === 'create' ? await submitCoupon() : await updateACoupon()
+      } else {
+        message.error(t('userLogin.checkForm'))
+      }
+    })
   }
 }
 
@@ -438,7 +497,7 @@ export default {
       :positive-text="editType === 'create'?t(`${i18nPrefix}.modal.confirmAdd`):t(`${i18nPrefix}.modal.confirmEdit`)"
       :negative-text="t(`${i18nPrefix}.modal.cancel`)"
       style="width: 480px;"
-      @positive-click="editType === 'create'?submitCoupon():updateACoupon()"
+      @positive-click="submitClick"
       @negative-click="closeModal"
       :show-icon="false"
   >
@@ -466,7 +525,7 @@ export default {
             :min="0"
         />
       </n-form-item>
-      <n-form-item :label="t(`${i18nPrefix}.modal.activeRange.title`)" path="coupon.name">
+      <n-form-item :label="t(`${i18nPrefix}.modal.activeRange.title`)" path="coupon.range">
         <n-date-picker v-model:value="range" type="datetimerange" style="width: 100%" clearable/>
       </n-form-item>
       <n-form-item :label="t(`${i18nPrefix}.modal.capacity.title`)" path="coupon.capacity">
@@ -474,6 +533,13 @@ export default {
             :style="{width: '100%'}"
             v-model:value.number="formValue.coupon.capacity"
             :placeholder="t(`${i18nPrefix}.modal.capacity.placeholder`)"
+        />
+      </n-form-item>
+      <n-form-item :label="t(`${i18nPrefix}.modal.residue.title`)" path="coupon.residue">
+        <n-input-number
+            :style="{width: '100%'}"
+            v-model:value.number="formValue.coupon.residue"
+            :placeholder="t(`${i18nPrefix}.modal.residue.placeholder`)"
         />
       </n-form-item>
       <n-form-item :label="t(`${i18nPrefix}.modal.perUserLimit.title`)" path="coupon.per_user_limit">
@@ -506,4 +572,5 @@ export default {
     }
   }
 }
+
 </style>

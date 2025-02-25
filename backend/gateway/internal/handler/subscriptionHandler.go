@@ -142,6 +142,7 @@ func HandleAddNewPlan(context *gin.Context) {
 		IsRenew       bool    `json:"is_renew"`
 		GroupId       int64   `json:"group_id"`
 		CapacityLimit int64   `json:"capacity_limit"`
+		Residue       int64   `json:"residue"`
 		MonthPrice    float64 `json:"month_price"`
 		QuarterPrice  float64 `json:"quarter_price"`
 		HalfYearPrice float64 `json:"half_year_price"`
@@ -163,6 +164,7 @@ func HandleAddNewPlan(context *gin.Context) {
 		IsRenew:       postData.IsRenew,
 		GroupId:       postData.GroupId,
 		CapacityLimit: postData.CapacityLimit,
+		Residue:       postData.Residue,
 		MonthPrice:    postData.MonthPrice,
 		QuarterPrice:  postData.QuarterPrice,
 		HalfYearPrice: postData.HalfYearPrice,
@@ -191,6 +193,7 @@ func HandleUpdatePlan(context *gin.Context) {
 		IsRenew       bool    `json:"is_renew"`
 		GroupId       int64   `json:"group_id"`
 		CapacityLimit int64   `json:"capacity_limit"`
+		Residue       int64   `json:"residue"`
 		MonthPrice    float64 `json:"month_price"`
 		QuarterPrice  float64 `json:"quarter_price"`
 		HalfYearPrice float64 `json:"half_year_price"`
@@ -204,6 +207,13 @@ func HandleUpdatePlan(context *gin.Context) {
 			"error": err.Error(),
 		})
 	}
+	if postData.Residue > postData.CapacityLimit {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusConflict,
+			"msg":  "limit config err",
+		})
+		return
+	}
 	log.Println(postData)
 	resp, err := grpcClient.SubscriptionServiceClient.UpdatePlan(sysContext.Background(), &pb.UpdatePlanRequest{
 		Id:            postData.Id,
@@ -212,6 +222,7 @@ func HandleUpdatePlan(context *gin.Context) {
 		IsSale:        postData.IsSale,
 		IsRenew:       postData.IsRenew,
 		GroupId:       postData.GroupId,
+		Residue:       postData.Residue,
 		CapacityLimit: postData.CapacityLimit,
 		MonthPrice:    postData.MonthPrice,
 		QuarterPrice:  postData.QuarterPrice,

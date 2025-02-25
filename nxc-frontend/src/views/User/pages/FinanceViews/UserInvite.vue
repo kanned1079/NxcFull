@@ -153,7 +153,7 @@ const copyText = async (key: string, event: MouseEvent) => {
   try {
     await navigator.clipboard.writeText(key);
     // message.success(t('userKeys.copiedSuccessMessage'))
-    message.success('链接复制成功')
+    message.success(t('userKeys.hoverCopiedSuccessMention'))
     copySuccess.value = true
     // copySuccess.value = true;
     setTimeout(() => {

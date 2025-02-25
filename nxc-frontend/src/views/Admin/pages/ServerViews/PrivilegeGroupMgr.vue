@@ -7,7 +7,8 @@ import {
   NButton,
   NIcon,
   useMessage,
-  useNotification
+  useNotification,
+  useDialog
 } from "naive-ui";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
 import useThemeStore from "@/stores/useThemeStore";
@@ -19,6 +20,7 @@ import useTablePagination from "@/hooks/useTablePagination";
 
 const {t} = useI18n()
 const message = useMessage()
+const dialog = useDialog()
 
 let modifyFunc = ref<string>('add')
 let modifyId = ref<number | null>(null)
@@ -91,7 +93,7 @@ const columns = computed<DataTableColumns<GroupItem>>(() =>
               size: 'small',
               type: 'error',
               secondary: true,
-              onClick: () => deleteGroup(row.id)
+              onClick: () => deleteGroup(row)
             }, {default: () => t('adminViews.groupMgr.deleteBtnHint')})
           ])
         }
@@ -109,21 +111,38 @@ const editGroup = (row: GroupItem) => {
 }
 
 // 刪除組操作
-const deleteGroup = async (id: number) => {
-  animated.value = false
-  // let {data} = await instance.delete('http://localhost:8081/api/admin/v1/groups', {
-  //   data: {
-  //     id,
-  //   }
-  // })
-  let data = await handleDeleteGroup(id)
-  if (data && data.code === 200) {
-    message.success(t('default.adminViews.common.deleteSuccess'))
-    await getAllGroups()
-  } else {
-    message.error(t('default.adminViews.common.deleteFailure'))
-
-  }
+const deleteGroup = async (row: GroupItem) => {
+  if (row.plan_count && row.user_count)
+    if (row.plan_count > 0 || row.user_count > 0)
+      return message.error(t('adminViews.groupMgr.common.delNotAllowed'))
+  dialog.error({
+    title: t('adminViews.common.dialog.delete'),
+    content: () => {
+      return h('div', {}, [
+        h('p', {style: {fontWeight: 'weight', fontSize: '1rem', opacity: '0.8'}}, row.name),
+        h('p', {style: {marginTop: '4px'}}, t('adminViews.groupMgr.common.delMention'))
+      ])
+    },
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+      marginTop: '20px',
+    },
+    onPositiveClick: async () => {
+      animated.value = false
+      let data = await handleDeleteGroup(row.id)
+      if (data && data.code === 200) {
+        message.success(t('adminViews.common.deleteSuccess'))
+        await getAllGroups()
+      } else {
+        message.error(t('adminViews.common.deleteFailure'))
+      }
+    }
+  })
 }
 
 let showModal = ref(false)
@@ -154,13 +173,13 @@ let handleAddGroup = async () => {
 let submitNewGroup = async () => {
   animated.value = false
   if (newGroupName.value.trim().length <= 0)
-    return message.error(t('default.adminViews.common.formatNotAllowed'))
+    return message.error(t('adminViews.common.formatNotAllowed'))
   let data = await handleSubmitNewGroup(newGroupName.value.trim())
   if (data && data.code === 200) {
     message.success(t('adminViews.common.addSuccess'))
     await getAllGroups()
   } else {
-    message.error(t('default.adminViews.common.addFailure') + data.msg || '')
+    message.error(t('adminViews.common.addFailure') + data.msg || '')
   }
 }
 
@@ -243,55 +262,6 @@ export default {
     </template>
   </PageHead>
 
-  <!--  <div style="padding: 20px 20px 0 20px">-->
-
-  <!--    <n-page-header :subtitle="t('adminViews.groupMgr.description')" @back="useRouter().back()">-->
-  <!--      <template #title>-->
-  <!--        <p style="font-size: 1.4rem; font-weight: bold; margin-bottom: 10px;">{{ t('adminViews.groupMgr.title') }}</p>-->
-  <!--      </template>-->
-  <!--&lt;!&ndash;      <template #avatar>&ndash;&gt;-->
-  <!--&lt;!&ndash;        <n-icon><privilegeIcon /></n-icon>&ndash;&gt;-->
-  <!--&lt;!&ndash;      </template>&ndash;&gt;-->
-
-  <!--    </n-page-header>-->
-
-  <!--    <n-flex vertical>-->
-  <!--      <div>-->
-  <!--              <n-tag-->
-  <!--                  type="default"-->
-  <!--                  :bordered="false"-->
-  <!--                  checkable-->
-  <!--                  style="font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; width: auto"-->
-  <!--              >{{ t('adminViews.groupMgr.title') }}-->
-  <!--                <template #icon>-->
-  <!--                  <n-icon><privilegeIcon /></n-icon>-->
-  <!--                </template>-->
-  <!--              </n-tag>-->
-  <!--      </div>-->
-  <!--    </n-flex>-->
-
-  <!--    <n-flex vertical>-->
-  <!--      <n-tag-->
-  <!--          type="default"-->
-  <!--          :bordered="false"-->
-  <!--          checkable-->
-  <!--          style="font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; width: auto"-->
-  <!--      >{{ t('adminViews.groupMgr.title') }}-->
-  <!--        <template #icon>-->
-  <!--          <n-icon><privilegeIcon /></n-icon>-->
-  <!--        </template>-->
-  <!--      </n-tag>-->
-  <!--      <n-tag-->
-  <!--          type="primary"-->
-  <!--          checkable-->
-  <!--          disabled-->
-  <!--          style="font-size: 0.8rem; opacity: 0.8">-->
-  <!--        > {{ t('adminViews.groupMgr.description') }}-->
-  <!--      </n-tag>-->
-  <!--    </n-flex>-->
-
-  <!--  </div>-->
-
   <transition name="slide-fade">
     <div class="root" v-if="animated">
       <n-card style="margin-top: 20px" :embedded="true" hoverable :bordered="false" content-style="padding: 0;">
@@ -350,16 +320,6 @@ export default {
   //padding: 20px;
   padding: 0 20px;
 
-  //.add-btn {
-  //  margin-top: 10px;
-  //}
-  //
-  //.btn-pagination {
-  //  margin-top: 20px;
-  //  display: flex;
-  //  flex-direction: row;
-  //  justify-content: right;
-  //}
 }
 
 </style>

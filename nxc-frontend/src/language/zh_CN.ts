@@ -59,7 +59,11 @@ export default {
             "success": "操作成功",
             "failure": "操作失敗",
             "NotAllowed": "非法格式",
+            "checkForm": '請檢查表單',
             "unknownErr": "未知錯誤",
+            "dialog": {
+                "delete": "您確認要刪除嗎",
+            }
         },
         "login": {
             "secureCard": {
@@ -634,6 +638,8 @@ export default {
                 "alterFailure": "修改權限組失敗",
                 "delSuccess": "刪除成功",
                 "delFailure": "刪除失敗",
+                "delMention": "將立即刪除條目，您不能撤銷此操作。已經關聯訂閱計畫的權限組謹慎刪除。",
+                "delNotAllowed": "該權限組有關聯資源，不可以刪除。",
             },
             "groupId": "權限組ID",
             "groupName": "權限組名稱",
@@ -713,13 +719,8 @@ export default {
                 "common": {
                     "success": "成功",
                     "failure": "失敗",
+                    "delMention": "如果訂閱計畫已經處於銷售中，謹慎刪除。",
                 },
-                "addSuccess": "添加新訂閱成功",
-                "addFailure": "添加新訂閱失敗",
-                "updateSuccess": "更新訂閱成功",
-                "updateFailure": "更新訂閱失敗",
-                "deleteSuccess": "計畫刪除成功",
-                "deleteFailure": "計畫刪除失敗"
                 // TVNTG-VFJQ3-FQXFP-DVCP6-D3VJ8
             },
             "form": {
@@ -747,6 +748,10 @@ export default {
                         "title": "最大允许用户数目",
                         "placeholder": "最大允许用户数目",
                     },
+                    "planResidue": {
+                        "title": "剩餘數量",
+                        "placeholder": "目前剩餘的數量",
+                    },
                     "sort": {
                         "title": "排序",
                         "placeholder": "用于前端排序",
@@ -771,6 +776,8 @@ export default {
                 "enabled": "是否啟用",
                 "name": "名稱",
                 "code": "券碼",
+                "percentOff": "优惠信息",
+                "capacity": "总数量",
                 "residue": "剩餘數量",
                 "startTime": "啟用時間",
                 "endTime": "結束時間",
@@ -784,6 +791,7 @@ export default {
                 "confirmAdd": "確認添加",
                 "confirmEdit": "確認修改",
                 "emptyNotAllow": "該項目是必填的",
+                "delMention": "条目删除后优惠券将会立即失效，您不能撤銷此操作。",
                 "cancel": "取消",
                 "name": {
                     "title": "優惠券名稱",
@@ -803,6 +811,10 @@ export default {
                 "capacity": {
                     "title": "優惠券最大使用次數",
                     "placeholder": "限制最大使用限制（為空則不限制）",
+                },
+                "residue": {
+                    "title": "優惠券剩余使用次數",
+                    "placeholder": "设置优惠券剩余使用的次数",
                 },
                 "perUserLimit": {
                     "title": "每個用戶可使用優惠券的次數",
@@ -970,7 +982,9 @@ export default {
                 "contentPlaceholder": '在這裡輸入密鑰的部分內容',
             },
             "mention": {
-                "blockOk": '禁用密鑰成功 ID:{id}'
+                "blockOk": '禁用密鑰成功 ID:{id}',
+                "title": "您確定要禁用密鑰嗎",
+                "content": "為保證用戶體驗，請再一次確認密鑰內容，密鑰一旦禁用後，在客戶端將不能再繼續使用。",
             },
             "detailModal": {
                 "title": '密鑰細節',
@@ -1149,6 +1163,7 @@ export default {
         "description": '您可以在這裡選擇最適合您的訂閱計畫，如果您的餘額不足請先充值，訂單將為您保留5分鐘。',
         "headerPlaceholder": '選擇最適合您的計畫',
         "purchaseBtn": '訂購',
+        "noLeft": "剩餘數量不足",
         "monthPay": '月付',
         "moreMethod": '更多選擇',
     },

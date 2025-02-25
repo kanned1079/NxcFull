@@ -10,6 +10,8 @@ import usePaymentStore from "@/stores/usePaymentStore";
 import 'md-editor-v3/lib/preview.css';
 import PageHead from "@/views/utils/PageHead.vue";
 
+import {CloseOutline, BagCheckOutline} from "@vicons/ionicons5"
+
 const {t} = useI18n();
 const hoveredIndex = ref<number | null>(null);
 
@@ -26,7 +28,8 @@ interface Plan {
   is_renew?: boolean
   is_sale?: boolean
   name: string
-  capacity: number
+  residue: number,
+  capacity_limit: number
   describe?: string
   month_price?: number
   quarter_price?: number
@@ -50,7 +53,7 @@ let shadowBg = () => {
 }
 
 let toPurchase = (plan_id: number) => {
-  console.log('purchase', plan_id)
+  // console.log('purchase', plan_id)
   paymentStore.plan_id_selected = plan_id // 存储选择的订阅下标
   router.push({
     path: '/dashboard/purchase/settlement'
@@ -101,12 +104,12 @@ export default {
     <div v-if="animated" style="padding: 20px">
       <n-grid cols="1 s:1 m:2 l:3" responsive="screen" x-gap="20px" y-gap="20px">
         <n-grid-item
-            v-for="(item, index) in paymentStore.plan_list as Plan[]"
+            v-for="(item, index) in paymentStore.plan_list"
             :key="item.id"
             class="plan-item"
             content-style="padding: 0;"
             :bordered="false"
-            @click="toPurchase(index)"
+            @click="item.residue>0?toPurchase(index):null"
             @mouseover="hoveredIndex = index"
             @mouseleave="hoveredIndex = null"
         >
@@ -135,12 +138,17 @@ export default {
                 :preview-theme="'github'"
             />
             <n-button
-                @click=""
                 type="primary"
                 class="purchase"
                 :bordered="false"
+                icon-placement="left"
+                :disabled="item.residue<=0"
             >
-              {{ t('newPurchase.purchaseBtn') }}
+              {{ item.residue > 0?t('newPurchase.purchaseBtn'):t('newPurchase.noLeft') }}
+              <template #icon>
+                <n-icon v-if="item.residue<=0"><CloseOutline /></n-icon>
+                <n-icon v-else><BagCheckOutline /></n-icon>
+              </template>
             </n-button>
           </n-card>
         </n-grid-item>

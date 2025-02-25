@@ -42,5 +42,51 @@ export const handleSubmitNewPlan = async (plan: Plan) => {
 }
 
 export const handleUpdatePlan = async (plan: Plan) => {
+    try {
+        let {data} = await instance.put('/api/admin/v1/plan', {
+            ...plan,
+        })
+        return data
+    } catch (err: any) {
+        console.error(err)
+        return false
+    }
+}
 
+export const handleDeletePlanById = async (planId: number) => {
+    try {
+        let {data} = await instance.delete('/api/admin/v1/plan', {
+            params: {
+                plan_id: planId,
+            }
+        })
+        return data
+    } catch (err: any) {
+        console.error(err)
+        return false
+    }
+}
+//
+// export const handleUpdatePlanRowIsSale = async (id: number, val: boolean) => {
+//     try {
+//
+//     } catch (err: any) {
+//         console.error(err)
+//         return false
+//     }
+// }
+
+export const handleUpdatePlanRowIsSaleOrRenew = async (field: 'sale' | 'renew', id: number, val: boolean) => {
+    try {
+        // let {data} = await instance.put(field==='sale'?'api/admin/v1/plan/sale':'/api/admin/v1/plan/renew', {
+        let {data} = await instance.put(`/api/admin/v1/plan/${field === 'sale' ? 'sale' : 'renew'}`, {
+            id,
+            is_sale: val,
+            is_renew: val,
+        })
+        return data
+    } catch (err: any) {
+        console.error(err)
+        return false
+    }
 }

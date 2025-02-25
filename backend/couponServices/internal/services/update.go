@@ -20,15 +20,16 @@ func (s *CouponService) UpdateCoupon(ctx context.Context, request *pb.UpdateCoup
 	startTime := time.Unix(request.StartTime/1000, (request.StartTime%1000)*int64(time.Millisecond)) // 处理毫秒部分
 	endTime := time.Unix(request.EndTime/1000, (request.EndTime%1000)*int64(time.Millisecond))       // 处理毫秒部分
 
-	if result := dao.Db.Model(&model.Coupon{}).Where("`id` = ?", request.Id).Updates(&model.Coupon{
-		Code:         request.Code,
-		Name:         request.Name,
-		PercentOff:   float64(request.PercentOff),
-		StartTime:    &startTime,
-		EndTime:      &endTime,
-		PerUserLimit: request.PerUserLimit,
-		Capacity:     request.Capacity,
-		PlanLimit:    request.PlanLimit,
+	if result := dao.Db.Model(&model.Coupon{}).Where("`id` = ?", request.Id).Updates(map[string]interface{}{
+		"code":           request.Code,
+		"name":           request.Name,
+		"percent_off":    float64(request.PercentOff),
+		"start_time":     &startTime,
+		"end_time":       &endTime,
+		"per_user_limit": request.PerUserLimit,
+		"capacity":       request.Capacity,
+		"residue":        request.Residue,
+		"plan_limit":     request.PlanLimit,
 	}); result.RowsAffected == 0 {
 		return &pb.UpdateCouponResponse{
 			Code: http.StatusInternalServerError,

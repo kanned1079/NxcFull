@@ -2,6 +2,7 @@ package handler
 
 import (
 	sysContext "context"
+	"encoding/json"
 	pb "gateway/internal/grpc/api/coupon/proto"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -15,6 +16,7 @@ func HandleAddNewCoupon(context *gin.Context) {
 		Code         string  `json:"code"`
 		PercentOff   float64 `json:"percent_off"`
 		Capacity     int64   `json:"capacity"`
+		Residue      int64   `json:"residue"`
 		PerUserLimit int64   `json:"per_user_limit"`
 		PlanLimit    int64   `json:"plan_limit"`
 		StartTime    int64   `json:"start_time"`
@@ -31,6 +33,7 @@ func HandleAddNewCoupon(context *gin.Context) {
 		Code:         postData.Code,
 		PercentOff:   float32(postData.PercentOff),
 		Capacity:     postData.Capacity,
+		Residue:      postData.Residue,
 		PerUserLimit: postData.PerUserLimit,
 		PlanLimit:    postData.PlanLimit,
 		StartTime:    postData.StartTime,
@@ -142,7 +145,7 @@ func HandleGetAllCoupons(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, gin.H{
 		"code":        resp.Code,
-		"coupon_list": resp.CouponList,
+		"coupon_list": json.RawMessage(resp.CouponList),
 		"msg":         resp.Msg,
 		"page_count":  resp.PageCount,
 	})
@@ -221,6 +224,7 @@ func HandleUpdateCoupons(context *gin.Context) {
 		Code         string  `json:"code"`
 		PercentOff   float64 `json:"percent_off"`
 		Capacity     int64   `json:"capacity"`
+		Residue      int64   `json:"residue"`
 		PerUserLimit int64   `json:"per_user_limit"`
 		PlanLimit    int64   `json:"plan_limit"`
 		StartTime    int64   `json:"start_time"`
@@ -241,6 +245,7 @@ func HandleUpdateCoupons(context *gin.Context) {
 		Code:         postData.Code,
 		PercentOff:   float32(postData.PercentOff),
 		Capacity:     postData.Capacity,
+		Residue:      postData.Residue,
 		PerUserLimit: postData.PerUserLimit,
 		PlanLimit:    postData.PlanLimit,
 		StartTime:    postData.StartTime,

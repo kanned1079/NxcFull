@@ -126,7 +126,7 @@ func (s *SubscribeServices) AddNewPlan(ctx context.Context, request *pb.AddNewPl
 		IsRenew:       request.IsRenew,
 		GroupId:       request.GroupId,
 		CapacityLimit: request.CapacityLimit,
-		Residue:       request.CapacityLimit,
+		Residue:       request.Residue,
 		MonthPrice:    request.MonthPrice,
 		QuarterPrice:  request.QuarterPrice,
 		HalfYearPrice: request.HalfYearPrice,
@@ -166,25 +166,27 @@ func (s *SubscribeServices) AddNewPlan(ctx context.Context, request *pb.AddNewPl
 }
 
 func (s *SubscribeServices) UpdatePlan(ctx context.Context, request *pb.UpdatePlanRequest) (*pb.UpdatePlanResponse, error) {
-	var plan = model.Plan{
-		Id:            request.Id,
-		Name:          request.Name,
-		Describe:      request.Describe,
-		IsSale:        request.IsSale,
-		IsRenew:       request.IsRenew,
-		GroupId:       request.GroupId,
-		CapacityLimit: request.CapacityLimit,
-		Residue:       request.CapacityLimit,
-		MonthPrice:    request.MonthPrice,
-		QuarterPrice:  request.QuarterPrice,
-		HalfYearPrice: request.HalfYearPrice,
-		YearPrice:     request.YearPrice,
-		// 以下Sort用于在前端进行排序 优先级从低到高，添加新订阅时，它的优先级为上一个的优先级+1，如果表内为空不存在数据，则第一个添加的sort为1000
-		Sort: request.Sort,
+	// 创建一个包含所有更新字段的 map
+	updates := map[string]interface{}{
+		"name":            request.Name,
+		"describe":        request.Describe,
+		"is_sale":         request.IsSale,
+		"is_renew":        request.IsRenew,
+		"group_id":        request.GroupId,
+		"capacity_limit":  request.CapacityLimit,
+		"residue":         request.Residue,
+		"month_price":     request.MonthPrice,
+		"quarter_price":   request.QuarterPrice,
+		"half_year_price": request.HalfYearPrice,
+		"year_price":      request.YearPrice,
+		"sort":            request.Sort,
 	}
 
+	// 设置请求超时时间
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
+
+	// 清除 Redis 缓存
 	if err := ClearPlansRedisCache(ctx); err != nil {
 		log.Println(err)
 		return &pb.UpdatePlanResponse{
@@ -193,13 +195,16 @@ func (s *SubscribeServices) UpdatePlan(ctx context.Context, request *pb.UpdatePl
 		}, nil
 	}
 
-	if result := dao.Db.Model(&model.Plan{}).Where("id = ?", plan.Id).Updates(&plan); result.Error != nil {
+	// 使用 map 进行更新
+	if result := dao.Db.Model(&model.Plan{}).Where("`id` = ?", request.Id).Updates(updates); result.Error != nil {
 		log.Println(result.Error)
 		return &pb.UpdatePlanResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "更新失败" + result.Error.Error(),
 		}, nil
 	}
+
+	// 返回成功响应
 	return &pb.UpdatePlanResponse{
 		Code: http.StatusOK,
 		Msg:  "更新成功",

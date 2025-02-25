@@ -31,7 +31,7 @@ export default {
       <n-layout-content content-style="padding: 0;" class="content">
         <n-scrollbar style="max-height: 100vh;">
           <RouterView />
-          <div style="height: 3rem"></div>
+          <div style="height: 10rem"></div>
         </n-scrollbar>
       </n-layout-content>
       <!--      <n-layout-footer>成府路</n-layout-footer>-->

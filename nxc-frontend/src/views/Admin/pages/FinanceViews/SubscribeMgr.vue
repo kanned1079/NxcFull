@@ -5,36 +5,40 @@ import useThemeStore from "@/stores/useThemeStore";
 // import useApiAddrStore from "@/stores/useApiAddrStore";
 import usePaymentStore from "@/stores/usePaymentStore";
 // import useUserInfoStore from "@/stores/useUserInfoStore";
-import {type DrawerPlacement, type FormInst, type NotificationType, type DataTableColumns, NIcon} from 'naive-ui'
-import {NButton, NSwitch, NTag, useMessage, useNotification} from 'naive-ui'
+import {
+  type DrawerPlacement,
+  type FormInst,
+  type DataTableColumns,
+  NIcon,
+  type FormRules,
+} from 'naive-ui'
+import {NButton, NSwitch, NTag, useMessage, useDialog} from 'naive-ui'
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
 
 import instance from "@/axios";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
 import useTablePagination from "@/hooks/useTablePagination";
-import {handleSubmitNewPlan} from "@/api/admin/plan";
+// import useConfirmDialog from "@/hooks/useConfirmDialog"
+
+import {
+  handleDeletePlanById,
+  handleSubmitNewPlan,
+  handleUpdatePlan,
+  handleUpdatePlanRowIsSaleOrRenew
+} from "@/api/admin/plan";
 import {handleGetAllGroupsKv} from "@/api/admin/groups";
 // import {MdEditor} from "md-editor-v3";
 
 const {t} = useI18n();
 const i18nPrefix = 'adminViews.planMgr'
+const dialog = useDialog()
 let animated = ref<boolean>(false)
 
-// const notification = useNotification()
-// const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
-// const userInfoStore = useUserInfoStore();
-const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 
 let editType = ref<'add' | 'update'>('add') // 这里可以选择的是add和update
-
-// let pageCount = ref(10)
-// let dataSize = ref<{ pageSize: number, page: number }>({
-//   pageSize: 10,
-//   page: 1,
-// })
 
 const [dataSize, pageCount] = useTablePagination()
 
@@ -57,7 +61,8 @@ interface Plan {
   deleted_at?: string
 }
 
-let formValue = ref({
+const formRef = ref<FormInst | null>(null)
+let formValue = ref<{ plan: Plan }>({
   plan: {
     id: null,
     group_id: null,
@@ -72,8 +77,10 @@ let formValue = ref({
     half_year_price: null,
     year_price: null,
     sort: null,
-  } as Plan
+  }
 })
+
+// console.log(formValue.value.plan.name)
 
 let rules = {
   plan: {
@@ -94,29 +101,61 @@ let rules = {
       required: false,
     },
     group_id: {
-      required: false,
+      required: true,
+      message: '',
+      type: 'number',
+      trigger: ['blur', 'change']
     },
     capacity_limit: {
       required: true,
+      type: 'number',
       message: '',
-      trigger: 'changed'
+      trigger: ['blur', 'change'],
+    },
+    residue: {
+      required: true,
+      type: 'number',
+      message: '',
+      trigger: ['blur', 'change', 'change'],
+      validator() {
+        if (formValue.value.plan.residue && formValue.value.plan.capacity_limit)
+          if (formValue.value.plan.residue > formValue.value.plan.capacity_limit) {
+            return new Error('capacity cannot less than residue')
+          } else return null
+      }
     },
     month_price: {
       required: false,
+      type: 'number',
+      message: '',
+      validator: () => formValue.value.plan.month_price?formValue.value.plan.month_price <= 0 ? new Error('price cannot less than zero') : null:  new Error('field is null')
     },
     quarter_price: {
-      required: false
+      required: false,
+      type: 'number',
+      message: '',
+      // validator: () => formValue.value.plan.quarter_price <= 0 ? new Error('price cannot less than zero') : null,
+      validator: () => formValue.value.plan.quarter_price?formValue.value.plan.quarter_price <= 0 ? new Error('price cannot less than zero') : null:  new Error('field is null')
+
     },
     half_year_price: {
       required: false,
+      type: 'number',
+      message: '',
+      // validator: () => formValue.value.plan.half_year_price <= 0 ? new Error('price cannot less than zero') : null,
+      validator: () => formValue.value.plan.half_year_price?formValue.value.plan.half_year_price <= 0 ? new Error('price cannot less than zero') : null:  new Error('field is null')
     },
     year_price: {
       required: false,
+      type: 'number',
+      message: '',
+      // validator: () => formValue.value.plan.year_price <= 0 ? new Error('price cannot less than zero') : null,
+      validator: () => formValue.value.plan.year_price?formValue.value.plan.year_price <= 0 ? new Error('price cannot less than zero') : null:  new Error('field is null')
     },
     sort: {
       required: false,
     }
-  }
+  } as FormRules
 }
 
 let groupOptions = ref<{ label: string, value: number }[]>([])
@@ -125,11 +164,6 @@ const themeStore = useThemeStore();
 
 const active = ref(false)
 const placement = ref<DrawerPlacement>('right')
-// const activate = (place: DrawerPlacement) => {
-//   active.value = true
-//   placement.value = place
-// }
-
 let handleAddSubscribe = () => {
   editType.value = 'add'  // 添加操作
   Object.assign(formValue.value.plan, {
@@ -151,26 +185,16 @@ let handleAddSubscribe = () => {
   active.value = true // 打开模态框
 }
 
-// let getAllSubscribeItems = async () => {
-//   let {data} = await instance.get('/api/admin/get-all-subscribes')
-//   console.log('获取所有的订阅', data)
-// }
-
 let cancelAdd = () => {
   active.value = false
 }
 
-// interface RespData {
-//   code: number
-//   msg?: string
-//   error?: string
-//
-//   [key: string]: any; // 允许其他字段，键是字符串，值可以是任意类型
-// }
-
 let submitNewPlan = async () => {
   animated.value = false
-  if (!formValue.value.plan.name.trim()) return message.error(t('adminViews.common.formatNotAllowed'))
+  if (!formValue.value.plan.name.trim()) {
+    message.error(t('adminViews.common.formatNotAllowed'))
+    return
+  }
   let data = await handleSubmitNewPlan(formValue.value.plan)
   if (data && data.code === 200) {
     active.value = false
@@ -181,18 +205,34 @@ let submitNewPlan = async () => {
   }
 }
 
+let updatePlan = async () => {
+  let data = await handleUpdatePlan(formValue.value.plan)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.updateSuccess'))
+    await reloadPlanList()
+
+  } else {
+    message.success(t('adminViews.common.updateFailure') + data.msg || '')
+  }
+}
+
+let validPlanForm = async (type: string) => {
+  if (formRef.value) {
+    await formRef.value.validate((err: any) => {
+      if (!err) {
+        animated.value = false
+        type === 'add' ? submitNewPlan() : updatePlan()
+      } else {
+        message.error(t('adminViews.common.checkForm'))
+      }
+    })
+    active.value = false
+  }
+}
+
 let submitPlan = async () => {
   console.log(formValue.value)
-  switch (editType.value) {
-    case 'add': {
-      await submitNewPlan()
-      break
-    }
-    case 'update': {
-      await updatePlan()
-      break
-    }
-  }
+  await validPlanForm(editType.value)
 }
 
 interface GroupItemFromServer {
@@ -205,27 +245,18 @@ interface GroupItemFromServer {
 }
 
 let getAllGroups = async () => {
-    let {data} = await handleGetAllGroupsKv()
-    if (data && data.code === 200) {
-      groupOptions.value = []
-      if (data.group_list)
-        data.group_list.forEach((group: GroupItemFromServer) => groupOptions.value.push({
-          label: group.name,
-          value: group.id,
-        }))
-    } else {
-      message.error(t('adminViews.common.fetchDataFailure') + data.msg || '')
-    }
+  let data = await handleGetAllGroupsKv()
+  if (data && data.code === 200) {
+    groupOptions.value = []
+    if (data.group_list)
+      data.group_list.forEach((group: GroupItemFromServer) => groupOptions.value.push({
+        label: group.name,
+        value: group.id,
+      }))
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure') + data.msg || '')
+  }
 }
-
-// const notify = (type: NotificationType, title: string, meta?: string) => {
-//   notification[type]({
-//     content: title,
-//     meta: meta,
-//     duration: 2500,
-//     keepAliveOnHover: true
-//   })
-// }
 
 const columns = computed<DataTableColumns<Plan>>(() => [
   {
@@ -256,7 +287,7 @@ const columns = computed<DataTableColumns<Plan>>(() => [
     title: t('adminViews.planMgr.table.sort'),
     key: 'sort',
     render(row: Plan) {
-      return h(NTag, {}, {default: () => row.hasOwnProperty('sort') ? row.sort?.toString() : 'null'});
+      return h(NTag, {size: 'small', type: 'default', bordered: false}, {default: () => row.hasOwnProperty('sort') ? row.sort?.toString() : 'null'});
     }
   },
   {
@@ -265,7 +296,7 @@ const columns = computed<DataTableColumns<Plan>>(() => [
     key: 'group',
     render(row: Plan) {
       const group = groupOptions.value.find(option => option.value === row.group_id);
-      return h(NTag, {}, {default: () => group ? group.label : '未知'});
+      return h(NTag, {size: 'small', type: 'primary', bordered: false}, {default: () => group ? group.label : '未知'});
     }
   },
   {
@@ -285,7 +316,6 @@ const columns = computed<DataTableColumns<Plan>>(() => [
   },
   {
     // title: '月付价格',
-
     title: t('period.month'),
     key: 'month_price',
     render(row: Plan): any {
@@ -336,131 +366,65 @@ const columns = computed<DataTableColumns<Plan>>(() => [
           type: 'error',
           secondary: true,
           style: {marginLeft: '10px'},
-          onClick: () => handleDelete(row.id as number)
+          onClick: () => confirmDeletePlanWarn(row.id as number)
         }, {default: () => t('adminViews.planMgr.table.operateBtn.delete')})
       ]);
     }
   },
 ])
 
-let updatePlan = async () => {
-  console.log('updatePlan')
-  // console.log(...row)
-  try {
-    let {data} = await instance.put('/api/admin/v1/plan', {
-      ...formValue.value.plan,
-      // ...row
-    })
-    if (data.code === 200) {
-      // notify('success', '成功', '修改订阅成功')
-      message.success(t(`${i18nPrefix}.updateSuccess`))
-      // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      // pageCount.value = page_count as number
-      if (success) {
-        pageCount.value = page_count as number
-        animated.value = false
-        active.value = false
-      } else {
-        // message.error('更新失败')
-        message.success(t(`${i18nPrefix}.updateFailure`))
+const confirmDeletePlanWarn = (id: number) => dialog.error({
+  title: t('adminViews.common.dialog.delete'),
+  content: t('adminViews.planMgr.mention.common.delMention'),
+  positiveText: t('adminViews.common.confirm'),
+  negativeText: t('adminViews.common.cancel'),
+  showIcon: false,
+  actionStyle: {
+    marginTop: '20px',
+  },
+  contentStyle: {
+    marginTop: '20px',
+  },
+  onPositiveClick: () => handleDelete(id as number),
+})
 
-      }
-      animated.value = true
-
-    } else {
-      // notify('error', '修改出错', data.error)
-      // message.error('修改出错' + data.msg || '')
-      message.success(t(`${i18nPrefix}.updateFailure`) + data.msg || '')
-
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
 
 let handleUpdate = (row: Plan) => {
-  console.log(row)
   editType.value = 'update'
-  formValue.value.plan = row
+  // formValue.value.plan = row
+  Object.assign(formValue.value.plan, row)
   active.value = true
 }
 
 let handleDelete = async (planId: number) => {
-  console.log(planId)
-  try {
-    animated.value = false
-    let {data} = await instance.delete('/api/admin/v1/plan', {
-      // ...formValue.value.plan,
-      // ...row
-      params: {
-        plan_id: planId,
-      }
-    })
-    if (data.code === 200) {
-      // notify('success', '成功', '删除成功')
-      message.success(t(`${i18nPrefix}.deleteSuccess`))
-      // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize) ? animated.value = true : setTimeout(() => animated.value = true, 3000)
-      let {page_count, success} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      // pageCount.value = page_count as number
-      if (success) {
-        pageCount.value = page_count as number
-        animated.value = false
-      }
-
-    } else {
-      // notify('error', '删除失败', data.error)
-      message.success(t(`${i18nPrefix}.deleteFailure`))
-
-    }
-  } catch (error) {
-    console.log(error)
+  animated.value = false
+  let data = await handleDeletePlanById(planId)
+  if (data.code === 200) {
+    // notify('success', '成功', '删除成功')
+    message.success(t('adminViews.common.deleteSuccess'))
+    await reloadPlanList()
+  } else {
+    message.success(t('adminViews.common.deleteFailure'))
   }
 }
 
 let updateRowIsSale = async (id: number, val: boolean) => {
-  console.log('updateRowIsSale: ', val)
-  try {
-    let {data} = await instance.put('/api/admin/v1/plan/sale', {
-      id,
-      is_sale: val,
-    })
-    if (data.code === 200) {
-      // notify('success', '更新成功')
-      message.success(t(`${i18nPrefix}.updateSuccess`))
-      // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      pageCount.value = page_count as number
-    } else {
-      // notify('error', '更新失败')
-      message.success(t(`${i18nPrefix}.updateFailure`))
-
-
-    }
-  } catch (error: any) {
-    console.log(error)
+  let data = await handleUpdatePlanRowIsSaleOrRenew('sale', id, val)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.success'))
+    await reloadPlanList()
+  } else {
+    message.success(t('adminViews.common.failure'))
   }
 }
 
 let updateRowRenew = async (id: number, val: boolean) => {
-  console.log(val)
-  try {
-    let {data} = await instance.put('/api/admin/v1/plan/renew', {
-      id,
-      is_renew: val,
-    })
-    if (data.code === 200) {
-      message.success(t(`${i18nPrefix}.updateSuccess`))
-      // notify('success', '更新成功')
-      // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-      pageCount.value = page_count as number
-    } else {
-      message.success(t(`${i18nPrefix}.updateFailure`))
-      // notify('error', '更新失败')
-    }
-  } catch (error: any) {
-    console.log(error)
+  let data = await handleUpdatePlanRowIsSaleOrRenew('renew', id, val)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.success'))
+    await reloadPlanList()
+  } else {
+    message.success(t('adminViews.common.failure'))
   }
 }
 
@@ -482,9 +446,7 @@ onBeforeMount(async () => {
 onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/subscribemanager'
   await getAllGroups()
-  // await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-  // let {page_count} = await paymentStore.getAllPlans(dataSize.value.page, dataSize.value.pageSize)
-  // pageCount.value = page_count as number
+
   await reloadPlanList()
 
   animated.value = true
@@ -550,7 +512,7 @@ export default {
           :update-data="reloadPlanList"
       />
 
-      <n-drawer v-model:show="active" width="60%" :placement="placement">
+      <n-drawer v-model:show="active" width="40%" :placement="placement">
         <n-drawer-content :title="t('adminViews.planMgr.addNewPlan')">
           <n-form
               ref="formRef"
@@ -560,6 +522,7 @@ export default {
           >
             <n-form-item :label="t('adminViews.planMgr.form.items.name.title')" path="plan.name">
               <n-input v-model:value="formValue.plan.name"
+                       clearable
                        :placeholder="t('adminViews.planMgr.form.items.name.placeholder')"/>
             </n-form-item>
             <n-form-item :label="t('adminViews.planMgr.form.items.describe.title')" path="plan.describe">
@@ -581,6 +544,10 @@ export default {
             <n-form-item :label="t('adminViews.planMgr.form.items.capacityLimit.title')" path="plan.capacity_limit">
               <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.capacity_limit"
                               :placeholder="t('adminViews.planMgr.form.items.capacityLimit.placeholder')"/>
+            </n-form-item>
+            <n-form-item :label="t('adminViews.planMgr.form.items.planResidue.title')" path="plan.residue">
+              <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.residue"
+                              :placeholder="t('adminViews.planMgr.form.items.planResidue.placeholder')"/>
             </n-form-item>
             <n-form-item :label="t('adminViews.planMgr.form.items.sort.title')" path="plan.sort">
               <n-input-number :style="{width: '100%'}" v-model:value.number="formValue.plan.sort"
@@ -608,7 +575,7 @@ export default {
               {{ t('operate.cancel') }}
             </n-button>
             <n-button style="width: 80px" type="primary" @click="submitPlan">{{
-                editType === 'add' ? t('operate.update') : t('operate.add')
+                editType === 'add' ? t('operate.add') : t('operate.update')
               }}
             </n-button>
           </div>

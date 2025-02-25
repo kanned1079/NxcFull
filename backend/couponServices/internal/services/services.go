@@ -5,6 +5,7 @@ import (
 	pb "couponServices/api/proto"
 	"couponServices/internal/dao"
 	"couponServices/internal/model"
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -63,7 +64,7 @@ func (s *CouponService) AddNewCoupon(ctx context.Context, request *pb.AddNewCoup
 		Code:         request.Code,
 		PercentOff:   float64(request.PercentOff),
 		Capacity:     request.Capacity,
-		Residue:      request.Capacity,
+		Residue:      request.Residue,
 		PerUserLimit: request.PerUserLimit,
 		PlanLimit:    request.PlanLimit,
 		StartTime:    &startTime,
@@ -204,10 +205,19 @@ func (s *CouponService) GetAllCoupons(ctx context.Context, request *pb.GetAllCou
 	// 计算总页数
 	pageCount := int64((total + int64(pageSize) - 1) / int64(pageSize))
 
+	jsonCoupons, err := json.Marshal(&coupons)
+	if err != nil {
+		return &pb.GetAllCouponsResponse{
+			Code:      http.StatusInternalServerError,
+			Msg:       err.Error(),
+			PageCount: 0, // 总页数
+		}, nil
+	}
+
 	return &pb.GetAllCouponsResponse{
 		Code:       http.StatusOK,
-		CouponList: Convert2rpcCoupons(coupons),
-		Msg:        "查询成功",
+		CouponList: jsonCoupons,
+		Msg:        "success",
 		PageCount:  pageCount, // 总页数
 	}, nil
 }

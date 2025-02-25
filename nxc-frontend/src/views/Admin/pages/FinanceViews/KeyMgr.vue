@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
-import {NButton, NIcon, NTag, useMessage, type DataTableColumns} from "naive-ui"
+import {NButton, NIcon, NTag, useMessage, type DataTableColumns, useDialog} from "naive-ui"
 import useThemeStore from "@/stores/useThemeStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 // import instance from "@/axios";
@@ -10,9 +10,9 @@ import {handleBlockKeyById, handleGetAllKeysByAdmin} from "@/api/admin/keys";
 import PageHead from "@/views/utils/PageHead.vue";
 import {RefreshOutline as refreshIcon, Search as searchIcon,} from "@vicons/ionicons5"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
-import {formatDate} from "../../../../utils/timeFormat";
+import {formatDate} from "@/utils/timeFormat";
 import useTablePagination from "@/hooks/useTablePagination";
-
+// import {handleDeleteCouponById} from "@/api/admin/coupon";
 
 interface KeyItem {
   key_id: number;
@@ -63,18 +63,12 @@ if (keyIdParam) {
   paramsKeyId = 0
 }
 
-
 const message = useMessage();
+const dialog = useDialog();
 const themeStore = useThemeStore()
 const userInfoStore = useUserInfoStore()
 
 let animated = ref<boolean>(false);
-// let pageCount = ref(10)
-
-// let dataSize = ref<{ pageSize: number, page: number }>({
-//   pageSize: 10,
-//   page: 1,
-// })
 
 const [dataSize, pageCount] = useTablePagination()
 
@@ -226,18 +220,41 @@ const callGetAllKeys = async () => {
     pageCount.value = 0
   }
   animated.value = true
-
 }
 
 const callBlockKeyByKeyId = async (row: KeyItem) => {
-  let data = await handleBlockKeyById(row.user_id, row.key_id)
-  if (data && data.code === 200) {
-    message.success(t('adminViews.keysMgr.mention.blockOk', {id: row.key_id}))
-    await callGetAllKeys()
-  } else {
-    // TODO
-    message.error(t('adminViews.common.failure'))
+  const runTask = async () => {
+    let data = await handleBlockKeyById(row.user_id, row.key_id)
+    if (data && data.code === 200) {
+      message.success(t('adminViews.keysMgr.mention.blockOk', {id: row.key_id}))
+      await callGetAllKeys()
+    } else {
+      // TODO
+      message.error(t('adminViews.common.failure'))
+    }
   }
+  if (!row.is_valid) return runTask()
+  else dialog.warning({
+    title: t('adminViews.keysMgr.mention.title'),
+    content: () => {
+      return h('div', {}, [
+        h('p', {style: {fontWeight: 'weight', fontSize: '1rem', opacity: '0.8'}}, row.key),
+        h('p', {style: {marginTop: '4px'}}, t('adminViews.keysMgr.mention.content'))
+      ])
+    },
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+      marginTop: '20px',
+    },
+    onPositiveClick: async () => {
+      await runTask()
+    }
+  })
 }
 
 type KeyDetailKey = 'user_id' | 'plan_name' | 'expiration_date' | 'created_at'

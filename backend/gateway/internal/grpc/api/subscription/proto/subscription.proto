@@ -164,11 +164,12 @@ message AddNewPlanRequest {
   bool is_renew = 4;
   int64 group_id = 5;
   int64 capacity_limit = 6;
-  double month_price = 7;
-  double quarter_price = 8;
-  double half_year_price = 9;
-  double year_price = 10;
-  int64 sort = 11;
+  int64 residue = 7;
+  double month_price = 8;
+  double quarter_price = 9;
+  double half_year_price = 10;
+  double year_price = 11;
+  int64 sort = 12;
 }
 
 message AddNewPlanResponse {
@@ -186,11 +187,12 @@ message UpdatePlanRequest {
   bool is_renew = 5;
   int64 group_id = 6;
   int64 capacity_limit = 7;
-  double month_price = 8;
-  double quarter_price = 9;
-  double half_year_price = 10;
-  double year_price = 11;
-  int64 sort = 12;
+  int64 residue = 8;
+  double month_price = 9;
+  double quarter_price = 10;
+  double half_year_price = 11;
+  double year_price = 12;
+  int64 sort = 13;
 }
 
 message UpdatePlanResponse {

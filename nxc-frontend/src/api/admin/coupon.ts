@@ -9,6 +9,7 @@ interface CouponInst {
     end_time: number | null
     per_user_limit: number | null
     capacity: number | null
+    residue: number | null
     plan_limit: number | null
 }
 
