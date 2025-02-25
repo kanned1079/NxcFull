@@ -36,18 +36,18 @@ func HandleGetAllMyTickets(context *gin.Context) {
 		})
 		return
 	}
-	var ticketsMap []map[string]any
-	if err = json.Unmarshal(resp.Tickets, &ticketsMap); err != nil {
-		log.Println(err)
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var ticketsMap []map[string]any
+	//if err = json.Unmarshal(resp.Tickets, &ticketsMap); err != nil {
+	//	log.Println(err)
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
-		"tickets":    ticketsMap,
+		"tickets":    json.RawMessage(resp.Tickets),
 		"page_count": resp.PageCount,
 		"msg":        resp.Msg,
 	})
@@ -194,29 +194,31 @@ func HandleGetAllTickets(context *gin.Context) {
 		})
 		return
 	}
-	var ticketsMap []map[string]any
-	var activeTicketMap []map[string]any
-	if err = json.Unmarshal(resp.Tickets, &ticketsMap); err != nil {
-		log.Println(err)
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
-	if err = json.Unmarshal(resp.PendingTickets, &activeTicketMap); err != nil {
-		log.Println(err)
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var ticketsMap []map[string]any
+	//var activeTicketMap []map[string]any
+	//if err = json.Unmarshal(resp.Tickets, &ticketsMap); err != nil {
+	//	log.Println(err)
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
+	//if err = json.Unmarshal(resp.PendingTickets, &activeTicketMap); err != nil {
+	//	log.Println(err)
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
-		"code":                resp.Code,
-		"msg":                 resp.Msg,
-		"tickets":             ticketsMap,
-		"pending_tickets":     activeTicketMap,
+		"code": resp.Code,
+		"msg":  resp.Msg,
+		//"tickets":             ticketsMap,
+		"tickets": json.RawMessage(resp.Tickets),
+		//"pending_tickets":     activeTicketMap,
+		"pending_tickets":     json.RawMessage(resp.PendingTickets),
 		"pending_page_count":  resp.PendingPageCount,
 		"finished_page_count": resp.FinishedPageCount,
 	})

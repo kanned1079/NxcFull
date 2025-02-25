@@ -45,48 +45,42 @@ func GetActivePlanListByUserId(context *gin.Context) {
 			"msg":  err.Error(),
 		})
 	}
-	var myPlansMap []map[string]any
-	if err := json.Unmarshal(resp.MyPlans, &myPlansMap); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "转换格式失败",
-		})
-		return
-	}
+	//var myPlansMap []map[string]any
+	//if err := json.Unmarshal(resp.MyPlans, &myPlansMap); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "转换格式失败",
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":     resp.Code,
-		"my_plans": myPlansMap,
+		"my_plans": json.RawMessage(resp.MyPlans),
 		"msg":      resp.Msg,
 	})
 }
 
 func HandleGetAllPlanKeyName(context *gin.Context) {
 	resp, err := grpcClient.SubscriptionServiceClient.GetAllPlanKeyName(sysContext.Background(), &pb.GetAllPlanKeyNameRequest{})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
-		})
 		return
 	}
-	var plansMap []map[string]any
-	if err := json.Unmarshal(resp.Plans, &plansMap); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "转换格式失败",
-		})
-		return
-	}
+	//var plansMap []map[string]any
+	//if err := json.Unmarshal(resp.Plans, &plansMap); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "转换格式失败",
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":  resp.Code,
 		"msg":   resp.Msg,
-		"plans": plansMap,
+		"plans": json.RawMessage(resp.Plans),
 	})
 }
 
@@ -116,33 +110,25 @@ func HandleGetAllPlans(context *gin.Context) {
 			IsUser: isUserQ,
 		})
 	}
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg": err.Error(),
 		})
 		return
 	}
 	//log.Println(string(resp.Plans))
-	var plansMap []map[string]any
-	if err := json.Unmarshal(resp.Plans, &plansMap); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "转换格式失败",
-		})
-		return
-	}
-	log.Println("页面计数", resp.PageCount)
+	//var plansMap []map[string]any
+	//if err := json.Unmarshal(resp.Plans, &plansMap); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "转换格式失败",
+	//	})
+	//	return
+	//}
+	//log.Println("页面计数", resp.PageCount)
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
-		"plans":      plansMap,
+		"plans":      json.RawMessage(resp.Plans),
 		"msg":        resp.Msg,
 		"page_count": resp.PageCount,
 	})
@@ -183,16 +169,10 @@ func HandleAddNewPlan(context *gin.Context) {
 		YearPrice:     postData.YearPrice,
 		Sort:          postData.Sort,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -239,16 +219,10 @@ func HandleUpdatePlan(context *gin.Context) {
 		YearPrice:     postData.YearPrice,
 		Sort:          postData.Sort,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -272,16 +246,10 @@ func HandleDeletePlan(context *gin.Context) {
 	resp, err := grpcClient.SubscriptionServiceClient.DeletePlan(sysContext.Background(), &pb.DeletePlanRequest{
 		PlanId: int64(planId),
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
 		})
 		return
 	}
@@ -310,17 +278,10 @@ func HandleUpdatePlanSale(context *gin.Context) {
 		Id:     postData.Id,
 		IsSale: postData.IsSale,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败" + err.Error(),
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -349,17 +310,10 @@ func HandleUpdatePlanRenew(context *gin.Context) {
 		Id:      postData.Id,
 		IsRenew: postData.IsRenew,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败" + err.Error(),
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}

@@ -24,6 +24,16 @@ export const handleGetAllGroups = async (page: number, size: number) => {
     }
 }
 
+export const handleGetAllGroupsKv = async () => {
+    try {
+        let {data} = await instance.get('/api/admin/v1/groups/kv')
+        return data
+    }catch (err: any) {
+        console.error(err)
+        return false
+    }
+}
+
 export const handleSubmitNewGroup = async (grpName: string) => {
     try {
         let {data} = await instance.post('/api/admin/v1/groups', {
@@ -36,7 +46,7 @@ export const handleSubmitNewGroup = async (grpName: string) => {
     }
 }
 
-export const handleUpdateGroup = async (id: number, name: number) => {
+export const handleUpdateGroup = async (id: number, name: string) => {
     try {
         let {data} = await instance.put('/api/admin/v1/groups', {
             id: id,

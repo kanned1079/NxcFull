@@ -24,26 +24,27 @@ func HandleSendTestMail(context *gin.Context) {
 	resp, err := grpcClient.MailServicesClient.SendTestEmail(sysContext.Background(), &pb.SendTestEmailRequest{
 		Email: postData.Email,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
+			"code":      http.StatusInternalServerError,
+			"cancelled": false,
+			"msg":       err.Error(),
 		})
 		return
 	}
 	//log.Println(string(resp.Info))
-	var smtpConfig map[string]any
-	if err := json.Unmarshal(resp.Info, &smtpConfig); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-	}
-	log.Println(smtpConfig)
+	//var smtpConfig map[string]any
+	//if err := json.Unmarshal(resp.Info, &smtpConfig); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//}
+	//log.Println(smtpConfig)
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
-		"info": smtpConfig,
+		"info": json.RawMessage(resp.Info),
 	})
 }
 
@@ -67,17 +68,11 @@ func HandleSendRegisterVerifyEmail(context *gin.Context) {
 			&pb.SendRegisterVerifyCode2EmailRequest{
 				Email: postForm.Email,
 			})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusBadRequest,
-			"msg":  "调用gRPC服务错误无返回值",
+			"code":      http.StatusInternalServerError,
+			"cancelled": false,
+			"msg":       err.Error(),
 		})
 		return
 	}
@@ -148,17 +143,11 @@ func HandleSendRetrieveVerifyEmail(context *gin.Context) {
 			&pb.SendRetrievePwdVerifyCode2EmailRequest{
 				Email: postForm.Email,
 			})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusBadRequest,
-			"msg":  "调用gRPC服务错误无返回值",
+			"code":      http.StatusInternalServerError,
+			"cancelled": false,
+			"msg":       err.Error(),
 		})
 		return
 	}
@@ -185,19 +174,11 @@ func HandleVerifyEmailCode(context *gin.Context) {
 		Email: postForm.Email,
 		Code:  postForm.Code,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code":   http.StatusBadRequest,
-			"msg":    "rpc调用错误" + err.Error(),
-			"passed": false,
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code":   http.StatusBadRequest,
-			"msg":    "rpc方法调用失败无返回值",
-			"passed": false,
+			"code":      http.StatusInternalServerError,
+			"cancelled": false,
+			"msg":       err.Error(),
 		})
 		return
 	}

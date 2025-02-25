@@ -12,12 +12,14 @@ import {
 } from "@vicons/ionicons5"
 
 import {type DataTableColumns, NButton, NDropdown, NIcon, NTag, useMessage} from "naive-ui";
-import instance from "@/axios";
+// import instance from "@/axios";
 import {formatDate} from "@/utils/timeFormat";
 import renderIcon from "@/utils/iconFormator";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
 import useTablePagination from "@/hooks/useTablePagination";
+import {handleGetAllOrders, handleManualCancelOrderById, handleManualPassOrderById} from "@/api/admin/order";
+import {handleGetAllGroupsKv} from "@/api/admin/groups";
 
 interface Order {
   id: number
@@ -70,14 +72,6 @@ let searchForm = ref<{
   sort: 'DESC',   // 默认按照created_at降序排序
 })
 
-
-// let pageCount = ref(10)
-//
-// let dataSize = ref<{ pageSize: number, page: number }>({
-//   pageSize: 10,
-//   page: 1,
-// })
-
 const [dataSize, pageCount] = useTablePagination()
 
 // 获取状态颜色
@@ -96,9 +90,9 @@ function getStatusText(is_finished: boolean, is_success: boolean): ComputedRef<s
   if (!is_success && !is_finished) {
     return computed(() => t(`${i18nPrefix}.tradeWaiting`));
   } else if (is_finished && !is_success) {
-    return  computed(() => t(`${i18nPrefix}.tradeFailure`));
+    return computed(() => t(`${i18nPrefix}.tradeFailure`));
   } else {
-    return  computed(() => t(`${i18nPrefix}.tradeSuccess`));
+    return computed(() => t(`${i18nPrefix}.tradeSuccess`));
   }
 }
 
@@ -319,95 +313,66 @@ const columns = computed<DataTableColumns<Order>>(() => [
 ])
 
 let getAllOrders = async () => {
-  try {
-    let {data} = await instance.get('/api/admin/v1/order', {
-      params: {
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-        search_email: searchForm.value.email.trim(),
-        sort: searchForm.value.sort
-      }
-    })
-    if (data.code === 200) {
-      console.log(data)
-      orderList.value = []
+  let data = await handleGetAllOrders(dataSize.value.page, dataSize.value.pageSize, searchForm.value.email.trim(), searchForm.value.sort.toUpperCase());
+  if (data.code === 200) {
+    orderList.value = []
+    if (data.orders)
       data.orders.forEach((order: Order) => orderList.value.push(order))
-      pageCount.value = data.page_count
-      animated.value = true
-    } else {
-      message.error('未知错误' + data.msg || '')
-    }
-  } catch (err: any) {
-    message.error(err + '')
+    pageCount.value = data.page_count || 0
+    animated.value = true
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure') + data.msg || '')
   }
 }
 
 let handleManualCancelOrder = async (orderId: string, userId: number) => {
-  try {
-    animated.value = false
-    let {data} = await instance.delete('/api/admin/v1/order', {
-      params: {
-        user_id: userId,
-        order_id: orderId
-      }
-    })
-    if (data.code === 200) {
-      if (data.cancelled) {
-        message.success('order cancelled successfully')
-        await getAllOrders()
-        animated.value = true
-      } else {
-        message.warning('order cancelled failure.')
-      }
+  animated.value = false
+  let data = await handleManualCancelOrderById(userId, orderId)
+  if (data.code === 200) {
+    if (data.cancelled) {
+      message.success(t('adminViews.common.success'))
+      await getAllOrders()
+      animated.value = true
     } else {
-      console.log('request failure', data.msg)
+      message.warning(t('adminViews.common.failure') + data.msg || '')
+      // message.warning('order cancelled failure.')
     }
-  } catch (err: any) {
-    console.log(err + '')
+  } else {
+    message.error(t('adminViews.common.unknownErr'))
   }
 }
 
 let handleManualPassOrder = async (orderId: string, userId: number) => {
-  try {
-    animated.value = false
-    let {data} = await instance.put('/api/admin/v1/order', {
-      user_id: userId,
-      order_id: orderId
-    })
-    if (data.code === 200) {
-      if (data.passed) {
-        message.success('order passed successfully')
-        await getAllOrders()
-        animated.value = true
-      } else {
-        message.warning('order passed failure.')
-      }
+  animated.value = false
+  let data = await handleManualPassOrderById(userId, orderId)
+  if (data.code === 200) {
+    if (data.passed) {
+      message.success(t('adminViews.common.success'))
+      await getAllOrders()
+      animated.value = true
     } else {
-      console.log('request failure', data.msg)
+      message.warning(t('adminViews.common.failure') + data.msg || '')
     }
-  } catch (err: any) {
-    console.log(err + '')
+  } else {
+    message.error(t('adminViews.common.unknownErr'))
   }
+
 }
 
 let getAllGroups = async () => {
-  try {
-    let {data} = await instance.get('/api/admin/v1/groups/kv',)
+    let data = await handleGetAllGroupsKv()
     if (data.code === 200) {
       privilegeGroupList.value = []
-      // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
-      data.group_list.forEach((group: PrivilegeGroup) => privilegeGroupList.value.push(group))
+      if (data.group_list)
+        data.group_list.forEach((group: PrivilegeGroup) => privilegeGroupList.value.push(group))
     } else {
-      message.error(data.msg || 'Error fetch.')
+      message.error(t('default.adminViews.common.fetchDataFailure') + data.msg || '')
     }
-  } catch (error) {
-    console.log(error)
-  }
 }
 
-let showOrderDetailsByIdClick = () => {
-  showDetailModal.value = true
-}
+// let showOrderDetailsByIdClick = () => {
+//   showDetailModal.value = true
+// }
 
 type OrderDetailKey = 'user_id' | 'email' | 'discount_amount' | 'coupon_id' | 'coupon_name' | 'failure_reason';
 
@@ -453,7 +418,7 @@ const formatDetailString = (key: string): string => {
   } else if (key === 'user_id') {
     return `# ${orderList.value[detailKeyIndex.value][key as OrderDetailKey].toString()}`
   } else if (key === 'coupon_id') {
-    return parseInt(`${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}`) > 0?`# ${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}`:t('adminViews.orderMgr.noEntry')
+    return parseInt(`${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}`) > 0 ? `# ${orderList.value[detailKeyIndex.value][key as OrderDetailKey]}` : t('adminViews.orderMgr.noEntry')
   } else if (key == 'failure_reason') {
     if (orderList.value[detailKeyIndex.value].is_success && orderList.value[detailKeyIndex.value].is_finished)
       return t('adminViews.orderMgr.tradeSuccess')
@@ -461,7 +426,7 @@ const formatDetailString = (key: string): string => {
       return orderList.value[detailKeyIndex.value][key as OrderDetailKey].toString()
   } else if (key === 'discount_amount') {
     if (orderList.value[detailKeyIndex.value].discount_amount > 0) return `${orderList.value[detailKeyIndex.value].discount_amount.toFixed(2)} ${appInfosStore.appCommonConfig.currency}`
-    else return  t('adminViews.orderMgr.noEntry')
+    else return t('adminViews.orderMgr.noEntry')
   } else {
     return orderList.value[detailKeyIndex.value][key as OrderDetailKey].toString() || t('adminViews.orderMgr.noEntry')
   }
@@ -522,24 +487,6 @@ export default {
       {{ t(`${i18nPrefix}.resetSearch`) }}
     </n-button>
   </PageHead>
-
-  <!--  <div class="root">-->
-  <!--    <n-card hoverable :bordered="false" :embedded="true" class="card1" :title="'订单管理'">-->
-  <!--      <n-button class="btn" secondary type="primary" size="medium" @click="showSearchModal=true">-->
-  <!--        <n-icon size="14" style="padding-right: 8px">-->
-  <!--          <searchIcon/>-->
-  <!--        </n-icon>-->
-  <!--        {{ t('adminViews.userMgr.query') }}-->
-  <!--      </n-button>-->
-  <!--      <n-button class="btn" tertiary type="primary" size="medium"-->
-  <!--                @click="searchForm.email=''; animated=false; getAllOrders()">-->
-  <!--        <n-icon size="14" style="padding-right: 8px">-->
-  <!--          <refreshIcon/>-->
-  <!--        </n-icon>-->
-  <!--        {{ '重置搜索' }}-->
-  <!--      </n-button>-->
-  <!--    </n-card>-->
-  <!--  </div>-->
 
   <transition name="slide-fade">
     <div style="padding: 20px" v-if="animated">
@@ -636,11 +583,13 @@ export default {
 
 .details-root {
   margin-top: 16px;
+
   .detail-title {
     font-size: 1rem;
     font-weight: bold;
     opacity: 0.7;
   }
+
   .detail-content {
     font-size: 1.1rem;
     margin-top: 4px;

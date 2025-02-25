@@ -172,14 +172,10 @@ func HandleUserRegister(context *gin.Context) {
 		Password:     postForm.Password,
 		InviteUserId: postForm.InviteUserId,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	if resp == nil {
+	if err = failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -212,16 +208,11 @@ func HandleCheckPreviousPassword(context *gin.Context) {
 		Email:       postData.Email,
 		OldPassword: postData.OldPassword,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code":  http.StatusInternalServerError,
-			"error": err.Error(),
-		})
-	}
-	if resp == nil {
+	if err = failOnRpcError(err, resp); err != nil {
+		log.Println(err)
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -256,16 +247,11 @@ func HandleApplyNewPassword(context *gin.Context) {
 		Email:       postData.Email,
 		NewPassword: postData.NewPassword,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code":  http.StatusInternalServerError,
-			"error": err.Error(),
-		})
-	}
-	if resp == nil {
+	if err = failOnRpcError(err, resp); err != nil {
+		log.Println(err)
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -297,17 +283,11 @@ func HandleSetup2FA(context *gin.Context) {
 		Id:    postData.Id,
 		Email: postData.Email,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
-	if resp == nil {
+	if err = failOnRpcError(err, resp); err != nil {
+		log.Println(err)
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "rpc服务调用失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -338,17 +318,11 @@ func HandleTest2FA(context *gin.Context) {
 		Email:     postData.Email,
 		TwoFaCode: postData.TwoFaCode,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
-	if resp == nil {
+	if err = failOnRpcError(err, resp); err != nil {
+		log.Println(err)
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "rpc服务器调用失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -380,17 +354,11 @@ func HandleGet2FAStatus(context *gin.Context) {
 		Id: int64(id),
 		//Email: postData.Email,
 	})
-	if err != nil {
+	if err = failOnRpcError(err, resp); err != nil {
+		log.Println(err)
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
-		})
-		return
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "rpc调用失败无返回值",
 		})
 		return
 	}
@@ -407,17 +375,11 @@ func HandleCancelSetup2FA(context *gin.Context) {
 	resp, err := grpcClient.UserServiceClient.CancelSetup2FA(sysContext.Background(), &pb.CancelSetup2FARequest{
 		Email: email,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
-	if resp == nil {
+	if err = failOnRpcError(err, resp); err != nil {
+		log.Println(err)
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
-			"msg":  "rpc服务器调用失败无返回值",
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -433,19 +395,11 @@ func HandleDisable2FA(context *gin.Context) {
 	resp, err := grpcClient.UserServiceClient.Disable2FA(sysContext.Background(), &pb.Disable2FARequest{
 		Email: email,
 	})
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code":     http.StatusInternalServerError,
-			"disabled": false,
-			"msg":      err.Error(),
-		})
-		return
-	}
-	if resp == nil {
+	if err = failOnRpcError(err, resp); err != nil {
+		log.Println(err)
 		context.JSON(http.StatusOK, gin.H{
-			"code":     http.StatusInternalServerError,
-			"disabled": false,
-			"msg":      "rpc服务器调用失败无返回值",
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
 		})
 		return
 	}
@@ -480,19 +434,19 @@ func HandleUpdateUserInfo(context *gin.Context) {
 		})
 		return
 	}
-	var userMap map[string]interface{}
-	err = json.Unmarshal(resp.UserInfo, &userMap)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var userMap map[string]interface{}
+	//err = json.Unmarshal(resp.UserInfo, &userMap)
+	//if err != nil {
+	//	context.JSON(http.StatusInternalServerError, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":      resp.Code,
 		"msg":       resp.Msg,
-		"user_info": userMap,
+		"user_info": json.RawMessage(resp.UserInfo),
 	})
 }
 
@@ -762,18 +716,19 @@ func HandleGetUserInvitedUserListByUserId(context *gin.Context) {
 		})
 		return
 	}
-	var usersMap []map[string]interface{}
-	if err := json.Unmarshal(resp.UserList, &usersMap); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var usersMap []map[string]interface{}
+	//if err := json.Unmarshal(resp.UserList, &usersMap); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 	context.JSON(http.StatusOK, gin.H{
-		"code":       resp.Code,
-		"msg":        resp.Msg,
-		"user_list":  usersMap,
+		"code": resp.Code,
+		"msg":  resp.Msg,
+		//"user_list":  usersMap,
+		"user_list":  json.RawMessage(resp.UserList),
 		"page_count": resp.PageCount,
 	})
 }

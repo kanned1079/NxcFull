@@ -59,6 +59,7 @@ export default {
             "success": "操作成功",
             "failure": "操作失敗",
             "NotAllowed": "非法格式",
+            "unknownErr": "未知錯誤",
         },
         "login": {
             "secureCard": {

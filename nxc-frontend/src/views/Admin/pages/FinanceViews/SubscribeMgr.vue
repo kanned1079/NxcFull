@@ -14,13 +14,14 @@ import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
 import useTablePagination from "@/hooks/useTablePagination";
 import {handleSubmitNewPlan} from "@/api/admin/plan";
+import {handleGetAllGroupsKv} from "@/api/admin/groups";
 // import {MdEditor} from "md-editor-v3";
 
 const {t} = useI18n();
 const i18nPrefix = 'adminViews.planMgr'
 let animated = ref<boolean>(false)
 
-const notification = useNotification()
+// const notification = useNotification()
 // const apiAddrStore = useApiAddrStore();
 const paymentStore = usePaymentStore();
 // const userInfoStore = useUserInfoStore();
@@ -174,7 +175,6 @@ let submitNewPlan = async () => {
   if (data && data.code === 200) {
     active.value = false
     message.success(t('adminViews.common.addSuccess'))
-
     await reloadPlanList()
   } else {
     message.success(t('adminViews.common.addFailure'))
@@ -205,21 +205,17 @@ interface GroupItemFromServer {
 }
 
 let getAllGroups = async () => {
-  try {
-    let {data} = await instance.get('/api/admin/v1/groups/kv',)
-    if (data.code === 200) {
+    let {data} = await handleGetAllGroupsKv()
+    if (data && data.code === 200) {
       groupOptions.value = []
-      // data.group_list.forEach((group: PrivilegeGroup) => groupList.push(group))
-      data.group_list.forEach((group: GroupItemFromServer) => groupOptions.value.push({
-        label: group.name,
-        value: group.id,
-      }))
+      if (data.group_list)
+        data.group_list.forEach((group: GroupItemFromServer) => groupOptions.value.push({
+          label: group.name,
+          value: group.id,
+        }))
     } else {
-      message.error(data.msg || 'Error fetch.')
+      message.error(t('adminViews.common.fetchDataFailure') + data.msg || '')
     }
-  } catch (error) {
-    console.log(error)
-  }
 }
 
 // const notify = (type: NotificationType, title: string, meta?: string) => {

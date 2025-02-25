@@ -236,9 +236,9 @@ const useThemeStore = defineStore('themeStore', (): Theme => {
     })
 
     const grayTheme = ref({
-        topLogoBgColor: computed(() => enableDarkMode.value ? '#636363' : '#8e8e8e'),
+        topLogoBgColor: computed(() => enableDarkMode.value ? '#595959' : '#777777'),
         topLogoTextColor: '#dbe9f3',
-        topHeaderBgColor: computed(() => enableDarkMode.value ? '#595959' : '#777777'),
+        topHeaderBgColor: computed(() => enableDarkMode.value ? '#636363' : '#8e8e8e'),
         topHeaderTextColor: '#fff',
         globeTheme, // 通用部分
         selfOverride: computed(() => enableDarkMode.value ? {

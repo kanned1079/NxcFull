@@ -175,30 +175,15 @@ let getAllCoupons = async () => {
 }
 
 let activateACoupon = async (id: number, value: boolean) => {
-  // console.log(id, value)
-  // 这里是使用post方法 当switch改变时调用来启用或关闭优惠券
-  // 请求地址 /admin/v1/coupon/status/update
-  // 请求体 {优惠券id， 状态}
-  // try {
-  //   let {data} = await instance.put('http://localhost:8081/api/admin/v1/coupon/status', {
-  //     id: id,
-  //     status: value
-  //   });
   let data = await handleActivateCouponById(id, value)
   if (data && data.code === 200) {
     // message.success('优惠券状态更新成功');
     message.success(t('adminViews.common.updateSuccess'));
     await getAllCoupons()
   } else {
-    // message.error('更新优惠券状态失败');
     message.error(t('adminViews.common.updateFailure'));
   }
   await getAllCoupons();
-  // } catch (error) {
-  //   console.error(error);
-  //   message.error(t('adminViews.common.updateFailure'));
-  //   // message.error('请求更新优惠券状态失败');
-  // }
 }
 
 const updateCouponClick = async (row: Coupon) => {

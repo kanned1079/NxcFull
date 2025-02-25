@@ -47,16 +47,11 @@ func HandleUpdateSingleOptions(context *gin.Context) {
 		Key:      req.Key,
 		Value:    jsonVal,
 	})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-	}
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
+			"code":      http.StatusInternalServerError,
+			"cancelled": false,
+			"msg":       err.Error(),
 		})
 		return
 	}
@@ -68,34 +63,28 @@ func HandleUpdateSingleOptions(context *gin.Context) {
 
 func HandleGetSystemSetting(context *gin.Context) {
 	resp, err := grpcClient.SettingServiceClient.GetSystemSettings(sysContext.Background(), &pb.GetSystemSettingsRequest{})
-	if err != nil {
+	if err := failOnRpcError(err, resp); err != nil {
 		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
-	}
-	//log.Println(string(resp.Settings)) // 此处json格式正确
-	if resp == nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "调用rpc服务器失败无返回值",
-		})
 		return
 	}
+	//lo
 	// 反序列化 resp.Settings 到 Go 的 map 或其他结构
-	var settings map[string]interface{}
-	if err := json.Unmarshal(resp.Settings, &settings); err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  "Failed to parse settings",
-		})
-		return
-	}
+	//var settings map[string]interface{}
+	//if err := json.Unmarshal(resp.Settings, &settings); err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  "Failed to parse settings",
+	//	})
+	//	return
+	//}
 
 	context.JSON(http.StatusOK, gin.H{
 		"code":     resp.Code,
 		"msg":      resp.Msg,
-		"settings": settings,
+		"settings": json.RawMessage(resp.Settings),
 	})
 }
 
@@ -136,7 +125,7 @@ func HandleEditOrSavePaymentMethodBySystemName(context *gin.Context) {
 		Config: configBytes,
 	})
 	if err := failOnRpcError(err, resp); err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusOK, gin.H{
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
@@ -418,15 +407,15 @@ func HandleGetRegisterEnv(context *gin.Context) {
 		})
 		return
 	}
-	var config map[string]any
-	err = json.Unmarshal(resp.Config, &config)
-	if err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var config map[string]any
+	//err = json.Unmarshal(resp.Config, &config)
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
@@ -445,7 +434,7 @@ func HandleGetRegisterEnv(context *gin.Context) {
 			        recaptcha_site_key: 'password',
 			        tos_url: 'https://ikanned.com:24444/',
 		*/
-		"config": config,
+		"config": json.RawMessage(resp.Config),
 		//"app_name":                 resp.AppName,
 		//"app_sub_name":             resp.AppSubName,
 		//"app_description":          resp.AppDescription,
@@ -473,20 +462,20 @@ func HandleGetWelcomeConfig(context *gin.Context) {
 		})
 		return
 	}
-	var config map[string]any
-	err = json.Unmarshal(resp.Config, &config)
-	if err != nil {
-		context.JSON(http.StatusOK, gin.H{
-			"code": http.StatusInternalServerError,
-			"msg":  err.Error(),
-		})
-		return
-	}
+	//var config map[string]any
+	//err = json.Unmarshal(resp.Config, &config)
+	//if err != nil {
+	//	context.JSON(http.StatusOK, gin.H{
+	//		"code": http.StatusInternalServerError,
+	//		"msg":  err.Error(),
+	//	})
+	//	return
+	//}
 
 	context.JSON(http.StatusOK, gin.H{
 		"code":   resp.Code,
 		"msg":    resp.Msg,
-		"config": config,
+		"config": json.RawMessage(resp.Config),
 	})
 }
 

@@ -191,6 +191,7 @@ let submit = async () => {
 }
 
 let submitUpdate = async () => {
+  if (modifyId.value === null) return message.error(t('adminViews.common.updateFailure'))
   let data = await handleUpdateGroup(modifyId.value, newGroupName.value.trim())
   if (data && data.code === 200) {
     message.success(t('adminViews.common.updateSuccess'))
@@ -337,7 +338,7 @@ export default {
         :rules="rules"
     >
       <n-form-item :label="t('adminViews.groupMgr.groupName')" path="privilege_group.name">
-        <n-input v-model:value="newGroupName" :placeholder="t('adminViews.groupMgr.groupPlaceholder')"/>
+        <n-input clearable v-model:value="newGroupName" :placeholder="t('adminViews.groupMgr.groupPlaceholder')"/>
       </n-form-item>
     </n-form>
 
