@@ -44,7 +44,7 @@ const userInfoStore = useUserInfoStore();
 const router = useRouter();
 
 // 管理员 ----------------------------------
-let MenuOption = ref<MenuOption[]>([
+let MenuOption = computed<MenuOption[]>(() => [
   {
     label: t('commonAside.admin.dashboard'),
     key: 'dashboard',
@@ -189,7 +189,7 @@ let adminUpdate = (key: string) => {
 
 
 // 普通用户 ----------------------------------
-let UserMenuOption = ref<MenuOption[]>([
+let UserMenuOption = computed<MenuOption[]>( () => [
   {
     label: t('commonAside.user.dashboard'),
     key: 'user-dashboard',

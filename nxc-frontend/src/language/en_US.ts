@@ -8,24 +8,24 @@ export default {
     "commonAside": {
         "admin": {
             "dashboard": "Tableboard",
-            "queueMonit": "Service side monitoring",
+            "queueMonit": "Service side",
             "settings": "Settings",
-            "systemConfig": "System Settings",
-            "paymentConfig": "Payment Settings",
-            "themeConfig": "Theme settings",
+            "systemConfig": "System",
+            "paymentConfig": "Payment",
+            "themeConfig": "Theme",
             "server": "Server",
-            "privilege": "Authority management",
+            "privilege": "Authority",
             "finance": "Finance",
-            "subscription": "Subscription Management",
-            "coupon": "Coupon Management",
-            "order": "Order Management",
-            "activate": "Activate the record",
-            "key": "Key management",
+            "subscription": "Subscription",
+            "coupon": "Coupon",
+            "order": "Order",
+            "activate": "Activation",
+            "key": "Key",
             "user": "User",
-            "userMgr": "User Management",
-            "notice": "Announcement Management",
-            "ticket": "Work order management",
-            "doc": "Knowledge database management"
+            "userMgr": "User",
+            "notice": "Announcement",
+            "ticket": "Ticket",
+            "doc": "Knowledge"
         },
         "user": {
             "dashboard": "Tableboard",
@@ -57,7 +57,11 @@ export default {
             "confirm": "Confirm",
             "cancel": "Cancel",
             "success": "Operation is successful",
-            "failure": "Operation failed"
+            "failure": "Operation failed",
+            "NotAllowed": "Illegal format",
+            "checkForm": "Please check the form",
+            "unknownErr": "Unknown error",
+            "dialog": { "delete": "Do you know you want to delete it?" }
         },
         "login": {
             "secureCard": {
@@ -159,7 +163,7 @@ export default {
                     },
                     "l4": {
                         "title": "Difference",
-                        "description": "You can feel obvious delays and affect the user experience."
+                        "description": "You can feel the obvious delay and affect the user experience."
                     },
                     "l5": {
                         "title": "Very bad",
@@ -191,11 +195,11 @@ export default {
                 "deleteLogMsg": "Delete the journal {nums}",
                 "deleteLogErr": "Delete journal failed",
                 "logTableRows": "Total diary records",
-                "logTableSize": "Diary tables occupy space",
+                "logTableSize": "Blog tables occupy space",
                 "unit": { "lines": "OK", "mb": "Mega-character" },
                 "deleteLog": "Delete the journal",
                 "exportCsv": "Export CSV",
-                "deleteLogHint": "This will execute the removal of all journals a week ago. The removal method is hard deleted. All deleted journals will not be restored. It is recommended to save the backup first.",
+                "deleteLogHint": "This will execute the removal of all journals a week ago. The removal method is hard delete. All deleted journals will not be restored. It is recommended to save the backup first.",
                 "warn": {
                     "title": "Do you know you want to delete your journal?",
                     "description": "The list will be deleted immediately and you cannot revoke this operation."
@@ -323,7 +327,7 @@ export default {
                 },
                 "ipRegisterLimit": {
                     "title": "IP registration restrictions",
-                    "description": "After opening, if the IP registration account meets the rules requirements, it will be restricted from registering. Please note that IP judgment may cause problems due to CDN or pre-agent."
+                    "description": "After opening, if the IP registration account meets the rules requirements, the registration will be restricted. Please note that IP judgment may cause problems due to CDN or pre-agent."
                 },
                 "registerTimes": {
                     "title": "frequency",
@@ -396,7 +400,7 @@ export default {
                 },
                 "whyChooseUs": {
                     "title": "Why choose us",
-                    "description": "Set up a description about why we selected.",
+                    "description": "Set up our description about why we selected.",
                     "placeholder": "Please enter a detailed description"
                 },
                 "bilibiliLink": {
@@ -491,7 +495,7 @@ export default {
                 },
                 "barkEndpoint": {
                     "title": "Bark access point",
-                    "shallow": "Bark Server Backend API Address",
+                    "shallow": "Bark server backend API address",
                     "placeholder": "https://<ip>:<port>/<secret-key>"
                 },
                 "barkGroup": {
@@ -542,7 +546,7 @@ export default {
             "attention": {
                 "title": "Things to note",
                 "point1": "It is really important to configure the payment method information before enabling it.",
-                "point2": "When modifying the payment method configuration, if it is displayed as \"---\", it means that the option has been set and is not empty. If you need to modify it again, just enter the new value to save."
+                "point2": "When modifying the payment method configuration, if it is displayed as \"---\", it means that the option has been set and is not empty. If you need to re-modify, just enter the new value to save."
             },
             "common": {
                 "detail": "{method} configuration",
@@ -595,7 +599,7 @@ export default {
         },
         "groupMgr": {
             "title": "Authority management",
-            "description": "The right group is used to mark different subscription levels, and you can easily manage the subscriber plan of the same level but different sizes in one right group.",
+            "description": "The right group is used to mark different subscription levels, and you can subscribe to the same level but different sizes in a right group for easy management.",
             "common": {
                 "addNewGroup": "New permission group",
                 "alterGroupName": "Modify the name of the permission group",
@@ -607,7 +611,9 @@ export default {
                 "alterSuccess": "The modification permission group was successful",
                 "alterFailure": "The modification permission group failed",
                 "delSuccess": "Deletion successfully",
-                "delFailure": "Deletion failed"
+                "delFailure": "Deletion failed",
+                "delMention": "The list will be deleted immediately and you cannot revoke this operation. Relevant groups for subscription plans should be deleted with caution.",
+                "delNotAllowed": "This right group has related resources and cannot be deleted."
             },
             "groupId": "Rights Group ID",
             "groupName": "Name of permission group",
@@ -680,7 +686,11 @@ export default {
                 "operateBtn": { "update": "Revise", "delete": "delete" }
             },
             "mention": {
-                "common": { "success": "success", "failure": "Fail" },
+                "common": {
+                    "success": "success",
+                    "failure": "Fail",
+                    "delMention": "If the subscription plan is already on sale, please be careful to delete it."
+                },
                 "addSuccess": "Adding a new subscription successfully",
                 "addFailure": "Adding new subscription failed",
                 "updateSuccess": "Updated subscription successfully",
@@ -692,7 +702,7 @@ export default {
                 "title": "Add a subscription",
                 "items": {
                     "name": {
-                        "title": "Subscription Name",
+                        "title": "Subscription name",
                         "placeholder": "Enter the name of the subscription plan"
                     },
                     "describe": {
@@ -715,6 +725,10 @@ export default {
                         "quarter": "Enter the quarterly paid price",
                         "halfYear": "Enter the half year payment price",
                         "year": "Enter annual payment price"
+                    },
+                    "planResidue": {
+                        "title": "The remaining amount",
+                        "placeholder": "The remaining amount"
                     }
                 }
             }
@@ -734,7 +748,9 @@ export default {
                 "endTime": "End time",
                 "actions": "operate",
                 "edit": "Edit",
-                "delete": "delete"
+                "delete": "delete",
+                "percentOff": "Discount information",
+                "capacity": "Total quantity"
             },
             "modal": {
                 "newCoupon": "Add a new coupon",
@@ -767,6 +783,11 @@ export default {
                 "planLimit": {
                     "title": "Specify a subscription plan",
                     "placeholder": "Restrictions on the specified subscription plan to use the offer (no limit on space)"
+                },
+                "delMention": "The coupon will be invalid immediately after the entry is deleted and you cannot withdraw this operation.",
+                "residue": {
+                    "title": "The number of remaining coupons used",
+                    "placeholder": "Set the number of times the coupon is used remaining"
                 }
             }
         },
@@ -812,16 +833,21 @@ export default {
             },
             "tradeWaiting": "Not paid",
             "tradeFailure": "Transaction failed",
-            "tradeSuccess": "success"
+            "tradeSuccess": "success",
+            "failureReason": "Cause of failure",
+            "couponId": "Coupon ID",
+            "couponName": "Coupon name",
+            "noEntry": "without",
+            "orderDetail": "Order details"
         },
         "userMgr": {
             "userManager": "User Management",
-            "description": "You can manage all users here, including employees and administrators, grant or cancel management rights, set user balances, reset passwords, manually add new users, and more.",
+            "description": "You can manage all users here, including employees and administrators, grant or cancel management rights, set user balances, reset passwords, add new users manually, and more.",
             "enterEmail": "Please enter your email",
             "enterValidEmail": "Please enter the correct email format",
             "enterPassword": "Please enter your password",
             "passwordMinLength": "The password length cannot be less than 6 digits",
-            "passwordMaxLength": "Password length cannot exceed 20 digits",
+            "passwordMaxLength": "The password length cannot exceed 20 digits",
             "passwordStrength": "Passwords must contain letters, numbers and special characters",
             "validationSuccess": "Verification passed",
             "validationFailed": "Form verification failed, please check the input item",
@@ -859,7 +885,11 @@ export default {
             "inputPassword": "Enter password",
             "editUser": "Edit user",
             "no": "no",
-            "yes": "yes"
+            "yes": "yes",
+            "mention": {
+                "title": "Are you sure you want to disable your account?",
+                "content": "If the user is blocked, the user will not be able to log in to {appName} and all resources associated with it will become unavailable."
+            }
         },
         "activation": {
             "activateLog": "Activate the record",
@@ -903,14 +933,18 @@ export default {
             },
             "searchModal": {
                 "searchMethod": "Inquiry method",
-                "byId": "Check by ID",
+                "byId": "Query by ID",
                 "byContent": "Inquiry through keys (fuzzy)",
                 "keyId": "Key ID",
                 "idPlaceholder": "Enter the ID of the key here",
                 "keyContent": "Keyword",
                 "contentPlaceholder": "Enter part of the key here"
             },
-            "mention": { "blockOk": "Disabling key successfully ID:{id}" },
+            "mention": {
+                "blockOk": "Disabling key successfully ID:{id}",
+                "title": "Are you sure you want to disable the key?",
+                "content": "To ensure the user experience, please confirm the content of the key again. Once the key is disabled, it will no longer be used on the client side."
+            },
             "detailModal": {
                 "title": "Key details",
                 "userId": "User ID",
@@ -921,7 +955,7 @@ export default {
         },
         "noticeMgr": {
             "title": "Announcement Management",
-            "description": "Announcements can be managed here. The activated announcements will be displayed in the wheelbarrow picture on the user's homepage. Announcements that can be set include promotions, day notifications, precautions, etc.",
+            "description": "Announcements can be managed here. The activated announcements will be displayed in the wheelbarrow picture on the user's homepage. Announcements that can be set include promotions, day notices, precautions, etc.",
             "addNotice": "Add an announcement",
             "table": {
                 "id": "#",
@@ -929,13 +963,41 @@ export default {
                 "title": "Title",
                 "createdAt": "Creation time",
                 "action": { "title": "operate", "edit": "Edit", "delete": "delete" }
+            },
+            "mention": {
+                "title": "Do you know you want to delete it?",
+                "content": "The announcement will be deleted immediately and you cannot withdraw this action."
+            },
+            "modal": {
+                "addNew": "New announcement",
+                "title": {
+                    "title": "Announcement Title",
+                    "placeholder": "Show as a big title in the wheel cast"
+                },
+                "content": {
+                    "title": "Announcement content",
+                    "placeholder": "The main contents of writing an announcement"
+                },
+                "tag": {
+                    "title": "Announcement Tags",
+                    "placeholder": "Enter the tag for the announcement"
+                },
+                "img": {
+                    "title": "Background image URL",
+                    "placeholder": "Use the default background if you don't fill in"
+                }
             }
         },
         "adminTicket": {
             "ticketMgr": "Work order management",
             "description": "You can view all users submitted work orders here. There are three urgency levels of work orders, and you are recommended to start processing from an emergency work order.",
             "pendingTicket": "Work orders to be processed",
-            "finishedTicket": "Completed work order"
+            "finishedTicket": "Completed work order",
+            "type": {
+                "pendingDescription": "Live work order, this is the work order you should process first. If the work order is confirmed to be completed, please close it. If it is not closed, the work order will always be placed here.",
+                "finishedDescription": "Completed work orders, you can view them here."
+            },
+            "chooseOneNecessary": "You should choose at least one item"
         }
     },
     "userLogin": {
@@ -978,7 +1040,7 @@ export default {
         "reg": "register",
         "infoIncomplete": "Incomplete information",
         "pwdIncorrect": "Password inconsistent",
-        "regSuccess": "Registration is successful and returned to login",
+        "regSuccess": "Registration is successful and returns to login",
         "regFailure": "Registration failed",
         "success": "success",
         "failure": "Fail",
@@ -1061,7 +1123,8 @@ export default {
         "headerPlaceholder": "Choose the plan that suits you best",
         "purchaseBtn": "Order",
         "monthPay": "Monthly payment",
-        "moreMethod": "More options"
+        "moreMethod": "More options",
+        "noLeft": "Insufficient amount of remaining"
     },
     "newSettlement": {
         "err": "Mistake",
@@ -1115,7 +1178,7 @@ export default {
         "deletedSuccessMsg": "The account has been deleted and there will be a period of time later.",
         "deleteErrOccur": "An error encountered",
         "faAuth": "Two-step verification 2FA",
-        "faAuthHint": "Two-step verification is a security mechanism that adds the protection level for logging in to your account. After entering the password, the user needs to complete the second step of identity verification, such as entering the verification code sent to the phone, using the identity verification application to verify the dynamic code, or confirming it through biological characteristics such as fingerprints.",
+        "faAuthHint": "Two-step verification is a security mechanism that adds protection levels for logging in to your account. After entering the password, the user needs to complete the second step of identity verification, such as entering the verification code sent to the phone, using the identity verification application to generate the dynamic code, or confirming it through biological characteristics such as fingerprints.",
         "faAuthStatus": "Two-step verification status",
         "faEnabled": "Restarted",
         "faNotEnabled": "Not activated",
@@ -1136,7 +1199,7 @@ export default {
         },
         "deleteMyAccountModal": {
             "title": "Register Account",
-            "contentLine1": "Accounting is an irreversible operation. Once you confirm that the account is deleted, you will permanently lose access to the account, which means you will not be able to log in again and all data related to this account, including but not limited to your personal information, history, collection of content, purchase records Wait, I will not be able to visit again.",
+            "contentLine1": "Accounting is an irreversible operation. Once you confirm that the account is deleted, you will permanently lose access to the account, which means you will not be able to log in again and all data related to this account, including but not limited to your personal information, history, collection of content, purchase records After that, I will not be able to visit again.",
             "contentLine2": "If you have ongoing business on our platform, such as unfinished orders, activities being involved, subscription services, etc., these will be terminated or cancelled with your account removal, which may bring you corresponding losses. At the same time, the contacts and interaction information you have established through this platform between you and other users will no longer exist.",
             "contentLine3": "Please confirm your decision again. If you have any questions or questions, please contact our customer service and we will sincerely answer it for you. If you still want to delete your account, click the Confirm Delete button.",
             "inputHint1": "Enter \"",
@@ -1228,7 +1291,7 @@ export default {
         "myOrders": "My Order",
         "description": "All your orders will be displayed here, if you have unpaid orders, you can click on Continue Payment or cancel the order, and you can view the order details after completed orders.",
         "orderId": "#",
-        "planName": "Subscription Name",
+        "planName": "Subscription name",
         "planCycle": "Subscription cycle",
         "orderPrice": "Order amount",
         "orderStatus": "Order status",
@@ -1253,8 +1316,8 @@ export default {
     },
     "userTopUp": {
         "topUp": "Account recharge",
-        "description": "You can recharge your account here, support custom recharge amounts, you can also pay attention to whether there is any discount information displayed below, and use the mentioned payment method to get discounts.",
-        "chooseTopUpAmount": "Select the amount of recharge",
+        "description": "You can recharge your account here, support custom recharge amounts, and you can also pay attention to whether there is any discount information displayed below and use the mentioned payment method to get discounts.",
+        "chooseTopUpAmount": "Select the recharge amount",
         "quickSelect": "Quickly choose",
         "customAmount": "Custom amount",
         "maxAmount": "Maximum amount: 10,000,000",
@@ -1329,7 +1392,7 @@ export default {
         "pendingDescription": "Orders are kept at regular intervals and you can click the button below to continue payment.",
         "toPay": "Go to pay",
         "outDate": "Have expired",
-        "outDateDescription": "Since you canceled the order or did not complete the payment within the specified time, the order has been cancelled and you can re-select your subscription.",
+        "outDateDescription": "Since you canceled the order or did not complete the payment within the specified time, the order has been cancelled and you can reselect your subscription.",
         "chooseNewPlan": "Choose a new subscription plan"
     },
     "userInvite": {
@@ -1345,7 +1408,7 @@ export default {
         "generateFaCode": "Generate an invitation code",
         "flushFaCode": "Refresh the invitation code",
         "faCode": "Invitation code",
-        "noFaCode": "You have not yet had an invitation code, please make it.",
+        "noFaCode": "You have no invitation code yet, please make it.",
         "faLink": "Invitation link",
         "generateFaCodePlease": "Please create an invitation code",
         "usersMyInvited": "Users I invite",
@@ -1395,7 +1458,7 @@ export default {
             "missingToken": "Websocket connection cannot be created because tokens are missing.",
             "msgEmptyNotAllowed": "The content of the message cannot be empty",
             "accessNotPermit": "Illegal visit",
-            "sendSuccess": "The message was sent successfully"
+            "sendSuccess": "Send the message successfully"
         }
     },
     "userActivation": {
@@ -1493,7 +1556,7 @@ export default {
             "whyUs": "Why choose us",
             "whyUsSub": "\"When passing through the long tunnel in the prefecture, it is the Snow Country. Under the night sky, the earth is white, and the train stops in front of the signal station.\" Here, Yasunari Kawabata opened the Snow Country with a very stingy and concise text. prelude to.",
             "browseSafe": "Browse safe",
-            "browseSafeSub": "The excellent firewall filter system can effectively prevent online fishing and malicious websites",
+            "browseSafeSub": "The excellent firewall filter system can effectively prevent online fish and malicious websites",
             "encrypt": "End-to-end encryption",
             "encryptSub": "Double-way SSL and end-to-end encryption protect your privacy and security, even servers cannot read your information",
             "mgr": "Efficient management",
@@ -1535,8 +1598,8 @@ export default {
     },
     "notFound": {
         "title": "404 The page does not exist",
-        "description": "We cannot find the page you requested, it may have been deleted or linked with errors. If you think this is an error, please submit the work order to practice us.",
-        "p1": "Return to the home page after {sec}s, if your browser does not respond, click the button below.",
+        "description": "We cannot find the page you requested, it may have been deleted or linked with errors. If you think this is an error, please submit the work order to contact us.",
+        "p1": "It will return to the home page after {sec}s, and if your browser does not respond, click the button below.",
         "manualBack": "Return to home page"
     }
 }

@@ -226,7 +226,7 @@ const callBlockKeyByKeyId = async (row: KeyItem) => {
   const runTask = async () => {
     let data = await handleBlockKeyById(row.user_id, row.key_id)
     if (data && data.code === 200) {
-      message.success(t('adminViews.keysMgr.mention.blockOk', {id: row.key_id}))
+      message.success(t('adminViews.common.success'))
       await callGetAllKeys()
     } else {
       // TODO
@@ -238,7 +238,7 @@ const callBlockKeyByKeyId = async (row: KeyItem) => {
     title: t('adminViews.keysMgr.mention.title'),
     content: () => {
       return h('div', {}, [
-        h('p', {style: {fontWeight: 'weight', fontSize: '1rem', opacity: '0.8'}}, row.key),
+        h('p', {style: {fontWeight: 'bold', fontSize: '1rem', opacity: '0.8'}}, row.key),
         h('p', {style: {marginTop: '4px'}}, t('adminViews.keysMgr.mention.content'))
       ])
     },
@@ -292,52 +292,6 @@ const formatDetailString = (key: string): string => {
     return keyList.value[detailKeyIndex.value][key as KeyDetailKey].toString()
   }
 }
-
-// const showKeyDetailById = () => {
-//   showDetailModal
-// }
-
-
-
-// let handleUnbindById = async (row: ActivateRecord) => {
-//   animated.value = false
-//   try {
-//     let {data} = await instance.delete('/api/user/v1/activation', {
-//       params: {
-//         user_id: userInfoStore.thisUser.id,
-//         activation_id: row.id,
-//       }
-//     })
-//     if (data.code === 200) {
-//       await callGetAllActivateLog()
-//     }
-//
-//   } catch (error: any) {
-//     console.log(error)
-//     message.error("unknown err: " + error)
-//   }
-// }
-
-// let enableAlterRemark = ref<boolean>(false)
-
-// let handleCommitNewRemark = async () => {
-//   enableAlterRemark.value = false
-//   try {
-//     let {data} = await instance.patch('/api/user/v1/activation/remark', {
-//       user_id: userInfoStore.thisUser.id,
-//       record_id: currentRecord.value.id,
-//       remark: currentRecord.value.remark,
-//     })
-//     if (data.code === 200) {
-//       message.success(t('userActivation.updateSuccess'))
-//     } else {
-//       message.error('err: ' + data.msg || '')
-//     }
-//   } catch (err: any) {
-//     console.log(err)
-//   }
-// }
-
 
 onBeforeMount(() => {
   themeStore.menuSelected = 'key-manager'

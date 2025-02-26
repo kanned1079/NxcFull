@@ -77,9 +77,9 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
     })
 
     const updatePaginationSize = (newSize: number) => {
+        defaultTablePagination.value.size = newSize
         localStorage.setItem('pagination', JSON.stringify({page: 1, size: newSize}))
     }
-
 
     return {
         registerPageConfig,

@@ -1,7 +1,11 @@
 package services
 
 import (
+	"context"
+	"fmt"
+	"log"
 	pb "noticeServices/api/proto"
+	"noticeServices/internal/dao"
 	"noticeServices/internal/model"
 	"time"
 )
@@ -28,4 +32,19 @@ func convertToProtoNotices(notices []model.PublicNotices) []*pb.PublicNotice {
 		}
 	}
 	return protoNotices
+}
+
+func ClearNoticeRedisCache(ctx context.Context) {
+	// 使用 Redis 客户端的 Del 方法来删除指定的键
+	redisKey := "notices:user"
+	result, err := dao.Rdb.Del(ctx, redisKey).Result()
+	if err != nil {
+		log.Println("Error clearing cache:", err)
+	}
+	// 如果 result 是 1，表示成功删除了该键
+	if result == 1 {
+		fmt.Println("Cache cleared successfully.")
+	} else {
+		fmt.Println("Cache key does not exist.")
+	}
 }

@@ -210,76 +210,79 @@ func (s *NoticeServices) GetAllNotices(ctx context.Context, request *pb.GetAllNo
 
 // passed
 
-func (s *NoticeServices) AddNotice(context context.Context, request *pb.AddNoticeRequest) (*pb.AddNoticeResponse, error) {
+func (s *NoticeServices) AddNotice(ctx context.Context, request *pb.AddNoticeRequest) (*pb.AddNoticeResponse, error) {
 	var notice model.PublicNotices
 	notice.Title = request.Title
 	notice.Content = request.Content
 	notice.Tags = request.Tags
 	notice.ImgUrl = request.ImgUrl
 	if result := dao.Db.Model(&model.PublicNotices{}).Create(&notice); result.Error != nil {
-		log.Println("新建通知错误", result.Error)
+		log.Println("add new notice err: ", result.Error)
 		return &pb.AddNoticeResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "新建通知错误" + result.Error.Error(),
+			Msg:  "err: " + result.Error.Error(),
 		}, nil
 	} else {
+		ClearNoticeRedisCache(ctx)
 		return &pb.AddNoticeResponse{
 			Code: http.StatusOK,
-			Msg:  "新建通知成功",
+			Msg:  "success",
 		}, nil
 	}
 }
 
-func (s *NoticeServices) UpdateNotice(context context.Context, request *pb.UpdateNoticeRequest) (*pb.UpdateNoticeResponse, error) {
-	notice := model.PublicNotices{
-		Id:      request.Id,
-		Title:   request.Title,
-		Content: request.Content,
-		Tags:    request.Tags,
-		ImgUrl:  request.ImgUrl,
-	}
+func (s *NoticeServices) UpdateNotice(ctx context.Context, request *pb.UpdateNoticeRequest) (*pb.UpdateNoticeResponse, error) {
 	// 更新操作
-	if result := dao.Db.Model(&model.PublicNotices{}).Where("id = ?", request.Id).Updates(&notice); result.Error != nil {
+	if result := dao.Db.Model(&model.PublicNotices{}).Where("id = ?", request.Id).Updates(map[string]interface{}{
+		"id":      request.Id,
+		"title":   request.Title,
+		"content": request.Content,
+		"tags":    request.Tags,
+		"img_url": request.ImgUrl,
+	}); result.Error != nil {
 		log.Println("更新通知错误", result.Error)
 		return &pb.UpdateNoticeResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "更新通知错误: " + result.Error.Error(),
+			Msg:  "update notice err: " + result.Error.Error(),
 		}, nil
 	}
-
+	ClearNoticeRedisCache(ctx)
 	return &pb.UpdateNoticeResponse{
 		Code: http.StatusOK,
-		Msg:  "更新通知成功",
+		Msg:  "success",
 	}, nil
 }
 
-func (s *NoticeServices) DeleteNotice(context context.Context, request *pb.DeleteNoticeRequest) (*pb.DeleteNoticeResponse, error) {
+func (s *NoticeServices) DeleteNotice(ctx context.Context, request *pb.DeleteNoticeRequest) (*pb.DeleteNoticeResponse, error) {
 	if err := dao.Db.Model(&model.PublicNotices{}).Where("id = ?", request.NoticeId).Delete(&model.PublicNotices{}).Error; err != nil {
 		log.Println(err)
 		return &pb.DeleteNoticeResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "删除通知失败" + err.Error(),
+			Msg:  "delete notice err: " + err.Error(),
 		}, nil
 	} else {
+		ClearNoticeRedisCache(ctx)
 		return &pb.DeleteNoticeResponse{
 			Code: http.StatusOK,
-			Msg:  "删除成功",
+			Msg:  "success",
 		}, nil
 	}
 }
 
-func (s *NoticeServices) UpdateNoticeStatus(context context.Context, request *pb.UpdateNoticeStatusRequest) (*pb.UpdateNoticeStatusResponse, error) {
+func (s *NoticeServices) UpdateNoticeStatus(ctx context.Context, request *pb.UpdateNoticeStatusRequest) (*pb.UpdateNoticeStatusResponse, error) {
 	log.Println("UpdateNoticeStatusRequest: ", request.Id, request.IsShow)
 	if result := dao.Db.Model(&model.PublicNotices{}).Where("id = ?", request.Id).Update("`show`", request.IsShow); result.Error != nil {
 		log.Println("更新通知失败" + result.Error.Error())
 		return &pb.UpdateNoticeStatusResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "更新通知失败" + result.Error.Error(),
+			Msg:  "update notice status err: " + result.Error.Error(),
 		}, nil
 	}
+	ClearNoticeRedisCache(ctx)
+
 	return &pb.UpdateNoticeStatusResponse{
 		Code: http.StatusOK,
-		Msg:  "更新成功",
+		Msg:  "success",
 	}, nil
 
 }

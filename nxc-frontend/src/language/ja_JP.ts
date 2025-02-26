@@ -7,8 +7,8 @@ export default {
     },
     "commonAside": {
         "admin": {
-            "dashboard": "ダッシュボード",
-            "queueMonit": "監視",
+            "dashboard": "テーブルボード",
+            "queueMonit": "サービス側の監視",
             "settings": "設定",
             "systemConfig": "システム設定",
             "paymentConfig": "支払い設定",
@@ -16,32 +16,32 @@ export default {
             "server": "サーバ",
             "privilege": "権限管理",
             "finance": "ファイナンス",
-            "subscription": "サブスクリプション",
-            "coupon": "クーポン",
+            "subscription": "サブスクリプション管理",
+            "coupon": "クーポン管理",
             "order": "注文管理",
-            "activate": "レコードアクティブ",
+            "activate": "レコードをアクティブにします",
             "key": "キー管理",
             "user": "ユーザー",
-            "userMgr": "管理",
+            "userMgr": "ユーザー管理",
             "notice": "発表管理",
-            "ticket": "ワークオーダー",
-            "doc": "知識管理"
+            "ticket": "ワークオーダー管理",
+            "doc": "知識データベース管理"
         },
         "user": {
-            "dashboard": "ダッシュボード",
-            "document": "ドキュメント",
-            "app": "アプリダウンロード",
-            "subscription": "購読",
-            "purchase": "サブスクリプション購入",
+            "dashboard": "テーブルボード",
+            "document": "ドキュメントを使用します",
+            "app": "アプリのダウンロード",
+            "subscription": "購読する",
+            "purchase": "サブスクリプションを購入します",
             "surplus": "私の鍵",
             "fiance": "ファイナンス",
-            "topUp": "補充",
-            "myOrder": "注文",
-            "myInvite": "招待",
+            "topUp": "補充します",
+            "myOrder": "私の注文",
+            "myInvite": "私の招待",
             "user": "ユーザー",
             "profile": "パーソナルセンター",
-            "support": "作業注文",
-            "activateLog": "レコードアクティブ"
+            "support": "私の作業注文",
+            "activateLog": "レコードをアクティブにします"
         }
     },
     "adminViews": {
@@ -57,7 +57,11 @@ export default {
             "confirm": "確認する",
             "cancel": "キャンセル",
             "success": "操作は成功しました",
-            "failure": "操作に失敗しました"
+            "failure": "操作に失敗しました",
+            "NotAllowed": "違法な形式",
+            "checkForm": "フォームを確認してください",
+            "unknownErr": "不明なエラー",
+            "dialog": { "delete": "あなたはそれを削除したいことを知っていますか？" }
         },
         "login": {
             "secureCard": {
@@ -159,7 +163,7 @@ export default {
                     },
                     "l4": {
                         "title": "違い",
-                        "description": "明らかな遅延を感じ、ユーザーエクスペリエンスに影響を与える可能性があります。"
+                        "description": "明らかな遅延を感じ、ユーザーエクスペリエンスに影響を与えることができます。"
                     },
                     "l5": {
                         "title": "非常に悪い",
@@ -188,7 +192,7 @@ export default {
                 "deleteLogMsg": "ジャーナルを削除{nums}",
                 "deleteLogErr": "削除ジャーナルに失敗しました",
                 "logTableRows": "総日記記録",
-                "logTableSize": "日記テーブルはスペースを占有します",
+                "logTableSize": "ブログテーブルはスペースを占有します",
                 "unit": { "lines": "わかりました", "mb": "メガキャラクター" },
                 "deleteLog": "ジャーナルを削除します",
                 "exportCsv": "CSVをエクスポートします",
@@ -204,7 +208,7 @@ export default {
                 "table": {
                     "id": "＃",
                     "method": "リクエスト方法",
-                    "path": "ルートを求めてください",
+                    "path": "ルートをリクエストしてください",
                     "code": "ステータスコード",
                     "clientIp": "クライアントIP",
                     "responseTime": "処理時間",
@@ -232,7 +236,7 @@ export default {
                 },
                 "appDescription": {
                     "title": "サイトの説明",
-                    "shallow": "サイトの説明が必要な場所を表示するために使用されます。",
+                    "shallow": "サイトが必要な場所を表示するために使用されます。",
                     "placeholder": "サイトの説明"
                 },
                 "appUrl": {
@@ -252,7 +256,7 @@ export default {
                 "subscribeUrl": {
                     "title": "サブスクライブURL",
                     "shallow": "サブスクリプションに使用して、サイトURLとして空白のままにします。 ランダムにフェッチするために複数のサブスクリプションURLが必要な場合は、コンマを使用してそれらを分割してください。",
-                    "placeholder": "URLを購読します"
+                    "placeholder": "サブスクライブURL"
                 },
                 "tosUrl": {
                     "title": "ユーザー（TOS）URLの用語",
@@ -604,7 +608,9 @@ export default {
                 "alterSuccess": "変更許可グループは成功しました",
                 "alterFailure": "変更許可グループは失敗しました",
                 "delSuccess": "削除に正常に",
-                "delFailure": "削除が失敗しました"
+                "delFailure": "削除が失敗しました",
+                "delMention": "リストはすぐに削除され、この操作を取り消すことはできません。 サブスクリプションプランに関連するグループは、注意して削除する必要があります。",
+                "delNotAllowed": "この適切なグループには関連するリソースがあり、削除することはできません。"
             },
             "groupId": "権利グループID",
             "groupName": "許可グループの名前",
@@ -617,7 +623,7 @@ export default {
         },
         "docMgr": {
             "title": "知識データベース管理",
-            "description": "ここでは、ユーザーに説明ファイルを書くことができます。これは、ソフトウェアデザインマニュアル、チュートリアルまたは予防策などです。",
+            "description": "ここでは、ユーザーに説明ファイルを書くことができます。これは、ソフトウェアデザインマニュアル、チュートリアル、またはメモなどです。",
             "addDoc": "新しいドキュメントを追加します",
             "addSuccess": "新しいドキュメントを正常に追加します",
             "addFailure": "ファイルの追加に失敗しました",
@@ -677,7 +683,11 @@ export default {
                 "operateBtn": { "update": "改訂", "delete": "消去" }
             },
             "mention": {
-                "common": { "success": "成功", "failure": "失敗" },
+                "common": {
+                    "success": "成功",
+                    "failure": "失敗",
+                    "delMention": "サブスクリプションプランがすでに販売されている場合は、削除するように注意してください。"
+                },
                 "addSuccess": "新しいサブスクリプションを正常に追加します",
                 "addFailure": "新しいサブスクリプションの追加に失敗しました",
                 "updateSuccess": "サブスクリプションを正常に更新しました",
@@ -715,7 +725,8 @@ export default {
                         "quarter": "四半期ごとの有料価格を入力します",
                         "halfYear": "半年の支払い価格を入力します",
                         "year": "年間支払い価格を入力します"
-                    }
+                    },
+                    "planResidue": { "title": "残りの金額", "placeholder": "残りの金額" }
                 }
             }
         },
@@ -734,7 +745,9 @@ export default {
                 "endTime": "終了時間",
                 "actions": "動作します",
                 "edit": "編集",
-                "delete": "消去"
+                "delete": "消去",
+                "percentOff": "割引情報",
+                "capacity": "総量"
             },
             "modal": {
                 "newCoupon": "新しいクーポンを追加します",
@@ -767,6 +780,11 @@ export default {
                 "planLimit": {
                     "title": "サブスクリプションプランを指定します",
                     "placeholder": "指定されたサブスクリプションプランの制限オファーを使用する（スペースに制限なし）"
+                },
+                "delMention": "クーポンは、エントリが削除された直後に無効になり、この操作を引き出すことはできません。",
+                "residue": {
+                    "title": "使用される残りのクーポンの数",
+                    "placeholder": "クーポンが使用されている回数を設定する"
                 }
             }
         },
@@ -786,23 +804,18 @@ export default {
                 "planName": "計画名",
                 "period": "サイクル",
                 "group": "権利グループ",
-                "amount": "実際の",
+                "amount": "実際の支払い額",
                 "price": "元の価格",
                 "isSuccess": {
-                    "title": "ステータス",
+                    "title": "ステータスを注文します",
                     "cancelOrder": "注文をキャンセルします",
                     "passOrder": "注文によって"
                 },
-                "createdAt": "作成時間",
+                "createdAt": "作成時間を注文します",
                 "action": { "title": "動作します", "showDetail": "詳細を表示します" }
             },
-            "failureReason": "失敗の原因",
-            "couponId": "クーポンID",
-            "couponName": "クーポン名",
-            "noEntry": "なし",
             "search": "お問い合わせ注文",
             "resetSearch": "クエリをリセットします",
-            "orderDetail": "注文詳細",
             "searchModal": {
                 "email": {
                     "title": "ユーザーメールボックス",
@@ -815,13 +828,18 @@ export default {
                     "DESC": "降順"
                 }
             },
-            "tradeWaiting": "支払中",
-            "tradeFailure": "失敗",
-            "tradeSuccess": "成功"
+            "tradeWaiting": "支払われていません",
+            "tradeFailure": "トランザクションは失敗しました",
+            "tradeSuccess": "成功",
+            "failureReason": "失敗の原因",
+            "couponId": "クーポンID",
+            "couponName": "クーポン名",
+            "noEntry": "それなし",
+            "orderDetail": "詳細を注文します"
         },
         "userMgr": {
             "userManager": "ユーザー管理",
-            "description": "従業員や管理者など、ここですべてのユーザーを管理し、管理権の付与またはキャンセル、ユーザーバランスの設定、パスワードのリセット、新しいユーザーの追加などを含むことができます。",
+            "description": "従業員や管理者など、すべてのユーザーを管理したり、管理権を付与またはキャンセルしたり、ユーザーバランスを設定したり、パスワードをリセットしたり、新しいユーザーを手動で追加したりすることができます。",
             "enterEmail": "メールを入力してください",
             "enterValidEmail": "正しい電子メール形式を入力してください",
             "enterPassword": "パスワードを入力してください",
@@ -864,7 +882,11 @@ export default {
             "inputPassword": "パスワードを入力します",
             "editUser": "ユーザーを編集します",
             "no": "いいえ",
-            "yes": "はい"
+            "yes": "はい",
+            "mention": {
+                "title": "アカウントを無効にしたいですか？",
+                "content": "ユーザーがブロックされている場合、ユーザーは{appname}にログインできず、関連するすべてのリソースが利用できなくなります。"
+            }
         },
         "activation": {
             "activateLog": "レコードをアクティブにします",
@@ -908,14 +930,18 @@ export default {
             },
             "searchModal": {
                 "searchMethod": "お問い合わせ方法",
-                "byId": "IDで確認してください",
+                "byId": "IDによるクエリ",
                 "byContent": "キーを介した問い合わせ（ファジー）",
                 "keyId": "キーID",
                 "idPlaceholder": "ここにキーのIDを入力してください",
                 "keyContent": "キーワード",
                 "contentPlaceholder": "ここにキーの一部を入力してください"
             },
-            "mention": { "blockOk": "キーを無効にして正常にid：{id}" },
+            "mention": {
+                "blockOk": "キーを無効にして正常にid：{id}",
+                "title": "キーを無効にしたいですか？",
+                "content": "ユーザーエクスペリエンスを確保するために、キーのコンテンツを再度確認してください。"
+            },
             "detailModal": {
                 "title": "重要な詳細",
                 "userId": "ユーザーID",
@@ -934,13 +960,41 @@ export default {
                 "title": "タイトル",
                 "createdAt": "作成時間",
                 "action": { "title": "動作します", "edit": "編集", "delete": "消去" }
+            },
+            "mention": {
+                "title": "あなたはそれを削除したいことを知っていますか？",
+                "content": "発表はすぐに削除され、このアクションを撤回することはできません。"
+            },
+            "modal": {
+                "addNew": "新しい発表",
+                "title": {
+                    "title": "発表タイトル",
+                    "placeholder": "ホイールキャストの大きなタイトルとして表示します"
+                },
+                "content": {
+                    "title": "アナウンスコンテンツ",
+                    "placeholder": "発表を書くことの主な内容"
+                },
+                "tag": {
+                    "title": "アナウンスタグ",
+                    "placeholder": "アナウンスのタグを入力してください"
+                },
+                "img": {
+                    "title": "背景画像URL",
+                    "placeholder": "入力しない場合は、デフォルトの背景を使用してください"
+                }
             }
         },
         "adminTicket": {
             "ticketMgr": "ワークオーダー管理",
             "description": "ここでは、すべてのユーザーが提出された作業注文を表示できます。",
             "pendingTicket": "処理される作業注文",
-            "finishedTicket": "完了した作業注文"
+            "finishedTicket": "完了した作業注文",
+            "type": {
+                "pendingDescription": "ライブオーダー、これは最初に処理する必要があります。",
+                "finishedDescription": "完了した作業注文、ここで表示できます。"
+            },
+            "chooseOneNecessary": "少なくとも1つのアイテムを選択する必要があります"
         }
     },
     "userLogin": {
@@ -983,7 +1037,7 @@ export default {
         "reg": "登録する",
         "infoIncomplete": "不完全な情報",
         "pwdIncorrect": "一貫性のないパスワード",
-        "regSuccess": "登録は成功し、ログインに返されます",
+        "regSuccess": "登録は成功し、ログインに戻ります",
         "regFailure": "登録に失敗しました",
         "success": "成功",
         "failure": "失敗",
@@ -1066,7 +1120,8 @@ export default {
         "headerPlaceholder": "あなたに最適な計画を選択してください",
         "purchaseBtn": "注文",
         "monthPay": "毎月の支払い",
-        "moreMethod": "その他のオプション"
+        "moreMethod": "その他のオプション",
+        "noLeft": "残りの量が不十分です"
     },
     "newSettlement": {
         "err": "間違い",
@@ -1120,7 +1175,7 @@ export default {
         "deletedSuccessMsg": "アカウントは削除されており、期間が経ちます。",
         "deleteErrOccur": "遭遇したエラー",
         "faAuth": "2段階検証2FA",
-        "faAuthHint": "2段階の検証は、アカウントにログインするための保護レベルを追加するセキュリティメカニズムです。 パスワードを入力した後、ユーザーは、電話に送信された検証コードを入力したり、ID検証アプリケーションを使用して動的コードを確認したり、指紋などの生物学的特性を確認したりするなど、ID検証の2番目のステップを完了する必要があります。",
+        "faAuthHint": "2段階の検証は、アカウントにログインするための保護レベルを追加するセキュリティメカニズムです。 パスワードを入力した後、ユーザーは、電話に送信された検証コードを入力したり、ID検証アプリケーションを使用して動的コードを生成したり、指紋などの生物学的特性を通じて確認したりするなど、身元確認の2番目のステップを完了する必要があります。",
         "faAuthStatus": "2段階検証ステータス",
         "faEnabled": "再起動",
         "faNotEnabled": "アクティブ化されていません",
@@ -1141,7 +1196,7 @@ export default {
         },
         "deleteMyAccountModal": {
             "title": "アカウントを登録します",
-            "contentLine1": "会計は不可逆的な操作です。 アカウントが削除されていることを確認すると、アカウントへのアクセスが永久にアクセスできます。つまり、個人情報、履歴、コレクションを含むがこれらに限定されない、このアカウントに関連するすべてのデータを再度ログインできなくなります。コンテンツ、購入レコードが待っています、私は再び訪問することができません。",
+            "contentLine1": "会計は不可逆的な操作です。 アカウントが削除されていることを確認すると、アカウントへのアクセスが永久にアクセスできます。つまり、個人情報、履歴、コレクションを含むがこれらに限定されない、このアカウントに関連するすべてのデータを再度ログインできなくなります。コンテンツ、その後の記録を購入すると、私は再び訪問することができません。",
             "contentLine2": "未完成の注文、関与するアクティビティ、サブスクリプションサービスなど、当社のプラットフォームで継続的なビジネスがある場合、これらはアカウントの削除で終了またはキャンセルされ、対応する損失をもたらす可能性があります。 同時に、お客様と他のユーザーとの間にこのプラットフォームを通じて確立した連絡先と相互作用情報は存在しなくなります。",
             "contentLine3": "あなたの決定をもう一度確認してください。 それでもアカウントを削除する場合は、[削除]ボタンをクリックします。",
             "inputHint1": "入力 \"",
@@ -1258,8 +1313,8 @@ export default {
     },
     "userTopUp": {
         "topUp": "アカウント充電",
-        "description": "ここでアカウントを充電し、カスタムリチャージ額をサポートし、以下に表示される割引情報があるかどうかに注意を払うこともできます。また、上記の支払い方法を使用して割引を受けることもできます。",
-        "chooseTopUpAmount": "リチャージの量を選択します",
+        "description": "ここでアカウントを充電し、カスタムリチャージ額をサポートすることもできます。また、以下に表示されている割引情報があるかどうかに注意して、上記の支払い方法を使用して割引を受けることもできます。",
+        "chooseTopUpAmount": "充電額を選択します",
         "quickSelect": "すぐに選択します",
         "customAmount": "カスタム量",
         "maxAmount": "最大額：10,000,000",
@@ -1270,7 +1325,7 @@ export default {
         "alipay": "支払い",
         "apple": "Apple Pay",
         "yourAmount": "あなたの金額",
-        "discount": "割引",
+        "discount": "申し出",
         "accountBalance": "アカウント残高",
         "balanceResult": "バランスの量",
         "commitTopUp": "提出する",
@@ -1350,7 +1405,7 @@ export default {
         "generateFaCode": "招待コードを生成します",
         "flushFaCode": "招待コードを更新します",
         "faCode": "招待コード",
-        "noFaCode": "招待状コードはまだありません。",
+        "noFaCode": "招待コードはまだありません。",
         "faLink": "招待状リンク",
         "generateFaCodePlease": "招待コードを作成してください",
         "usersMyInvited": "私が招待するユーザー",
@@ -1400,7 +1455,7 @@ export default {
             "missingToken": "トークンが欠落しているため、WebSocket接続は作成できません。",
             "msgEmptyNotAllowed": "メッセージのコンテンツを空にすることはできません",
             "accessNotPermit": "違法訪問",
-            "sendSuccess": "メッセージは正常に送信されました"
+            "sendSuccess": "メッセージを正常に送信します"
         }
     },
     "userActivation": {
@@ -1440,7 +1495,7 @@ export default {
         "description": "",
         "common": {
             "title": "アプリをダウンロードしてください",
-            "shallow2": "さまざまなクライアントにアプリケーションを入手してください",
+            "shallow2": "さまざまなクライアント向けにアプリケーションを入手してください",
             "shallow": "アプリケーションを使用すると、サービスに簡単にアクセスでき、毎回ブラウザの複雑な操作を排除できます。テクニカルサポートにお問い合わせください。",
             "noDownload": "ダウンロードはまだありません。後で再試行してください。"
         },
@@ -1498,7 +1553,7 @@ export default {
             "whyUs": "なぜ私たちを選ぶのか",
             "whyUsSub": "「県の長いトンネルを通過すると、雪の国です。夜空の下では、地球が白く、ここで列車が止まっています。ケチと簡潔なテキスト。",
             "browseSafe": "安全に閲覧します",
-            "browseSafeSub": "優れたファイアウォールフィルターシステムは、オンライン釣りや悪意のあるウェブサイトを効果的に防止できます",
+            "browseSafeSub": "優れたファイアウォールフィルターシステムは、オンラインの魚や悪意のあるウェブサイトを効果的に防ぐことができます",
             "encrypt": "エンドツーエンド暗号化",
             "encryptSub": "二重ウェイSSLとエンドツーエンドの暗号化は、プライバシーとセキュリティを保護し、サーバーでさえあなたの情報を読み取ることができません",
             "mgr": "効率的な管理",
@@ -1540,8 +1595,8 @@ export default {
     },
     "notFound": {
         "title": "404ページは存在しません",
-        "description": "要求したページを見つけることができません。削除されているか、エラーでリンクされている可能性があります。 これがエラーだと思われる場合は、練習するために作業注文を送信してください。",
-        "p1": "{sec}の後にホームページに戻ります。ブラウザが応答しない場合は、下のボタンをクリックします。",
+        "description": "要求したページを見つけることができません。削除されているか、エラーでリンクされている可能性があります。 これがエラーだと思われる場合は、お問い合わせの作業注文を送信してください。",
+        "p1": "{sec}の後にホームページに戻り、ブラウザが応答しない場合は、下のボタンをクリックします。",
         "manualBack": "ホームページに戻ります"
     }
 }

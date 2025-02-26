@@ -1,34 +1,39 @@
 <script setup lang="ts">
-import  {useI18n} from "vue-i18n";
+import {useI18n} from "vue-i18n";
 import {computed, h, onMounted, onBeforeMount, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore"
-import instance from "@/axios";
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
-import {NButton, NIcon, NSwitch, useMessage, type DataTableColumns, type FormInst, type FormRules} from 'naive-ui'
+import {
+  NButton,
+  NIcon,
+  NSwitch,
+  useMessage,
+  type DataTableColumns,
+  type FormInst,
+  type FormRules,
+  useDialog
+} from 'naive-ui'
 // import useNoticesStore from "@/stores/useNoticesStore";
 import {formatDate} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
-import {handleFetchAllNotices} from "@/api/admin/notice";
+import {
+  handleAddNewNotice,
+  handleDeleteNoticeById, handleEditNoticeByIdReq,
+  handleFetchAllNotices,
+  handleUpdateNoticeEnabled
+} from "@/api/admin/notice";
+import useTablePagination from "@/hooks/useTablePagination";
 
-// const apiAddrStore = useApiAddrStore();
 const {t} = useI18n()
 const i18nPrefix = 'adminViews.noticeMgr'
 const themeStore = useThemeStore()
-// const noticesStore = useNoticesStore()
 const message = useMessage()
+const dialog = useDialog()
 
 let animated = ref<boolean>(false)
-
-
 let editType = ref<'add' | 'edit'>('add')
-
-let pageCount = ref(10)
-
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+let [dataSize, pageCount] = useTablePagination()
 
 interface formData {
   id?: number
@@ -52,7 +57,7 @@ const rules: FormRules = {
     trigger: 'blur',
     type: 'string',
     validator() {
-      return formData.value.title.trim()?true:new Error('empty not allowed')
+      return formData.value.title.trim() ? true : new Error('empty not allowed')
     }
   },
   content: {
@@ -60,12 +65,10 @@ const rules: FormRules = {
     trigger: 'blur',
     type: 'string',
     validator() {
-      return formData.value.content.trim()?true:new Error('empty not allowed')
+      return formData.value.content.trim() ? true : new Error('empty not allowed')
     }
   },
 }
-
-// noticesStore.getAllNotices()
 
 // 显示表单
 let showModal = ref(false)
@@ -94,7 +97,6 @@ let handleAddNotice = () => {
     tags: '',
     img_url: '',
   })
-  console.log('处理添加一条通知')
   editType.value = 'add'
   showModal.value = true
 }
@@ -107,7 +109,6 @@ let handleEditNotice = (row: Notice) => {
     tags: '',
     img_url: '',
   })
-  console.log('处理修改一条通知')
   editType.value = 'edit'
   Object.assign(formData.value, row)
   showModal.value = true
@@ -120,7 +121,7 @@ let closeModal = () => {
 // 这里是按钮按下
 let submitModal = async () => {
   if (formRef.value) {
-   await formRef.value.validate(async (err: any) => {
+    await formRef.value.validate(async (err: any) => {
       if (!err) {
         switch (editType.value) {
           case 'add': {
@@ -136,21 +137,6 @@ let submitModal = async () => {
         message.warning(t('userLogin.checkForm'))
       }
     })
-  }
-}
-
-let addNewNotice = async () => {
-  try {
-    animated.value = false
-    let {data} = await instance.post('/api/admin/v1/notice', {
-      ...formData.value
-    })
-    if (data.code === 200) {
-      message.success("添加成功")
-    }
-    await getAllNotices()
-  } catch (error: any) {
-    console.log(error)
   }
 }
 
@@ -205,7 +191,7 @@ const columns = computed<DataTableColumns<Notice>>(() => [
           type: 'error',
           secondary: true,
           style: {marginLeft: '10px'},
-          onClick: () => deleteNotice(row.id as number)
+          onClick: () => deleteNotice(row)
         }, {default: () => t(`${i18nPrefix}.table.action.delete`)})
       ]);
     },
@@ -218,85 +204,87 @@ const columns = computed<DataTableColumns<Notice>>(() => [
 
 // 获取所有的通知
 let getAllNotices = async () => {
-  // try {
-  //   let {data} = await instance.get('/api/admin/v1/notice', {
-  //     params: {
-  //       page: dataSize.value.page,
-  //       size: dataSize.value.pageSize,
-  //       is_user: false,
-  //     }
-  //   })
   let data = await handleFetchAllNotices(dataSize.value.page, dataSize.value.pageSize, false)
-    if (data && data.code === 200) {
-      noticesArr.value = []
-      // console.log(1111)
+  if (data && data.code === 200) {
+    noticesArr.value = []
+    if (data.notices) {
       data.notices.forEach((notice: Notice) => noticesArr.value.push(notice))
       pageCount.value = data.page_count
-      animated.value = true
     } else {
-      message.error('获取失败')
+      pageCount.value = 0
     }
-  // } catch (err) {
-  //   message.error('未知错误 ' + err)
-  // }
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure'))
+  }
+  animated.value = true
 }
 
 let updateNoticeEnabled = async (id: number, enabled: boolean) => {
-  console.log("new: ", id, enabled)
-  try {
-    // animated.value = false
-    let {data} = await instance.put('/api/admin/v1/notice/status', {
-      id,
-      is_show: enabled,
-    })
-    if (data.code === 200) {
-      console.log('更新成功')
-    }
+  let data = await handleUpdateNoticeEnabled(id, enabled)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.success'))
     await getAllNotices()
-  } catch (error: any) {
-    console.log(error)
+  } else {
+    message.error(t('adminViews.common.failure'))
   }
 }
 
 // 删除一条通知
-let deleteNotice = async (id: number) => {
-  const message = useMessage()
-  try {
-    animated.value = false
-    let {data} = await instance.delete('/api/admin/v1/notice',
-        {
-          params: {notice_id: id,},
-        },
-    )
-    if (data.code === 200) {
-      message.success("删除成功")
+let deleteNotice = async (row: Notice) => {
+
+  const runDelTask = async () => {
+    let data = await handleDeleteNoticeById(row.id)
+    if (data && data.code === 200) {
+      message.success(t('adminViews.common.deleteSuccess'))
       await getAllNotices()
     } else {
-      message.error("出现错误")
+      message.error(t('adminViews.common.deleteFailure'))
     }
-    // data.code === 200 ? message.success("删除成功") : message.error("出现错误")
-  } catch (err) {
-    message.error("未知错误" + err)
   }
-  // console.log(data)
+
+  dialog.error({
+    title: t('adminViews.noticeMgr.mention.title'),
+    content: () => {
+      return h('div', {}, [
+        h('p', {style: {fontWeight: 'bold', fontSize: '1rem', opacity: '0.8'}}, row.title),
+        h('p', {style: {marginTop: '4px'}}, t('adminViews.noticeMgr.mention.content'))
+      ])
+    },
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+      marginTop: '20px',
+    },
+    onPositiveClick: async () => {
+      animated.value = false
+      await runDelTask()
+    }
+  })
 }
 
-// let handleEditNotice = () => {
-//
-// }
+let addNewNotice = async () => {
+  animated.value = false
+  let data = await handleAddNewNotice(formData.value)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.addSuccess'))
+    await getAllNotices()
+  } else {
+    message.error(t('adminViews.common.addFailure'))
+  }
+}
 
 let editNotice = async () => {
-  try {
-    animated.value = false
-    let {data} = await instance.put('/api/admin/v1/notice', {
-      ...formData.value
-    })
-    if (data.code === 200) {
-      message.success("修改成功")
-    }
+  animated.value = false
+  let data = await handleEditNoticeByIdReq(formData.value)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.updateSuccess'))
     await getAllNotices()
-  } catch (error: any) {
-    console.log(error)
+  } else {
+    message.error(t('adminViews.common.updateFailure'))
   }
 }
 
@@ -316,10 +304,6 @@ onMounted(async () => {
   animated.value = true
 })
 
-
-let handleDeleteNotice = async () => {
-  await deleteNotice(7)
-}
 
 </script>
 
@@ -350,13 +334,6 @@ export default {
     </n-button>
 
   </PageHead>
-<!--  <div style="padding: 20px 20px 0 20px">-->
-<!--    <n-card title="公告管理" hoverable :embedded="true" class="card" :bordered="false">-->
-<!--      <n-button secondary type="primary" :bordered="false" class="add-btn" @click="handleAddNotice">添加公告</n-button>-->
-<!--      <n-button secondary type="primary" :bordered="false" style="margin-left: 20px" @click="handleDeleteNotice">测试-->
-<!--      </n-button>-->
-<!--    </n-card>-->
-<!--  </div>-->
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
@@ -379,23 +356,6 @@ export default {
           v-model:animated="animated"
           :update-data="getAllNotices"
       />
-
-<!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-<!--        <n-pagination-->
-<!--            size="medium"-->
-<!--            v-model:page.number="dataSize.page"-->
-<!--            :page-count="pageCount"-->
-<!--            @update:page="getAllNotices() "-->
-<!--        />-->
-<!--        <n-select-->
-<!--            style="width: 160px; margin-left: 20px"-->
-<!--            v-model:value.number="dataSize.pageSize"-->
-<!--            size="small"-->
-<!--            :options="dataCountOptions"-->
-<!--            :remote="true"-->
-<!--            @update:value="dataSize.page = 1; getAllNotices()"-->
-<!--        />-->
-<!--      </div>-->
     </div>
   </transition>
 
@@ -416,29 +376,33 @@ export default {
     <div style="margin-top: 30px"></div>
 
     <n-form
-      :show-feedback="false"
-      :show-label="true"
-      :show-require-mark="true"
-      :model="formData"
-      :rules="rules"
-      size="medium"
-      ref="formRef"
+        :show-feedback="false"
+        :show-label="true"
+        :show-require-mark="true"
+        :model="formData"
+        :rules="rules"
+        size="medium"
+        ref="formRef"
     >
 
       <n-form-item class="form-gap-btn" path="title" :label="t(`${i18nPrefix}.modal.title.title`)">
-        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.title.placeholder`)" v-model:value="formData.title"/>
+        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.title.placeholder`)"
+                 v-model:value="formData.title"/>
       </n-form-item>
 
       <n-form-item class="form-gap-btn" path="content" :label="t(`${i18nPrefix}.modal.content.title`)">
-        <n-input type="textarea" :placeholder="t(`${i18nPrefix}.modal.content.placeholder`)" :rows="8" show-count v-model:value="formData.content"/>
+        <n-input type="textarea" :placeholder="t(`${i18nPrefix}.modal.content.placeholder`)" :rows="8" show-count
+                 v-model:value="formData.content"/>
       </n-form-item>
 
       <n-form-item class="form-gap-btn" path="tags" :label="t(`${i18nPrefix}.modal.tag.title`)">
-        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.tag.placeholder`)" v-model:value="formData.tags"/>
+        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.tag.placeholder`)"
+                 v-model:value="formData.tags"/>
       </n-form-item>
 
       <n-form-item class="form-gap-btn" path="img_url" :label="t(`${i18nPrefix}.modal.img.title`)">
-        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.img.placeholder`)" v-model:value="formData.img_url"/>
+        <n-input @keydown.enter.prevent :placeholder="t(`${i18nPrefix}.modal.img.placeholder`)"
+                 v-model:value="formData.img_url"/>
       </n-form-item>
     </n-form>
 

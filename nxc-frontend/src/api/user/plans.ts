@@ -12,8 +12,8 @@ export const handleGetAllPlans = async (isUser: boolean, page: number, size: num
             }
         })
         return data
-    } catch (error) {
+    } catch (error: any) {
         console.log(error)
-        return null
+        return false
     }
 }

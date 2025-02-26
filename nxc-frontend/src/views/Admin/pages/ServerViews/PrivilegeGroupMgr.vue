@@ -119,7 +119,7 @@ const deleteGroup = async (row: GroupItem) => {
     title: t('adminViews.common.dialog.delete'),
     content: () => {
       return h('div', {}, [
-        h('p', {style: {fontWeight: 'weight', fontSize: '1rem', opacity: '0.8'}}, row.name),
+        h('p', {style: {fontWeight: 'bold', fontSize: '1rem', opacity: '0.8'}}, row.name),
         h('p', {style: {marginTop: '4px'}}, t('adminViews.groupMgr.common.delMention'))
       ])
     },

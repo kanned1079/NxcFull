@@ -768,7 +768,7 @@ export default {
         "couponMgr": {
             "title": "優惠券管理",
             "description": "在這裡您可以為一些特定的節日等添加一些優惠券，它允許用戶在下單的時候使用並按照您設置的比例進行抵折優惠。",
-            // addNewCoupon: '添加新優惠券',
+
             "fetchErr": "獲取數據失敗請重試",
             "fetchPlanKvFailurese": "獲取訂閱計畫列表失敗",
             "table": {
@@ -923,14 +923,13 @@ export default {
             "inputEmail": "輸入郵箱",
             "password": "密碼",
             "inputPassword": "輸入密碼",
-            // inviteCode: "邀請碼",
-            // isAdmin: "管理員",
-            // isStaff: "員工",
-            // balance: "餘額",
-            // email: "郵箱",
             "editUser": "編輯用戶",
             "no": "否",
-            "yes": "是"
+            "yes": "是",
+            "mention": {
+                "title": "您確定要封禁用戶嗎？",
+                "content": "如果封禁該用戶，那麼該用戶將無法登錄到{appName}，並且與其相關的所有資源將變為不可用。",
+            }
         },
         "activation": {
             "activateLog": '激活紀錄',
@@ -1010,6 +1009,10 @@ export default {
                     "delete": "刪除"
                 }
             },
+            "mention": {
+                "title": "您確認要刪除嗎？",
+                "content": "將立即刪除該公告，您不能撤銷此操作。",
+            },
             "modal": {
                 "addNew": "新建公告",
                 "title": {
@@ -1030,14 +1033,16 @@ export default {
                 }
             }
         },
-        // docMgr: {
-        //
-        // },
         "adminTicket": {
             "ticketMgr": '工單管理',
             "description": '您可以在此處檢視到所有用戶提交的工單，工單有三個緊急程度，推薦您從緊急工單開始處理。',
             "pendingTicket": '待處理工單',
             "finishedTicket": '已完成工單',
+            "type": {
+                "pendingDescription": "活躍的工單，這是您應該先進行處理的工單，如果工單確認已經完成請關閉，如不關閉則該工單將始終置於此處。",
+                "finishedDescription": "已經完成的工單，您可以在這裡檢視它們。",
+            },
+            "chooseOneNecessary": "您應該至少選擇一個項目"
         },
     },
     "userLogin": {
@@ -1078,7 +1083,6 @@ export default {
         "agreement": '我已閱讀並同意',
         "terminalUserAgreement": '用戶條款',
         "reg": '註冊',
-        // regSuccess: '註冊成功',
         "infoIncomplete": '信息不完整',
         "pwdIncorrect": '密碼不一致',
         "regSuccess": '註冊成功返回登錄',

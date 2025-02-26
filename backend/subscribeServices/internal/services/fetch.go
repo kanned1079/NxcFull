@@ -50,10 +50,11 @@ func (s *SubscribeServices) GetActivePlanListByUserId(ctx context.Context, reque
 		}, nil
 	}
 
+	log.Println("activeOrders:", activeOrders)
 	var result []map[string]interface{}
 	for _, order := range activeOrders {
 		var plan model.Plan
-		if err := dao.Db.Where("id = ?", order.PlanId).First(&plan).Error; err != nil {
+		if err := dao.Db.Where("id = ?", order.PlanId).Unscoped().First(&plan).Error; err != nil {
 			return &pb.GetActivePlanListByUserIdResponse{
 				Code: http.StatusNotFound,
 				Msg:  "Failed to fetch plan details: " + err.Error(),

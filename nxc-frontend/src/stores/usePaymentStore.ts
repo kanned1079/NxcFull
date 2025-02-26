@@ -56,13 +56,14 @@ const usePaymentStore = defineStore('paymentStore', () => {
         let data = await handleGetAllPlans(!userInfoStore.thisUser.isAdmin, page, size)
         if (data && data.code === 200) {
             plan_list.value = []
-            data.plans.forEach((item: Plan) => plan_list.value.push(item))
+            if (data.plans)
+                data.plans.forEach((item: Plan) => plan_list.value.push(item))
             return {
                 success: true,
                 page_count: data.page_count as number,
             }
         } else {
-            console.log('err:', data.msg)
+            console.log('err:', data.msg || '')
             return {
                 success: false,
                 page_count: 0,

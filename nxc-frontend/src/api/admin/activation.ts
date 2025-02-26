@@ -20,5 +20,20 @@ export const handleGetAllActivationLog = async (
         return data
     } catch (err: any) {
         console.log(err)
+        return false
+    }
+}
+
+export const handleShowKeyDetails = async (keyId: number) => {
+    try {
+        let {data} = await instance.get('/api/user/v1/key/details', {
+            params: {
+                key_id: keyId,
+            }
+        })
+        return data
+    } catch (err: any) {
+        console.log(err)
+        return false
     }
 }

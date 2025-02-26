@@ -11,7 +11,8 @@ import {type Component} from "vue"
 const props = defineProps<{
   title: string;
   description: string;
-  icon?: Component
+  icon?: Component;
+  secondary?: boolean;
 }>()
 </script>
 
@@ -19,7 +20,7 @@ const props = defineProps<{
   <div class="root">
     <div class="t-part">
       <n-icon class="page-icon" size="20" v-if="props.icon" :component="props.icon?props.icon:null"/>
-      <p class="title">{{ props.title }}</p>
+      <p class="title" :style="secondary?{fontSize: '1.1rem !important'}:null">{{ props.title }}</p>
     </div>
     <div class="b-part">
       <p class="description">{{ props.description }}</p>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {type FormInst, NButton, NIcon, NTag, useMessage} from 'naive-ui'
+import {type FormInst, NButton, NIcon, NTag, useMessage, type FormRules, type DataTableColumns, useDialog} from 'naive-ui'
 import {computed, h, onMounted, onBeforeMount, ref} from 'vue'
 import {
   PeopleOutline as usersIcon,
@@ -10,21 +10,31 @@ import {
 } from '@vicons/ionicons5'
 import useThemeStore from "@/stores/useThemeStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
-import instance from "@/axios";
+// import instance from "@/axios";
+import useTablePagination from "@/hooks/useTablePagination";
 import {formatDate} from "@/utils/timeFormat";
 import {hashPassword} from "@/utils/encryptor";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import {
+  handleAddNewUserReq,
+  handleBlock2UnblockUserById,
+  handleEditUserInfoReq,
+  handleGetAllUsers
+} from "@/api/admin/user";
+import {handleDeleteGroup} from "@/api/admin/groups";
 
 const {t} = useI18n()
 const appInfoStore = useAppInfosStore()
 const themeStore = useThemeStore();
 const message = useMessage()
+const dialog = useDialog()
 
 interface User {
   id?: number
   invite_user_id?: number
   invite_code?: string
+  name?: string
   email?: string
   password?: string
   is_admin?: boolean
@@ -45,22 +55,25 @@ let showEditUserDrawer = ref<boolean>(false)
 
 const addUserForm = ref<FormInst | null>(null)
 const editUserForm = ref<FormInst | null>(null);
-const addRules = {
-  email: [
-    {required: true, message: computed(() => t('adminViews.userMgr.enterEmail')).value, trigger: 'blur'},
-    {type: 'email', message: computed(() => t('adminViews.userMgr.enterValidEmail')).value, trigger: 'blur'},
-  ],
-  password: [
-    {required: true, message: computed(() => t('adminViews.userMgr.enterPassword')).value, trigger: 'blur'},
-    {min: 6, message: computed(() => t('adminViews.userMgr.passwordMinLength')).value, trigger: 'blur'},
-    {max: 20, message: computed(() => t('adminViews.userMgr.passwordMaxLength')).value, trigger: 'blur'},
-    {
-      pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])/, // 至少包含一个字母、数字和特殊字符
-      message: computed(() => t('adminViews.userMgr.passwordStrength')).value,
-      trigger: 'blur'
-    }
-  ]
-};
+const addRules = computed<FormRules>(() => {
+  return {
+    email: [
+      {required: true, message: t('adminViews.userMgr.enterEmail'), trigger: 'blur'},
+      {type: 'email', message: t('adminViews.userMgr.enterValidEmail'), trigger: 'blur'},
+    ],
+    password: [
+      {required: true, message: t('adminViews.userMgr.enterPassword'), trigger: 'blur'},
+      {min: 6, message: t('adminViews.userMgr.passwordMinLength'), trigger: 'blur'},
+      {max: 20, message: t('adminViews.userMgr.passwordMaxLength'), trigger: 'blur'},
+      {
+        pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])/, // 至少包含一个字母、数字和特殊字符
+        message: t('adminViews.userMgr.passwordStrength'),
+        trigger: 'blur'
+      }
+    ]
+  };
+})
+
 const editRules = {
   email: [
     {required: true, message: computed(() => t('adminViews.userMgr.enterEmail')).value, trigger: 'blur'},
@@ -75,12 +88,11 @@ const submitForm = async () => {
     if (valid) {
       console.log('提交表单:', editUser);
       showEditUserDrawer.value = false;
-      message.success(computed(() => t('adminViews.userMgr.validationSuccess')).value);
+      message.success(t('adminViews.userMgr.validationSuccess'));
       await handleEditUserInfo()
     }
   } catch (error) {
-    console.log('表单验证失败', error);
-    message.error(computed(() => t('adminViews.userMgr.validationFailed')).value);
+    message.error(t('adminViews.userMgr.validationFailed'));
   }
 };
 
@@ -88,13 +100,11 @@ const submitAddForm = async () => {
   try {
     const valid = await addUserForm.value?.validate();
     if (valid) {
-      console.log('提交表单2:', editUser);
       await handleAddNewUser()
     }
   } catch (error) {
-    console.log('表单验证失败', error);
     showAddUserModal.value = true;
-    message.error(computed(() => t('adminViews.userMgr.validationFailed')).value);
+    message.error(t('adminViews.userMgr.validationFailed'));
   }
 };
 
@@ -145,88 +155,77 @@ const isStaffString = computed({
 });
 
 // 定义表格的列
-const columns = [
+
+const columns = computed<DataTableColumns<User>>(() => [
   {
-    title: '#',
-    key: 'id'
-  },
-  {
-    title: computed(() => t('adminViews.userMgr.email')).value,
+    title: t('adminViews.userMgr.email'),
     key: 'email',
     render(row: User) {
       return h('p', {
         style: row.deleted_at ? {
-          // textDecoration: 'line-through', // 如果 deleted_at 不为空，添加删除线
-          // textDecorationThickness: 1,
           opacity: 1,
           color: '#787d7b',
         } : null
-      }, row.email); // 直接渲染邮箱地址
+      }, row.email);
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.registerDate')).value,
+    title: t('adminViews.userMgr.registerDate'),
     key: 'created_at',
     render(row: User) {
       return h('p', {}, {
         default: () => formatDate(row.created_at as string),
-      })
+      });
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.isAdmin')).value,
+    title: t('adminViews.userMgr.isAdmin'),
     key: 'is_admin',
     render(row: User) {
       return h(NTag, {
         size: 'small',
         bordered: false,
         type: row.is_admin ? 'success' : 'default',
-      }, {default: () => row.is_admin ? computed(() => t('adminViews.userMgr.yes')).value : computed(() => t('adminViews.userMgr.no')).value});
+      }, {default: () => row.is_admin ? t('adminViews.userMgr.yes') : t('adminViews.userMgr.no')});
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.isStaff')).value,
+    title: t('adminViews.userMgr.isStaff'),
     key: 'is_staff',
     render(row: User) {
       return h(NTag, {
         size: 'small',
         bordered: false,
         type: row.is_staff ? 'success' : 'default',
-      }, {default: () => row.is_staff ? computed(() => t('adminViews.userMgr.yes')).value : computed(() => t('adminViews.userMgr.no')).value});
+      }, {default: () => row.is_staff ? t('adminViews.userMgr.yes') : t('adminViews.userMgr.no')});
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.accountStatus')).value,
+    title: t('adminViews.userMgr.accountStatus'),
     key: 'status',
     render(row: User) {
       return h(NTag, {
         size: 'small',
         bordered: false,
-        type: row.deleted_at
-            ? 'error'
-            : (row.status ? 'success' : 'warning'),
+        type: row.deleted_at ? 'error' : (row.status ? 'success' : 'warning'),
       }, {
-        default: () => row.deleted_at
-            ? computed(() => t('adminViews.userMgr.deleted')).value
-            : (row.status
-                ? computed(() => t('adminViews.userMgr.normal')).value
-                : computed(() => t('adminViews.userMgr.banned')).value)
+        default: () => row.deleted_at ? t('adminViews.userMgr.deleted') : (row.status ? t('adminViews.userMgr.normal') : t('adminViews.userMgr.banned'))
       });
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.inviteCode')).value,
+    title: t('adminViews.userMgr.inviteCode'),
     key: 'invite_code',
     render(row: User) {
       return h(NTag, {
         size: 'small',
         bordered: false,
         type: row.invite_code ? 'primary' : 'default',
-      }, {default: () => row.invite_code ? row.invite_code : computed(() => t('adminViews.userMgr.nullContent')).value});
+      }, {default: () => row.invite_code || t('adminViews.userMgr.nullContent')});
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.balance')).value,
+    title: t('adminViews.userMgr.balance'),
     key: 'balance',
     render(row: User) {
       return h(
@@ -234,31 +233,29 @@ const columns = [
           {
             style: {
               color: row.balance !== undefined && row.balance < 0.00 ? '#d16666' : null,
-              textDecoration: row.balance !== undefined && row.balance < 0.00 ? 'underline' : null // 如果余额小于0，添加下划线
+              textDecoration: row.balance !== undefined && row.balance < 0.00 ? 'underline' : null
             },
           },
-          {
-            default: () => appInfoStore.appCommonConfig.currency_symbol + ' ' + row.balance?.toFixed(2).toString()
-          }
+          {default: () => appInfoStore.appCommonConfig.currency_symbol + ' ' + row.balance?.toFixed(2).toString()}
       );
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.orderCount')).value,
+    title: t('adminViews.userMgr.orderCount'),
     key: 'order_count',
     render(row: User) {
       return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.order_count});
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.planCount')).value,
+    title: t('adminViews.userMgr.planCount'),
     key: 'plan_count',
     render(row: User) {
       return h(NTag, {size: 'small', bordered: false, type: 'default'}, {default: () => row.plan_count});
     }
   },
   {
-    title: computed(() => t('adminViews.userMgr.actions')).value,
+    title: t('adminViews.userMgr.actions'),
     fixed: 'right',
     key: 'actions',
     render(row: User) {
@@ -271,114 +268,107 @@ const columns = [
           bordered: false,
           onClick: () => {
             // 编辑用户
-            Object.assign(editUser.value, row)
-            showEditUserDrawer.value = true
+            Object.assign(editUser.value, row);
+            showEditUserDrawer.value = true;
           },
-        }, {default: () => computed(() => t('adminViews.userMgr.editProfile')).value}),
+        }, {default: () => t('adminViews.userMgr.editProfile')}),
         h(NButton, {
           size: 'small',
           type: row.status ? 'error' : 'warning',
           secondary: true,
-          disabled: !!row.deleted_at,
+          disabled: row.deleted_at || row.is_admin,
           style: {marginLeft: '10px'},
-          onClick: () => handleBlock2UnblockUserById(row)
-        }, {default: () => row.status ? computed(() => t('adminViews.userMgr.banUser')).value : computed(() => t('adminViews.userMgr.unbanUser')).value})
+          onClick: () => block2UnblockUserById(row)
+        }, {default: () => row.status ? t('adminViews.userMgr.banUser') : t('adminViews.userMgr.unbanUser')})
       ]);
     },
   }
-];
-
-let pageCount = ref(10)
+]);
 
 let animated = ref<boolean>(false)
-
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
-
+let [dataSize, pageCount] = useTablePagination()
 
 let searchEmail = ref<string>('')
 
 let getAllUsers = async () => {
-  try {
-    let {data} = await instance.get('/api/admin/v1/users', {
-      params: {
-        page: dataSize.value.page,
-        size: dataSize.value.pageSize,
-        email: searchEmail.value.trim(),
-      }
-    })
-    if (data.code === 200) {
-      users.value = []
-      pageCount.value = data.page_count
-      console.log(data)
-      if (data.users)
-        data.users.forEach((user: User) => users.value.push(user))
-      else
-        message.warning(computed(() => t('adminViews.userMgr.noRecord')).value)
-      animated.value = true
+  let data = await handleGetAllUsers(dataSize.value.page, dataSize.value.pageSize, searchEmail.value.trim())
+  if (data && data.code === 200) {
+    users.value = []
+    if (data.users) {
+      data.users.forEach((user: User) => users.value.push(user))
+      pageCount.value = data.page_count || 0
+    } else {
+      message.error(t('adminViews.common.fetchDataFailure') + data.msg || '')
     }
-  } catch (err: any) {
-    message.error(err + '')
+    animated.value = true
   }
 }
 
-let handleBlock2UnblockUserById = async (row: User) => {
-  try {
-    let {data} = await instance.patch('/api/admin/v1/users', {
-      user_id: row.id
-    })
-    if (data.code === 200) {
-      message.success(computed(() => t('adminViews.userMgr.operationSuccess')).value)
+let block2UnblockUserById = async (row: User) => {
+  const runDelTask = async () => {
+    let data = await handleBlock2UnblockUserById(row.id)
+    if (data && data.code === 200) {
+      t('adminViews.common.success')
       await getAllUsers()
     } else {
-      message.error(computed(() => t('adminViews.userMgr.unknownError')).value + data.msg || '')
+      message.error(t('adminViews.common.failure') + data.msg || '')
     }
-  } catch (err: any) {
-    message.error(err + '')
   }
+  dialog.error({
+    title: t('adminViews.userMgr.mention.title'),
+    content: () => {
+      return h('div', {}, [
+        h('p', {style: {fontWeight: 'bold', fontSize: '1rem', opacity: '0.8'}}, row.name?row.name:row.email),
+        h('p', {style: {marginTop: '4px'}}, t('adminViews.userMgr.mention.content', {appName: appInfoStore.appCommonConfig.app_name}))
+      ])
+    },
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+      marginTop: '20px',
+    },
+    onPositiveClick: async () => {
+      animated.value = false
+      await runDelTask()
+    }
+  })
+
+
+
 }
 
 let handleAddNewUser = async () => {
-  try {
-    animated.value = false
-    let hashedPwd = await hashPassword(newUser.value.password)
-    let {data} = await instance.post('/api/admin/v1/users', {
-      email: newUser.value.email,
-      password: hashedPwd,
-    })
-    if (data.code === 200) {
-      message.success(computed(() => t('adminViews.userMgr.addUserSuccess')).value)
-      await getAllUsers()
-    } else {
-      message.error(computed(() => t('adminViews.userMgr.unknownError')).value + data.msg || '')
-    }
-  } catch (err: any) {
-    message.error(err + '')
+  animated.value = false
+  let hashedPwd = await hashPassword(newUser.value.password)
+  let data = await handleAddNewUserReq(newUser.value.email.trim(), hashedPwd)
+  if (data && data.code === 200) {
+    message.success(t('adminViews.common.success'))
+    await getAllUsers()
+  } else {
+    message.error(t('adminViews.common.failure') + data.msg || '')
   }
 }
 
 let handleEditUserInfo = async () => {
-  try {
-    animated.value = false
-    editUser.value.password = editUser.value.password ? await hashPassword(editUser.value.password) : '';
-    let {data} = await instance.put('/api/admin/v1/users', {
-      id: editUser.value.id,
-      password: editUser.value.password,
-      invite_code: editUser.value.invite_code,
-      is_admin: editUser.value.is_admin,
-      is_staff: editUser.value.is_staff,
-      balance: editUser.value.balance,
-    })
-    if (data.code === 200) {
-      message.success(computed(() => t('adminViews.userMgr.updateSuccess')).value)
-      await getAllUsers()
-    } else {
-      message.error(computed(() => t('adminViews.userMgr.unknownError')).value + data.msg || '')
-    }
-  } catch (err: any) {
-    message.error(err + '')
+  animated.value = false
+  editUser.value.password = editUser.value.password?.trim() ? await hashPassword(editUser.value.password) : '';
+  let data = await handleEditUserInfoReq(
+      editUser.value.id,
+      editUser.value.password,
+      editUser.value.invite_code,
+      editUser.value.is_admin,
+      editUser.value.is_staff,
+      editUser.value.balance,
+  )
+  if (data.code === 200) {
+    message.success(t('adminViews.common.success'))
+    await getAllUsers()
+  } else {
+    message.error(t('adminViews.common.failure') + data.msg || '')
   }
 }
 
@@ -455,31 +445,6 @@ export default {
       </n-button>
     </template>
   </PageHead>
-
-  <!--  <div class="root">-->
-  <!--    <n-card hoverable :bordered="false" :embedded="true" class="card1" :title="t('adminViews.userMgr.userManager')">-->
-  <!--      <n-button class="btn" tertiary type="primary" size="medium" @click="showSearchNModal=true">-->
-  <!--        <n-icon size="14" style="padding-right: 8px">-->
-  <!--          <searchIcon/>-->
-  <!--        </n-icon>-->
-  <!--        {{ t('adminViews.userMgr.query') }}-->
-  <!--      </n-button>-->
-  <!--      <n-button class="btn" tertiary type="primary" size="medium"-->
-  <!--                @click="searchEmail=''; animated=false; getAllUsers()">-->
-  <!--        <n-icon size="14" style="padding-right: 8px">-->
-  <!--          <refreshIcon/>-->
-  <!--        </n-icon>-->
-  <!--        {{ t('adminViews.userMgr.reset') }}-->
-  <!--      </n-button>-->
-  <!--      <n-button class="btn" tertiary type="primary" size="medium" @click="showAddUserModal=true">-->
-  <!--        <n-icon size="14" style="padding-right: 8px">-->
-  <!--          <addUserIcon/>-->
-  <!--        </n-icon>-->
-  <!--        {{ t('adminViews.userMgr.addNewUser') }}-->
-  <!--      </n-button>-->
-  <!--    </n-card>-->
-  <!--  </div>-->
-
   <transition name="slide-fade">
     <div style="padding: 20px" v-if="animated">
       <n-card class="form-root-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0px">
@@ -493,22 +458,6 @@ export default {
         />
       </n-card>
 
-      <!--      <div style="margin-top: 20px; display: flex; flex-direction: row; justify-content: right;">-->
-      <!--        <n-pagination-->
-      <!--            size="medium"-->
-      <!--            v-model:page.number="dataSize.page"-->
-      <!--            :page-count="pageCount"-->
-      <!--            @update:page="animated=false; getAllUsers()"-->
-      <!--        />-->
-      <!--        <n-select-->
-      <!--            style="width: 160px; margin-left: 20px"-->
-      <!--            v-model:value.number="dataSize.pageSize"-->
-      <!--            size="small"-->
-      <!--            :options="dataCountOptions"-->
-      <!--            :remote="true"-->
-      <!--            @update:value="animated=false; dataSize.page = 1; getAllUsers()"-->
-      <!--        />-->
-      <!--      </div>-->
 
       <DataTableSuffix
           v-model:data-size="dataSize"
@@ -607,7 +556,7 @@ export default {
               :autofocus="false"
               showPasswordOn="click"
               type="password"
-              v-model:value="editUser.password" />
+              v-model:value="editUser.password"/>
         </n-form-item>
 
         <!-- 用户邀请码 选填 -->
