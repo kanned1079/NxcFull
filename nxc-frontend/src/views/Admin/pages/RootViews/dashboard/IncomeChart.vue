@@ -7,7 +7,7 @@ import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import instance from "@/axios";
 import {useMessage} from "naive-ui"
-import {Podium as incomeIcon} from '@vicons/ionicons5'
+import {Podium as incomeIcon, CheckmarkCircle as successIcon, CloseCircle as errIcon} from '@vicons/ionicons5'
 import {handleGetUserLayout, handleFetchAppCommonConfig} from "@/api/admin/server";
 import {config as backendConfig} from "@/config"
 
@@ -426,7 +426,7 @@ let serverInfo = computed<ServerInfo[]>(() =>[
   },
   {
     name: 'adminViews.summary.system.redisStatus',
-    data: miscellaneousConfig.value.config.redisServerStatus? '运行正常' : '运行异常',
+    data: `${miscellaneousConfig.value.config.redisServerStatus}`,
   },
   {
     name: 'adminViews.summary.system.serverOsType',
@@ -662,7 +662,30 @@ export default {
                 <n-td
                     style="background-color: rgba(0,0,0,0.0);"
                 >
-                  {{ typeof item.data === 'function' ? item.data() : item.data }}
+                  {{
+                    typeof item.data === 'function' ? item.data() : item.data
+
+
+                  }}
+
+                  <NTag
+                      v-if="item.data === 'true'"
+                      type="success"
+                      :bordered="false"
+                    size="small"
+                  >
+                    {{ '运行正常' }}
+
+                  <template #icon>
+                    <n-icon><successIcon /></n-icon>
+                  </template>
+                  </NTag>
+                  <NTag v-if="item.data === 'false'" type="error" :bordered="false" size="small">
+                    {{ '运行正常' }}
+                  <template #icon>
+                    <n-icon><errIcon /></n-icon>
+                  </template>
+                  </NTag>
                 </n-td>
               </n-tr>
             </n-table>
