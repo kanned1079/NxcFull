@@ -8,7 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"runtime"
 	"strconv"
+	"time"
 )
 
 func HandleUpdateSingleOptions(context *gin.Context) {
@@ -502,3 +504,49 @@ func HandleGetAllAppDownloadLink(context *gin.Context) {
 //func GetRegisterEnvRuntime(context *gin.Context) {
 //
 //}
+
+var initTime = time.Now()
+
+func HandleFetchServerSystemPartConfig(context *gin.Context) {
+	resp, err := grpcClient.SettingServiceClient.GetServerSystemPartConfig(sysContext.Background(), &pb.GetServerSystemPartConfigRequest{})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	/*
+	   serverTime: '2025-2-12 12:12:12',
+	    apiServerStatus: true,
+	    mysqlServerStatus: true,
+	    redisServerStatus: true,
+	    osType: 'Linux',
+	    osArch: 'arm64',
+	    uptime: '30h',
+	    ginMode: 'release',
+	    numCpu: 10,
+	    enabledPayMethods: ['aaa', 'bbb']
+	*/
+
+	var nowTime time.Time = time.Now()
+	// nowTime减去initTime，得到time.Duration类型的差值
+
+	context.JSON(http.StatusOK, gin.H{
+		"code": resp.Code,
+		"msg":  resp.Msg,
+		"config": map[string]interface{}{
+			"api_server_status":   true,
+			"mysql_server_status": resp.MysqlServerStatus,
+			"redis_server_status": resp.RedisServerStatus,
+			"os_type":             resp.OsType,
+			"os_arch":             resp.OsArch,
+			"uptime":              nowTime.Sub(initTime).String(), // "30h
+			"enabled_pay_methods": resp.PayMethods,
+			"gin_mode":            gin.Mode(),
+			"num_cpu":             runtime.NumCPU(),
+			"server_time":         time.Now().UTC(),
+		},
+	})
+
+}

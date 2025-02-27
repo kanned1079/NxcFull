@@ -100,9 +100,9 @@ interface UserData {
 }
 
 let bindUserInfo = (data: DataWithAuth) => {
+  userInfoStore.thisUser.token = data.token
   userInfoStore.isAuthed = data.isAuthed
   let {user_data} = data
-
   userInfoStore.thisUser.id = user_data.id
   userInfoStore.thisUser.inviteUserId = user_data.invite_user_id
   userInfoStore.thisUser.name = user_data.name
@@ -112,7 +112,6 @@ let bindUserInfo = (data: DataWithAuth) => {
   userInfoStore.thisUser.balance = user_data.balance
   userInfoStore.thisUser.lastLogin = user_data.last_login
   userInfoStore.thisUser.lastLoginIp = user_data.last_login_ip
-  userInfoStore.thisUser.token = data.token
   console.log('isAdmin', user_data.is_admin)
   console.log('admin/login: ', userInfoStore.thisUser.isAdmin)
 }
@@ -130,18 +129,11 @@ let handleLoginClick = async (e: MouseEvent) => {
 
 const submitLogin = async () => {
   enableLogin.value = false
-  // try {
-  //   // let hashedPwd =  hashPassword(password.value.trim())
-  //   let {data} = await instance.post('http://localhost:8081/api/admin/v1/login', {
-  //     email: userFormData.value.username,
-  //     password: encodeToBase64(userFormData.value.password),
-  //     role: 'admin', // 限制权限
-  //   })
-
   let data = await handleAdminLoginFunc(userFormData.value.username, userFormData.value.password, 'admin')
   // console.log(data)
   if (data.code === 200 && data.isAuthed === true) {
     // 验证通过 保存token
+    if (!data.token) return message.error(t('userLogin.tokenNotExist'))
     sessionStorage.setItem('token', data.token)
     // 保存验证状态
     userInfoStore.setAndSaveAuthStatus(true)

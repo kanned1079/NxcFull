@@ -63,6 +63,8 @@ service UserService {
   rpc GetUserAvatar(GetUserAvatarRequest) returns (GetUserAvatarResponse);
 
   rpc AlterUserSecondaryName(AlterUserSecondaryNameRequest) returns (AlterUserSecondaryNameResponse);
+
+  rpc GetUsersLayout(GetUsersLayoutRequest) returns (GetUsersLayoutResponse);
 }
 
 
@@ -394,4 +396,17 @@ message AlterUserSecondaryNameRequest {
 message AlterUserSecondaryNameResponse {
   int32 code = 1;
   string msg = 2;
+}
+
+message GetUsersLayoutRequest {
+
+}
+
+message GetUsersLayoutResponse {
+  int32 code = 1;
+  string msg = 2;
+  int64 user_all = 3;
+  int64 user_active = 4;
+  int64 user_inactive = 5;
+  int64 user_blocked = 6;
 }

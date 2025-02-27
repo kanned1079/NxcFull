@@ -52,7 +52,7 @@ onMounted(() => {
   // 监听深色模式的变化
   // console.log(isDark.value)
   themeStore.enableDarkMode = isDark.value;
-  appInfosStore.appVersion = 'v0.7.9_patch4'
+  // appInfosStore.appVersion = 'v0.7.9_patch4'
 
   readDefaultPaginationFromStorage()
 

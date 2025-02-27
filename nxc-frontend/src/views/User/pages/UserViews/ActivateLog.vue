@@ -11,6 +11,7 @@ import {ChevronForwardOutline as toRight,} from "@vicons/ionicons5"
 import {handleGetAllMyActivateLog, handleUnbindById} from "@/api/user/record"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import useTablePagination from "@/hooks/useTablePagination"
 
 interface ActivateRecord {
   id: number;
@@ -51,12 +52,15 @@ const userInfoStore = useUserInfoStore()
 
 let showModal = ref<boolean>(false)
 let animated = ref<boolean>(false);
-let pageCount = ref(10)
+// let pageCount = ref(10)
+//
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
 
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+
+let [dataSize, pageCount] = useTablePagination()
 
 let keyDetails = ref<{
   id: number;
@@ -240,14 +244,6 @@ export default {
       :description="t('userActivation.description')"
   />
 
-<!--  <div class="root-header">-->
-<!--    <n-card-->
-<!--        hoverable-->
-<!--        :embedded="true"-->
-<!--        :bordered="false"-->
-<!--        :title="t('userActivation.activateLog')"-->
-<!--    ></n-card>-->
-<!--  </div>-->
   <transition name="slide-fade">
     <div class="root" v-if="animated">
       <n-card
@@ -327,7 +323,7 @@ export default {
           type="textarea"
           size="large"
           :disabled="!enableAlterRemark"
-          :placeholder="'在這裡設置備注信息'"
+          :placeholder="t('userActivation.setRemark')"
           v-model:value.trim="currentRecord.remark"
           :bordered="true"
           style="margin-top: 5px"

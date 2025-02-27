@@ -64,14 +64,15 @@ export const glacierBlueNight: GlobalThemeOverrides = {
     common: {
         primaryColor: '#4f7698',
         primaryColorPressed: '#4f7698',
-        bodyColor: '#2d2f2f',
-        modalColor: '#2d2f2f',
+        bodyColor: '#2d2e2f',
+        modalColor: '#2d2e2f',
         tableColorStriped: 'rgba(40, 41, 41, 1)',
         tableColor: 'rgba(40, 41, 41, 1)',
         tableHeaderColor: 'rgba(40, 41, 41, 1)',
         tableColorHover: 'rgba(40, 41, 41, 0.5)',
         primaryColorHover: '#4f7698',
         borderRadius: '6px',
+        popoverColor: 'rgb(66, 67, 68)',
     },
     Button: {
         color: '#4f7698',

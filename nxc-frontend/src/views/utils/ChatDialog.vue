@@ -7,6 +7,7 @@ import useThemeStore from "@/stores/useThemeStore";
 // import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore"
 // import useAppInfosStore from "@/stores/useAppInfosStore";
+import {config} from "@/config";
 
 const themeStore = useThemeStore();
 const appInfosStore = useAppInfosStore();
@@ -37,7 +38,7 @@ let socket: WebSocket | null = null;
 const createWebSocket = () => {
   if (socket) socket.close(); // 先关闭已有连接
 
-  socket = new WebSocket(`ws://localhost:8081/ws/user/v1/chat?token=${token.value}&user_id=${paramsData.value.userId}&ticket_id=${paramsData.value.ticketId}`);
+  socket = new WebSocket(`${config.apiAddr.wsAddr}/ws/user/v1/chat?token=${token.value}&user_id=${paramsData.value.userId}&ticket_id=${paramsData.value.ticketId}`);
 
   socket.onopen = () => {
     console.log("WebSocket connection established");
@@ -246,8 +247,16 @@ export default {
     </n-layout-content>
 
     <n-layout-footer>
-      <n-card content-style="padding: 0" class="send-box">
-        <n-card class="send-box-btn" content-style="padding: 0">
+      <n-card
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          content-style="padding: 0" class="send-box">
+        <n-card
+            hoverable
+            :embedded="true"
+            :bordered="false"
+            class="send-box-btn" content-style="padding: 0">
           <div class="send-box-btn-body">
             <n-input
                 @keyup.enter="handleSendMsgBtnClicked"

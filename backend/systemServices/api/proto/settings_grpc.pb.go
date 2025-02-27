@@ -35,6 +35,8 @@ const (
 	SettingsService_GetWelcomePageConfig_FullMethodName             = "/settings.SettingsService/GetWelcomePageConfig"
 	SettingsService_GetAppDownloadLink_FullMethodName               = "/settings.SettingsService/GetAppDownloadLink"
 	SettingsService_GetServerLiveStatus_FullMethodName              = "/settings.SettingsService/GetServerLiveStatus"
+	SettingsService_GetAdminDashboardShowMessage_FullMethodName     = "/settings.SettingsService/GetAdminDashboardShowMessage"
+	SettingsService_GetServerSystemPartConfig_FullMethodName        = "/settings.SettingsService/GetServerSystemPartConfig"
 )
 
 // SettingsServiceClient is the client API for SettingsService service.
@@ -71,6 +73,8 @@ type SettingsServiceClient interface {
 	GetWelcomePageConfig(ctx context.Context, in *GetWelcomePageConfigRequest, opts ...grpc.CallOption) (*GetWelcomePageConfigResponse, error)
 	GetAppDownloadLink(ctx context.Context, in *GetAppDownloadLinkRequest, opts ...grpc.CallOption) (*GetAppDownloadLinkResponse, error)
 	GetServerLiveStatus(ctx context.Context, in *GetServerLiveStatusRequest, opts ...grpc.CallOption) (*GetServerLiveStatusResponse, error)
+	GetAdminDashboardShowMessage(ctx context.Context, in *GetAdminDashboardShowMessageRequest, opts ...grpc.CallOption) (*GetAdminDashboardShowMessageResponse, error)
+	GetServerSystemPartConfig(ctx context.Context, in *GetServerSystemPartConfigRequest, opts ...grpc.CallOption) (*GetServerSystemPartConfigResponse, error)
 }
 
 type settingsServiceClient struct {
@@ -241,6 +245,26 @@ func (c *settingsServiceClient) GetServerLiveStatus(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *settingsServiceClient) GetAdminDashboardShowMessage(ctx context.Context, in *GetAdminDashboardShowMessageRequest, opts ...grpc.CallOption) (*GetAdminDashboardShowMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAdminDashboardShowMessageResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetAdminDashboardShowMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *settingsServiceClient) GetServerSystemPartConfig(ctx context.Context, in *GetServerSystemPartConfigRequest, opts ...grpc.CallOption) (*GetServerSystemPartConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetServerSystemPartConfigResponse)
+	err := c.cc.Invoke(ctx, SettingsService_GetServerSystemPartConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SettingsServiceServer is the server API for SettingsService service.
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
@@ -275,6 +299,8 @@ type SettingsServiceServer interface {
 	GetWelcomePageConfig(context.Context, *GetWelcomePageConfigRequest) (*GetWelcomePageConfigResponse, error)
 	GetAppDownloadLink(context.Context, *GetAppDownloadLinkRequest) (*GetAppDownloadLinkResponse, error)
 	GetServerLiveStatus(context.Context, *GetServerLiveStatusRequest) (*GetServerLiveStatusResponse, error)
+	GetAdminDashboardShowMessage(context.Context, *GetAdminDashboardShowMessageRequest) (*GetAdminDashboardShowMessageResponse, error)
+	GetServerSystemPartConfig(context.Context, *GetServerSystemPartConfigRequest) (*GetServerSystemPartConfigResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
 
@@ -332,6 +358,12 @@ func (UnimplementedSettingsServiceServer) GetAppDownloadLink(context.Context, *G
 }
 func (UnimplementedSettingsServiceServer) GetServerLiveStatus(context.Context, *GetServerLiveStatusRequest) (*GetServerLiveStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetServerLiveStatus not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetAdminDashboardShowMessage(context.Context, *GetAdminDashboardShowMessageRequest) (*GetAdminDashboardShowMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAdminDashboardShowMessage not implemented")
+}
+func (UnimplementedSettingsServiceServer) GetServerSystemPartConfig(context.Context, *GetServerSystemPartConfigRequest) (*GetServerSystemPartConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetServerSystemPartConfig not implemented")
 }
 func (UnimplementedSettingsServiceServer) mustEmbedUnimplementedSettingsServiceServer() {}
 func (UnimplementedSettingsServiceServer) testEmbeddedByValue()                         {}
@@ -642,6 +674,42 @@ func _SettingsService_GetServerLiveStatus_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SettingsService_GetAdminDashboardShowMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAdminDashboardShowMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetAdminDashboardShowMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetAdminDashboardShowMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetAdminDashboardShowMessage(ctx, req.(*GetAdminDashboardShowMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SettingsService_GetServerSystemPartConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetServerSystemPartConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).GetServerSystemPartConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_GetServerSystemPartConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).GetServerSystemPartConfig(ctx, req.(*GetServerSystemPartConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SettingsService_ServiceDesc is the grpc.ServiceDesc for SettingsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -712,6 +780,14 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetServerLiveStatus",
 			Handler:    _SettingsService_GetServerLiveStatus_Handler,
+		},
+		{
+			MethodName: "GetAdminDashboardShowMessage",
+			Handler:    _SettingsService_GetAdminDashboardShowMessage_Handler,
+		},
+		{
+			MethodName: "GetServerSystemPartConfig",
+			Handler:    _SettingsService_GetServerSystemPartConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

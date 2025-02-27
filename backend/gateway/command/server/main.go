@@ -8,6 +8,7 @@ import (
 	"gateway/internal/handler"
 	"gateway/internal/middleware"
 	"gateway/internal/routers"
+	"github.com/gin-gonic/gin"
 	"log"
 )
 
@@ -66,6 +67,10 @@ func main() {
 
 	go handler.StartLogFlushLog(60)
 
-	routers.StartApiGateways()
+	MyApp1 := routers.NewGatewayApp(1, gin.ReleaseMode)
+
+	//routers.StartApiGateways()
+
+	MyApp1.StartApiGateways()
 
 }

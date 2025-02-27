@@ -340,7 +340,7 @@ export default {
             :pagination="false"
             :bordered="true"
             style=""
-            :scroll-x="1600"
+            :scroll-x="1200"
         />
       </n-card>
 

@@ -31,13 +31,13 @@ const message = useMessage()
 const dialog = useDialog()
 
 interface User {
-  id?: number
+  id: number
   invite_user_id?: number
   invite_code?: string
   name?: string
   email?: string
   password?: string
-  is_admin?: boolean
+  is_admin: boolean
   is_staff?: boolean
   status?: boolean
   privilege_group?: string
@@ -276,7 +276,7 @@ const columns = computed<DataTableColumns<User>>(() => [
           size: 'small',
           type: row.status ? 'error' : 'warning',
           secondary: true,
-          disabled: row.deleted_at || row.is_admin,
+          disabled: Boolean(row.deleted_at) || Boolean(row.is_admin),
           style: {marginLeft: '10px'},
           onClick: () => block2UnblockUserById(row)
         }, {default: () => row.status ? t('adminViews.userMgr.banUser') : t('adminViews.userMgr.unbanUser')})
@@ -359,10 +359,10 @@ let handleEditUserInfo = async () => {
   let data = await handleEditUserInfoReq(
       editUser.value.id,
       editUser.value.password,
-      editUser.value.invite_code,
+      editUser.value.invite_code || '',
       editUser.value.is_admin,
-      editUser.value.is_staff,
-      editUser.value.balance,
+      editUser.value.is_staff || false,
+      editUser.value.balance || 0.00,
   )
   if (data.code === 200) {
     message.success(t('adminViews.common.success'))
@@ -454,7 +454,7 @@ export default {
             :bordered="true"
             :columns="columns"
             :data="users"
-            :scroll-x="1600"
+            :scroll-x="1200"
         />
       </n-card>
 

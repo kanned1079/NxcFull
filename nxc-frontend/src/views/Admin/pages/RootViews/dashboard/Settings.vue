@@ -24,8 +24,8 @@ export default {
     <n-grid
         cols="2 s:2 m:4"
         responsive="screen"
-        :x-gap="15"
-        :y-gap="15"
+        :x-gap="14"
+        :y-gap="14"
     >
       <n-grid-item>
         <n-card
@@ -43,21 +43,6 @@ export default {
           </div>
         </n-card>
       </n-grid-item>
-      <!--        <n-grid-item>-->
-      <!--          <n-card-->
-      <!--              hoverable style="margin-right: 20px"-->
-      <!--              :embedded="true"-->
-      <!--              :bordered="false"-->
-      <!--              class="shortcut-item"-->
-      <!--          >-->
-      <!--            <div>-->
-      <!--              <n-icon size="25">-->
-      <!--                <payIcon/>-->
-      <!--              </n-icon>-->
-      <!--              <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.paymentConfig') }}</p>-->
-      <!--            </div>-->
-      <!--          </n-card>-->
-      <!--        </n-grid-item>-->
       <n-grid-item>
         <n-card
             hoverable
@@ -77,7 +62,7 @@ export default {
       <n-grid-item>
         <n-card
             hoverable
-            style="margin-right: 20px"
+            style="margin-right: 14px"
             :embedded="true"
             :bordered="false"
             @click="router.push({ path: '/admin/dashboard/usermanager'})"

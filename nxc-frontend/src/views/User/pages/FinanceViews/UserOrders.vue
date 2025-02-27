@@ -11,20 +11,23 @@ import {cancelOrder, getAllMyOrders} from "@/api/user/order";
 import {formatDate} from "@/utils/timeFormat"
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import useTablePagination from "@/hooks/useTablePagination"
 
 const {t} = useI18n()
 const message = useMessage()
 const router = useRouter()
 const paymentStore = usePaymentStore()
 
-let pageCount = ref(10)
+// let pageCount = ref(10)
 
 let animated = ref<boolean>(false)
 
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
+
+let [dataSize, pageCount] = useTablePagination()
 
 const themeStore = useThemeStore();
 const userInfoStore = useUserInfoStore()

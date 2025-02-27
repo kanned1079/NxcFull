@@ -6,19 +6,19 @@ import (
 	"gateway/internal/handler"
 	"gateway/internal/middleware"
 	"gateway/internal/utils"
-	"github.com/gin-gonic/gin"
+	//"github.com/gin-gonic/gin"
 	"log"
 	"strconv"
 )
 
-func StartApiGateways() {
-	router := gin.Default()
+func (inst *GatewayApp) StartApiGateways() {
+	//router := gin.Default()
 
-	router.Use(middleware.ProtocolAllowance())      // 設置後端允許的請求方式和过OPTIONS预检
-	router.Use(middleware.AccessLoggerMiddleware()) // 統計API訪問紀錄 提交到日誌為服務
-	router.Use(middleware.APICountMiddleware())     // 對API訪問進行計數
+	inst.Router.Use(middleware.ProtocolAllowance())      // 設置後端允許的請求方式和过OPTIONS预检
+	inst.Router.Use(middleware.AccessLoggerMiddleware()) // 統計API訪問紀錄 提交到日誌為服務
+	inst.Router.Use(middleware.APICountMiddleware())     // 對API訪問進行計數
 
-	publicRoutes := router.Group("/api")
+	publicRoutes := inst.Router.Group("/api")
 
 	// 这里是获取网站的标题 颜色 说明 配置
 	publicRoutes.GET("/app/preference/")
@@ -45,7 +45,7 @@ func StartApiGateways() {
 		userPublic.POST("/register/register", handler.HandleUserRegister)            // rpc实现
 	}
 
-	protectedRoutes := router.Group("/api")
+	protectedRoutes := inst.Router.Group("/api")
 	protectedRoutes.Use(middleware.AuthMiddleware()) // 验证Token中间价
 	protectedRoutes.Use(middleware.RoleMiddleware()) // 鉴权中间件
 	adminAuthorized := protectedRoutes.Group("/admin/v1", middleware.RoleMiddleware())
@@ -60,6 +60,8 @@ func StartApiGateways() {
 		//// adminAuthorized.POST("admin/save-settings", handleUpdateSystemSettings)
 
 		adminAuthorized.GET("/app/overview", handler.HandleGetAppOverview)
+		adminAuthorized.GET("/app/users/layout", handler.HandleGetUserLayout)
+		adminAuthorized.GET("/app/common/config", handler.HandleFetchServerSystemPartConfig) // 获取所有用户的列表
 
 		//
 		adminAuthorized.PUT("/setting", handler.HandleUpdateSingleOptions) // 修改单个配置项目
@@ -187,13 +189,13 @@ func StartApiGateways() {
 	}
 
 	// WebSocket 路由组
-	wsRoutes := router.Group("/ws")
+	wsRoutes := inst.Router.Group("/ws")
 	//wsRoutes.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware())
 	// 为 WebSocket 配置单独的用户路由
 	userWsRoutes := wsRoutes.Group("/user/v1")
 	userWsRoutes.GET("/chat", handler.HandleChatWs)
 
-	if err := router.Run(fmt.Sprintf("%s:%s", config.MyServerConfig.ListenAddr, strconv.Itoa(int(config.MyServerConfig.ListenPort)))); err != nil {
+	if err := inst.Router.Run(fmt.Sprintf("%s:%s", config.MyServerConfig.ListenAddr, strconv.Itoa(int(config.MyServerConfig.ListenPort)))); err != nil {
 		log.Println("启动服务器失败", err)
 	}
 }

@@ -59,7 +59,7 @@ export default {
 .root {
   display: flex;
   flex-direction: row;
-  margin-bottom: 15px;
+  margin-bottom: 14px;
 
   .l-content {
     flex: 3;

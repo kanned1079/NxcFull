@@ -2785,6 +2785,232 @@ func (x *GetServerLiveStatusResponse) GetPageSize() int64 {
 	return 0
 }
 
+type GetAdminDashboardShowMessageRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetAdminDashboardShowMessageRequest) Reset() {
+	*x = GetAdminDashboardShowMessageRequest{}
+	mi := &file_settings_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAdminDashboardShowMessageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAdminDashboardShowMessageRequest) ProtoMessage() {}
+
+func (x *GetAdminDashboardShowMessageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_settings_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAdminDashboardShowMessageRequest.ProtoReflect.Descriptor instead.
+func (*GetAdminDashboardShowMessageRequest) Descriptor() ([]byte, []int) {
+	return file_settings_proto_rawDescGZIP(), []int{44}
+}
+
+type GetAdminDashboardShowMessageResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+}
+
+func (x *GetAdminDashboardShowMessageResponse) Reset() {
+	*x = GetAdminDashboardShowMessageResponse{}
+	mi := &file_settings_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAdminDashboardShowMessageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAdminDashboardShowMessageResponse) ProtoMessage() {}
+
+func (x *GetAdminDashboardShowMessageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_settings_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAdminDashboardShowMessageResponse.ProtoReflect.Descriptor instead.
+func (*GetAdminDashboardShowMessageResponse) Descriptor() ([]byte, []int) {
+	return file_settings_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *GetAdminDashboardShowMessageResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *GetAdminDashboardShowMessageResponse) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+type GetServerSystemPartConfigRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetServerSystemPartConfigRequest) Reset() {
+	*x = GetServerSystemPartConfigRequest{}
+	mi := &file_settings_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetServerSystemPartConfigRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetServerSystemPartConfigRequest) ProtoMessage() {}
+
+func (x *GetServerSystemPartConfigRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_settings_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetServerSystemPartConfigRequest.ProtoReflect.Descriptor instead.
+func (*GetServerSystemPartConfigRequest) Descriptor() ([]byte, []int) {
+	return file_settings_proto_rawDescGZIP(), []int{46}
+}
+
+type GetServerSystemPartConfigResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code              int32    `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg               string   `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Config            []byte   `protobuf:"bytes,3,opt,name=config,proto3" json:"config,omitempty"`
+	MysqlServerStatus bool     `protobuf:"varint,4,opt,name=mysql_server_status,json=mysqlServerStatus,proto3" json:"mysql_server_status,omitempty"`
+	RedisServerStatus bool     `protobuf:"varint,5,opt,name=redis_server_status,json=redisServerStatus,proto3" json:"redis_server_status,omitempty"`
+	OsType            string   `protobuf:"bytes,7,opt,name=os_type,json=osType,proto3" json:"os_type,omitempty"`
+	OsArch            string   `protobuf:"bytes,8,opt,name=os_arch,json=osArch,proto3" json:"os_arch,omitempty"`
+	PayMethods        []string `protobuf:"bytes,9,rep,name=pay_methods,json=payMethods,proto3" json:"pay_methods,omitempty"`
+}
+
+func (x *GetServerSystemPartConfigResponse) Reset() {
+	*x = GetServerSystemPartConfigResponse{}
+	mi := &file_settings_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetServerSystemPartConfigResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetServerSystemPartConfigResponse) ProtoMessage() {}
+
+func (x *GetServerSystemPartConfigResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_settings_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetServerSystemPartConfigResponse.ProtoReflect.Descriptor instead.
+func (*GetServerSystemPartConfigResponse) Descriptor() ([]byte, []int) {
+	return file_settings_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *GetServerSystemPartConfigResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *GetServerSystemPartConfigResponse) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+func (x *GetServerSystemPartConfigResponse) GetConfig() []byte {
+	if x != nil {
+		return x.Config
+	}
+	return nil
+}
+
+func (x *GetServerSystemPartConfigResponse) GetMysqlServerStatus() bool {
+	if x != nil {
+		return x.MysqlServerStatus
+	}
+	return false
+}
+
+func (x *GetServerSystemPartConfigResponse) GetRedisServerStatus() bool {
+	if x != nil {
+		return x.RedisServerStatus
+	}
+	return false
+}
+
+func (x *GetServerSystemPartConfigResponse) GetOsType() string {
+	if x != nil {
+		return x.OsType
+	}
+	return ""
+}
+
+func (x *GetServerSystemPartConfigResponse) GetOsArch() string {
+	if x != nil {
+		return x.OsArch
+	}
+	return ""
+}
+
+func (x *GetServerSystemPartConfigResponse) GetPayMethods() []string {
+	if x != nil {
+		return x.PayMethods
+	}
+	return nil
+}
+
 var File_settings_proto protoreflect.FileDescriptor
 
 var file_settings_proto_rawDesc = []byte{
@@ -3145,7 +3371,34 @@ var file_settings_proto_rawDesc = []byte{
 	0x70, 0x69, 0x5f, 0x6c, 0x6f, 0x67, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28,
 	0x0c, 0x52, 0x0a, 0x61, 0x70, 0x69, 0x4c, 0x6f, 0x67, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x1b, 0x0a,
 	0x09, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x03,
-	0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x32, 0xdc, 0x0d, 0x0a, 0x0f, 0x53,
+	0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x22, 0x25, 0x0a, 0x23, 0x47, 0x65,
+	0x74, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53,
+	0x68, 0x6f, 0x77, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x22, 0x4c, 0x0a, 0x24, 0x47, 0x65, 0x74, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x44, 0x61, 0x73,
+	0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x68, 0x6f, 0x77, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67,
+	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a,
+	0x03, 0x6d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x22,
+	0x22, 0x0a, 0x20, 0x47, 0x65, 0x74, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x53, 0x79, 0x73, 0x74,
+	0x65, 0x6d, 0x50, 0x61, 0x72, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x22, 0x94, 0x02, 0x0a, 0x21, 0x47, 0x65, 0x74, 0x53, 0x65, 0x72, 0x76, 0x65,
+	0x72, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x50, 0x61, 0x72, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69,
+	0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a,
+	0x03, 0x6d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x12,
+	0x16, 0x0a, 0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52,
+	0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x2e, 0x0a, 0x13, 0x6d, 0x79, 0x73, 0x71, 0x6c,
+	0x5f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x04,
+	0x20, 0x01, 0x28, 0x08, 0x52, 0x11, 0x6d, 0x79, 0x73, 0x71, 0x6c, 0x53, 0x65, 0x72, 0x76, 0x65,
+	0x72, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x2e, 0x0a, 0x13, 0x72, 0x65, 0x64, 0x69, 0x73,
+	0x5f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05,
+	0x20, 0x01, 0x28, 0x08, 0x52, 0x11, 0x72, 0x65, 0x64, 0x69, 0x73, 0x53, 0x65, 0x72, 0x76, 0x65,
+	0x72, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x17, 0x0a, 0x07, 0x6f, 0x73, 0x5f, 0x74, 0x79,
+	0x70, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6f, 0x73, 0x54, 0x79, 0x70, 0x65,
+	0x12, 0x17, 0x0a, 0x07, 0x6f, 0x73, 0x5f, 0x61, 0x72, 0x63, 0x68, 0x18, 0x08, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x06, 0x6f, 0x73, 0x41, 0x72, 0x63, 0x68, 0x12, 0x1f, 0x0a, 0x0b, 0x70, 0x61, 0x79,
+	0x5f, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x73, 0x18, 0x09, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a,
+	0x70, 0x61, 0x79, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x73, 0x32, 0xd1, 0x0f, 0x0a, 0x0f, 0x53,
 	0x65, 0x74, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x5f,
 	0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x69, 0x6e, 0x67, 0x6c, 0x65, 0x4f, 0x70,
 	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x23, 0x2e, 0x73, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x2e,
@@ -3255,8 +3508,24 @@ var file_settings_proto_rawDesc = []byte{
 	0x72, 0x4c, 0x69, 0x76, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x1a, 0x25, 0x2e, 0x73, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x2e, 0x47, 0x65,
 	0x74, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x4c, 0x69, 0x76, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x7d, 0x0a, 0x1c, 0x47, 0x65, 0x74,
+	0x41, 0x64, 0x6d, 0x69, 0x6e, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x68,
+	0x6f, 0x77, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x2d, 0x2e, 0x73, 0x65, 0x74, 0x74,
+	0x69, 0x6e, 0x67, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x44, 0x61, 0x73,
+	0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x68, 0x6f, 0x77, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x73, 0x65, 0x74, 0x74, 0x69,
+	0x6e, 0x67, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x44, 0x61, 0x73, 0x68,
+	0x62, 0x6f, 0x61, 0x72, 0x64, 0x53, 0x68, 0x6f, 0x77, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x74, 0x0a, 0x19, 0x47, 0x65, 0x74, 0x53,
+	0x65, 0x72, 0x76, 0x65, 0x72, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x50, 0x61, 0x72, 0x74, 0x43,
+	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x2a, 0x2e, 0x73, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67, 0x73,
+	0x2e, 0x47, 0x65, 0x74, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d,
+	0x50, 0x61, 0x72, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x2b, 0x2e, 0x73, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x2e, 0x47, 0x65, 0x74,
+	0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x50, 0x61, 0x72, 0x74,
+	0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x09,
+	0x5a, 0x07, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -3271,7 +3540,7 @@ func file_settings_proto_rawDescGZIP() []byte {
 	return file_settings_proto_rawDescData
 }
 
-var file_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
+var file_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 49)
 var file_settings_proto_goTypes = []any{
 	(*Value)(nil),                                    // 0: settings.Value
 	(*UpdateSingleOptionRequest)(nil),                // 1: settings.UpdateSingleOptionRequest
@@ -3317,10 +3586,14 @@ var file_settings_proto_goTypes = []any{
 	(*GetAppDownloadLinkResponse)(nil),               // 41: settings.GetAppDownloadLinkResponse
 	(*GetServerLiveStatusRequest)(nil),               // 42: settings.GetServerLiveStatusRequest
 	(*GetServerLiveStatusResponse)(nil),              // 43: settings.GetServerLiveStatusResponse
-	nil,                                              // 44: settings.CategorySettings.OptionsEntry
+	(*GetAdminDashboardShowMessageRequest)(nil),      // 44: settings.GetAdminDashboardShowMessageRequest
+	(*GetAdminDashboardShowMessageResponse)(nil),     // 45: settings.GetAdminDashboardShowMessageResponse
+	(*GetServerSystemPartConfigRequest)(nil),         // 46: settings.GetServerSystemPartConfigRequest
+	(*GetServerSystemPartConfigResponse)(nil),        // 47: settings.GetServerSystemPartConfigResponse
+	nil, // 48: settings.CategorySettings.OptionsEntry
 }
 var file_settings_proto_depIdxs = []int32{
-	44, // 0: settings.CategorySettings.options:type_name -> settings.CategorySettings.OptionsEntry
+	48, // 0: settings.CategorySettings.options:type_name -> settings.CategorySettings.OptionsEntry
 	8,  // 1: settings.Settings.site:type_name -> settings.Site
 	9,  // 2: settings.Settings.security:type_name -> settings.Security
 	10, // 3: settings.Settings.frontend:type_name -> settings.Frontend
@@ -3346,24 +3619,28 @@ var file_settings_proto_depIdxs = []int32{
 	37, // 23: settings.SettingsService.GetWelcomePageConfig:input_type -> settings.GetWelcomePageConfigRequest
 	39, // 24: settings.SettingsService.GetAppDownloadLink:input_type -> settings.GetAppDownloadLinkRequest
 	42, // 25: settings.SettingsService.GetServerLiveStatus:input_type -> settings.GetServerLiveStatusRequest
-	2,  // 26: settings.SettingsService.UpdateSingleOption:output_type -> settings.UpdateSingleOptionResponse
-	4,  // 27: settings.SettingsService.GetStartTheme:output_type -> settings.GetStartThemeResponse
-	7,  // 28: settings.SettingsService.GetSystemSettings:output_type -> settings.GetSystemSettingsResponse
-	18, // 29: settings.SettingsService.AddPaymentMethod:output_type -> settings.AddPaymentMethodResponse
-	20, // 30: settings.SettingsService.GetAllPaymentSettingsKv:output_type -> settings.GetAllPaymentSettingsKvResponse
-	28, // 31: settings.SettingsService.GetPaymentMethodDetailsByName:output_type -> settings.GetPaymentMethodDetailsByNameResponse
-	22, // 32: settings.SettingsService.EditPaymentSettingsBySystemName:output_type -> settings.EditPaymentSettingsBySystemNameResponse
-	24, // 33: settings.SettingsService.EnablePaymentSettingBySystemName:output_type -> settings.EnablePaymentSettingBySystemNameResponse
-	26, // 34: settings.SettingsService.DeletePaymentSettingBySystemName:output_type -> settings.DeletePaymentSettingBySystemNameResponse
-	30, // 35: settings.SettingsService.GetInviteUserMsg:output_type -> settings.GetInviteUserMsgResponse
-	32, // 36: settings.SettingsService.GetAdminDashboardData:output_type -> settings.GetAdminDashboardDataResponse
-	34, // 37: settings.SettingsService.GetBasicRuntimeEnvConfig:output_type -> settings.GetBasicRuntimeEnvConfigResponse
-	36, // 38: settings.SettingsService.GetRegisterEnvConfig:output_type -> settings.GetRegisterEnvConfigResponse
-	38, // 39: settings.SettingsService.GetWelcomePageConfig:output_type -> settings.GetWelcomePageConfigResponse
-	41, // 40: settings.SettingsService.GetAppDownloadLink:output_type -> settings.GetAppDownloadLinkResponse
-	43, // 41: settings.SettingsService.GetServerLiveStatus:output_type -> settings.GetServerLiveStatusResponse
-	26, // [26:42] is the sub-list for method output_type
-	10, // [10:26] is the sub-list for method input_type
+	44, // 26: settings.SettingsService.GetAdminDashboardShowMessage:input_type -> settings.GetAdminDashboardShowMessageRequest
+	46, // 27: settings.SettingsService.GetServerSystemPartConfig:input_type -> settings.GetServerSystemPartConfigRequest
+	2,  // 28: settings.SettingsService.UpdateSingleOption:output_type -> settings.UpdateSingleOptionResponse
+	4,  // 29: settings.SettingsService.GetStartTheme:output_type -> settings.GetStartThemeResponse
+	7,  // 30: settings.SettingsService.GetSystemSettings:output_type -> settings.GetSystemSettingsResponse
+	18, // 31: settings.SettingsService.AddPaymentMethod:output_type -> settings.AddPaymentMethodResponse
+	20, // 32: settings.SettingsService.GetAllPaymentSettingsKv:output_type -> settings.GetAllPaymentSettingsKvResponse
+	28, // 33: settings.SettingsService.GetPaymentMethodDetailsByName:output_type -> settings.GetPaymentMethodDetailsByNameResponse
+	22, // 34: settings.SettingsService.EditPaymentSettingsBySystemName:output_type -> settings.EditPaymentSettingsBySystemNameResponse
+	24, // 35: settings.SettingsService.EnablePaymentSettingBySystemName:output_type -> settings.EnablePaymentSettingBySystemNameResponse
+	26, // 36: settings.SettingsService.DeletePaymentSettingBySystemName:output_type -> settings.DeletePaymentSettingBySystemNameResponse
+	30, // 37: settings.SettingsService.GetInviteUserMsg:output_type -> settings.GetInviteUserMsgResponse
+	32, // 38: settings.SettingsService.GetAdminDashboardData:output_type -> settings.GetAdminDashboardDataResponse
+	34, // 39: settings.SettingsService.GetBasicRuntimeEnvConfig:output_type -> settings.GetBasicRuntimeEnvConfigResponse
+	36, // 40: settings.SettingsService.GetRegisterEnvConfig:output_type -> settings.GetRegisterEnvConfigResponse
+	38, // 41: settings.SettingsService.GetWelcomePageConfig:output_type -> settings.GetWelcomePageConfigResponse
+	41, // 42: settings.SettingsService.GetAppDownloadLink:output_type -> settings.GetAppDownloadLinkResponse
+	43, // 43: settings.SettingsService.GetServerLiveStatus:output_type -> settings.GetServerLiveStatusResponse
+	45, // 44: settings.SettingsService.GetAdminDashboardShowMessage:output_type -> settings.GetAdminDashboardShowMessageResponse
+	47, // 45: settings.SettingsService.GetServerSystemPartConfig:output_type -> settings.GetServerSystemPartConfigResponse
+	28, // [28:46] is the sub-list for method output_type
+	10, // [10:28] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
 	10, // [10:10] is the sub-list for extension extendee
 	0,  // [0:10] is the sub-list for field type_name
@@ -3386,7 +3663,7 @@ func file_settings_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_settings_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   45,
+			NumMessages:   49,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

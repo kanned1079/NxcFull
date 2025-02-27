@@ -853,3 +853,22 @@ func HandleAlterUsername(context *gin.Context) {
 	})
 
 }
+
+func HandleGetUserLayout(context *gin.Context) {
+	resp, err := grpcClient.UserServiceClient.GetUsersLayout(sysContext.Background(), &pb.GetUsersLayoutRequest{})
+	if err = failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":          resp.Code,
+		"msg":           resp.Msg,
+		"user_all":      resp.UserAll,
+		"user_active":   resp.UserActive,
+		"user_inactive": resp.UserInactive,
+		"user_blocked":  resp.UserBlocked,
+	})
+}

@@ -116,6 +116,8 @@ export default {
             "incomeText": "昨日收入 / 當月收入",
             "pendingTicket": "您有 {nums} 條待處理工單",
             "toHandle": "去查看",
+            "apiAccessCard": "一週內API接口訪問次數",
+            "incomeWeek": "一週內收入金額",
             "userCard": {
                 "title": "用戶概覽",
                 "allRegisteredUsers": "總註冊用戶",
@@ -134,13 +136,18 @@ export default {
             },
             "system": {
                 "title": "系統配置",
-                "serverTime": "",
-                "gatewayStatus": "網關狀態",
+                "axiosAddr": "HTTP后端地址",
+                "wsAddr": "Websocket后端地址",
+                "serverTime": "服務器時間",
+                "uptime": "運行時長",
+                "gatewayStatus": "API網關狀態",
                 "dbStatus": "數據庫狀態",
                 "redisStatus": "Redis狀態",
-                "etcdStatus": "Etcd狀態",
                 "serverOsType": "服務器操作系統類型",
-
+                "serverOsArch": "服務器操作系統架構",
+                "runMode": "運行模式",
+                "cpuNums": "網關服務器CPU核心數",
+                "paymentMethods": "啟用的支付方式",
             }
         },
         "queueMonit": {
@@ -1042,7 +1049,11 @@ export default {
                 "pendingDescription": "活躍的工單，這是您應該先進行處理的工單，如果工單確認已經完成請關閉，如不關閉則該工單將始終置於此處。",
                 "finishedDescription": "已經完成的工單，您可以在這裡檢視它們。",
             },
-            "chooseOneNecessary": "您應該至少選擇一個項目"
+            "chooseOneNecessary": "您應該至少選擇一個項目",
+            "mention": {
+                "title": "您确定要关闭该工单吗？",
+                "content": "該工單在關閉後將會歸檔至已完成工單中，您可以再次檢視他們的內容，但是再也无法回复此工单。",
+            },
         },
     },
     "userLogin": {
@@ -1067,7 +1078,8 @@ export default {
         "checkForm": '請檢查表單',
         "if2FaEnabledHint": '如果您啟用了兩步驗證（非必填）',
         "reqErr": '請求出現錯誤請稍後再試',
-        "accountLocked": '您的帳戶可能被註銷或封禁，暫時無法繼續使用，如你仍然認為這是一個錯誤，請聯繫我們的技術支持。'
+        "accountLocked": "您的帳戶可能被註銷或封禁，暫時無法繼續使用，如你仍然認為這是一個錯誤，請聯繫我們的技術支持。",
+        "tokenNotExist": "请提供Token",
     },
     "userRegister": {
         "backHomePage": '回到首頁',
@@ -1567,6 +1579,7 @@ export default {
         "alterRemark": '修改備注',
         "commitRemark": '提交',
         "updateSuccess": '更新成功',
+        "setRemark": "在這裡設置備注信息",
     },
     "userAppDownload": {
         "title": 'APP下載',

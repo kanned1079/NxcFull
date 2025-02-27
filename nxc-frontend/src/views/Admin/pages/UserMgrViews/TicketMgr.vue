@@ -4,17 +4,19 @@ import {useI18n} from "vue-i18n";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
-import {NButton, NTag, useMessage, type DataTableColumns, type CheckboxProps} from "naive-ui";
+import {NButton, NTag, useMessage, type DataTableColumns, type CheckboxProps, useDialog} from "naive-ui";
 import {formatDate} from "@/utils/timeFormat";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
 import useTablePagination from "@/hooks/useTablePagination";
 import {handleCloseTicketById, handleGetAllTicket} from "@/api/admin/ticket";
+import {handleDeleteGroup} from "@/api/admin/groups";
 // import {ArrowUpOutline} from "@vicons/ionicons5"
 
 const {t} = useI18n()
 const i18nPrefix = 'adminViews.adminTicket'
 const message = useMessage()
+const dialog = useDialog()
 const userInfoStore = useUserInfoStore()
 const appInfoStore = useAppInfosStore()
 const themeStore = useThemeStore()
@@ -130,7 +132,7 @@ const columns = computed<DataTableColumns<TicketItem>>(() => [
           secondary: true,
           disabled: row.status === 204,
           style: {marginLeft: '10px'},
-          onClick: () => closeTicket(row.id)
+          onClick: () => closeTicket(row)
         }, {
           default: () => t('userTickets.closeTicket')
         })
@@ -162,15 +164,38 @@ let getAllTicket = async () => {
   animated.value = true
 }
 
-let closeTicket = async (ticket_id: number) => {
-  animated.value = false
-  let data = await handleCloseTicketById(userInfoStore.thisUser.id, ticket_id)
-  if (data && data.code === 200 && data.closed) {
-    message.success(t('userTickets.ticketCloseSuccess'))
-    await getAllTicket()
-  } else {
-    message.error(t('userTickets.ticketCloseFailure') + data.msg || '')
+let closeTicket = async (row: TicketItem) => {
+  let runCloseTask = async () => {
+    animated.value = false
+    let data = await handleCloseTicketById(userInfoStore.thisUser.id, row.id)
+    if (data && data.code === 200 && data.closed) {
+      message.success(t('userTickets.ticketCloseSuccess'))
+      await getAllTicket()
+    } else {
+      message.error(t('userTickets.ticketCloseFailure') + data.msg || '')
+    }
   }
+  dialog.warning({
+    title: t('adminViews.adminTicket.mention.title'),
+    content: () => {
+      return h('div', {}, [
+        h('p', {style: {fontWeight: 'bold', fontSize: '1rem', opacity: '0.8'}}, row.subject),
+        h('p', {style: {marginTop: '4px'}}, t('adminViews.adminTicket.mention.content'))
+      ])
+    },
+    positiveText: t('adminViews.common.confirm'),
+    negativeText: t('adminViews.common.cancel'),
+    showIcon: false,
+    actionStyle: {
+      marginTop: '20px',
+    },
+    contentStyle: {
+      marginTop: '20px',
+    },
+    onPositiveClick: async () => {
+      await runCloseTask()
+    }
+  })
 }
 
 const triggerTypeCheck = () => {

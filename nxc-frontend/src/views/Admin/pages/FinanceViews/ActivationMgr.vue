@@ -362,7 +362,7 @@ export default {
             :data="activateRecordList"
             :pagination="false"
             :bordered="true"
-            :scroll-x="1600"
+            :scroll-x="1200"
         />
       </n-card>
       <DataTableSuffix

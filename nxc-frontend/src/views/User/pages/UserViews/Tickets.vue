@@ -11,12 +11,9 @@ import {AddOutline as AddIcon} from "@vicons/ionicons5"
 
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import useTablePagination from "@/hooks/useTablePagination";
 
-let pageCount = ref<number>(0)
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+let [dataSize, pageCount] = useTablePagination()
 
 interface Ticket {
   subject: string
@@ -156,7 +153,6 @@ let callGetAllMyTickets = async () => {
 let callCommitNewTicket = async () => {
   if (await validateClick()) {
     // if (formIsValid.value) {
-    console.log('表單驗證通過')
     let data = await commitNewTicket(userInfoStore.thisUser.id, newTicket.value)
     if (data.code === 200 && data.created) {
       message.success(computed(() => t('userTickets.commitNewTicketSuccess')).value)
@@ -172,7 +168,7 @@ let callCommitNewTicket = async () => {
 
 // 点击打开工单后 单独打开一个聊天窗口
 let openTicket = (ticket: TicketItem) => {
-  message.info(`查看工单：${ticket.subject}`);
+  message.info(`check ticket：${ticket.subject}`);
   const chatDialogWindow = window.open(
       `${appInfoStore.appCommonConfig.app_url}/user/tickets/chat?user_id=${userInfoStore.thisUser.id}&ticket_id=${ticket.id}&subject=${ticket.subject}&status=${ticket.status}&role=1`,
       'Chat',
@@ -337,15 +333,6 @@ export default {
   </PageHead>
 
   <div class="root">
-<!--    <n-card class="tickets-history" :embedded="true" hoverable content-style="padding: 0;" :bordered="false">-->
-<!--      <div class="header">-->
-<!--        <p class="title">{{ t('userTickets.userTickets') }}</p>-->
-<!--        <n-button :bordered="false" class="add-btn" type="primary" @click="showNewTicketModal = true">{{-->
-<!--            t('userTickets.addTicket')-->
-<!--          }}-->
-<!--        </n-button>-->
-<!--      </div>-->
-<!--    </n-card>-->
 
     <transition name="slide-fade">
       <div v-if="animated">

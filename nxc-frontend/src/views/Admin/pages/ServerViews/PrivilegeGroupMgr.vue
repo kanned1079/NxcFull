@@ -272,7 +272,7 @@ export default {
               striped
               :columns="columns"
               :data="groupList"
-              :scroll-x="900"
+              :scroll-x="1200"
               :remote="true"
           />
         </n-spin>

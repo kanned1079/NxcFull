@@ -30,6 +30,27 @@ export const handleDeletePreviousLog = async () => {
         let {data} = await instance.delete('/api/admin/v1/server/log/delete')
         return data
     } catch (err: any) {
+        console.error(err)
+        return false
+    }
+}
 
+export const handleGetUserLayout = async () => {
+    try {
+        let {data} = await instance.get('/api/admin/v1/app/users/layout')
+        return data
+    } catch (err: any) {
+        console.error(err)
+        return false
+    }
+}
+
+export const handleFetchAppCommonConfig = async () => {
+    try {
+        let {data} = await instance.get('/api/admin/v1/app/common/config')
+        return data
+    } catch (err: any) {
+        console.error(err)
+        return false
     }
 }

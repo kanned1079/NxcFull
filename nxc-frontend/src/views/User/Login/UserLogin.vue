@@ -116,6 +116,7 @@ let clickedCount = ref<number>(0)
 interface DataWithAuth {
   isAuthed: boolean;
   user_data: UserData;
+  token: string;
 }
 
 interface UserData {
@@ -133,6 +134,7 @@ interface UserData {
 }
 
 let bindUserInfo = (data: DataWithAuth) => {
+  userInfoStore.thisUser.token = data.token
   userInfoStore.isAuthed = data.isAuthed
   let {user_data} = data
 
@@ -152,35 +154,34 @@ let bindUserInfo = (data: DataWithAuth) => {
 let callLogin = async () => {
   // console.log(formValue.value.user.email, formValue.value.user.password)
   // try {
-    // let hashedPwd = await hashPassword(formValue.value.user.password)
-    // console.log('测试用hashedPwd ', hashedPwd)
-    // let {data} = await instance.post("/api/user/v1/login", {
-    //   email: formValue.value.user.email.trim(),
-    //   password: encodeToBase64(formValue.value.user.password.trim() as string),
-    //   two_fa_code: formValue.value.user.two_fa_code.trim(),
-    //   // password: hashedPwd,
-    //   role: 'user',
-    // })
-    let data = await handleUserLogin(
-        formValue.value.user.email,
-        formValue.value.user.password.trim(),
-        'user',
-        formValue.value.user.two_fa_code.trim(),
-    )
-    if (!data) return message.error(t('userLogin.reqErr'))
-    if (data.code === 200 && data.isAuthed === true) {
-      if (!data.user_data.status) return message.error(t('userLogin.accountLocked'))
-      // 验证通过 保存token
-      sessionStorage.setItem('token', data.token)
-      // sessionStorage.setItem('isAuthed', JSON.stringify(true))
-      notifyPass('success');
-      bindUserInfo(data)
-      // if (!userInfoStore.thisUser.status) return message.error('locked')
-      await router.push({path: '/dashboard'});
-    } else {
-      enableLogin.value = true
-      notifyErr("error", data.msg)
-    }
+  // let hashedPwd = await hashPassword(formValue.value.user.password)
+  // console.log('测试用hashedPwd ', hashedPwd)
+  // let {data} = await instance.post("/api/user/v1/login", {
+  //   email: formValue.value.user.email.trim(),
+  //   password: encodeToBase64(formValue.value.user.password.trim() as string),
+  //   two_fa_code: formValue.value.user.two_fa_code.trim(),
+  //   // password: hashedPwd,
+  //   role: 'user',
+  // })
+  let data = await handleUserLogin(
+      formValue.value.user.email,
+      formValue.value.user.password.trim(),
+      'user',
+      formValue.value.user.two_fa_code.trim(),
+  )
+  if (!data) return message.error(t('userLogin.reqErr'))
+  if (data.code === 200 && data.isAuthed === true) {
+    if (!data.user_data.status) return message.error(t('userLogin.accountLocked'))
+    // 验证通过 保存token
+    if (!data.token) return message.error(t('userLogin.tokenNotExist'))
+    sessionStorage.setItem('token', data.token)
+    notifyPass('success');
+    bindUserInfo(data)
+    await router.push({path: '/dashboard'});
+  } else {
+    enableLogin.value = true
+    notifyErr("error", data.msg)
+  }
   // } catch (error) {
   //   console.log(error)
   //   // notifyErr('error', error.toString())

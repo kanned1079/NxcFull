@@ -20,6 +20,7 @@ import {
 } from "@/api/admin/coupon";
 import {handleFetchPlanKv} from "@/api/admin/plan";
 import useTablePagination from "@/hooks/useTablePagination";
+import {formatDate} from "@/utils/timeFormat";
 import {handleDeleteGroup} from "@/api/admin/groups";
 
 const {t} = useI18n();
@@ -50,7 +51,7 @@ interface Coupon {
   enabled: boolean // 优惠券是否启用
   code: string  // 优惠券码
   percent_off: number   // 抵折百分比
-  start_time: number  // 优惠券启用时间
+  start_time: number | string  // 优惠券启用时间
   end_time: number  // 优惠券过期时间
   per_user_limit: number  // 每个用户限制的使用次数
   capacity: number  // 总共优惠券数量
@@ -199,7 +200,7 @@ let activateACoupon = async (id: number, value: boolean) => {
 const updateCouponClick = async (row: Coupon) => {
   Object.assign(formValue.value.coupon, row)
   if (row.plan_limit === 0) formValue.value.coupon.plan_limit = null
-  range.value = [Date.parse(row.start_time), Date.parse(row.end_time)]
+  range.value = [Date.parse(String(row.start_time)), Date.parse(String(row.end_time))]
   editType.value = 'edit'
   await getPlanKV()
   showModal.value = true // 修改好後再顯示
@@ -323,14 +324,14 @@ const columns = computed<DataTableColumns<Coupon>>(() => [
     title: t(`${i18nTablePrefix}.startTime`),
     key: 'start_time',
     render(row: Coupon) {
-      return h('p', {}, {default: () => formatTimestamp(row.start_time)});
+      return h('p', {}, {default: () => formatDate(row.start_time as string)});
     }
   },
   {
     title: t(`${i18nTablePrefix}.endTime`),
     key: 'end_time',
     render(row: Coupon) {
-      return h('p', {}, {default: () => formatTimestamp(row.end_time)});
+      return h('p', {}, {default: () => formatDate(row.end_time as string)});
     }
   },
   {
@@ -473,7 +474,7 @@ export default {
               :data="couponList"
               :pagination="false"
               :bordered="true"
-              :scroll-x="1600"
+              :scroll-x="1200"
           />
         </n-spin>
 

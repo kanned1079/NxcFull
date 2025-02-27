@@ -5,7 +5,7 @@ import useApiAddrStore from "@/stores/useApiAddrStore";
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import useThemeStore from "@/stores/useThemeStore";
 import {NButton, NIcon, useMessage} from "naive-ui";
-import instance from "@/axios";
+// import instance from "@/axios";
 import {
   CheckmarkOutline as copiedIcon,
   CloseOutline as closeIcon,
@@ -15,10 +15,11 @@ import {
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
 import {handleGetAllMyKeys} from "@/api/user/keys";
+import useTablePagination from "@/hooks/useTablePagination";
 
 const {t} = useI18n();
 const message = useMessage()
-const apiAddrStore = useApiAddrStore();
+// const apiAddrStore = useApiAddrStore();
 const userInfoStore = useUserInfoStore();
 const themeStore = useThemeStore();
 
@@ -29,12 +30,13 @@ let showSkeleton = ref<boolean>(false)
 
 let animated = ref<boolean>(false)
 
-let pageCount = ref(10)
+// let pageCount = ref(10)
+let [dataSize, pageCount] = useTablePagination()
 
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
 
 
 interface Key {
@@ -53,7 +55,6 @@ interface Key {
 }
 
 let myKeys = ref<Key[]>([])
-
 
 // getAllMyKeys 获取所有用户的密钥
 let getAllMyKeys = async () => {

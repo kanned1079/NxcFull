@@ -576,6 +576,7 @@ export default {
             :columns="columns"
             :data="apiLogList"
             striped
+            :scroll-x="1200"
         />
       </n-card>
 

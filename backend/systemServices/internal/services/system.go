@@ -7,6 +7,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"log"
 	"net/http"
+	"runtime"
 	pb "systemServices/api/proto"
 	"systemServices/internal/dao"
 	"systemServices/internal/model"
@@ -115,5 +116,100 @@ func (s *SettingServices) UpdateSingleOption(context context.Context, request *p
 	return &pb.UpdateSingleOptionResponse{
 		Code: http.StatusOK,
 		Msg:  "配置项更新成功",
+	}, nil
+}
+
+/*
+
+serverTime: '2025-2-12 12:12:12',
+    apiServerStatus: true,
+    mysqlServerStatus: true,
+    redisServerStatus: true,
+    osType: 'Linux',
+    osArch: 'arm64',
+    uptime: '30h',
+    ginMode: 'release',
+    numCpu: 10,
+    enabledPayMethods: ['aaa', 'bbb']
+*/
+
+func normalizeBoolJsonValue(value json.RawMessage) bool {
+	var boolValue bool
+	// 尝试将 json.RawMessage 解码为布尔值
+	err := json.Unmarshal(value, &boolValue)
+	if err != nil {
+		// 如果解码失败，可以返回 false 或根据需要进行其他处理
+		return false
+	}
+	return boolValue
+}
+
+func getPaymentConf() {
+	// 清空 PaymentMethodsArr
+	paymentMethodsArr = nil
+
+	var paymentSettings []model.PaymentSettings
+
+	// 查询数据库
+	err := dao.Db.Model(&model.PaymentSettings{}).Find(&paymentSettings).Error
+	if err != nil {
+		fmt.Printf("Failed to load payment settings: %v\n", err)
+		return
+	}
+
+	// 遍历配置项
+	for _, setting := range paymentSettings {
+		// 如果配置项的 Key 是 Enabled，并且值为 true
+		if setting.Key == "enabled" && string(setting.Value) == "true" {
+			// 将系统类型（如 alipay, wechat, apple）推入 PaymentMethodsArr
+			paymentMethodsArr = append(paymentMethodsArr, setting.System)
+		}
+	}
+
+	fmt.Printf("Payment configurations initialized successfully. Enabled methods: %v\n", paymentMethodsArr)
+}
+
+var paymentMethodsArr []string
+
+func (s *SettingServices) GetServerSystemPartConfig(ctx context.Context, request *pb.GetServerSystemPartConfigRequest) (*pb.GetServerSystemPartConfigResponse, error) {
+	// 检查 MySQL 服务器状态
+	var mysqlServerStatus bool
+	if err := dao.Db.Raw("SELECT 1").Scan(&mysqlServerStatus).Error; err != nil {
+		mysqlServerStatus = false
+	} else {
+		mysqlServerStatus = true
+	}
+
+	// 检查 Redis 服务器状态
+	var redisServerStatus bool
+	_, err := dao.Rdb.Ping(ctx).Result() // 检查 Redis 是否可用
+	if err != nil {
+		redisServerStatus = false
+	} else {
+		redisServerStatus = true
+	}
+	/*
+	   serverTime: '2025-2-12 12:12:12',
+	      apiServerStatus: true,
+	      mysqlServerStatus: true,
+	      redisServerStatus: true,
+	      osType: 'Linux',
+	      osArch: 'arm64',
+	      uptime: '30h',
+	      ginMode: 'release',
+	      numCpu: 10,
+	      enabledPayMethods: ['aaa', 'bbb']
+	*/
+	getPaymentConf()
+
+	// 返回响应
+	return &pb.GetServerSystemPartConfigResponse{
+		Code:              http.StatusOK,
+		Msg:               "success",
+		MysqlServerStatus: mysqlServerStatus, // MySQL 服务器状态
+		RedisServerStatus: redisServerStatus, // Redis 服务器状态
+		OsType:            runtime.GOOS,      // 操作系统类型
+		OsArch:            runtime.GOARCH,    // 操作系统架构
+		PayMethods:        paymentMethodsArr,
 	}, nil
 }

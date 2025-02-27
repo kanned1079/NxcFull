@@ -6,13 +6,17 @@ import * as echarts from 'echarts';
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
 import instance from "@/axios";
+import {useMessage} from "naive-ui"
 import {Podium as incomeIcon} from '@vicons/ionicons5'
+import {handleGetUserLayout, handleFetchAppCommonConfig} from "@/api/admin/server";
+import {config as backendConfig} from "@/config"
 
 type EChartsOption = echarts.EChartsOption;
 
 const {t, locale} = useI18n()
 const themeStore = useThemeStore();
 const appInfoStore = useAppInfosStore();
+const message = useMessage()
 
 let apiAccessCount = ref<number[]>([])
 let incomeCount = ref<number[]>([])
@@ -31,7 +35,6 @@ let getAppOverview = async () => {
       data.income_count_history.forEach((item: number) => incomeCount.value.unshift(item))
       yesterdayIncome.value = data.income_yesterday ? data.income_yesterday : 0.00
       monthIncome.value = data.income_this_month ? data.income_this_month : 0.00
-      // console.log('a:', yesterdayIncome.value, monthIncome.value)
     }
   } catch (error) {
     console.log(error)
@@ -297,116 +300,194 @@ let reloadCharts = () => {
   }
 }
 
-interface MiscellaneousConfig {
+type MiscellaneousConfig = {
   userAll: number;
   userActive: number;
   userInactive: number;
   userBlocked: number;
-  serverTime: string;
-  apiServerStatus: boolean;
-  mysqlServerStatus: boolean;
-  osType: string;
-  osArch: string;
+  config: {
+    serverTime: string;
+    apiServerStatus: boolean;
+    mysqlServerStatus: boolean;
+    redisServerStatus: boolean;
+    osType: string;
+    osArch: string;
+    uptime: string;
+    ginMode: string;
+    numCpu: number;
+    enabledPayMethods?: string[]
+  }
 }
 
 let miscellaneousConfig = ref<MiscellaneousConfig>({
-  userAll: 0,
-  userActive: 0,
-  userInactive: 0,
-  userBlocked: 0,
-  serverTime: '',
-  apiServerStatus: true,
-  mysqlServerStatus: true,
-  osType: '',
-  osArch: '',
+  userAll: 100,
+  userActive: 20,
+  userInactive: 10,
+  userBlocked: 30,
+  config: {
+    serverTime: '',
+    apiServerStatus: false,
+    mysqlServerStatus: false,
+    redisServerStatus: false,
+    osType: '',
+    osArch: '',
+    uptime: '',
+    ginMode: '',
+    numCpu: 0,
+    enabledPayMethods: []
+  }
 })
 
 // TODO
-let usersInfo = computed<{ name: string; data: number }[]>(() => [
+let usersInfo = computed<{ name: string; data: string }[]>(() => [
   {
-    name: '总注册用户数',
-    data: miscellaneousConfig.value.userAll,
+    name: 'adminViews.summary.userCard.allRegisteredUsers',
+    data: `${miscellaneousConfig.value.userAll}`,
   },
   {
-    name: '活跃用户数',
-    data: miscellaneousConfig.value.userActive,
+    name: 'adminViews.summary.userCard.activeUsers',
+    data: `${miscellaneousConfig.value.userActive} (${((miscellaneousConfig.value.userActive/miscellaneousConfig.value.userAll)*100).toFixed(1)}%)`,
   },
   {
-    name: '非活跃用户数',
-    data: miscellaneousConfig.value.userInactive,
+    name: 'adminViews.summary.userCard.inactiveUsers',
+    data: `${miscellaneousConfig.value.userInactive} (${((miscellaneousConfig.value.userInactive/miscellaneousConfig.value.userAll)*100).toFixed(1)}%)`,
   },
   {
-    name: '封禁或注销',
-    data: miscellaneousConfig.value.userInactive,
+    name: 'adminViews.summary.userCard.blockedUsers',
+    data: `${miscellaneousConfig.value.userBlocked} (${((miscellaneousConfig.value.userBlocked/miscellaneousConfig.value.userAll)*100).toFixed(1)}%)`,
   }
 ])
 
 let generalInfo = computed<{ name: string; data: string }[]>( () => [
   {
-    name: '浏览器时间',
+    name: 'adminViews.summary.general.localTime',
     data: computed(() => {
-      // let timeNow = new Date()
-      // return `${timeNow.getUTCFullYear()}-${timeNow.getUTCMonth()}-${timeNow.getUTCDay()} ${timeNow.getUTCHours()}:${timeNow.getMinutes()}:${timeNow.getSeconds()} UTC`
       return (new Date()).toString()
     }).value,
   },
   {
-    name: '当前操作系统类型',
+    name: 'adminViews.summary.general.osType',
     data: getOperatingSystem(),
   },
   {
-    name: '系统名',
-    data: computed(() => appInfoStore.appCommonConfig.app_name).value,
+    name: 'adminViews.summary.general.appName',
+    data: appInfoStore.appCommonConfig.app_name,
   },
   {
-    name: '最新网址',
-    data: computed(() => appInfoStore.appCommonConfig.app_url).value,
+    name: 'adminViews.summary.general.appUrl',
+    data: appInfoStore.appCommonConfig.app_url,
   },
   {
-    name: '货币单位',
-    data: computed(() => appInfoStore.appCommonConfig.currency).value,
+    name: 'adminViews.summary.general.currency',
+    data: appInfoStore.appCommonConfig.currency,
   },
   {
-    name: '允许用户注册',
-    data: computed(() => !appInfoStore.appCommonConfig.stop_register ? '是' : '否').value,
+    name: 'adminViews.summary.general.allowRegister',
+    data:  !appInfoStore.appCommonConfig.stop_register ? '是' : '否',
   },
 ])
 
-let serverInfo = ref<{ name: string; data: string }[]>([
+/*
+* serverTime: string;
+    apiServerStatus: boolean;
+    mysqlServerStatus: boolean;
+    osType: string;
+    osArch: string;
+    uptime: string;
+    ginMode: string;
+    numCpu: number;
+* */
+
+type ServerInfo = {
+  name: string;
+  data: string | (() => string);
+}
+
+let serverInfo = computed<ServerInfo[]>(() =>[
   {
-    name: '服务器时间',
-    data: '2024-10-18 15:23:03',
+    name: 'adminViews.summary.system.axiosAddr',
+    data: backendConfig.apiAddr.axiosAddr,
   },
   {
-    name: 'API网关运行状态',
-    data: '运行正常 (https)',
+    name: 'adminViews.summary.system.wsAddr',
+    data: backendConfig.apiAddr.wsAddr,
   },
   {
-    name: '数据库运行状态',
-    data: '运行正常',
+    name: 'adminViews.summary.system.uptime',
+    data: miscellaneousConfig.value.config.uptime,
   },
   {
-    name: 'Redis运行状态',
-    data: '运行正常',
+    name: 'adminViews.summary.system.gatewayStatus',
+    data: miscellaneousConfig.value.config.apiServerStatus? '运行正常' : '运行异常',
   },
   {
-    name: 'Etcd运行状态',
-    data: '运行正常',
+    name: 'adminViews.summary.system.dbStatus',
+    data:  miscellaneousConfig.value.config.mysqlServerStatus? '运行正常' : '运行异常',
   },
   {
-    name: '服务器操作系统类型',
-    data: 'Linux 5.14.287',
+    name: 'adminViews.summary.system.redisStatus',
+    data: miscellaneousConfig.value.config.redisServerStatus? '运行正常' : '运行异常',
   },
   {
-    name: '后端程序操作系统架构',
-    data: 'x86_64',
+    name: 'adminViews.summary.system.serverOsType',
+    data: miscellaneousConfig.value.config.osType,
   },
   {
-    name: '启用的支付方式',
-    data: 'Wechat | Alipay | ApplePay',
+    name: 'adminViews.summary.system.serverOsArch',
+    data: miscellaneousConfig.value.config.osArch,
+  },
+  {
+    name: 'adminViews.summary.system.runMode',
+    data: miscellaneousConfig.value.config.ginMode,
+  },
+  {
+    name: 'adminViews.summary.system.cpuNums',
+    data: `${miscellaneousConfig.value.config.numCpu.toString()}(s) 个`,
+  },
+  {
+    name: 'adminViews.summary.system.paymentMethods',
+    data: () => {
+      let res = '';
+      miscellaneousConfig.value.config.enabledPayMethods?.map((method: string) => {
+        res = res + `${method}, `;
+      });
+      return res.trim().replace(/,$/, '');  // 去掉最后多余的逗号
+    }
   },
 
 ])
+
+let callGetUsersLayout = async () => {
+  let data = await handleGetUserLayout()
+  if (data && data.code === 200) {
+    miscellaneousConfig.value.userAll = data.user_all
+    miscellaneousConfig.value.userActive = data.user_active
+    miscellaneousConfig.value.userInactive = data.user_inactive
+    miscellaneousConfig.value.userBlocked = data.user_blocked
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure'))
+  }
+}
+
+let callGetAppCommonConfig = async () => {
+  let data = await handleFetchAppCommonConfig()
+  console.log(data)
+  if (data && data.code === 200) {
+      miscellaneousConfig.value.config.serverTime = data.config.server_time
+      miscellaneousConfig.value.config.enabledPayMethods = data.config.enabled_pay_methods
+      miscellaneousConfig.value.config.apiServerStatus = data.config.api_server_status
+      miscellaneousConfig.value.config.mysqlServerStatus = data.config.mysql_server_status
+      miscellaneousConfig.value.config.redisServerStatus = data.config.redis_server_status
+      miscellaneousConfig.value.config.osType = data.config.os_type
+      miscellaneousConfig.value.config.osArch = data.config.os_arch
+      miscellaneousConfig.value.config.uptime = data.config.uptime
+      miscellaneousConfig.value.config.ginMode = data.config.gin_mode
+      miscellaneousConfig.value.config.numCpu = data.config.num_cpu
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure'))
+  }
+}
+
 
 onBeforeMount(async () => {
   await getAppOverview()  // 先获取数据
@@ -423,7 +504,10 @@ onMounted(async () => {
 
   // console.log(toRaw(props.apiAccessCount))
 
-  console.log(yesterdayIncome.value, monthIncome.value)
+  // console.log(yesterdayIncome.value, monthIncome.value)
+
+  await callGetUsersLayout()
+  await callGetAppCommonConfig()
 
 });
 
@@ -492,36 +576,31 @@ export default {
 
     <!--      <Income :yesterday-income="yesterdayIncome" :this-month-income="monthIncome"></Income>-->
     <div>
-      <n-grid cols="1 s:2" responsive="screen" :x-gap="15" :y-gap="15">
+      <n-grid cols="1 s:2" responsive="screen" :x-gap="14" :y-gap="14">
         <n-grid-item>
           <n-card class="user-count-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0"
-                  title="用户概览">
+                  :title="t('adminViews.summary.userCard.title')">
             <n-table
                 :bordered="false"
                 :bottom-bordered="false"
-                style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
+                style="background-color: rgba(0,0,0,0.0); padding: 0 14px 0 14px"
             >
               <n-tr style=" margin-left: 200px" v-for="(item, index) in usersInfo" :key="index">
-                <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.name }}</n-td>
+                <n-td style="background-color: rgba(0,0,0,0.0);">{{ t(item.name) }}</n-td>
                 <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.data }}</n-td>
               </n-tr>
             </n-table>
           </n-card>
           <n-card
-              title="最近一周API接口访问次数"
+              :title="t('adminViews.summary.apiAccessCard')"
               hoverable class="card1" :embedded="true" :bordered="false">
             <div class="visited" style="height: 280px" ref="visitedChartDOM"></div>
           </n-card>
           <n-card
-              title="最近一周收入金额"
+              :title="t('adminViews.summary.incomeWeek')"
               hoverable class="card2" :embedded="true" :bordered="false">
             <div class="internal" style="height: 280px" ref="incomeChartDOM"></div>
           </n-card>
-          <!--            <n-card-->
-          <!--                title="活跃用户占比"-->
-          <!--                hoverable class="card3" :embedded="true" :bordered="false">-->
-          <!--              <div class="internal" style="height: 360px" ref="userActivityDOM"></div>-->
-          <!--            </n-card>-->
         </n-grid-item>
         <n-grid-item>
           <n-card
@@ -530,12 +609,12 @@ export default {
               :embedded="true"
               :bordered="false"
               content-style="padding: 0"
-              title="一般"
+              :title="t('adminViews.summary.general.title')"
           >
             <n-table
                 :bordered="false"
                 :bottom-bordered="false"
-                style="background-color: rgba(0,0,0,0.0); padding: 0 15px 0 15px"
+                style="background-color: rgba(0,0,0,0.0); padding: 0 14px 0 14px"
             >
               <n-tr
                   style=" margin-left: 200px"
@@ -545,7 +624,7 @@ export default {
                 <n-td
                     style="background-color: rgba(0,0,0,0.0);"
                 >
-                  {{ item.name }}
+                  {{ t(item.name) }}
                 </n-td>
                 <n-td
                     style="background-color: rgba(0,0,0,0.0);"
@@ -568,7 +647,7 @@ export default {
             <n-table
                 :bordered="false"
                 :bottom-bordered="false"
-                style="background-color: rgba(0,0,0,0.0); padding: 0 15px 10px 15px"
+                style="background-color: rgba(0,0,0,0.0); padding: 0 14px 10px 14px"
             >
               <n-tr
                   style=" margin-left: 200px"
@@ -578,12 +657,12 @@ export default {
                 <n-td
                     style="background-color: rgba(0,0,0,0.0);"
                 >
-                  {{ item.name }}
+                  {{ t(item.name) }}
                 </n-td>
                 <n-td
                     style="background-color: rgba(0,0,0,0.0);"
                 >
-                  {{ item.data }}
+                  {{ typeof item.data === 'function' ? item.data() : item.data }}
                 </n-td>
               </n-tr>
             </n-table>
@@ -597,14 +676,14 @@ export default {
 
 <style scoped>
 .root {
-  padding: 15px 20px 20px 20px;
+  padding: 14px 20px 20px 20px;
   display: flex;
   flex-direction: column;
 
   .income-part-root {
     display: flex;
     flex-direction: row;
-    margin-bottom: 15px;
+    margin-bottom: 14px;
   }
 }
 
@@ -639,7 +718,7 @@ export default {
 }
 
 .user-count-card {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   padding-bottom: 10px;
 }
 

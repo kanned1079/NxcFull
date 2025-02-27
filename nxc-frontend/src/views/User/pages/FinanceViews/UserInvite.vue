@@ -21,6 +21,7 @@ import {NButton, NIcon, NTag, useMessage, type DataTableColumns, useDialog} from
 import {formatDate} from "@/utils/timeFormat";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
+import useTablePagination from "@/hooks/useTablePagination";
 
 const {t} = useI18n();
 const userInfoStore = useUserInfoStore();
@@ -45,12 +46,15 @@ interface MyInvitedUser {
 
 let myInvitedUserList = ref<MyInvitedUser[]>([]);
 
-let pageCount = ref(10)
+// let pageCount = ref(10)
+//
+// let dataSize = ref<{ pageSize: number, page: number }>({
+//   pageSize: 10,
+//   page: 1,
+// })
 
-let dataSize = ref<{ pageSize: number, page: number }>({
-  pageSize: 10,
-  page: 1,
-})
+let [dataSize, pageCount] = useTablePagination()
+
 
 const columns = computed<DataTableColumns<MyInvitedUser>>(() => [
   {
@@ -96,7 +100,7 @@ let callHandleCreateMyInviteCode = async () => {
     // showCreateInviteCodeMention.value = false
 
   } else {
-    message.error('创建失败' + data.msg || '');
+    message.error('create failure: ' + data.msg || '');
   }
 }
 

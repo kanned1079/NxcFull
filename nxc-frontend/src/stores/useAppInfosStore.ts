@@ -2,6 +2,7 @@ import {reactive, ref} from 'vue';
 import {defineStore} from 'pinia';
 import instance from "@/axios/authInstance"
 import useThemeStore from './useThemeStore';
+import {config} from "@/config";
 
 export interface RegisterPageConfig {
     // app_name: string;
@@ -37,7 +38,7 @@ export interface AppCommonConfig {
 }
 
 const useAppInfosStore = defineStore('appInfosStore', () => {
-    const appVersion = ref<string>('')
+    const appVersion = ref<string>(config.appVersion)
 
     const registerPageConfig = ref<RegisterPageConfig>({
         email_whitelist_suffix: false,   // 邮箱白名单

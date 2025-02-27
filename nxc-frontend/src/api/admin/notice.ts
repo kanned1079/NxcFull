@@ -1,15 +1,11 @@
 import instance from "@/axios";
 
 type Notice = {
-    id: number,
-    title: string,
-    content: string,
-    show: boolean,
-    img_url?: string,
-    tags?: string,
-    created_at: string,
-    updated_at?: string,
-    deleted_at?: string,
+    id?: number | undefined;
+    title: string;
+    content: string;
+    tags: string; 
+    img_url?: string | undefined;
 }
 
 export const handleFetchAllNotices = async (page: number, size: number, isUser: boolean) => {

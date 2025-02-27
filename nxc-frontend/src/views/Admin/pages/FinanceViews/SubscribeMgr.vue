@@ -2,9 +2,7 @@
 import {useI18n} from "vue-i18n";
 import {computed, h, onBeforeMount, onMounted, ref} from "vue";
 import useThemeStore from "@/stores/useThemeStore";
-// import useApiAddrStore from "@/stores/useApiAddrStore";
 import usePaymentStore from "@/stores/usePaymentStore";
-// import useUserInfoStore from "@/stores/useUserInfoStore";
 import {
   type DrawerPlacement,
   type FormInst,
@@ -14,12 +12,9 @@ import {
 } from 'naive-ui'
 import {NButton, NSwitch, NTag, useMessage, useDialog} from 'naive-ui'
 import {AddOutline as AddIcon} from "@vicons/ionicons5"
-
-import instance from "@/axios";
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
 import useTablePagination from "@/hooks/useTablePagination";
-// import useConfirmDialog from "@/hooks/useConfirmDialog"
 
 import {
   handleDeletePlanById,
@@ -80,7 +75,6 @@ let formValue = ref<{ plan: Plan }>({
   }
 })
 
-// console.log(formValue.value.plan.name)
 
 let rules = {
   plan: {
@@ -489,19 +483,13 @@ export default {
 
   <transition name="slide-fade">
     <div class="root" v-if="animated">
-      <!--      <n-card class="card" hoverable :embedded="true" :title="t('adminViews.planMgr.title')" :bordered="false">-->
-      <!--        <n-button type="primary" :bordered="false" class="add-btn" @click="handleAddSubscribe">添加订阅</n-button>-->
-      <!--      </n-card>-->
-
       <n-card :embedded="true" :bordered="false" hoverable content-style="padding: 0;" style="margin-top: 20px">
-        <!--      在此处放置表格-->
-        <!--      表格的列名为 #ID， 启用销售（数据为bool，显示为一个n-switch），允许续费（数据为bool，显示为一个n-switch）,排序（数据为数值，显示为一个n-tag），权限组（数值为string，显示为一个n-tag），名称，数量，余量，月付价格，季付价格，半年付价格，年付价格，操作（显示为两个按钮，使用h函数，将按钮放置为一个div中，使用flex布局横向排列）-->
         <n-data-table
             striped
             size="medium"
             :columns="columns"
             :data="paymentStore.plan_list"
-            :scroll-x="1600"
+            :scroll-x="1200"
         />
       </n-card>
 
