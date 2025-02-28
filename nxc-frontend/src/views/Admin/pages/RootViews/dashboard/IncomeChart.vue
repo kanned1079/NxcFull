@@ -2,44 +2,42 @@
 import {useI18n} from "vue-i18n";
 // TODO 待实现全球化
 import {computed, onBeforeMount, onBeforeUpdate, onMounted, onUnmounted, ref, watch} from "vue"
+import {useRouter} from "vue-router"
 import * as echarts from 'echarts';
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import useThemeStore from "@/stores/useThemeStore";
-import instance from "@/axios";
+// import instance from "@/axios";
 import {useMessage} from "naive-ui"
-import {Podium as incomeIcon, CheckmarkCircle as successIcon, CloseCircle as errIcon} from '@vicons/ionicons5'
-import {handleGetUserLayout, handleFetchAppCommonConfig} from "@/api/admin/server";
+import {
+  Podium as incomeIcon,
+  CheckmarkCircle as successIcon,
+  CloseCircle as errIcon,
+} from '@vicons/ionicons5'
+import {handleGetUserLayout, handleFetchAppCommonConfig, handleGetAppOverview} from "@/api/admin/server";
 import {config as backendConfig} from "@/config"
+// import {type IsNetRequestedSuccess} from "@/hooks/useNetworkResultHook"
+import PageHead from "@/views/utils/PageHead.vue";
+// import ErrorPage from "@/views/ErrorPage.vue";
 
 type EChartsOption = echarts.EChartsOption;
+
+// const props = defineProps<{
+//   setNetStatus: (status: IsNetRequestedSuccess) => void
+// }>()
+
 
 const {t, locale} = useI18n()
 const themeStore = useThemeStore();
 const appInfoStore = useAppInfosStore();
 const message = useMessage()
+const router = useRouter()
 
+let animated = ref<boolean>(false)
 let apiAccessCount = ref<number[]>([])
 let incomeCount = ref<number[]>([])
 let yesterdayIncome = ref<number>(0.00)
 let monthIncome = ref<number>(0.00)
-let activeUserCount = ref<number>(0)
-let inactiveUserCount = ref<number>(0)
-let allUserCount = ref<number>(0)
-
-let getAppOverview = async () => {
-  try {
-    let {data} = await instance.get('/api/admin/v1/app/overview')
-    if (data.code === 200) {
-      // console.log(data)
-      data.api_access_count_history.forEach((item: number) => apiAccessCount.value.unshift(item))
-      data.income_count_history.forEach((item: number) => incomeCount.value.unshift(item))
-      yesterdayIncome.value = data.income_yesterday ? data.income_yesterday : 0.00
-      monthIncome.value = data.income_this_month ? data.income_this_month : 0.00
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
+let netFetchResult = ref<number[]>([])
 
 let getLast7DaysWeekdays = (): string[] => {
   const weekdays = [
@@ -286,7 +284,7 @@ let reloadCharts = () => {
       },
       series: [
         {
-          name: '收入',
+          name: 'income',
           type: 'bar',
           barWidth: '50%',
           data: incomeCount.value,
@@ -315,6 +313,7 @@ type MiscellaneousConfig = {
     uptime: string;
     ginMode: string;
     numCpu: number;
+    numCgoCall: number;
     enabledPayMethods?: string[]
   }
 }
@@ -334,31 +333,33 @@ let miscellaneousConfig = ref<MiscellaneousConfig>({
     uptime: '',
     ginMode: '',
     numCpu: 0,
+    numCgoCall: 0,
     enabledPayMethods: []
   }
 })
 
 // TODO
-let usersInfo = computed<{ name: string; data: string }[]>(() => [
+let usersInfo = computed<{ name: string; data: number; suffix?: string }[]>(() => [
   {
     name: 'adminViews.summary.userCard.allRegisteredUsers',
-    data: `${miscellaneousConfig.value.userAll}`,
+    data: miscellaneousConfig.value.userAll,
   },
   {
     name: 'adminViews.summary.userCard.activeUsers',
-    data: `${miscellaneousConfig.value.userActive} (${((miscellaneousConfig.value.userActive/miscellaneousConfig.value.userAll)*100).toFixed(1)}%)`,
+    data: miscellaneousConfig.value.userActive,
+    // suffix: `${((miscellaneousConfig.value.userActive / miscellaneousConfig.value.userAll) * 100).toFixed(1)}%}`,
   },
   {
     name: 'adminViews.summary.userCard.inactiveUsers',
-    data: `${miscellaneousConfig.value.userInactive} (${((miscellaneousConfig.value.userInactive/miscellaneousConfig.value.userAll)*100).toFixed(1)}%)`,
+    data: miscellaneousConfig.value.userInactive,
   },
   {
     name: 'adminViews.summary.userCard.blockedUsers',
-    data: `${miscellaneousConfig.value.userBlocked} (${((miscellaneousConfig.value.userBlocked/miscellaneousConfig.value.userAll)*100).toFixed(1)}%)`,
+    data: miscellaneousConfig.value.userBlocked,
   }
 ])
 
-let generalInfo = computed<{ name: string; data: string }[]>( () => [
+let generalInfo = computed<{ name: string; data: string }[]>(() => [
   {
     name: 'adminViews.summary.general.localTime',
     data: computed(() => {
@@ -383,79 +384,101 @@ let generalInfo = computed<{ name: string; data: string }[]>( () => [
   },
   {
     name: 'adminViews.summary.general.allowRegister',
-    data:  !appInfoStore.appCommonConfig.stop_register ? '是' : '否',
+    data: !appInfoStore.appCommonConfig.stop_register ? t('adminViews.common.yes') : t('adminViews.common.no'),
   },
 ])
 
-/*
-* serverTime: string;
-    apiServerStatus: boolean;
-    mysqlServerStatus: boolean;
-    osType: string;
-    osArch: string;
-    uptime: string;
-    ginMode: string;
-    numCpu: number;
-* */
-
 type ServerInfo = {
+  type: 'text' | 'list' | 'tag';
   name: string;
-  data: string | (() => string);
+  data: string | string[] | undefined | null;
 }
 
-let serverInfo = computed<ServerInfo[]>(() =>[
+let serverInfo = computed<ServerInfo[]>(() => [
   {
+    type: 'text',
     name: 'adminViews.summary.system.axiosAddr',
     data: backendConfig.apiAddr.axiosAddr,
   },
   {
+    type: 'text',
     name: 'adminViews.summary.system.wsAddr',
     data: backendConfig.apiAddr.wsAddr,
   },
   {
+    type: 'text',
+    name: 'adminViews.summary.system.serverTime',
+    data: miscellaneousConfig.value.config.serverTime,
+  },
+  {
+    type: 'text',
     name: 'adminViews.summary.system.uptime',
     data: miscellaneousConfig.value.config.uptime,
   },
   {
+    type: 'tag',
     name: 'adminViews.summary.system.gatewayStatus',
-    data: miscellaneousConfig.value.config.apiServerStatus? '运行正常' : '运行异常',
+    data: `${miscellaneousConfig.value.config.apiServerStatus}`,
   },
   {
+    type: 'tag',
     name: 'adminViews.summary.system.dbStatus',
-    data:  miscellaneousConfig.value.config.mysqlServerStatus? '运行正常' : '运行异常',
+    data: `${miscellaneousConfig.value.config.mysqlServerStatus}`,
   },
   {
+    type: 'tag',
     name: 'adminViews.summary.system.redisStatus',
     data: `${miscellaneousConfig.value.config.redisServerStatus}`,
   },
   {
+    type: 'text',
     name: 'adminViews.summary.system.serverOsType',
     data: miscellaneousConfig.value.config.osType,
   },
   {
+    type: 'text',
     name: 'adminViews.summary.system.serverOsArch',
     data: miscellaneousConfig.value.config.osArch,
   },
   {
+    type: 'text',
     name: 'adminViews.summary.system.runMode',
     data: miscellaneousConfig.value.config.ginMode,
   },
   {
+    type: 'text',
     name: 'adminViews.summary.system.cpuNums',
-    data: `${miscellaneousConfig.value.config.numCpu.toString()}(s) 个`,
+    data: `${miscellaneousConfig.value.config.numCpu.toString()} ${t('adminViews.summary.core')}`,
   },
   {
+    type: 'text',
+    name: 'adminViews.summary.system.numCgoCall',
+    data: `${miscellaneousConfig.value.config.numCgoCall.toString()} ${t('adminViews.summary.system.time')}`,
+  },
+  {
+    type: 'list',
     name: 'adminViews.summary.system.paymentMethods',
-    data: () => {
-      let res = '';
-      miscellaneousConfig.value.config.enabledPayMethods?.map((method: string) => {
-        res = res + `${method}, `;
-      });
-      return res.trim().replace(/,$/, '');  // 去掉最后多余的逗号
-    }
+    data: miscellaneousConfig.value.config.enabledPayMethods,
   },
 
 ])
+
+let getAppOverview = async () => {
+  let data = await handleGetAppOverview()
+  if (data && data.code === 200) {
+    // console.log(data)
+    if (data.api_access_count_history && data.income_count_history) {
+      data.api_access_count_history.forEach((item: number) => apiAccessCount.value.unshift(item))
+      data.income_count_history.forEach((item: number) => incomeCount.value.unshift(item))
+    }
+    yesterdayIncome.value = data.income_yesterday ? data.income_yesterday : 0.00
+    monthIncome.value = data.income_this_month ? data.income_this_month : 0.00
+    netFetchResult.value.push(1)
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure'))
+    netFetchResult.value.push(-1)
+  }
+}
 
 let callGetUsersLayout = async () => {
   let data = await handleGetUserLayout()
@@ -464,8 +487,10 @@ let callGetUsersLayout = async () => {
     miscellaneousConfig.value.userActive = data.user_active
     miscellaneousConfig.value.userInactive = data.user_inactive
     miscellaneousConfig.value.userBlocked = data.user_blocked
+    netFetchResult.value.push(1)
   } else {
     message.error(t('adminViews.common.fetchDataFailure'))
+    netFetchResult.value.push(-1)
   }
 }
 
@@ -473,41 +498,51 @@ let callGetAppCommonConfig = async () => {
   let data = await handleFetchAppCommonConfig()
   console.log(data)
   if (data && data.code === 200) {
-      miscellaneousConfig.value.config.serverTime = data.config.server_time
-      miscellaneousConfig.value.config.enabledPayMethods = data.config.enabled_pay_methods
-      miscellaneousConfig.value.config.apiServerStatus = data.config.api_server_status
-      miscellaneousConfig.value.config.mysqlServerStatus = data.config.mysql_server_status
-      miscellaneousConfig.value.config.redisServerStatus = data.config.redis_server_status
-      miscellaneousConfig.value.config.osType = data.config.os_type
-      miscellaneousConfig.value.config.osArch = data.config.os_arch
-      miscellaneousConfig.value.config.uptime = data.config.uptime
-      miscellaneousConfig.value.config.ginMode = data.config.gin_mode
-      miscellaneousConfig.value.config.numCpu = data.config.num_cpu
+    miscellaneousConfig.value.config.serverTime = data.config.server_time
+    miscellaneousConfig.value.config.enabledPayMethods = data.config.enabled_pay_methods
+    miscellaneousConfig.value.config.apiServerStatus = data.config.api_server_status
+    miscellaneousConfig.value.config.mysqlServerStatus = data.config.mysql_server_status
+    miscellaneousConfig.value.config.redisServerStatus = data.config.redis_server_status
+    miscellaneousConfig.value.config.osType = data.config.os_type
+    miscellaneousConfig.value.config.osArch = data.config.os_arch
+    miscellaneousConfig.value.config.uptime = data.config.uptime
+    miscellaneousConfig.value.config.ginMode = data.config.gin_mode
+    miscellaneousConfig.value.config.numCpu = data.config.num_cpu
+    miscellaneousConfig.value.config.numCgoCall = data.config.num_cgo_call
+    // console.log(data)
+    netFetchResult.value.push(1)
   } else {
     message.error(t('adminViews.common.fetchDataFailure'))
+    netFetchResult.value.push(-1)
   }
 }
 
+// let isNetDataFetchedSuccess = computed(() => netFetchResult.value.length === 3)
 
+let showErrMessage = ref<boolean>(false)
 onBeforeMount(async () => {
   await getAppOverview()  // 先获取数据
-  reloadCharts()  // 再渲染图表
-})
-
-onMounted(async () => {
-  // await reloadCharts()
-  // console.log(props.apiAccessCount)
-
-  // for (let i = 0; i < props.apiAccessCount.length; i++) {
-  //   console.log(props.apiAccessCount[i])
-  // }
-
-  // console.log(toRaw(props.apiAccessCount))
-
-  // console.log(yesterdayIncome.value, monthIncome.value)
-
   await callGetUsersLayout()
   await callGetAppCommonConfig()
+  let sum = 0;
+  netFetchResult.value.forEach((i: number) => {
+    if (i === -1) {
+      return showErrMessage.value = true
+    }
+    sum += i
+  })
+  if (sum === 3) {
+    animated.value = true
+  }
+
+})
+
+onMounted(() => {
+
+  console.log(netFetchResult)
+  setTimeout(() => {
+    reloadCharts()
+  }, 500)
 
 });
 
@@ -530,171 +565,229 @@ export default {
 </script>
 
 <template>
-  <div class="root">
-    <n-card
-        class="income-part-root"
-        hoverable
-        :embedded="true"
-        :bordered="false"
-        content-style="padding: 0;"
-    >
-      <n-flex
-          style="justify-content: space-between;"
+
+  <transition name="slide-fade">
+    <PageHead
+        v-if="showErrMessage"
+        :title="t('adminViews.summary.reqErr')"
+        :description="t('adminViews.summary.reqErrHint')"/>
+  </transition>
+
+  <transition name="slide-fade">
+    <div class="root" v-if="animated">
+      <n-card
+          class="income-part-root"
+          hoverable
+          :embedded="true"
+          :bordered="false"
+          content-style="padding: 0;"
       >
-        <div
-            style="padding: 20px"
+        <n-flex
+            style="justify-content: space-between;"
         >
-          <n-statistic
-              :label="t('adminViews.summary.incomeText')"
-              tabular-nums
+          <div
+              style="padding: 20px"
           >
-            <n-number-animation
-                ref="numberAnimationInstRef"
-                :precision="2"
-                :from="0"
-                :to="yesterdayIncome"
-            />
-            /
-            <n-number-animation
-                ref="numberAnimationInstRef"
-                :precision="2"
-                :from="0"
-                :to="monthIncome"
-            />
-            <template #suffix>
-              {{ appInfoStore.appCommonConfig.currency }}
-            </template>
-          </n-statistic>
-        </div>
-        <div style="opacity: 0.05; padding: 5px 20px 0 0">
-          <n-icon size="50">
-            <incomeIcon/>
-          </n-icon>
-        </div>
-      </n-flex>
-    </n-card>
+            <n-statistic
+                :label="t('adminViews.summary.incomeText')"
+                tabular-nums
+            >
+              <n-number-animation
+                  ref="numberAnimationInstRef"
+                  :precision="2"
+                  :from="0"
+                  :to="yesterdayIncome"
+              />
+              /
+              <n-number-animation
+                  ref="numberAnimationInstRef"
+                  :precision="2"
+                  :from="0"
+                  :to="monthIncome"
+              />
+              <template #suffix>
+                {{ appInfoStore.appCommonConfig.currency }}
+              </template>
+            </n-statistic>
+          </div>
+          <div style="opacity: 0.05; padding: 5px 20px 0 0">
+            <n-icon size="50">
+              <incomeIcon/>
+            </n-icon>
+          </div>
+        </n-flex>
+      </n-card>
 
-    <!--      <Income :yesterday-income="yesterdayIncome" :this-month-income="monthIncome"></Income>-->
-    <div>
-      <n-grid cols="1 s:2" responsive="screen" :x-gap="14" :y-gap="14">
-        <n-grid-item>
-          <n-card class="user-count-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0"
-                  :title="t('adminViews.summary.userCard.title')">
-            <n-table
-                :bordered="false"
-                :bottom-bordered="false"
-                style="background-color: rgba(0,0,0,0.0); padding: 0 14px 0 14px"
-            >
-              <n-tr style=" margin-left: 200px" v-for="(item, index) in usersInfo" :key="index">
-                <n-td style="background-color: rgba(0,0,0,0.0);">{{ t(item.name) }}</n-td>
-                <n-td style="background-color: rgba(0,0,0,0.0);">{{ item.data }}</n-td>
-              </n-tr>
-            </n-table>
-          </n-card>
-          <n-card
-              :title="t('adminViews.summary.apiAccessCard')"
-              hoverable class="card1" :embedded="true" :bordered="false">
-            <div class="visited" style="height: 280px" ref="visitedChartDOM"></div>
-          </n-card>
-          <n-card
-              :title="t('adminViews.summary.incomeWeek')"
-              hoverable class="card2" :embedded="true" :bordered="false">
-            <div class="internal" style="height: 280px" ref="incomeChartDOM"></div>
-          </n-card>
-        </n-grid-item>
-        <n-grid-item>
-          <n-card
-              class="r-card"
-              hoverable
-              :embedded="true"
-              :bordered="false"
-              content-style="padding: 0"
-              :title="t('adminViews.summary.general.title')"
-          >
-            <n-table
-                :bordered="false"
-                :bottom-bordered="false"
-                style="background-color: rgba(0,0,0,0.0); padding: 0 14px 0 14px"
-            >
-              <n-tr
-                  style=" margin-left: 200px"
-                  v-for="(item, index) in generalInfo"
-                  :key="index"
+      <!--      <Income :yesterday-income="yesterdayIncome" :this-month-income="monthIncome"></Income>-->
+      <div>
+        <n-grid cols="1 s:2" responsive="screen" :x-gap="14" :y-gap="14">
+          <n-grid-item>
+            <n-card class="user-count-card" hoverable :embedded="true" :bordered="false" content-style="padding: 0"
+                    :title="t('adminViews.summary.userCard.title')">
+              <n-table
+                  :bordered="false"
+                  :bottom-bordered="false"
+                  style="background-color: rgba(0,0,0,0.0); padding: 0 14px 0 14px"
               >
-                <n-td
-                    style="background-color: rgba(0,0,0,0.0);"
-                >
-                  {{ t(item.name) }}
-                </n-td>
-                <n-td
-                    style="background-color: rgba(0,0,0,0.0);"
-                >
-                  {{ item.data }}
-                </n-td>
-              </n-tr>
-            </n-table>
-          </n-card>
+                <n-tr style=" margin-left: 200px" v-for="(item, index) in usersInfo" :key="index">
+                  <n-td style="background-color: rgba(0,0,0,0.0);">{{ t(item.name) }}</n-td>
+                  <n-td style="background-color: rgba(0,0,0,0.0);">
+                    <div style="display: flex; flex-direction: row">
+                      <p style="opacity: 0.9">{{ item.data }}</p>
+                      <NTag
+                          v-if="index >= 1"
+                          style="margin-left: 10px"
+                          :type="item.name==='adminViews.summary.userCard.blockedUsers'?'default':'primary'"
+                          size="small"
+                          :bordered="!themeStore.enableDarkMode">
+                        {{ `${((item.data / miscellaneousConfig.userAll)*100).toFixed(2)} %` }}
+                      </NTag>
+                    </div>
+                  </n-td>
+                </n-tr>
+              </n-table>
+            </n-card>
+            <n-card
+                :title="t('adminViews.summary.apiAccessCard')"
+                hoverable class="card1" :embedded="true" :bordered="false">
+              <div class="visited" style="height: 280px" ref="visitedChartDOM"></div>
+            </n-card>
+            <n-card
+                :title="t('adminViews.summary.incomeWeek')"
+                hoverable class="card2" :embedded="true" :bordered="false">
+              <div class="internal" style="height: 280px" ref="incomeChartDOM"></div>
+            </n-card>
+          </n-grid-item>
+          <n-grid-item>
 
-          <n-card
-              style="margin-top: 10px"
-              class="r-card"
-              hoverable
-              :embedded="true"
-              :bordered="false"
-              content-style="padding: 0"
-              title="系统配置"
-          >
-            <n-table
-                :bordered="false"
-                :bottom-bordered="false"
-                style="background-color: rgba(0,0,0,0.0); padding: 0 14px 10px 14px"
+            <n-alert
+                type="info"
+                style="margin-bottom: 10px"
+                :closable="true"
+                :bordered="!themeStore.enableDarkMode"
+                v-if="appInfoStore.appCommonConfig.stop_register"
             >
-              <n-tr
-                  style=" margin-left: 200px"
-                  v-for="(item, index) in serverInfo"
-                  :key="index"
+              {{ t('adminViews.summary.system.stopRegisterHint') }}
+              <n-button
+                  text
+                  type="primary"
+                  icon-placement="right"
+                  @click="router.push({path: '/admin/dashboard/systemconfig'})"
+                  style="text-decoration: underline"
               >
-                <n-td
-                    style="background-color: rgba(0,0,0,0.0);"
+                {{ t('adminViews.summary.system.toSetting') }}
+              </n-button>
+            </n-alert>
+
+            <n-card
+                class="r-card"
+                hoverable
+                :embedded="true"
+                :bordered="false"
+                style="padding-bottom: 10px;"
+                content-style="padding: 0"
+                :title="t('adminViews.summary.general.title')"
+            >
+              <n-table
+                  :bordered="false"
+                  :bottom-bordered="false"
+                  style="background-color: rgba(0,0,0,0.0); padding: 0 14px 0 14px"
+              >
+                <n-tr
+                    style=" margin-left: 200px"
+                    v-for="(item, index) in generalInfo"
+                    :key="index"
                 >
-                  {{ t(item.name) }}
-                </n-td>
-                <n-td
-                    style="background-color: rgba(0,0,0,0.0);"
-                >
-                  {{
-                    typeof item.data === 'function' ? item.data() : item.data
-
-
-                  }}
-
-                  <NTag
-                      v-if="item.data === 'true'"
-                      type="success"
-                      :bordered="false"
-                    size="small"
+                  <n-td
+                      style="background-color: rgba(0,0,0,0.0);"
                   >
-                    {{ '运行正常' }}
+                    {{ t(item.name) }}
+                  </n-td>
+                  <n-td
+                      style="background-color: rgba(0,0,0,0.0);"
+                  >
+                    <p style="opacity: 0.9">{{ item.data }}</p>
+                  </n-td>
+                </n-tr>
+              </n-table>
+            </n-card>
 
-                  <template #icon>
-                    <n-icon><successIcon /></n-icon>
-                  </template>
-                  </NTag>
-                  <NTag v-if="item.data === 'false'" type="error" :bordered="false" size="small">
-                    {{ '运行正常' }}
-                  <template #icon>
-                    <n-icon><errIcon /></n-icon>
-                  </template>
-                  </NTag>
-                </n-td>
-              </n-tr>
-            </n-table>
+            <n-alert
+                type="error"
+                style="margin-top: 10px"
+                :closable="true"
+                :bordered="!themeStore.enableDarkMode"
+                v-if="!miscellaneousConfig.config.apiServerStatus ||
+              !miscellaneousConfig.config.redisServerStatus ||
+              !miscellaneousConfig.config.mysqlServerStatus"
+            >
+              {{ t('adminViews.summary.system.checkServer') }}
+            </n-alert>
 
-          </n-card>
-        </n-grid-item>
-      </n-grid>
+            <n-card
+                style="margin-top: 10px"
+                class="r-card"
+                hoverable
+                :embedded="true"
+                :bordered="false"
+                content-style="padding: 0"
+                :title="t('adminViews.summary.system.title')"
+            >
+              <n-table
+                  :bordered="false"
+                  :bottom-bordered="false"
+                  style="background-color: rgba(0,0,0,0.0); padding: 0 14px 10px 14px"
+              >
+                <n-tr
+                    style=" margin-left: 200px"
+                    v-for="(item, index) in serverInfo"
+                    :key="index"
+                >
+                  <n-td
+                      style="background-color: rgba(0,0,0,0.0);"
+                  >
+                    {{ t(item.name) }}
+                  </n-td>
+                  <n-td style="background-color: rgba(0,0,0,0.0);">
+                    <p style="opacity: 0.9" v-if="item.type === 'text'">{{ item.data }}</p>
+                    <NTag
+                        v-if="item.type === 'tag' && item.data === 'true' || item.data === 'false'"
+                        :bordered="!themeStore.enableDarkMode"
+                        :type="item.data === 'true' ? 'success' : 'error'"
+                        size="small"
+                    >
+                      {{ t(`adminViews.summary.system.${item.data === 'true' ? 'runOK' : 'runErr'}`) }}
+                      <template #icon>
+                        <n-icon v-if="item.data === 'true'"><successIcon/></n-icon>
+                        <n-icon v-else><errIcon/></n-icon>
+                      </template>
+                    </NTag>
+                    <div
+                        style="display: flex; flex-direction: row;"
+                        v-if="item.type === 'list'"
+                    >
+                      <NTag
+                          :bordered="!themeStore.enableDarkMode"
+                          size="small"
+                          type="primary"
+                          style="margin-right: 14px"
+                          v-for="(method) in item.data"
+                      >
+                        {{ method }}
+                      <template #icon><n-icon><successIcon/></n-icon></template>
+                      </NTag>
+                    </div>
+                  </n-td>
+                </n-tr>
+              </n-table>
+
+            </n-card>
+          </n-grid-item>
+        </n-grid>
+      </div>
     </div>
-  </div>
+  </transition>
+
 </template>
 
 <style scoped>
@@ -736,9 +829,7 @@ export default {
   }
 }
 
-.r-card {
 
-}
 
 .user-count-card {
   margin-bottom: 10px;

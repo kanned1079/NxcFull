@@ -8,6 +8,9 @@ import useThemeStore from "@/stores/useThemeStore";
 import IncomeChart from "@/views/Admin/pages/RootViews/dashboard/IncomeChart.vue";
 import instance from "@/axios";
 import {ChevronForwardOutline as toRightIcon,} from "@vicons/ionicons5"
+import PageHead from "@/views/utils/PageHead.vue";
+import useNetworkResultHook from "@/hooks/useNetworkResultHook";
+import {type IsNetRequestedSuccess} from "@/hooks/useNetworkResultHook"
 
 const {t} = useI18n()
 const userInfoStore = useUserInfoStore();
@@ -37,18 +40,32 @@ let checkIsUserHaveOpenTickets = async () => {
   }
 }
 
+// let netCompleted = ref<'waiting' | 'err' | 'finished'>("waiting")
+
+let [netStatus, setNetStatus] = useNetworkResultHook()
+
 
 onBeforeMount(async () => {
   // await getAppOverview()
   themeStore.breadcrumb = 'adminViews.summary.cockpit'
-  await checkIsUserHaveOpenTickets()
+
 })
 
-onMounted(() => {
+onMounted(async () => {
   themeStore.contentPath = '/admin/dashboard/summary'
   themeStore.menuSelected = 'dashboard'
 
+  setTimeout(() => {
+    animated.value = true
+  }, 500)
+
   animated.value = true
+
+  await checkIsUserHaveOpenTickets()
+
+  // setTimeout( async () => {
+  //   await checkIsUserHaveOpenTickets()
+  // }, 2000)
 })
 
 </script>
@@ -60,6 +77,15 @@ export default {
 </script>
 
 <template>
+
+
+    <PageHead
+        style="margin-left: 20px; margin-bottom: 20px"
+        v-if="!animated" title="請等待" description="數據正在加載" />
+
+
+
+
   <transition name="slide-fade">
     <div class="root" v-if="animated">
 
@@ -92,7 +118,7 @@ export default {
         <Settings></Settings>
       </div>
       <div class="income-chart">
-        <IncomeChart></IncomeChart>
+        <IncomeChart :set-net-status="setNetStatus"></IncomeChart>
       </div>
     </div>
   </transition>
@@ -115,10 +141,6 @@ export default {
   }
 
   .income-chart {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    justify-content: center;
   }
 }
 

@@ -39,7 +39,7 @@ export default {
             <n-icon size="25">
               <settingIcon/>
             </n-icon>
-            <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.systemConfig') }}</p>
+            <p style="margin-top: 8px; font-size: 0.9rem">{{ t('adminViews.summary.systemConfig') }}</p>
           </div>
         </n-card>
       </n-grid-item>
@@ -55,7 +55,7 @@ export default {
             <n-icon size="25">
               <OrderIcon/>
             </n-icon>
-            <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.planMgr') }}</p>
+            <p style="margin-top: 8px; font-size: 0.9rem">{{ t('adminViews.summary.planMgr') }}</p>
           </div>
         </n-card>
       </n-grid-item>
@@ -72,7 +72,7 @@ export default {
             <n-icon size="25">
               <UserIcon/>
             </n-icon>
-            <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.userMgr') }}</p>
+            <p style="margin-top: 8px; font-size: 0.9rem">{{ t('adminViews.summary.userMgr') }}</p>
           </div>
         </n-card>
       </n-grid-item>
@@ -88,25 +88,10 @@ export default {
             <n-icon size="25">
               <SubIcon/>
             </n-icon>
-            <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.orderMgr') }}</p>
+            <p style="margin-top: 8px; font-size: 0.9rem">{{ t('adminViews.summary.orderMgr') }}</p>
           </div>
         </n-card>
       </n-grid-item>
-      <!--        <n-grid-item>-->
-      <!--          <n-card-->
-      <!--              hoverable style="margin-right: 20px"-->
-      <!--              :embedded="true"-->
-      <!--              :bordered="false"-->
-      <!--              class="shortcut-item"-->
-      <!--          >-->
-      <!--            <div>-->
-      <!--              <n-icon size="25">-->
-      <!--                <keyIcon/>-->
-      <!--              </n-icon>-->
-      <!--              <p style="margin-top: 8px; font-size: 15px">{{ t('adminViews.summary.keyMgr') }}</p>-->
-      <!--            </div>-->
-      <!--          </n-card>-->
-      <!--        </n-grid-item>-->
     </n-grid>
   </div>
 
@@ -114,7 +99,7 @@ export default {
 
 <style lang="less" scoped>
 .root {
-  padding: 15px 20px 0 20px;
+  padding: 14px 20px 0 20px;
   display: flex;
   flex-direction: row;
   text-align: center;

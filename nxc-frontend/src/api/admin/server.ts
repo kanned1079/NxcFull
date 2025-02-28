@@ -54,3 +54,13 @@ export const handleFetchAppCommonConfig = async () => {
         return false
     }
 }
+
+export const handleGetAppOverview = async () => {
+    try {
+        let {data} = await instance.get('/api/admin/v1/app/overview')
+        return data
+    } catch (err: any) {
+        console.error(err)
+        return false
+    }
+}

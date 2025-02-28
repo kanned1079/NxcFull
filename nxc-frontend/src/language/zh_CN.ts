@@ -63,7 +63,9 @@ export default {
             "unknownErr": "未知錯誤",
             "dialog": {
                 "delete": "您確認要刪除嗎",
-            }
+            },
+            "yes": "是",
+            "no": "否",
         },
         "login": {
             "secureCard": {
@@ -118,6 +120,9 @@ export default {
             "toHandle": "去查看",
             "apiAccessCard": "一週內API接口訪問次數",
             "incomeWeek": "一週內收入金額",
+            "core": "核心",
+            "reqErr": "遇到錯誤",
+            "reqErrHint": "在獲取概覽信息時遇到錯誤，導致本次請求無法完成，因此圖表暫不能顯示，請您稍後再試。",
             "userCard": {
                 "title": "用戶概覽",
                 "allRegisteredUsers": "總註冊用戶",
@@ -147,7 +152,14 @@ export default {
                 "serverOsArch": "服務器操作系統架構",
                 "runMode": "運行模式",
                 "cpuNums": "網關服務器CPU核心數",
+                "numCgoCall": "垃圾回收次数",
+                "time": "次",
                 "paymentMethods": "啟用的支付方式",
+                "runOK": "運行正常",
+                "runErr": "運行異常",
+                "checkServer": "請檢查您後端服務器的環境配置",
+                "stopRegisterHint": "您似乎禁用了新用戶註冊",
+                "toSetting": "轉到設置",
             }
         },
         "queueMonit": {

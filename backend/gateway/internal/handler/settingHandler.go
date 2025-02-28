@@ -546,6 +546,7 @@ func HandleFetchServerSystemPartConfig(context *gin.Context) {
 			"gin_mode":            gin.Mode(),
 			"num_cpu":             runtime.NumCPU(),
 			"server_time":         time.Now().UTC(),
+			"num_cgo_call":        runtime.NumCgoCall(),
 		},
 	})
 
