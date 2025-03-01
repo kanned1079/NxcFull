@@ -77,15 +77,6 @@ export default {
 </script>
 
 <template>
-
-
-    <PageHead
-        style="margin-left: 20px; margin-bottom: 20px"
-        v-if="!animated" title="請等待" description="數據正在加載" />
-
-
-
-
   <transition name="slide-fade">
     <div class="root" v-if="animated">
 

@@ -12,6 +12,7 @@ import {
   Podium as incomeIcon,
   CheckmarkCircle as successIcon,
   CloseCircle as errIcon,
+  FunnelOutline as userPrefixIcon,
 } from '@vicons/ionicons5'
 import {handleGetUserLayout, handleFetchAppCommonConfig, handleGetAppOverview} from "@/api/admin/server";
 import {config as backendConfig} from "@/config"
@@ -339,23 +340,27 @@ let miscellaneousConfig = ref<MiscellaneousConfig>({
 })
 
 // TODO
-let usersInfo = computed<{ name: string; data: number; suffix?: string }[]>(() => [
+let usersInfo = computed<{ name: string; data: number; suffix?: string; color: 'success'|'default'|'error' }[]>(() => [
   {
     name: 'adminViews.summary.userCard.allRegisteredUsers',
     data: miscellaneousConfig.value.userAll,
+    color: 'success',
   },
   {
     name: 'adminViews.summary.userCard.activeUsers',
     data: miscellaneousConfig.value.userActive,
     // suffix: `${((miscellaneousConfig.value.userActive / miscellaneousConfig.value.userAll) * 100).toFixed(1)}%}`,
+    color: 'success',
   },
   {
     name: 'adminViews.summary.userCard.inactiveUsers',
     data: miscellaneousConfig.value.userInactive,
+    color: 'default',
   },
   {
     name: 'adminViews.summary.userCard.blockedUsers',
     data: miscellaneousConfig.value.userBlocked,
+    color: 'error',
   }
 ])
 
@@ -637,7 +642,7 @@ export default {
                       <NTag
                           v-if="index >= 1"
                           style="margin-left: 10px"
-                          :type="item.name==='adminViews.summary.userCard.blockedUsers'?'default':'primary'"
+                          :type="item.color==='success'?'success':item.color==='error'?'error':'default'"
                           size="small"
                           :bordered="!themeStore.enableDarkMode">
                         {{ `${((item.data / miscellaneousConfig.userAll)*100).toFixed(2)} %` }}
@@ -648,13 +653,23 @@ export default {
               </n-table>
             </n-card>
             <n-card
-                :title="t('adminViews.summary.apiAccessCard')"
                 hoverable class="card1" :embedded="true" :bordered="false">
+              <PageHead
+                  style="margin: 0 !important; padding: 0 !important;"
+                  :title="t('adminViews.summary.apiAccessCard')"
+                  :description="t('adminViews.summary.apiAccessCardHint')"
+                  secondary
+              />
               <div class="visited" style="height: 280px" ref="visitedChartDOM"></div>
             </n-card>
             <n-card
-                :title="t('adminViews.summary.incomeWeek')"
                 hoverable class="card2" :embedded="true" :bordered="false">
+              <PageHead
+                  style="margin: 0 !important; padding: 0 !important;"
+                  :title="t('adminViews.summary.incomeWeek')"
+                  :description="t('adminViews.summary.incomeCardHint')"
+                  secondary
+              />
               <div class="internal" style="height: 280px" ref="incomeChartDOM"></div>
             </n-card>
           </n-grid-item>
@@ -809,6 +824,7 @@ export default {
 
   .visited {
     background-color: rgba(0, 0, 0, 0.0);
+    margin-top: 10px;
   }
 }
 
@@ -818,6 +834,8 @@ export default {
 
   .internal {
     background-color: rgba(0, 0, 0, 0.0);
+    margin-top: 10px;
+
   }
 }
 
@@ -834,6 +852,13 @@ export default {
 .user-count-card {
   margin-bottom: 10px;
   padding-bottom: 10px;
+}
+
+.to-management-root {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  font-weight: bold;
 }
 
 

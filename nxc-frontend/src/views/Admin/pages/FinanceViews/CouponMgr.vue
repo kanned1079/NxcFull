@@ -283,6 +283,7 @@ const columns = computed<DataTableColumns<Coupon>>(() => [
     render(row: Coupon) {
       return h(NSwitch, {
         value: row.enabled,
+        size: 'medium',
         onUpdateValue: (value) => activateACoupon(row.id, value),
       });
     }

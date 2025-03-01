@@ -2,10 +2,10 @@
 import {useI18n} from "vue-i18n";
 import {useRouter} from 'vue-router';
 import {
-  BagHandleSharp as SubIcon,
-  PeopleSharp as UserIcon,
-  ReorderFourSharp as OrderIcon,
-  SettingsSharp as settingIcon,
+  BagHandleOutline as SubIcon,
+  PeopleOutline as UserIcon,
+  ClipboardOutline as OrderIcon,
+  SettingsOutline as settingIcon,
 } from '@vicons/ionicons5'
 
 const {t} = useI18n()

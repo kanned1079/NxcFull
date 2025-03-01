@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {type DataTableColumns, type DataTableInst, NButton, NIcon, NTag, useDialog, useMessage} from "naive-ui"
-import {computed, h, onBeforeMount, onMounted, onUnmounted, ref} from 'vue'
+import {computed, h, onBeforeMount, onMounted, onUnmounted, onBeforeUnmount, ref} from 'vue'
 import useThemeStore from "@/stores/useThemeStore";
 import {handleDeletePreviousLog, handleFetchServerStatus, handleTestServerLatency} from "@/api/admin/server";
 
@@ -336,10 +336,14 @@ onBeforeMount(() => {
 
 })
 
+onBeforeUnmount(() => {
+  clearInterval(latencyTestIntervalId.value);
+
+})
+
 onUnmounted(() => {
-  console.log('queue组件卸载')
+  console.log('queue unmounted')
   // clearInterval()
-  clearInterval(latencyTestIntervalId.value)
 })
 
 </script>
