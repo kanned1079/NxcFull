@@ -12,6 +12,7 @@ import (
 	"math"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // GetActivateLogByAdmin 管理员获取所有的密钥列表
@@ -230,9 +231,6 @@ func (s *KeyServices) UnbindKey(ctx context.Context, request *pb.UnbindKeyReques
 	}
 	log.Println("查找ok", activateRecord)
 
-	// 设置 IsBind 为 false
-	//activateRecord.IsBind = false
-	//activateRecord.Remark = ""
 	if err := tx.Model(&model.ActivateRecord{}).
 		Where("id = ? and user_id = ?", request.RecordId, request.UserId).
 		Updates(map[string]any{
@@ -274,6 +272,15 @@ func (s *KeyServices) UnbindKey(ctx context.Context, request *pb.UnbindKeyReques
 	}
 	log.Println("修改使用记录 ok")
 
+	if err := utils.CloseActiveActivationCheckCacheByKeyId(ctx, activateRecord.KeyId); err != nil {
+		log.Println("关闭激活检查缓存失败:", err)
+		tx.Rollback() // 更新失败，回滚事务
+		return &pb.UnbindKeyResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "关闭激活检查缓存失败",
+		}, err
+	}
+
 	// 提交事务
 	if err := tx.Commit().Error; err != nil {
 		log.Println("事务提交失败:", err)
@@ -309,6 +316,13 @@ func (s *KeyServices) AlterKeyBindRemark(ctx context.Context, request *pb.AlterK
 }
 
 func (s *KeyServices) AlterKeyIsValidByAdmin(ctx context.Context, request *pb.AlterKeyIsValidByAdminRequest) (*pb.AlterKeyIsValidByAdminResponse, error) {
+	if err := utils.CloseActiveActivationCheckCacheByKeyId(ctx, request.KeyId); err != nil {
+		return &pb.AlterKeyIsValidByAdminResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "error: " + err.Error(),
+		}, nil
+	}
+	// 如果清楚缓存都没有成功 取消后面的操作
 	if result := dao.Db.Model(&model.ActiveOrders{}).
 		Where("`key_id` = ?", request.KeyId).
 		Update("is_valid", gorm.Expr("NOT `is_valid`")); result.RowsAffected == 0 {
@@ -321,5 +335,130 @@ func (s *KeyServices) AlterKeyIsValidByAdmin(ctx context.Context, request *pb.Al
 	return &pb.AlterKeyIsValidByAdminResponse{
 		Code: http.StatusOK,
 		Msg:  "success",
+	}, nil
+}
+
+//func (s *KeyServices) CheckActivationStatusIntervalReq(ctx context.Context, request *pb.CheckActivationStatusIntervalReqRequest) (*pb.CheckActivationStatusIntervalReqResponse, error) {
+//
+//	code, expiredAt := utils.CheckActivationFromCache(ctx, request.ClientId, request.KeyContent)
+//	log.Println("检查: ", code, expiredAt)
+//	// 200 成功 直接返回 取消下面查询数据库
+//	// 404 在redis中查询不到该密钥
+//	// 409 密钥和客户端ID不对应
+//	// 500 其他错误
+//	// 除了200 其他状态码后都需要查询数据库
+//
+//	if code != 200 {
+//		// 1 先查询密钥
+//		var key model.Keys
+//		result := dao.Db.Model(&model.Keys{}).Where("`key` = ?", request.KeyContent).First(&key)
+//		if result.RowsAffected == 0 {
+//			code = http.StatusNotFound // 404
+//		} else if result.Error != nil {
+//			code = http.StatusInternalServerError // 500
+//		}
+//		// 2 再根据密钥的id查询有效订单表中的is_valid字段来判断该密钥是否被管理员禁用 如果是false则是禁用状态
+//		var activeOrder model.ActiveOrders
+//		// 添加下面代码的错误处理
+//		result = dao.Db.Model(&model.ActiveOrders{}).Where("`key_id` = ?", key.Id).First(&activeOrder)
+//		if activeOrder.IsValid == false {
+//			code = http.StatusForbidden // 403 密钥被管理员禁用且不可使用
+//		}
+//		// 上面如果有一个出现错误则不执行下面的
+//		// 3 检查密钥的内容和客户端id
+//		if request.KeyContent == key.Key && request.ClientId == key.ClientId {
+//
+//			code = http.StatusOK                                                                                                 // 200
+//			if err := utils.SetActivationRecordCache2Redis(ctx, key.ClientId, key.Key, activeOrder.ExpirationDate); err != nil { //保存到缓存
+//
+//			}
+//
+//		}
+//	}
+//
+//	// 200 匹配成功
+//	// 206 密钥可用但是即将过期
+//	// 409 密钥和客户端id不匹配
+//	// 403 密钥被管理员禁用
+//	// 404 密钥不存在
+//	// 500 其他运行错误
+//	// 503 密钥已过期
+//
+//	// 检查密钥是否过期
+//	var msg string = ""
+//	if expiredAt.Sub(time.Now()) <= time.Hour*24*7 {
+//		// 密钥即将过期 返回code 为206
+//		code = http.StatusPartialContent // 206
+//		msg = "key is comming to expire"
+//	} else if expiredAt.Sub(time.Now()) < 0 {
+//		// 密钥即将过期 返回code 为207
+//		code = http.StatusServiceUnavailable // 503 密钥过期
+//		msg = "key is expired"
+//	}
+//
+//	return &pb.CheckActivationStatusIntervalReqResponse{
+//		Code: code,
+//		Msg:  msg,
+//	}, nil
+//}
+
+func (s *KeyServices) CheckActivationStatusIntervalReq(ctx context.Context, request *pb.CheckActivationStatusIntervalReqRequest) (*pb.CheckActivationStatusIntervalReqResponse, error) {
+	code, expiredAt := utils.CheckActivationFromCache(ctx, request.ClientId, request.KeyContent) // 从缓存中检查激活状态
+	var msg string = "success"
+	if code != http.StatusOK {
+		// 1. 查询密钥是否存在
+		var key model.Keys
+		result := dao.Db.Model(&model.Keys{}).Where("`key` = ?", request.KeyContent).First(&key)
+		if result.RowsAffected == 0 {
+			code = http.StatusNotFound // 404
+			msg = "cannot find key of " + request.KeyContent
+		} else if result.Error != nil {
+			code = http.StatusInternalServerError // 500
+			msg = "err on query db: " + result.Error.Error()
+		} else {
+			code = http.StatusOK
+		}
+		// 2. 查询有效订单表，检查该密钥是否被禁用
+		if code == http.StatusOK { // 如果没有出错，继续检查是否禁用
+			var activeOrder model.ActiveOrders
+			result = dao.Db.Model(&model.ActiveOrders{}).Where("`key_id` = ?", key.Id).First(&activeOrder)
+
+			if result.Error != nil {
+				code = http.StatusInternalServerError // 500 查询数据库出错
+				msg = "err on query db: " + result.Error.Error()
+			} else if activeOrder.IsValid == false {
+				code = http.StatusForbidden // 403 密钥被管理员禁用
+				msg = "the key has been blocked by admin, please contact us via ticket"
+			}
+			// 3. 检查密钥和客户端 ID 是否匹配
+			if code == http.StatusOK && request.KeyContent == key.Key && request.ClientId == key.ClientId {
+				code = http.StatusOK // 200 密钥有效，且匹配客户端
+				// 如果成功，则将激活记录保存到缓存
+				if err := utils.SetActivationRecordCache2Redis(ctx, key.ClientId, key.Key, activeOrder.ExpirationDate); err != nil {
+					msg = "cache in redis failure, its not effected: " + err.Error() // 不影响返回状态
+				}
+			} else if request.KeyContent != key.Key || request.ClientId != key.ClientId {
+				code = http.StatusConflict // 409 密钥和客户端 ID 不匹配
+				msg = "the client_id and key_content is not match, please try again later"
+			}
+		}
+	}
+	// 检查密钥是否接近过期或已过期
+	if expiredAt != nil {
+		if expiredAt.Sub(time.Now()) <= time.Hour*24*7 {
+			// 密钥即将过期，返回 code 206
+			code = http.StatusPartialContent // 206
+			// TODO
+			msg = "key is coming to expire, please"
+		} else if expiredAt.Sub(time.Now()) < 0 {
+			// 密钥已经过期，返回 code 503
+			code = http.StatusServiceUnavailable // 503 密钥过期
+			msg = "key is expired"
+		}
+	}
+
+	return &pb.CheckActivationStatusIntervalReqResponse{
+		Code: code,
+		Msg:  msg,
 	}, nil
 }

@@ -26,6 +26,7 @@ func (inst *GatewayApp) StartApiGateways() {
 	publicRoutes.GET("/app/v1/env/welcome", handler.HandleGetWelcomeConfig)
 	publicRoutes.GET("/app/v1/env/register", handler.HandleGetRegisterEnv)
 	publicRoutes.POST("/user/v1/activation/bind", handler.HandleBindKeyToThirdExternalApp)
+	publicRoutes.POST("/user/v1/activation/status/check", handler.HandleCheckKeyValidation)
 
 	adminPublic := publicRoutes.Group("/admin/v1")
 	{

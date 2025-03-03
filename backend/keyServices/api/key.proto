@@ -21,6 +21,7 @@ service KeyService {
   rpc BindOrActiveMyKey2App(BindOrActiveMyKey2AppRequest) returns (BindOrActiveMyKey2AppResponse);
   rpc UnbindKey(UnbindKeyRequest) returns (UnbindKeyResponse);
   rpc AlterKeyBindRemark(AlterKeyBindRemarkRequest) returns (AlterKeyBindRemarkResponse);
+  rpc CheckActivationStatusIntervalReq(CheckActivationStatusIntervalReqRequest) returns (CheckActivationStatusIntervalReqResponse);
 
   rpc CheckAccountAndKeyUsability(CheckAccountAndKeyUsabilityRequest) returns (CheckAccountAndKeyUsabilityResponse);
 
@@ -89,15 +90,15 @@ message BindOrActiveMyKey2AppRequest {
   string key = 3; // 密钥key
   int64 request_at = 4; // 时间戳
   string client_version = 5;  // 客户端版本
-  string client_id = 6;
-  string os_type = 7; // 操作系统类型
-  string remark = 8;
+//  string client_id = 6;
+  string os_type = 6; // 操作系统类型
+  string remark = 7;
 }
 
 message BindOrActiveMyKey2AppResponse {
   int32 code = 1;
   string msg = 2;
-  string significant_number = 3;
+  string client_id = 3;
 }
 
 message UnbindKeyRequest {
@@ -200,4 +201,15 @@ message AlterKeyIsValidByAdminRequest {
 message AlterKeyIsValidByAdminResponse {
   int32 code = 1;
   string msg = 2;
+}
+
+message CheckActivationStatusIntervalReqRequest {
+  string key_content = 1;
+  string client_id = 2;
+}
+
+message CheckActivationStatusIntervalReqResponse {
+  int32 code = 1;
+  int64 expired_at = 2;
+  string msg = 3;
 }

@@ -114,7 +114,7 @@ func (s *KeyServices) BindOrActiveMyKey2App(ctx context.Context, request *pb.Bin
 
 	// 查询该密钥的使用细节
 	var activeOrder model.ActiveOrders
-	if err := dao.Db.Model(&model.ActiveOrders{}).Where("key_id = ? and email = ?", key.Id, request.Email).First(&activeOrder).Error; err != nil {
+	if err := dao.Db.Model(&model.ActiveOrders{}).Where("`key_id` = ? and `email` = ?", key.Id, request.Email).First(&activeOrder).Error; err != nil {
 		log.Printf("找不到激活订单：%v\n", err)
 		return &pb.BindOrActiveMyKey2AppResponse{
 			Code: http.StatusNotFound,
@@ -151,11 +151,12 @@ func (s *KeyServices) BindOrActiveMyKey2App(ctx context.Context, request *pb.Bin
 	// 1. 新增一条激活记录
 	reqAt := time.Now()
 	NewActivateRecord := model.ActivateRecord{
-		UserId:        authResponse.UserId,
-		Email:         request.Email,
-		OrderId:       activeOrder.OrderId,
-		KeyId:         key.Id,
-		RequestAt:     &reqAt,
+		UserId:    authResponse.UserId,
+		Email:     request.Email,
+		OrderId:   activeOrder.OrderId,
+		KeyId:     key.Id,
+		RequestAt: &reqAt,
+
 		ClientVersion: request.ClientVersion,
 		OsType:        request.OsType,
 		Remark:        request.Remark,
@@ -172,8 +173,19 @@ func (s *KeyServices) BindOrActiveMyKey2App(ctx context.Context, request *pb.Bin
 	}
 
 	// 2. 修改密钥绑定的ClientId
-	key.ClientId = request.ClientId
-	if err := tx.Model(&model.Keys{}).Where("id = ?", key.Id).Updates(&key).Error; err != nil {
+	//key.ClientId = request.ClientId
+	newClientId, err := utils.GenerateClientId()
+	if err != nil {
+		tx.Rollback()
+		log.Printf("err on generate client_id: %v\n", err)
+		return &pb.BindOrActiveMyKey2AppResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "err on generate client_id: " + err.Error(),
+		}, nil
+	}
+
+	key.ClientId = newClientId
+	if err := tx.Model(&model.Keys{}).Where("`id` = ?", key.Id).Updates(&key).Error; err != nil {
 		tx.Rollback()
 		log.Printf("修改密钥绑定信息失败：%v\n", err)
 		return &pb.BindOrActiveMyKey2AppResponse{
@@ -184,12 +196,21 @@ func (s *KeyServices) BindOrActiveMyKey2App(ctx context.Context, request *pb.Bin
 
 	// 3. 修改密钥的激活信息
 	activeOrder.IsUsed = true
-	if err := tx.Model(&model.ActiveOrders{}).Where("id = ?", activeOrder.ID).Updates(&activeOrder).Error; err != nil {
+	if err := tx.Model(&model.ActiveOrders{}).Where("`id` = ?", activeOrder.ID).Updates(&activeOrder).Error; err != nil {
 		tx.Rollback()
 		log.Printf("修改激活订单失败：%v\n", err)
 		return &pb.BindOrActiveMyKey2AppResponse{
 			Code: http.StatusInternalServerError,
 			Msg:  "failed to update activation order",
+		}, nil
+	}
+
+	if err := utils.SetActivationRecordCache2Redis(ctx, newClientId, key.Key, activeOrder.ExpirationDate); err != nil {
+		tx.Rollback()
+		log.Printf(err.Error())
+		return &pb.BindOrActiveMyKey2AppResponse{
+			Code: http.StatusInternalServerError,
+			Msg:  "failed to set cache: " + err.Error(),
 		}, nil
 	}
 
@@ -207,8 +228,8 @@ func (s *KeyServices) BindOrActiveMyKey2App(ctx context.Context, request *pb.Bin
 
 	log.Println("密钥绑定并激活成功")
 	return &pb.BindOrActiveMyKey2AppResponse{
-		Code:              http.StatusOK,
-		Msg:               "success",
-		SignificantNumber: "23456ytgfdd", // 可以根据实际需要生成
+		Code:     http.StatusOK,
+		Msg:      "success",
+		ClientId: key.ClientId,
 	}, nil
 }

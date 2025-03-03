@@ -184,7 +184,6 @@ func HandleBindKeyToThirdExternalApp(context *gin.Context) {
 		Password      string `json:"password"`
 		Key           string `json:"key"`
 		ClientVersion string `json:"client_version"`
-		ClientId      string `json:"client_id"`
 		OsType        string `json:"os_type"`
 		Remark        string `json:"remark"`
 	}{}
@@ -210,7 +209,6 @@ func HandleBindKeyToThirdExternalApp(context *gin.Context) {
 		Password:      postData.Password,
 		Key:           postData.Key,
 		ClientVersion: postData.ClientVersion,
-		ClientId:      postData.ClientId,
 		OsType:        postData.OsType,
 		Remark:        postData.Remark,
 	})
@@ -223,9 +221,9 @@ func HandleBindKeyToThirdExternalApp(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{
-		"code":               resp.Code,
-		"msg":                resp.Msg,
-		"significant_number": resp.SignificantNumber,
+		"code":      resp.Code,
+		"msg":       resp.Msg,
+		"client_id": resp.ClientId,
 	})
 }
 
@@ -288,15 +286,6 @@ func GetAllActivateLogByAdmin(context *gin.Context) {
 		})
 		return
 	}
-	//var logMap []map[string]any
-	//err = json.Unmarshal(resp.Log, &logMap)
-	//if err != nil {
-	//	context.JSON(http.StatusOK, gin.H{
-	//		"code": http.StatusInternalServerError,
-	//		"msg":  err.Error(),
-	//	})
-	//	return
-	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
 		"msg":        resp.Msg,
@@ -329,15 +318,6 @@ func HandleGetAllKeysByAdmin(context *gin.Context) {
 		})
 		return
 	}
-	//var keysMap []map[string]any
-	//err = json.Unmarshal(resp.Keys, &keysMap)
-	//if err != nil {
-	//	context.JSON(http.StatusOK, gin.H{
-	//		"code": http.StatusInternalServerError,
-	//		"msg":  "gateway " + err.Error(),
-	//	})
-	//	return
-	//}
 	context.JSON(http.StatusOK, gin.H{
 		"code":       resp.Code,
 		"msg":        resp.Msg,
@@ -371,5 +351,35 @@ func HandleAlterKeyIsValidByAdmin(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"code": resp.Code,
 		"msg":  resp.Msg,
+	})
+}
+
+func HandleCheckKeyValidation(context *gin.Context) {
+	postData := &struct {
+		KeyContent string `json:"key_content"`
+		ClientId   string `json:"client_id"`
+	}{}
+	if err := context.ShouldBind(&postData); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadRequest, // 400
+			"msg":  "Bad Request",
+		})
+		return
+	}
+	resp, err := grpcClient.KeyServicesClient.CheckActivationStatusIntervalReq(sysContext.Background(), &pb.CheckActivationStatusIntervalReqRequest{
+		KeyContent: postData.KeyContent,
+		ClientId:   postData.ClientId,
+	})
+	if err := failOnRpcError(err, resp); err != nil {
+		context.JSON(http.StatusOK, gin.H{
+			"code": http.StatusInternalServerError, // 500
+			"msg":  err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"code":       resp.Code,
+		"expired_ar": resp.ExpiredAt,
+		"msg":        resp.Msg,
 	})
 }

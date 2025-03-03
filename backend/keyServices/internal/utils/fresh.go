@@ -2,8 +2,11 @@ package utils
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"keyServices/internal/dao"
+	"keyServices/internal/model"
+	"log"
 	"time"
 )
 
@@ -47,5 +50,23 @@ func FreshUserPropertyInfoInRedis(userId int64) error {
 	}
 
 	fmt.Printf("All keys for user %d deleted successfully\n", userId)
+	return nil
+}
+
+// CloseActiveActivationCheckCacheByKeyId 清除redis中缓存的激活记录 如果它不成功则需要回滚事务
+func CloseActiveActivationCheckCacheByKeyId(ctx context.Context, keyId int64) error {
+	var clientId string = ""
+	if err := dao.Db.Model(&model.Keys{}).Where("`id` = ?", keyId).Select("client_id").Scan(&clientId).Error; err != nil {
+		log.Println("failed to get client_id:", err)
+		return err
+	}
+	if clientId == "" || len(clientId) != 64 {
+		return errors.New("client_id of key is not valid")
+	} else {
+		if err := dao.Rdb.Del(ctx, "user_property:active_activation_record_cache:"+clientId).Err(); err != nil {
+			log.Println("failed to delete cache:", err)
+			return err
+		}
+	}
 	return nil
 }
