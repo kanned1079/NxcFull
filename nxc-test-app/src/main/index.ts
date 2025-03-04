@@ -2,6 +2,8 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import axios from "axios"
+// import {type IpcMainInvokeEvent} from "electron"
 
 function createWindow(): void {
   // Create the browser window.
@@ -13,7 +15,9 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: false,
     }
   })
 
@@ -51,6 +55,22 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  ipcMain.handle('login', async (_, data: {
+    email: string;
+    password: string;
+    key_content: string;
+  }) => {
+    try {
+      const response = await axios.post('http://localhost:8081/api/user/v1/activation/bind', {
+        ...data,
+      })
+      return response.data
+    } catch (err: any) {
+      return false
+    }
+  })
+
 
   createWindow()
 
