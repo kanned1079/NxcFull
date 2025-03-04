@@ -210,20 +210,20 @@ func (s *KeyServices) UnbindKey(ctx context.Context, request *pb.UnbindKeyReques
 	// 开始一个事务
 	tx := dao.Db.Begin()
 	if tx.Error != nil {
-		log.Println("事务开始失败:", tx.Error)
+		log.Println("handle roll back:", tx.Error)
 		return &pb.UnbindKeyResponse{
 			Code: http.StatusInternalServerError,
-			Msg:  "事务开始失败",
+			Msg:  "fail in handle data, rolled back",
 		}, tx.Error
 	}
 
 	// 1. 修改激活记录的表
 	var activateRecord model.ActivateRecord
 	if result := tx.Model(&model.ActivateRecord{}).
-		Where("`id` = ? and user_id = ?", request.RecordId, request.UserId).
+		Where("`id` = ? and `user_id` = ?", request.RecordId, request.UserId).
 		First(&activateRecord); result.Error != nil {
 		tx.Rollback() // 查询失败，回滚事务
-		log.Println("未找到激活记录:", result.Error)
+		log.Println("cannot find active log:", result.Error)
 		return &pb.UnbindKeyResponse{
 			Code: http.StatusNotFound,
 			Msg:  "未找到激活记录",
