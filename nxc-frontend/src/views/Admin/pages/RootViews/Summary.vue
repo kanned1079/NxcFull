@@ -8,9 +8,10 @@ import useThemeStore from "@/stores/useThemeStore";
 import IncomeChart from "@/views/Admin/pages/RootViews/dashboard/IncomeChart.vue";
 import instance from "@/axios";
 import {ChevronForwardOutline as toRightIcon,} from "@vicons/ionicons5"
-import PageHead from "@/views/utils/PageHead.vue";
-import useNetworkResultHook from "@/hooks/useNetworkResultHook";
-import {type IsNetRequestedSuccess} from "@/hooks/useNetworkResultHook"
+// import PageHead from "@/views/utils/PageHead.vue";
+// import useNetworkResultHook from "@/hooks/useNetworkResultHook";
+import {handleFetchRootRuntimeEnvConfig} from "@/api/common/env"
+// import {type IsNetRequestedSuccess} from "@/hooks/useNetworkResultHook"
 
 const {t} = useI18n()
 const userInfoStore = useUserInfoStore();
@@ -42,12 +43,13 @@ let checkIsUserHaveOpenTickets = async () => {
 
 // let netCompleted = ref<'waiting' | 'err' | 'finished'>("waiting")
 
-let [netStatus, setNetStatus] = useNetworkResultHook()
+// let [netStatus, setNetStatus] = useNetworkResultHook()
 
 
 onBeforeMount(async () => {
   // await getAppOverview()
   themeStore.breadcrumb = 'adminViews.summary.cockpit'
+  await handleFetchRootRuntimeEnvConfig()
 
 })
 
@@ -109,7 +111,7 @@ export default {
         <Settings></Settings>
       </div>
       <div class="income-chart">
-        <IncomeChart :set-net-status="setNetStatus"></IncomeChart>
+        <IncomeChart></IncomeChart>
       </div>
     </div>
   </transition>
@@ -131,8 +133,7 @@ export default {
     display: flex;
   }
 
-  .income-chart {
-  }
+
 }
 
 //.n-card {

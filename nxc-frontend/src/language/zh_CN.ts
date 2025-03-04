@@ -1012,7 +1012,7 @@ export default {
                 "planName": '訂閱計畫名稱',
                 "expiredAt": '到期日期',
                 "keyGeneratedAt": '密鑰生成日期',
-
+                "clientId": "客户端ID",
             }
         },
         "noticeMgr": {

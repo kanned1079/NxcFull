@@ -73,3 +73,16 @@ export const handleDeleteGroup = async (id: number) => {
     }
 }
 
+export const handleGetAllUsers = async (page: number, size: number) => {
+    try {
+        let {data} = await instance.get('dwefrtgythgf', {
+            params: {
+                name: 'kanna'
+            }
+        })
+        return data
+    }catch (err: any) {
+        console.error(err)
+        return false
+    }
+}

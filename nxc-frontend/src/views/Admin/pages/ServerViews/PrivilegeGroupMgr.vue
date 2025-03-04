@@ -15,7 +15,7 @@ import useThemeStore from "@/stores/useThemeStore";
 import {BarChartOutlined, UserOutlined} from '@vicons/antd'
 import DataTableSuffix from "@/views/utils/DataTableSuffix.vue";
 import PageHead from "@/views/utils/PageHead.vue";
-import {handleDeleteGroup, handleGetAllGroups, handleSubmitNewGroup, handleUpdateGroup} from "@/api/admin/groups"; // 引入所需圖標
+import {handleDeleteGroup, handleGetAllGroups, handleSubmitNewGroup, handleUpdateGroup} from "@/api/admin/groups";
 import useTablePagination from "@/hooks/useTablePagination";
 
 const {t} = useI18n()
@@ -197,6 +197,8 @@ let getAllGroups = async () => {
       data.group_list.forEach((group: PrivilegeGroup) => groupList.value.push(group))
     pageCount.value = data.page_count || 0
     animated.value = true
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure'))
   }
 }
 

@@ -257,7 +257,7 @@ const callBlockKeyByKeyId = async (row: KeyItem) => {
   })
 }
 
-type KeyDetailKey = 'user_id' | 'plan_name' | 'expiration_date' | 'created_at'
+type KeyDetailKey = 'user_id' | 'plan_name' | 'expiration_date' | 'created_at' | 'client_id'
 
 interface KeyDetail {
   title: string;
@@ -272,6 +272,10 @@ const keyDetailItems: KeyDetail[] = [
   {
     title: 'adminViews.keysMgr.detailModal.planName',
     key: 'plan_name',
+  },
+  {
+    title: 'adminViews.keysMgr.detailModal.clientId',
+    key: 'client_id',
   },
   {
     title: 'adminViews.keysMgr.detailModal.expiredAt',
@@ -436,12 +440,10 @@ export default {
   >
     <div class="details-root" v-for="i in keyDetailItems" :key="i.title">
       <p class="detail-title">{{ t(i.title || '') }}</p>
-      <p class="detail-content">{{ formatDetailString(i.key) }}</p>
+      <p class="detail-content" :style="i.title==='adminViews.keysMgr.detailModal.clientId'?{fontSize: '0.9rem',}:null">{{ formatDetailString(i.key) }}</p>
     </div>
 
   </n-modal>
-
-
 
 
 </template>

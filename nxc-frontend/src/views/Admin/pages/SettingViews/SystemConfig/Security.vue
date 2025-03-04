@@ -9,9 +9,9 @@ const settingStore = useSettingStore();
 type SecurityModel =
     | "email_verify"
     | "email_gmail_limit_enable"
-    | "safe_mode_enable"
+    // | "safe_mode_enable"
     | "secure_path"
-    | "email_whitelist_enable"
+    // | "email_whitelist_enable"
     | "recaptcha_enable"
     | "recaptcha_site_key"
     | "ip_register_limit_enable"
@@ -40,12 +40,12 @@ let securitySettingsData: SecuritySetting[] = [
     type: 'switch',
     modelValue: 'email_gmail_limit_enable',
   },
-  {
-    title: 'adminViews.systemConfig.security.safeMode.title',
-    description: 'adminViews.systemConfig.security.safeMode.description',
-    type: 'switch',
-    modelValue: 'safe_mode_enable',
-  },
+  // {
+  //   title: 'adminViews.systemConfig.security.safeMode.title',
+  //   description: 'adminViews.systemConfig.security.safeMode.description',
+  //   type: 'switch',
+  //   modelValue: 'safe_mode_enable',
+  // },
   {
     title: 'adminViews.systemConfig.security.adminPath.title',
     description: 'adminViews.systemConfig.security.adminPath.description',
@@ -53,12 +53,12 @@ let securitySettingsData: SecuritySetting[] = [
     placeholder: 'adminViews.systemConfig.security.adminPath.placeholder',
     modelValue: 'secure_path',
   },
-  {
-    title: 'adminViews.systemConfig.security.emailWhitelist.title',
-    description: 'adminViews.systemConfig.security.emailWhitelist.description',
-    type: 'switch',
-    modelValue: 'email_whitelist_enable',
-  },
+  // {
+  //   title: 'adminViews.systemConfig.security.emailWhitelist.title',
+  //   description: 'adminViews.systemConfig.security.emailWhitelist.description',
+  //   type: 'switch',
+  //   modelValue: 'email_whitelist_enable',
+  // },
   {
     title: 'adminViews.systemConfig.security.recaptcha.title',
     description: 'adminViews.systemConfig.security.recaptcha.description',

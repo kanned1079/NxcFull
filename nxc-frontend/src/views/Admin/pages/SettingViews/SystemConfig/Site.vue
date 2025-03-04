@@ -33,14 +33,14 @@ type SiteModel =
     | "app_sub_name"
     | "app_description"
     | "app_url"
-    | "force_https"
+    // | "force_https"
     | "logo_url"
-    | "subscribe_url"
+    // | "subscribe_url"
     | "tos_url"
     | "stop_register"
     | "invite_require"
-    | "trial_subscribe"
-    | "trial_time"
+    // | "trial_subscribe"
+    // | "trial_time"
     | "currency"
     | "currency_symbol";
 
@@ -82,12 +82,12 @@ const appSettings: AppSetting[] = [
     type: 'input',
     placeholder: 'adminViews.systemConfig.site.appUrl.placeholder'
   },
-  {
-    title: 'adminViews.systemConfig.site.forceHttps.title',
-    shallow: 'adminViews.systemConfig.site.forceHttps.shallow',
-    model: 'force_https',
-    type: 'switch'
-  },
+  // {
+  //   title: 'adminViews.systemConfig.site.forceHttps.title',
+  //   shallow: 'adminViews.systemConfig.site.forceHttps.shallow',
+  //   model: 'force_https',
+  //   type: 'switch'
+  // },
   {
     title: 'adminViews.systemConfig.site.logoUrl.title',
     shallow: 'adminViews.systemConfig.site.logoUrl.shallow',
@@ -95,13 +95,13 @@ const appSettings: AppSetting[] = [
     type: 'input',
     placeholder: 'adminViews.systemConfig.site.logoUrl.placeholder'
   },
-  {
-    title: 'adminViews.systemConfig.site.subscribeUrl.title',
-    shallow: 'adminViews.systemConfig.site.subscribeUrl.shallow',
-    model: 'subscribe_url',
-    type: 'input',
-    placeholder: 'adminViews.systemConfig.site.subscribeUrl.placeholder'
-  },
+  // {
+  //   title: 'adminViews.systemConfig.site.subscribeUrl.title',
+  //   shallow: 'adminViews.systemConfig.site.subscribeUrl.shallow',
+  //   model: 'subscribe_url',
+  //   type: 'input',
+  //   placeholder: 'adminViews.systemConfig.site.subscribeUrl.placeholder'
+  // },
   {
     title: 'adminViews.systemConfig.site.tosUrl.title',
     shallow: 'adminViews.systemConfig.site.tosUrl.shallow',
@@ -115,24 +115,24 @@ const appSettings: AppSetting[] = [
     model: 'stop_register',
     type: 'switch'
   },
-  {
-    title: 'adminViews.systemConfig.site.inviteRequire.title',
-    shallow: 'adminViews.systemConfig.site.inviteRequire.shallow',
-    model: 'invite_require',
-    type: 'switch'
-  },
-  {
-    title: 'adminViews.systemConfig.site.trialSubscribe.title',
-    shallow: 'adminViews.systemConfig.site.trialSubscribe.shallow',
-    model: 'trial_subscribe',
-    type: 'select'
-  },
-  {
-    title: 'adminViews.systemConfig.site.trialTime.title',
-    shallow: 'adminViews.systemConfig.site.trialTime.shallow',
-    model: 'trial_time',
-    type: 'input-number'
-  },
+  // {
+  //   title: 'adminViews.systemConfig.site.inviteRequire.title',
+  //   shallow: 'adminViews.systemConfig.site.inviteRequire.shallow',
+  //   model: 'invite_require',
+  //   type: 'switch'
+  // },
+  // {
+  //   title: 'adminViews.systemConfig.site.trialSubscribe.title',
+  //   shallow: 'adminViews.systemConfig.site.trialSubscribe.shallow',
+  //   model: 'trial_subscribe',
+  //   type: 'select'
+  // },
+  // {
+  //   title: 'adminViews.systemConfig.site.trialTime.title',
+  //   shallow: 'adminViews.systemConfig.site.trialTime.shallow',
+  //   model: 'trial_time',
+  //   type: 'input-number'
+  // },
   {
     title: 'adminViews.systemConfig.site.currency.title',
     shallow: 'adminViews.systemConfig.site.currency.shallow',
@@ -150,59 +150,59 @@ const appSettings: AppSetting[] = [
 ];
 
 
-let plans = [
-  {
-    id: 1, //  对应subscribe_list中的value
-    group_id: 5,
-    name: 'S1订阅', //  对应subscribe_list中的label
-    is_sale: true,  // 取反后对应subscribe_list中的disabled
-    is_renew: false,
-    capacity_limit: 120,
-    month_price: 12,
-    quarter_price: 33,
-    half_year_price: 66,
-    year_price: 129,
-  },
-  {
-    id: 2, //  对应subscribe_list中的value
-    group_id: 6,
-    name: 'S2订阅', //  对应subscribe_list中的label
-    is_sale: true,  // 取反后对应subscribe_list中的disabled
-    is_renew: true,
-    capacity_limit: 120,
-    month_price: 12,
-    quarter_price: 33,
-    half_year_price: 66,
-    year_price: 129,
-  }
-]
+// let plans = [
+//   {
+//     id: 1, //  对应subscribe_list中的value
+//     group_id: 5,
+//     name: 'S1订阅', //  对应subscribe_list中的label
+//     is_sale: true,  // 取反后对应subscribe_list中的disabled
+//     is_renew: false,
+//     capacity_limit: 120,
+//     month_price: 12,
+//     quarter_price: 33,
+//     half_year_price: 66,
+//     year_price: 129,
+//   },
+//   {
+//     id: 2, //  对应subscribe_list中的value
+//     group_id: 6,
+//     name: 'S2订阅', //  对应subscribe_list中的label
+//     is_sale: true,  // 取反后对应subscribe_list中的disabled
+//     is_renew: true,
+//     capacity_limit: 120,
+//     month_price: 12,
+//     quarter_price: 33,
+//     half_year_price: 66,
+//     year_price: 129,
+//   }
+// ]
 
 
-let subscribe_list = ref([
-  {
-    label: '关闭',
-    value: 0,
-    disabled: false,
-  },
-])
-
-let getSubscribeList = async () => {
-  try {
-    let {data} = await instance.get('http://localhost:8081/api/admin/v1/plan/kv')
-    if (data.code === 200) {
-      console.log(data)
-      data.plans.forEach((plan: Plan) => {
-        subscribe_list.value.push({
-          label: plan.name,
-          value: plan.id,
-          disabled: plan.is_sale
-        })
-      })
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
+// let subscribe_list = ref([
+//   {
+//     label: '关闭',
+//     value: 0,
+//     disabled: false,
+//   },
+// ])
+//
+// let getSubscribeList = async () => {
+//   try {
+//     let {data} = await instance.get('http://localhost:8081/api/admin/v1/plan/kv')
+//     if (data.code === 200) {
+//       console.log(data)
+//       data.plans.forEach((plan: Plan) => {
+//         subscribe_list.value.push({
+//           label: plan.name,
+//           value: plan.id,
+//           disabled: plan.is_sale
+//         })
+//       })
+//     }
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
 const saveFiled = async (k: string, v: any) => {
   let updateResponse = await settingStore.saveOption('site', k, v)
@@ -213,7 +213,7 @@ const saveFiled = async (k: string, v: any) => {
 }
 
 onMounted(() => {
-  getSubscribeList()
+  // getSubscribeList()
 
 })
 
@@ -274,13 +274,13 @@ export default {
                     @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"
                 />
               </div>
-              <n-select
-                  v-else-if="setting.type === 'select'"
-                  v-model:value="settingStore.settings.site[setting.model]"
-                  size="large"
-                  :options="subscribe_list"
-                  @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"
-              />
+<!--              <n-select-->
+<!--                  v-else-if="setting.type === 'select'"-->
+<!--                  v-model:value="settingStore.settings.site[setting.model]"-->
+<!--                  size="large"-->
+<!--                  :options="subscribe_list"-->
+<!--                  @update:value="saveFiled(setting.model, settingStore.settings.site[setting.model])"-->
+<!--              />-->
               <n-input-number
                   v-else-if="setting.type === 'input-number'"
                   v-model:value.number="settingStore.settings.site[setting.model]"
