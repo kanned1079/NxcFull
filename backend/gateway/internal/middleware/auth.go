@@ -57,6 +57,8 @@ func RoleMiddleware() gin.HandlerFunc {
 		if roleStr, ok := userRole.(string); ok {
 			if roleStr == "admin" {
 				context.Next()
+			} else if roleStr == "staff" {
+				context.Next()
 			} else if roleStr == "user" {
 				if isUserPath(context.Request.URL.Path) {
 					context.Next()

@@ -14,10 +14,16 @@ const routes: RouteRecordRaw[] = [
     //     component: ErrorPage,
     // },
     {
+        path: '/403',
+        name: 'NoPrivilege',
+        component: () => import("@/views/utils/NoPrivilege.vue")
+    },
+    {
         path: '/:pathMatch(.*)*', // 使用 pathMatch(.*)* 来匹配任何未定义的路径
         name: 'NotFound',
         component: () => import("@/views/utils/NotFound.vue"),
     },
+
 ]
 
 const router = createRouter({
@@ -116,8 +122,18 @@ router.beforeEach((to, from, next) => {
     // 已登录用户处理逻辑
     if (to.path.startsWith('/admin')) {
         // 非管理员禁止访问 /admin
-        if (!userInfoStore.thisUser.isAdmin) {
+        if (!userInfoStore.thisUser.isAdmin && !userInfoStore.thisUser.isStaff) {
             return to.path === '/dashboard/summary' ? next() : next('/dashboard/summary');
+        }
+
+        // if (userInfoStore.thisUser.isStaff && (to.path === '/admin/dashboard/systemconfig' || to.path === '/admin/dashboard/payment')) {
+        //     console.log('no pirvilege')
+        //     return to.path === '/403' ? next() : next('/403');
+        // }
+
+        if (userInfoStore.thisUser.isStaff && ['/admin/dashboard/systemconfig', '/admin/dashboard/payment'].includes(to.path)) {
+            console.log('no privilege');
+            return to.path === '/403' ? next() : next('/403');
         }
 
         // 管理员登录后禁止访问登录页面，重定向到管理员 dashboard

@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
 import {useRouter} from 'vue-router';
+import {useMessage} from "naive-ui"
 import {
   BagHandleOutline as SubIcon,
   PeopleOutline as UserIcon,
   ClipboardOutline as OrderIcon,
   SettingsOutline as settingIcon,
 } from '@vicons/ionicons5'
+import useUserInfoStore from "@/stores/useUserInfoStore";
 
 const {t} = useI18n()
 const router = useRouter();
+const message = useMessage()
+const userInfoStore = useUserInfoStore()
 
 </script>
 
@@ -29,8 +33,9 @@ export default {
     >
       <n-grid-item>
         <n-card
+            :style="userInfoStore.thisUser.isStaff?{opacity: 0.6}:null"
             hoverable
-            @click="router.push({ path: '/admin/dashboard/systemconfig'})"
+            @click="userInfoStore.thisUser.isStaff?message.error(t('forbidden.description')):router.push({ path: '/admin/dashboard/systemconfig'})"
             :embedded="true"
             :bordered="false"
             class="shortcut-item"

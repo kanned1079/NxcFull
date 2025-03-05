@@ -431,7 +431,7 @@ export default {
 
             <n-alert
                 type="warning"
-                title="停止注册"
+                :title="t('userRegister.stopRegisterTitle')"
                 v-if="appInfosStore.registerPageConfig.stop_register"
                 style="margin-bottom: 50px;"
             >

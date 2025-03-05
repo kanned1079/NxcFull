@@ -152,17 +152,6 @@ let bindUserInfo = (data: DataWithAuth) => {
 }
 
 let callLogin = async () => {
-  // console.log(formValue.value.user.email, formValue.value.user.password)
-  // try {
-  // let hashedPwd = await hashPassword(formValue.value.user.password)
-  // console.log('测试用hashedPwd ', hashedPwd)
-  // let {data} = await instance.post("/api/user/v1/login", {
-  //   email: formValue.value.user.email.trim(),
-  //   password: encodeToBase64(formValue.value.user.password.trim() as string),
-  //   two_fa_code: formValue.value.user.two_fa_code.trim(),
-  //   // password: hashedPwd,
-  //   role: 'user',
-  // })
   let data = await handleUserLogin(
       formValue.value.user.email,
       formValue.value.user.password.trim(),
@@ -177,7 +166,11 @@ let callLogin = async () => {
     sessionStorage.setItem('token', data.token)
     notifyPass('success');
     bindUserInfo(data)
-    await router.push({path: '/dashboard'});
+    setTimeout(async () => {
+      await router.push({path: `${(userInfoStore.thisUser.isStaff || userInfoStore.thisUser.isAdmin)?'/admin/dashboard/summary':'/dashboard'}`})
+
+    }, 1000)
+
   } else {
     enableLogin.value = true
     notifyErr("error", data.msg)

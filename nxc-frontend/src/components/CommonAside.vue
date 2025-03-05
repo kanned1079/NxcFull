@@ -59,17 +59,19 @@ let MenuOption = computed<MenuOption[]>(() => [
     label: t('commonAside.admin.settings'),
     key: 'pinball-1973',
     // icon: renderIcon(settingIcon),
-    disabled: false,
+    // show: !userInfoStore.thisUser.isStaff,
     children: [
       {
         label: t('commonAside.admin.systemConfig'),
         key: 'system-config',
         icon: renderIcon(settingIcon),
+        disabled: userInfoStore.thisUser.isStaff,
       },
       {
         label: t('commonAside.admin.paymentConfig'),
         key: 'payment-config',
         icon: renderIcon(paymentIcon),
+        disabled: userInfoStore.thisUser.isStaff,
       },
       {
         label: t('commonAside.admin.themeConfig'),
@@ -299,7 +301,7 @@ export default {
     <CommonLogo class="logo"></CommonLogo>
     <n-scrollbar style="max-height: calc(100vh - 52px)" :size="0">
       <n-menu
-          v-if="userInfoStore.thisUser.isAdmin"
+          v-if="userInfoStore.thisUser.isAdmin || userInfoStore.thisUser.isStaff"
           class="menu"
           :accordion="false"
           :default-expand-all="true"

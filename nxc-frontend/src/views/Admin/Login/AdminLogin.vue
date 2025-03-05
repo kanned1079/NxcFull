@@ -132,16 +132,21 @@ const submitLogin = async () => {
   let data = await handleAdminLoginFunc(userFormData.value.username, userFormData.value.password, 'admin')
   // console.log(data)
   if (data.code === 200 && data.isAuthed === true) {
-    // 验证通过 保存token
-    if (!data.token) return message.error(t('userLogin.tokenNotExist'))
-    sessionStorage.setItem('token', data.token)
-    // 保存验证状态
-    userInfoStore.setAndSaveAuthStatus(true)
-    notifyPass('success');
-    bindUserInfo(data)
-    console.log(userInfoStore.thisUser)
-    await router.push({path: '/admin/dashboard/summary'});
+    if (data.user_data.is_admin || data.user_data.is_staff) {
+      // 验证通过 保存token
+      if (!data.token) return message.error(t('userLogin.tokenNotExist'))
+      sessionStorage.setItem('token', data.token)
+      // 保存验证状态
+      userInfoStore.setAndSaveAuthStatus(true)
+      notifyPass('success');
+      bindUserInfo(data)
+      console.log(userInfoStore.thisUser)
+      setTimeout(async () => await router.push({path: '/admin/dashboard/summary'}), 1000)
+    } else {
+      message.error(t('adminViews.login.message.noPrivilege'))
+    }
   } else {
+    console.error('failure admin login')
     enableLogin.value = true
     switch (data.code) {
       case 401:
@@ -258,7 +263,7 @@ onBeforeMount(() => {
 onMounted(() => {
   if (JSON.parse(sessionStorage.getItem('isAuthed') as string)) {
     console.log('to dashboard')
-    router.push({path: '/admin/dashboard/summary'})
+    setTimeout(() => router.push({path: '/admin/dashboard/summary'}), 1000)
   }
   animated.value = true
   showStartupNotification()

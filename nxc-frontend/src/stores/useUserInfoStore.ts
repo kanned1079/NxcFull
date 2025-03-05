@@ -53,7 +53,7 @@ const useUserInfoStore = defineStore('userInfoS',() => {
     let logout = () => {
         console.log('logout')
         setAndSaveAuthStatus(false)
-        let isAdminBak = thisUser.value.isAdmin
+        let isAdminBak = thisUser.value.isAdmin || thisUser.value.isStaff
         sessionStorage.removeItem('token')
         Object.assign(thisUser, {
             id: 0,
@@ -72,9 +72,9 @@ const useUserInfoStore = defineStore('userInfoS',() => {
             token: '',
         });
         // console.log('是否是管理员:', isAdminBak)
-        router.push(isAdminBak ? '/admin/login' : '/login').catch(err => {
+        setTimeout(() => router.push(isAdminBak ? '/admin/login' : '/login').catch(err => {
             console.error('Failed to navigate:', err);
-        });
+        }), 100)
     }
 
     let updateUserInfo = async ():Promise<boolean> => {

@@ -16,14 +16,16 @@ import (
 // 返回值中 Exist:是否有没关闭的工单 TicketCount:有多少没关闭的工单
 func (s *TicketHandleServices) CheckIsUserHaveOpeningTickets(ctx context.Context, request *pb.CheckIsUserHaveOpeningTicketsRequest) (*pb.CheckIsUserHaveOpeningTicketsResponse, error) {
 	// 初始化变量
-	var isAdmin bool
 	var ticketCount int64
+	//var isAdmin bool
+	//var isStaff bool
 
-	// 1. 检查用户是否为管理员
+	var user model.User
+
+	// 1. 检查用户是否为管理员或员工
 	if err := dao.Db.Model(&model.User{}).
-		Where("id = ?", request.UserId).
-		Select("is_admin").
-		Scan(&isAdmin).Error; err != nil {
+		Where("`id` = ?", request.UserId).
+		First(&user).Error; err != nil {
 		return &pb.CheckIsUserHaveOpeningTicketsResponse{
 			Code:        http.StatusInternalServerError,
 			Msg:         "查询用户信息失败",
@@ -32,15 +34,17 @@ func (s *TicketHandleServices) CheckIsUserHaveOpeningTickets(ctx context.Context
 		}, err
 	}
 
+	log.Println("User is admin:", user.IsAdmin, "User is staff:", user.IsStaff)
+
 	// 2. 根据用户身份查询未关闭的工单数量
-	if isAdmin {
-		// 管理员：查询所有未关闭的工单
+	if user.IsAdmin || user.IsStaff {
+		// 管理员或员工：查询所有未关闭的工单
 		if err := dao.Db.Model(&model.Ticket{}).
 			Where("`status` != ?", 204). // 204 表示关闭的状态
 			Count(&ticketCount).Error; err != nil {
 			return &pb.CheckIsUserHaveOpeningTicketsResponse{
 				Code:        http.StatusInternalServerError,
-				Msg:         "查询管理员工单失败",
+				Msg:         "查询管理员或员工工单失败",
 				Exist:       false,
 				TicketCount: 0,
 			}, err

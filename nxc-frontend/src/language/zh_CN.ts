@@ -99,6 +99,7 @@ export default {
             "message": {
                 "passwordErr": "密码不正确",
                 "adminNotExist": "管理员不存在",
+                "noPrivilege": "無權限訪問",
                 "authPassed": "验证通过",
                 "authFailure": "验证失败",
                 "otherErr": "其他錯誤",
@@ -1120,6 +1121,7 @@ export default {
         "verifyCodeExpireErr": '验证码错误或已過期，請重試或獲取新驗證碼。',
         "thisMailAlreadyExist": '該郵箱已經被註冊',
         "pageConfigFetchFailure": '配置獲取失敗請刷新重試',
+        "stopRegisterTitle": "已停止註冊",
         "stopRegisterHint": '很抱歉，目前註冊功能已暫停。如閣下有需要，請稍後再試或联系我們的支持團隊獲取更多信息。感謝您的理解與支持。',
         "passwordComplexRequirePart1": '* 密碼需要符合',
         "passwordComplexRequirePart2": '複雜度要求',
@@ -1709,5 +1711,9 @@ export default {
         "description": '我們無法找到您請求的頁面，它可能已經被刪除或連結有誤。如果您認為這是一個錯誤，請提交工單以聯繫我們。',
         "p1": '將在 {sec}s 後返回主頁，如果您的瀏覽器沒有響應，請點擊以下按鈕。',
         "manualBack": '返回主頁',
+    },
+    "forbidden": {
+        "title": '403 無權限',
+        "description": '您可能沒有足夠的權限來訪問本頁面。如果您認為這是一個錯誤，請提交工單以聯繫我們。',
     }
 }

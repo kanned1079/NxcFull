@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineOptions({
-  name: 'NotFound',
+  name: 'NoPrivilege',
 })
 
 import {onBeforeUnmount, onMounted, ref} from "vue";
@@ -41,6 +41,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  // 你可以在这里进行一些初始化操作，当前没有需要的操作。
   timer?clearInterval(timer):null
 });
 
@@ -49,26 +50,26 @@ onBeforeUnmount(() => {
 <template>
   <div class="root">
     <n-layout-content style="height: 100vh">
-      <transition name="slide-fade">
-        <div class="inner" v-if="animated">
-          <PageHead
-              :title="t(`${i18nPrefix}.title`)"
-              :description="t(`${i18nPrefix}.description`)"
-          >
-            <div>
-              <p style="opacity: 0.8">{{ t(`${i18nPrefix}.p1`, { sec: secLeft }) }}</p>
-              <n-button
-                  type="primary"
-                  text
-                  style="text-decoration: underline;"
-                  @click="callBack"
-              >
-                {{ t(`${i18nPrefix}.manualBack`) }}
-              </n-button>
-            </div>
-          </PageHead>
-        </div>
-      </transition>
+     <transition name="slide-fade">
+       <div class="inner" v-if="animated">
+         <PageHead
+             :title="t('forbidden.title')"
+             :description="t('forbidden.description')"
+         >
+           <div>
+             <p style="opacity: 0.8">{{ t(`${i18nPrefix}.p1`, { sec: secLeft }) }}</p>
+             <n-button
+                 type="primary"
+                 text
+                 style="text-decoration: underline;"
+                 @click="callBack"
+             >
+               {{ t(`${i18nPrefix}.manualBack`) }}
+             </n-button>
+           </div>
+         </PageHead>
+       </div>
+     </transition>
     </n-layout-content>
   </div>
 </template>

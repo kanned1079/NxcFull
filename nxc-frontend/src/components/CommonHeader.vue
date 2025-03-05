@@ -109,7 +109,7 @@ let user_options = reactive([
 
 let admin_options = ref([
   {
-    label: '退出登录',
+    label: computed(() => t('commonHeader.logout')),
     key: 'logout',
     icon: renderIcon(LogoutIcon)
   }
@@ -172,7 +172,7 @@ export default {
       </n-button>
 
       <p class="txt" v-if="!themeStore.menuCollapsed">
-        {{ themeStore.breadcrumb?t(themeStore.breadcrumb):'breadcrumb' }}
+        {{ themeStore.breadcrumb?`${t(themeStore.breadcrumb)}`:'breadcrumb'  }}
       </p>
     </div>
     <div class="r-content">
@@ -197,10 +197,9 @@ export default {
       <span ref="dropDownBtn" class="info">
         <n-dropdown
             @select="handleSelect"
-            :options="userInfoStore.thisUser.isAdmin?admin_options:user_options"
+            :options="(userInfoStore.thisUser.isAdmin || userInfoStore.thisUser.isStaff)?admin_options:user_options"
             placement="bottom"
-            size="large"
-            :content-style="{backgroundColor:'#e3e5e7', width:'320px'}"
+            size="medium"
             class="dd"
             :width="themeStore.menuCollapsed?'100%':dropDownWidth"
         >

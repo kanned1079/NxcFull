@@ -248,7 +248,7 @@ func (s *UserService) Login(ctx context.Context, req *pb.UserLoginRequest) (*pb.
 			}, nil
 		}
 
-		if thisUser.IsTwoFA && !thisUser.IsAdmin {
+		if thisUser.IsTwoFA && !thisUser.IsAdmin && !thisUser.IsStaff {
 			if passed, err := auth.GetSecretAndVerify2FACode(req.Email, req.TwoFaCode); !passed || err != nil {
 				return &pb.UserLoginResponse{
 					Code:     http.StatusUnauthorized,
@@ -263,7 +263,19 @@ func (s *UserService) Login(ctx context.Context, req *pb.UserLoginRequest) (*pb.
 	log.Printf("用户信息加载完成: %+v", thisUser)
 
 	// 生成 token
-	token, err := auth.GenerateToken(req.Email, req.Role)
+	//token, err := auth.GenerateToken(req.Email, req.Role)
+
+	roleStr := ""
+
+	if thisUser.IsAdmin {
+		roleStr = "admin"
+	} else if thisUser.IsStaff {
+		roleStr = "staff"
+	} else if !thisUser.IsAdmin && !thisUser.IsStaff {
+		roleStr = "user"
+	}
+
+	token, err := auth.GenerateToken(req.Email, roleStr)
 	if err != nil {
 		log.Printf("生成Token失败: %v", err)
 		return &pb.UserLoginResponse{

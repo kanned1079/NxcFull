@@ -2,7 +2,7 @@
 import instance from "@/axios";
 import {encodeToBase64} from "@/utils/encryptor";
 
-export const handleAdminLoginFunc = async (email: string, password: string, role: 'admin' | 'user') => {
+export const handleAdminLoginFunc = async (email: string, password: string, role: 'admin' | 'user' | 'staff') => {
     try {
         let {data} = await instance.post('/api/admin/v1/login', {
             email: email,

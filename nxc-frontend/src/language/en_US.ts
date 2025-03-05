@@ -8,24 +8,24 @@ export default {
     "commonAside": {
         "admin": {
             "dashboard": "Tableboard",
-            "queueMonit": "Service side",
+            "queueMonit": "Service side monitoring",
             "settings": "Settings",
-            "systemConfig": "System",
-            "paymentConfig": "Payment",
-            "themeConfig": "Theme",
+            "systemConfig": "System Settings",
+            "paymentConfig": "Payment Settings",
+            "themeConfig": "Theme settings",
             "server": "Server",
-            "privilege": "Authority",
+            "privilege": "Authority management",
             "finance": "Finance",
-            "subscription": "Subscription",
-            "coupon": "Coupon",
-            "order": "Order",
-            "activate": "Activation",
-            "key": "Key",
+            "subscription": "Subscription Management",
+            "coupon": "Coupon Management",
+            "order": "Order Management",
+            "activate": "Activate the record",
+            "key": "Key management",
             "user": "User",
-            "userMgr": "User",
-            "notice": "Announcement",
-            "ticket": "Ticket",
-            "doc": "Knowledge"
+            "userMgr": "User Management",
+            "notice": "Announcement Management",
+            "ticket": "Work order management",
+            "doc": "Knowledge database management"
         },
         "user": {
             "dashboard": "Tableboard",
@@ -61,7 +61,9 @@ export default {
             "NotAllowed": "Illegal format",
             "checkForm": "Please check the form",
             "unknownErr": "Unknown error",
-            "dialog": { "delete": "Do you know you want to delete it?" }
+            "dialog": { "delete": "Do you know you want to delete it?" },
+            "yes": "yes",
+            "no": "no"
         },
         "login": {
             "secureCard": {
@@ -95,6 +97,7 @@ export default {
             "message": {
                 "passwordErr": "Incorrect password",
                 "adminNotExist": "The administrator does not exist",
+                "noPrivilege": "Access without permission",
                 "authPassed": "Verification passed",
                 "authFailure": "Verification failed",
                 "otherErr": "Other errors",
@@ -114,6 +117,13 @@ export default {
             "incomeText": "Yesterday's income / Monthly income",
             "pendingTicket": "You have {nums} orders to be processed",
             "toHandle": "Go and check it out",
+            "apiAccessCard": "Number of API interface visits within a week",
+            "apiAccessCardHint": "This data is only for you to understand current API access and does not represent your server performance.",
+            "incomeWeek": "Income amount within one week",
+            "incomeCardHint": "Here is a chart of income amounts over a week, which will cause inaccurate display if the cache is cleared.",
+            "core": "core",
+            "reqErr": "Encountered an error",
+            "reqErrHint": "An error was encountered while obtaining the overview information, which caused the request to be unable to complete, so the chart cannot be displayed. Please try again later.",
             "userCard": {
                 "title": "User Overview",
                 "allRegisteredUsers": "General registration user",
@@ -132,12 +142,25 @@ export default {
             },
             "system": {
                 "title": "System configuration",
-                "serverTime": "",
-                "gatewayStatus": "Network status",
+                "axiosAddr": "HTTP backend address",
+                "wsAddr": "Websocket backend address",
+                "serverTime": "Server time",
+                "uptime": "Operational time",
+                "gatewayStatus": "API network status",
                 "dbStatus": "Database status",
                 "redisStatus": "Redis Status",
-                "etcdStatus": "Etcd status",
-                "serverOsType": "Server operating system type"
+                "serverOsType": "Server operating system type",
+                "serverOsArch": "Server operating system architecture",
+                "runMode": "Running mode",
+                "cpuNums": "Number of CPU cores for network servers",
+                "numCgoCall": "Number of garbage collections",
+                "time": "Second-rate",
+                "paymentMethods": "Enable payment method",
+                "runOK": "Run normally",
+                "runErr": "Abnormal behavior",
+                "checkServer": "Please check the environment configuration of your backend server",
+                "stopRegisterHint": "You seem to have disabled new user registration",
+                "toSetting": "Turn to Settings"
             }
         },
         "queueMonit": {
@@ -211,7 +234,7 @@ export default {
                 "table": {
                     "id": "#",
                     "method": "Request method",
-                    "path": "Ask for a route",
+                    "path": "Please request a route",
                     "code": "Status code",
                     "clientIp": "Client IP",
                     "responseTime": "Processing time",
@@ -239,7 +262,7 @@ export default {
                 },
                 "appDescription": {
                     "title": "Site Description",
-                    "shallow": "Used to display where the site description is required.",
+                    "shallow": "Used to display where the site is required.",
                     "placeholder": "Site Description"
                 },
                 "appUrl": {
@@ -259,7 +282,7 @@ export default {
                 "subscribeUrl": {
                     "title": "Subscribe URL",
                     "shallow": "Used for subscription, leave blank as the site URL. If you need multiple subscription URLs to be randomly fetched, please use commas to split them.",
-                    "placeholder": "Subscribe to url"
+                    "placeholder": "Subscribe url"
                 },
                 "tosUrl": {
                     "title": "Terms of User (TOS) URL",
@@ -439,7 +462,7 @@ export default {
                     "title": "Mail settings",
                     "warning": "If you change the configuration of this page, you need to restart the queue service and reverse direction. In addition, the configuration priority of this page is higher than the mail configuration in .env.",
                     "sendTestMailTitle": "Send test email",
-                    "sendTestMailShallow": "The email will be sent to the email address of the currently logged in administrator",
+                    "sendTestMailShallow": "The email will be sent to the current logged-in administrator's email address",
                     "sendTestMailTo": "Send a test email to",
                     "sending": "Send email",
                     "success": "success",
@@ -495,11 +518,11 @@ export default {
                 },
                 "barkEndpoint": {
                     "title": "Bark access point",
-                    "shallow": "Bark server backend API address",
+                    "shallow": "Bark Server Backend API Address",
                     "placeholder": "https://<ip>:<port>/<secret-key>"
                 },
                 "barkGroup": {
-                    "title": "Bark Group",
+                    "title": "Bark Groups",
                     "shallow": "The group name displayed by the client",
                     "placeholder": "web"
                 }
@@ -546,7 +569,7 @@ export default {
             "attention": {
                 "title": "Things to note",
                 "point1": "It is really important to configure the payment method information before enabling it.",
-                "point2": "When modifying the payment method configuration, if it is displayed as \"---\", it means that the option has been set and is not empty. If you need to re-modify, just enter the new value to save."
+                "point2": "When modifying the payment method configuration, if it is displayed as \"---\", it means that the option has been set and is not empty. If you need to modify it again, just enter the new value to save."
             },
             "common": {
                 "detail": "{method} configuration",
@@ -690,13 +713,7 @@ export default {
                     "success": "success",
                     "failure": "Fail",
                     "delMention": "If the subscription plan is already on sale, please be careful to delete it."
-                },
-                "addSuccess": "Adding a new subscription successfully",
-                "addFailure": "Adding new subscription failed",
-                "updateSuccess": "Updated subscription successfully",
-                "updateFailure": "Update subscription failed",
-                "deleteSuccess": "The plan was successfully deleted",
-                "deleteFailure": "Plan removal failed"
+                }
             },
             "form": {
                 "title": "Add a subscription",
@@ -719,16 +736,16 @@ export default {
                         "title": "Maximum number of allowed users",
                         "placeholder": "Maximum number of allowed users"
                     },
+                    "planResidue": {
+                        "title": "The remaining amount",
+                        "placeholder": "The remaining amount"
+                    },
                     "sort": { "title": "Sort", "placeholder": "For front-end sorting" },
                     "periodPlaceholder": {
                         "month": "Enter monthly payment price",
                         "quarter": "Enter the quarterly paid price",
                         "halfYear": "Enter the half year payment price",
                         "year": "Enter annual payment price"
-                    },
-                    "planResidue": {
-                        "title": "The remaining amount",
-                        "placeholder": "The remaining amount"
                     }
                 }
             }
@@ -743,14 +760,14 @@ export default {
                 "enabled": "Whether to enable",
                 "name": "Name",
                 "code": "Coupon",
+                "percentOff": "Discount information",
+                "capacity": "Total quantity",
                 "residue": "The remaining amount",
                 "startTime": "Enable time",
                 "endTime": "End time",
                 "actions": "operate",
                 "edit": "Edit",
-                "delete": "delete",
-                "percentOff": "Discount information",
-                "capacity": "Total quantity"
+                "delete": "delete"
             },
             "modal": {
                 "newCoupon": "Add a new coupon",
@@ -758,6 +775,7 @@ export default {
                 "confirmAdd": "Confirm to add",
                 "confirmEdit": "Confirm the modification",
                 "emptyNotAllow": "This item is required",
+                "delMention": "The coupon will be invalid immediately after the entry is deleted and you cannot withdraw this operation.",
                 "cancel": "Cancel",
                 "name": {
                     "title": "Coupon name",
@@ -776,6 +794,10 @@ export default {
                     "title": "Maximum number of coupons used",
                     "placeholder": "Limit maximum usage limit (no limit if empty)"
                 },
+                "residue": {
+                    "title": "The number of remaining coupons used",
+                    "placeholder": "Set the number of times the coupon is used remaining"
+                },
                 "perUserLimit": {
                     "title": "The number of times each user can use a coupon",
                     "placeholder": "Limit the number of times each user can use (no limit on space)"
@@ -783,11 +805,6 @@ export default {
                 "planLimit": {
                     "title": "Specify a subscription plan",
                     "placeholder": "Restrictions on the specified subscription plan to use the offer (no limit on space)"
-                },
-                "delMention": "The coupon will be invalid immediately after the entry is deleted and you cannot withdraw this operation.",
-                "residue": {
-                    "title": "The number of remaining coupons used",
-                    "placeholder": "Set the number of times the coupon is used remaining"
                 }
             }
         },
@@ -819,6 +836,11 @@ export default {
             },
             "search": "Inquiry orders",
             "resetSearch": "Reset query",
+            "failureReason": "Cause of failure",
+            "couponId": "Coupon ID",
+            "couponName": "Coupon name",
+            "noEntry": "without",
+            "orderDetail": "Order details",
             "searchModal": {
                 "email": {
                     "title": "User mailbox",
@@ -833,12 +855,7 @@ export default {
             },
             "tradeWaiting": "Not paid",
             "tradeFailure": "Transaction failed",
-            "tradeSuccess": "success",
-            "failureReason": "Cause of failure",
-            "couponId": "Coupon ID",
-            "couponName": "Coupon name",
-            "noEntry": "without",
-            "orderDetail": "Order details"
+            "tradeSuccess": "success"
         },
         "userMgr": {
             "userManager": "User Management",
@@ -950,7 +967,8 @@ export default {
                 "userId": "User ID",
                 "planName": "Subscription plan name",
                 "expiredAt": "Date of Expiry",
-                "keyGeneratedAt": "Key generation date"
+                "keyGeneratedAt": "Key generation date",
+                "clientId": "Client ID"
             }
         },
         "noticeMgr": {
@@ -997,7 +1015,11 @@ export default {
                 "pendingDescription": "Live work order, this is the work order you should process first. If the work order is confirmed to be completed, please close it. If it is not closed, the work order will always be placed here.",
                 "finishedDescription": "Completed work orders, you can view them here."
             },
-            "chooseOneNecessary": "You should choose at least one item"
+            "chooseOneNecessary": "You should choose at least one item",
+            "mention": {
+                "title": "Are you sure you want to close the ticket?",
+                "content": "The order will be archived into the completed order after it is closed. You can view their content again, but you can never reply to the order."
+            }
         }
     },
     "userLogin": {
@@ -1022,7 +1044,8 @@ export default {
         "checkForm": "Please check the form",
         "if2FaEnabledHint": "If you enabled two-step verification (not required)",
         "reqErr": "Please try again later if there is an error",
-        "accountLocked": "Your account may be registered or banned and cannot be used at the moment. If you still think this is an error, please contact our technical support."
+        "accountLocked": "Your account may be registered or banned and cannot be used at the moment. If you still think this is an error, please contact our technical support.",
+        "tokenNotExist": "Please provide a token"
     },
     "userRegister": {
         "backHomePage": "Back to homepage",
@@ -1049,6 +1072,7 @@ export default {
         "verifyCodeExpireErr": "The verification code is incorrect or has expired. Please try again or obtain a new verification code.",
         "thisMailAlreadyExist": "The email has been registered",
         "pageConfigFetchFailure": "If configuration acquisition fails, please refresh and try again",
+        "stopRegisterTitle": "Registration has been stopped",
         "stopRegisterHint": "Sorry, the registration function has been suspended. If you need it, please try again later or contact our support team for more information. Thank you for your understanding and support.",
         "passwordComplexRequirePart1": "* Passwords need to be in compliance",
         "passwordComplexRequirePart2": "Complexity requirements",
@@ -1122,9 +1146,9 @@ export default {
         "description": "You can choose the subscription plan that suits you best here. If your balance is insufficient, please recharge first. The order will be reserved for you for 5 minutes.",
         "headerPlaceholder": "Choose the plan that suits you best",
         "purchaseBtn": "Order",
+        "noLeft": "Insufficient amount of remaining",
         "monthPay": "Monthly payment",
-        "moreMethod": "More options",
-        "noLeft": "Insufficient amount of remaining"
+        "moreMethod": "More options"
     },
     "newSettlement": {
         "err": "Mistake",
@@ -1199,8 +1223,8 @@ export default {
         },
         "deleteMyAccountModal": {
             "title": "Register Account",
-            "contentLine1": "Accounting is an irreversible operation. Once you confirm that the account is deleted, you will permanently lose access to the account, which means you will not be able to log in again and all data related to this account, including but not limited to your personal information, history, collection of content, purchase records After that, I will not be able to visit again.",
-            "contentLine2": "If you have ongoing business on our platform, such as unfinished orders, activities being involved, subscription services, etc., these will be terminated or cancelled with your account removal, which may bring you corresponding losses. At the same time, the contacts and interaction information you have established through this platform between you and other users will no longer exist.",
+            "contentLine1": "Accounting is an irreversible operation. Once you confirm that it is deleted, you will permanently lose access to the account, which means you will not be able to log in again and all data related to this account, including but not limited to your personal information, history, collection content, purchase records, etc., will not be able to access it again.",
+            "contentLine2": "If you have ongoing business on our platform, such as unfinished orders, activities being participated in, subscription services, etc., these will be terminated or cancelled with your account removal, which may bring you corresponding losses. At the same time, the contacts and interaction information you and other users through this platform will no longer exist.",
             "contentLine3": "Please confirm your decision again. If you have any questions or questions, please contact our customer service and we will sincerely answer it for you. If you still want to delete your account, click the Confirm Delete button.",
             "inputHint1": "Enter \"",
             "inputHint2": "\" Continue.",
@@ -1256,7 +1280,7 @@ export default {
                 "imageRequire": {
                     "title": "Notice",
                     "p1": "You can upload mainstream formats such as *.jpg(jpeg), *.png, *.webp, etc.",
-                    "p2": "The image's length ratio is 1:1 (square), if it is a different ratio, it will be cut into a square in the center, and the excess will be deleted.",
+                    "p2": "The image has a width ratio of 1:1 (square), if it is a different ratio, it will be cut into a square in the center, and the excess will be deleted.",
                     "p3": "The size of the image you upload will be set to 160px."
                 },
                 "click2Upload": "Click or drag the file to the area to upload",
@@ -1285,7 +1309,7 @@ export default {
         "hoverClickMention": "Click to copy to the clipboard",
         "copiedSuccessMessage": "The key copy has been successfully copied. Please refer to the document instructions to continue the operation.",
         "copyFailure": "Copying failure",
-        "hoverCopiedSuccessMention": "Copy successfully"
+        "hoverCopiedSuccessMention": "Successfully copied"
     },
     "userOrders": {
         "myOrders": "My Order",
@@ -1418,7 +1442,7 @@ export default {
         "negativeClick": "Cancel"
     },
     "userTickets": {
-        "description": "If you encounter any problems with use, please submit the work order here. Our technical support and customer service will reply after seeing it and mark the specific reply time in the form below. You can click to view the work order and us comminicate.",
+        "description": "If you encounter any problems with use, please submit the work order here. Our technical support and customer service will reply and mark the specific reply time in the form below. You can click to view the work order to communicate with us.",
         "ticketId": "#",
         "ticketSubject": "Work order theme",
         "ticketUrgency": "Work order grade",
@@ -1491,7 +1515,8 @@ export default {
         "cancelBind": "Cancel the decree",
         "alterRemark": "Modify Notes",
         "commitRemark": "submit",
-        "updateSuccess": "Update successfully"
+        "updateSuccess": "Update successfully",
+        "setRemark": "Set up the note information here"
     },
     "userAppDownload": {
         "title": "APP Download",
@@ -1499,7 +1524,7 @@ export default {
         "common": {
             "title": "Download our app",
             "shallow2": "Get our applications for different clients",
-            "shallow": "Using our application, you can access our services more easily, eliminating the complicated operation of the browser every time; you can find detailed installation requirements and tutorials in the document, including the operation environment, error reporting, etc. If you encounter other issues, please contact our technical support.",
+            "shallow": "Using our application, you can access our services more easily, eliminating the complicated operation of the browser every time; you can find detailed installation requirements and tutorials in the document, including the operation environment, error reporting, etc. If you encounter other problems, please contact our technical support.",
             "noDownload": "We are sorry that there is no download available yet. Please try again later. If you have any questions, please submit a work order to contact our support service."
         },
         "suffix": {
@@ -1516,7 +1541,7 @@ export default {
             },
             "desktop": {
                 "designFor": "Design for desktop",
-                "designShallow": "You can get our desktop mobile applications here",
+                "designShallow": "You can get our desktop mobile application here",
                 "windowsDownloadShallow": "Download Windows Client",
                 "osxDownloadShallow": "Download macOS client",
                 "linuxDownloadShallow": "Download Linux client"
@@ -1551,16 +1576,16 @@ export default {
             "login": "Log in",
             "register": "Register Account",
             "welcomeTo": "Welcome",
-            "welcomeToSub": "Passing through the long tunnel on the county is the Snow Country. Under the night sky, the earth was white and the train stopped in front of the signal station. \"Here, Kawabata Yasunari kicked off the \"Snow Country\" with almost stingy concise words.",
+            "welcomeToSub": "Passing through the long tunnel on the county is the Snow Country. Under the night sky, the earth was white and the train stopped in front of the signal station. \"Here, Kawabata Yasunari kicked off the Snow Country with a very stingy concise text.",
             "startingUse": "Get started",
             "whyUs": "Why choose us",
-            "whyUsSub": "\"When passing through the long tunnel in the prefecture, it is the Snow Country. Under the night sky, the earth is white, and the train stops in front of the signal station.\" Here, Yasunari Kawabata opened the Snow Country with a very stingy and concise text. prelude to.",
+            "whyUsSub": "\"When passing through the long tunnel in the prefecture, it is the Snow Country. Under the night sky, the earth is white, and the train stops in front of the signal station.\" Here, Yasunari Kawabata kicks off the prelude to \"Snow Country\" with almost stingy words.",
             "browseSafe": "Browse safe",
             "browseSafeSub": "The excellent firewall filter system can effectively prevent online fish and malicious websites",
             "encrypt": "End-to-end encryption",
             "encryptSub": "Double-way SSL and end-to-end encryption protect your privacy and security, even servers cannot read your information",
             "mgr": "Efficient management",
-            "mgrSub": "One user interface manages all keys, with complete and rich management functions, and no need to worry about subscribing to expose problems",
+            "mgrSub": "One user interface manages all keys, with complete and rich management functions, and no need to worry about subscribing to ejaculate problems",
             "fast": "Convenient and fast",
             "fastSub": "Provide complete API files for WebApps or embedded in third-party software",
             "fastLink": "Quick link",
@@ -1601,5 +1626,9 @@ export default {
         "description": "We cannot find the page you requested, it may have been deleted or linked with errors. If you think this is an error, please submit the work order to contact us.",
         "p1": "It will return to the home page after {sec}s, and if your browser does not respond, click the button below.",
         "manualBack": "Return to home page"
+    },
+    "forbidden": {
+        "title": "403 No rights",
+        "description": "You may not have sufficient permission to access this page. If you think this is an error, please submit the work order to contact us."
     }
 }

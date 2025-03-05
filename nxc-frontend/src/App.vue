@@ -37,7 +37,7 @@ let readDefaultPaginationFromStorage = () => {
     appInfosStore.defaultTablePagination.page = pagination.page || 1
     appInfosStore.defaultTablePagination.size = pagination.size || 10
   } else {
-    localStorage.setItem('pagination', JSON.stringify({page: 1, size: 11}))
+    localStorage.setItem('pagination', JSON.stringify({page: 1, size: 10}))
   }
 }
 
