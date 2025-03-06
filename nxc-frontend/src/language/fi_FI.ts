@@ -1,1644 +1,1646 @@
 export default {
     "commonHeader": {
-        "menuTxt": "menu",
-        "userData": "Informations sur l'utilisateur",
-        "editUserData": "Modifier les informations utilisateur",
-        "logout": "Déconnecter"
+        "menuTxt": "valikko",
+        "userData": "Käyttäjätiedot",
+        "editUserData": "Muokkaa käyttäjätietoja",
+        "logout": "Kirjautua sisään"
     },
     "commonAside": {
         "admin": {
-            "dashboard": "Panneau de table",
-            "queueMonit": "Surveillance côté service",
-            "settings": "Paramètres",
-            "systemConfig": "Paramètres du système",
-            "paymentConfig": "Paramètres de paiement",
-            "themeConfig": "Paramètres de thème",
-            "server": "Serveur",
-            "privilege": "Gestion des autorités",
-            "finance": "Finance",
-            "subscription": "Gestion de l'abonnement",
-            "coupon": "Gestion des coupons",
-            "order": "Gestion des commandes",
-            "activate": "Activer l'enregistrement",
-            "key": "Gestion clé",
-            "user": "Utilisateur",
-            "userMgr": "Gestion des utilisateurs",
-            "notice": "Gestion de l'annonce",
-            "ticket": "Gestion des bons de travail",
-            "doc": "Gestion de la base de données des connaissances"
+            "dashboard": "Pöytälauta",
+            "queueMonit": "Huoltopuolen seuranta",
+            "settings": "Asetukset",
+            "systemConfig": "Järjestelmäasetukset",
+            "paymentConfig": "Maksuasetukset",
+            "themeConfig": "Teema -asetukset",
+            "server": "Palvelin",
+            "privilege": "Viranomaisen hallinta",
+            "finance": "Rahoitus",
+            "subscription": "Tilauksen hallinta",
+            "coupon": "Kuponginhallinta",
+            "order": "Tilauksen hallinta",
+            "activate": "Aktivoi tietue",
+            "key": "Avainhallinta",
+            "user": "Käyttäjä",
+            "userMgr": "Käyttäjän hallinta",
+            "notice": "Ilmoituksen hallinta",
+            "ticket": "Työjärjestyksen hallinta",
+            "doc": "Tietotietokannan hallinta"
         },
         "user": {
-            "dashboard": "Panneau de table",
-            "document": "Utilisez le document",
-            "app": "Téléchargement de l'application",
-            "subscription": "S'abonner",
-            "purchase": "Acheter l'abonnement",
-            "surplus": "Ma clé",
-            "fiance": "Finance",
-            "topUp": "se débarrasser de",
-            "myOrder": "Ma commande",
-            "myInvite": "Mon invitation",
-            "user": "Utilisateur",
-            "profile": "Centre personnel",
-            "support": "Mon bon de travail",
-            "activateLog": "Activer l'enregistrement"
+            "dashboard": "Pöytälauta",
+            "document": "Käytä asiakirjaa",
+            "app": "Sovelluslataus",
+            "subscription": "Tilata",
+            "purchase": "Ostaa tilaus",
+            "surplus": "Minun avain",
+            "fiance": "Rahoitus",
+            "topUp": "täydentää",
+            "myOrder": "Minun tilaukseni",
+            "myInvite": "Kutsuni",
+            "user": "Käyttäjä",
+            "profile": "Henkilökohtainen keskus",
+            "support": "Työjärjestykseni",
+            "activateLog": "Aktivoi tietue"
         }
     },
     "adminViews": {
         "common": {
-            "fetchDataSuccess": "Acquisition de données avec succès",
-            "fetchDataFailure": "Si les données échouent, veuillez réessayer plus tard",
-            "addSuccess": "Ajouté avec succès",
-            "addFailure": "Si l'ajout échoue, veuillez essayer plus tard",
-            "updateSuccess": "La modification a réussi",
-            "updateFailure": "Si la modification échoue, veuillez réessayer plus tard",
-            "deleteSuccess": "Suppression avec succès",
-            "deleteFailure": "Veuillez réessayer si la suppression a échoué",
-            "confirm": "Confirmer",
-            "cancel": "Annuler",
-            "success": "L'opération est réussie",
-            "failure": "L'opération a échoué",
-            "NotAllowed": "Format illégal",
-            "checkForm": "Veuillez vérifier le formulaire",
-            "unknownErr": "Erreur inconnue",
-            "dialog": { "delete": "Savez-vous que vous souhaitez le supprimer?" },
-            "yes": "Oui",
-            "no": "Non"
+            "fetchDataSuccess": "Tietojen hankkiminen onnistuneesti",
+            "fetchDataFailure": "Jos tiedot epäonnistuvat, yritä uudelleen myöhemmin",
+            "addSuccess": "Lisätty onnistuneesti",
+            "addFailure": "Jos lisäys epäonnistuu, kokeile myöhemmin",
+            "updateSuccess": "Muutos oli onnistunut",
+            "updateFailure": "Jos muutos epäonnistuu, yritä uudelleen myöhemmin",
+            "deleteSuccess": "Poisto onnistuneesti",
+            "deleteFailure": "Yritä uudelleen, jos poisto epäonnistui",
+            "confirm": "Vahvistaa",
+            "cancel": "Peruuttaa",
+            "success": "Toiminta on onnistunut",
+            "failure": "Toiminta epäonnistui",
+            "NotAllowed": "Laiton muoto",
+            "checkForm": "Tarkista lomake",
+            "unknownErr": "Tuntematon virhe",
+            "dialog": { "delete": "Tiedätkö, että haluat poistaa sen?" },
+            "yes": "kyllä",
+            "no": "ei"
         },
         "login": {
             "secureCard": {
-                "title": "Inspection de la sécurité",
-                "securePath": "Chemin sûr",
-                "hint": "Pour assurer la sécurité du système, vous devez saisir le chemin de sécurité avant de pouvoir entrer la page de connexion de l'administrateur. Veuillez saisir le chemin de sécurité dans la zone d'entrée ci-dessous.",
-                "placeholder": "Veuillez saisir un chemin sûr",
-                "checkBtn": "examiner",
-                "rememberPath": "Souviens-toi du chemin sûr"
+                "title": "Turvatarkastus",
+                "securePath": "Turvallinen polku",
+                "hint": "Järjestelmän suojauksen varmistamiseksi sinun on syötettävä suojapolku ennen kuin voit kirjoittaa järjestelmänvalvojan kirjautumissivulle. Syötä tietoturvapolku alla olevaan syöttöruutuun. Suojauspolun onnistuneesti voit valita tallentaa seuraavaa nopeaa kirjautumista varten.",
+                "placeholder": "Anna turvallinen polku",
+                "checkBtn": "tutkia",
+                "rememberPath": "Muista turvallinen polku"
             },
             "card": {
-                "back": "Retour à la page d'accueil",
-                "toAdminCenter": "Connectez-vous au centre d'administration",
-                "emailAddr": "E-mail administrateur",
+                "back": "Palaa kotisivulle",
+                "toAdminCenter": "Kirjaudu sisään järjestelmänvalvojan keskukseen",
+                "emailAddr": "Järjestelmänvalvojan sähköposti",
                 "emailInputArea": {
-                    "title": "E-mail administrateur",
-                    "placeholder": "Adresse email"
+                    "title": "Järjestelmänvalvojan sähköposti",
+                    "placeholder": "Sähköpostiosoite"
                 },
                 "passwordInputArea": {
-                    "title": "Mot de passe administrateur",
-                    "placeholder": "mot de passe"
+                    "title": "Järjestelmänvalvojan salasana",
+                    "placeholder": "salasana"
                 },
-                "login": "se connecter",
-                "forgetPassword": "Oubliez le mot de passe",
-                "formNotPassed": "La vérification du formulaire échoue"
+                "login": "sisäänkirjautuminen",
+                "forgetPassword": "unohda salasana",
+                "formNotPassed": "Lomakkeen varmennus epäonnistuu"
             },
             "mention": {
-                "title": "indice",
-                "description": "Cette page est une page d'administrateur, qui ne peut être accessible que par les administrateurs."
+                "title": "vihje",
+                "description": "Tämä sivu on järjestelmänvalvojan sivu, johon pääsee vain järjestelmänvalvojat."
             },
             "message": {
-                "passwordErr": "Mot de passe incorrect",
-                "adminNotExist": "L'administrateur n'existe pas",
-                "noPrivilege": "Accès sans autorisation",
-                "authPassed": "Vérification a été adoptée",
-                "authFailure": "Échec de la vérification",
-                "otherErr": "Autres erreurs",
-                "pathCheckPassed": "Le contrôle du chemin de sécurité est passé",
-                "pathCheckFailure": "Chemin de sécurité incorrect",
-                "rememberSecureMention": "Pour assurer la sécurité de la gestion backend, ne le vérifiez pas s'il ne s'agit pas de votre ordinateur privé."
+                "passwordErr": "Väärä salasana",
+                "adminNotExist": "Järjestelmänvalvojaa ei ole olemassa",
+                "noPrivilege": "Pääsy ilman lupaa",
+                "authPassed": "Vahvistus ohi",
+                "authFailure": "Vahvistus epäonnistui",
+                "otherErr": "Muut virheet",
+                "pathCheckPassed": "Turvapolun tarkistus kulki",
+                "pathCheckFailure": "Virheellinen turvallisuuspolku",
+                "rememberSecureMention": "Älä tarkista, että tämä ei ole yksityinen tietokoneesi varmistaaksesi taustaohjelman hallinnan turvallisuuden."
             }
         },
         "summary": {
-            "cockpit": "Panneau de table",
-            "systemConfig": "Paramètres du système",
-            "paymentConfig": "Paramètres de paiement",
-            "planMgr": "Gestion de l'abonnement",
-            "userMgr": "Gestion des utilisateurs",
-            "orderMgr": "Gestion des commandes",
-            "keyMgr": "Gestion clé",
-            "incomeText": "Revenu d'hier / revenu mensuel",
-            "pendingTicket": "Vous avez {nums} ordres à traiter",
-            "toHandle": "Allez le vérifier",
-            "apiAccessCard": "Nombre de visites d'interface API dans une semaine",
-            "apiAccessCardHint": "Ces données sont seulement pour que vous compreniez l'accès actuel de l'API et ne représente pas les performances de votre serveur.",
-            "incomeWeek": "Montant de revenu dans une semaine",
-            "incomeCardHint": "Voici un tableau des montants de revenus sur une semaine, ce qui entraînera un affichage inexact si le cache est effacé.",
-            "core": "cœur",
-            "reqErr": "Rencontré une erreur",
-            "reqErrHint": "Une erreur a été rencontrée lors de l'obtention des informations sur la vue d'ensemble, ce qui a provoqué la fin de cette demande, de sorte que le graphique ne peut pas être affiché.",
+            "cockpit": "Pöytälauta",
+            "systemConfig": "Järjestelmäasetukset",
+            "paymentConfig": "Maksuasetukset",
+            "planMgr": "Tilauksen hallinta",
+            "userMgr": "Käyttäjän hallinta",
+            "orderMgr": "Tilauksen hallinta",
+            "keyMgr": "Avainhallinta",
+            "incomeText": "Eilinen tulo / kuukausitulot",
+            "pendingTicket": "Sinulla on käsiteltävä {nums} tilauksia",
+            "toHandle": "Mene ja tarkista se",
+            "apiAccessCard": "API -käyttöliittymän lukumäärä viikossa viikossa",
+            "apiAccessCardHint": "Nämä tiedot on tarkoitettu vain ymmärtämään nykyisen sovellusliittymän käyttöoikeus, eivätkä edusta palvelimen suorituskykyäsi.",
+            "incomeWeek": "Tulomäärä viikon kuluessa",
+            "incomeCardHint": "Tässä on tulosmäärät yli viikon, mikä aiheuttaa epätarkkoja näytön, jos välimuisti selvitetään.",
+            "core": "ydin",
+            "reqErr": "Kohtasi virheen",
+            "reqErrHint": "Yleiskatsaustiedot saatiin virhe, joka aiheutti tämän pyynnön kyvyttömyyden loppuun, joten kaaviota ei voida näyttää.",
             "userCard": {
-                "title": "Aperçu de l'utilisateur",
-                "allRegisteredUsers": "Utilisateur d'enregistrement général",
-                "activeUsers": "Utilisateurs en direct",
-                "inactiveUsers": "Utilisateurs inactifs",
-                "blockedUsers": "Interdiction ou remboursement"
+                "title": "Käyttäjän yleiskatsaus",
+                "allRegisteredUsers": "Yleinen rekisteröinnin käyttäjä",
+                "activeUsers": "Live -käyttäjät",
+                "inactiveUsers": "Passiiviset käyttäjät",
+                "blockedUsers": "Kielto tai korvaus"
             },
             "general": {
-                "title": "en général",
-                "localTime": "Temps de navigateur",
-                "osType": "Type de système d'exploitation",
-                "appName": "Nom de candidature",
-                "appUrl": "URL d'application",
-                "currency": "Monnaie",
-                "allowRegister": "Autoriser l'inscription"
+                "title": "yleensä",
+                "localTime": "Selaimen aika",
+                "osType": "Käyttöjärjestelmätyyppi",
+                "appName": "Sovelluksen nimi",
+                "appUrl": "Sovellus -URL -osoite",
+                "currency": "Kolikkoyksikkö",
+                "allowRegister": "Salli rekisteröinti"
             },
             "system": {
-                "title": "Configuration du système",
-                "axiosAddr": "Adresse backend http",
-                "wsAddr": "Adresse backend WebSocket",
-                "serverTime": "Heure du serveur",
-                "uptime": "Temps de fonctionnement",
-                "gatewayStatus": "État du réseau API",
-                "dbStatus": "État de la base de données",
-                "redisStatus": "Statut redis",
-                "serverOsType": "Type de système d'exploitation du serveur",
-                "serverOsArch": "Architecture du système d'exploitation du serveur",
-                "runMode": "Mode de course",
-                "cpuNums": "Nombre de cœurs CPU pour les serveurs réseau",
-                "numCgoCall": "Nombre de collections de déchets",
-                "time": "De premier ordre",
-                "paymentMethods": "Activer le mode de paiement",
-                "runOK": "Courir normalement",
-                "runErr": "Comportement anormal",
-                "checkServer": "Veuillez vérifier la configuration de l'environnement de votre serveur backend",
-                "stopRegisterHint": "Vous semblez avoir désactivé une nouvelle inscription utilisateur",
-                "toSetting": "Se tourner vers les paramètres"
+                "title": "Järjestelmän kokoonpano",
+                "axiosAddr": "HTTP -taustaosoite",
+                "wsAddr": "WebSocket -taustaosoite",
+                "serverTime": "Palvelinaika",
+                "uptime": "Operatiivinen aika",
+                "gatewayStatus": "API -verkon tila",
+                "dbStatus": "Tietokannan tila",
+                "redisStatus": "Redis -tila",
+                "serverOsType": "Palvelimen käyttöjärjestelmätyyppi",
+                "serverOsArch": "Palvelimen käyttöjärjestelmän arkkitehtuuri",
+                "runMode": "Käyttötila",
+                "cpuNums": "Verkkopalvelimien prosessorin ytimien lukumäärä",
+                "numCgoCall": "Jätehuoltokokoelmien lukumäärä",
+                "time": "Toisen luokan",
+                "paymentMethods": "Ota maksutapa käyttöön",
+                "runOK": "Juoksua normaalisti",
+                "runErr": "Epänormaali käyttäytyminen",
+                "checkServer": "Tarkista taustapalvelimen ympäristömääritykset",
+                "stopRegisterHint": "Näyttää siltä, ​​että olet poistanut käytöstä uuden käyttäjän rekisteröinnin",
+                "toSetting": "Kääntyä asetuksiin"
             }
         },
         "queueMonit": {
-            "title": "Surveillance côté service",
-            "headerHint": "Veuillez ne pas rester sur cette page pendant longtemps.",
+            "title": "Huoltopuolen seuranta",
+            "headerHint": "Älä pysy tällä sivulla pitkään.",
             "latency": {
-                "title": "Retard de serveur",
-                "retry": "Tester à nouveau",
-                "hint": "* La demande ici fait référence au temps requis pour une réponse réussie au client après que le client a envoyé une demande au serveur.",
-                "unit": "millisecondes",
+                "title": "Palvelinviive",
+                "retry": "Testata uudelleen",
+                "hint": "*Pyynnöstä viitataan tässä ajassa, joka vaaditaan onnistuneelle vastaukselle asiakkaalle sen jälkeen, kun asiakas lähettää pyynnön palvelimelle.",
+                "unit": "millisekunti",
                 "level": {
                     "l1": {
-                        "title": "Excellent",
-                        "description": "Il s'agit d'une très bonne situation de réseau et vous ne vous sentirez guère retardé."
+                        "title": "Erinomainen",
+                        "description": "Tämä on erittäin hyvä verkkotilanne, ja tuskin tuntuu viivästyneeltä."
                     },
                     "l2": {
-                        "title": "normale",
-                        "description": "C'est la situation du réseau la plupart du temps, et les utilisateurs pensent presque qu'ils ne se sentent pas retardés."
+                        "title": "normaali",
+                        "description": "Tämä on verkkotilanne suurimman osan ajasta, ja käyttäjät melkein tuntevat, että he eivät tunne viivästyneitä."
                     },
                     "l3": {
-                        "title": "Pauvre",
-                        "description": "Dans ce cas, l'utilisateur peut ressentir un léger décalage ou un retard."
+                        "title": "Huono",
+                        "description": "Tässä tapauksessa käyttäjä voi tuntea pienen viiveen tai viivästyksen."
                     },
                     "l4": {
-                        "title": "Différence",
-                        "description": "Vous pouvez ressentir le retard évident et affecter l'expérience utilisateur."
+                        "title": "Ero",
+                        "description": "Voit tuntea ilmeisen viiveen ja vaikuttaa käyttökokemukseen."
                     },
                     "l5": {
-                        "title": "Très mauvais",
-                        "description": "Il y a un retard évident et la vitesse de chargement est plus lente ou même incapable de se rafraîchir, ce qui affecte sérieusement l'interaction et l'expérience des utilisateurs."
+                        "title": "Erittäin huono",
+                        "description": "Viive on ilmeinen ja lastausnopeus on hitaampi tai edes kykene päivittämään, mikä vaikuttaa vakavasti käyttäjän vuorovaikutukseen ja kokemukseen."
                     },
                     "offline": {
-                        "title": "Servir",
-                        "description": "Impossible de se connecter au serveur ou de gérer les erreurs de demande, veuillez vérifier si la configuration est correcte."
+                        "title": "Laittaa",
+                        "description": "Tarkista, onko kokoonpano oikeassa palvelimessa tai käsittelemään pyyntövirheitä."
                     }
                 }
             },
             "api": {
-                "title": "Statut de demande d'API au cours des 7 derniers jours",
+                "title": "API -pyynnön tila viimeisen 7 päivän aikana",
                 "items": {
-                    "ok": { "title": "Succès (StatusOk)", "unit": "De premier ordre" },
+                    "ok": { "title": "Menestys (StatusOk)", "unit": "Toisen luokan" },
                     "notFound": {
-                        "title": "Erreur de chemin d'état (404)",
-                        "unit": "De premier ordre"
+                        "title": "Tilapolkuvirhe (404)",
+                        "unit": "Toisen luokan"
                     },
                     "unAuthorized": {
-                        "title": "Accès non autorisé (401)",
-                        "unit": "De premier ordre"
+                        "title": "Luvaton pääsy (401)",
+                        "unit": "Toisen luokan"
                     },
                     "login2reg": {
-                        "title": "Connexion / enregistrement",
-                        "unit": "De premier ordre"
+                        "title": "Kirjaudu sisään / rekisteröidy",
+                        "unit": "Toisen luokan"
                     }
                 }
             },
             "log": {
-                "title": "Enregistrement de journal",
-                "deleteLogMsg": "Supprimer le journal {nums}",
-                "deleteLogErr": "Supprimer le journal a échoué",
-                "logTableRows": "Records du journal total",
-                "logTableSize": "Les tables de blog occupent l'espace",
-                "unit": { "lines": "D'ACCORD", "mb": "Méga-personnage" },
-                "deleteLog": "Supprimer le journal",
-                "exportCsv": "Exporter CSV",
-                "deleteLogHint": "Cela exécutera la suppression de toutes les revues il y a une semaine.",
+                "title": "Päiväkirjarekisteri",
+                "deleteLogMsg": "Poista päiväkirja {nums}",
+                "deleteLogErr": "Poista päiväkirja epäonnistui",
+                "logTableRows": "Päiväkirjarekisterit",
+                "logTableSize": "Blogipöydät miehittävät tilaa",
+                "unit": { "lines": "Hyvä", "mb": "Megakarakki" },
+                "deleteLog": "Poista päiväkirja",
+                "exportCsv": "Vienti CSV",
+                "deleteLogHint": "Tämä toteuttaa kaikkien lehtien poistaminen viikko sitten.",
                 "warn": {
-                    "title": "Savez-vous que vous souhaitez supprimer votre journal?",
-                    "description": "La liste sera supprimée immédiatement et vous ne pouvez pas révoquer cette opération."
+                    "title": "Tiedätkö, että haluat poistaa päiväkirjasi?",
+                    "description": "Luettelo poistetaan välittömästi, etkä voi peruuttaa tätä operaatiota."
                 },
                 "export": {
-                    "title": "Exporter le fichier CSV",
-                    "description": "Cela exportera le tableau suivant en tant que fichier CSV et le téléchargez localement."
+                    "title": "Vie CSV -tiedosto",
+                    "description": "Tämä vie seuraavan taulukon CSV -tiedostoksi ja lataa sen paikallisesti. Jos sinulla ei ole lupaa avata latausta, lataus voi epäonnistua."
                 },
                 "table": {
-                    "id": "#",
-                    "method": "Méthode de demande",
-                    "path": "Veuillez demander un itinéraire",
-                    "code": "Code d'état",
-                    "clientIp": "IP du client",
-                    "responseTime": "Temps de traitement",
-                    "requestAt": "Demander l'heure"
+                    "id": "Hio",
+                    "method": "Pyyntömenetelmä",
+                    "path": "Pyydä reittiä",
+                    "code": "Tilakoodi",
+                    "clientIp": "Asiakkaan IP",
+                    "responseTime": "Käsittelyaika",
+                    "requestAt": "Pyyntöaika"
                 }
             }
         },
         "systemConfig": {
-            "title": "Paramètres du système",
+            "title": "Järjestelmäasetukset",
             "common": {
-                "success": "Configuration mise à jour avec succès",
-                "err": "Mise à jour de la configuration Échec"
+                "success": "Päivitetty kokoonpano onnistuneesti",
+                "err": "Päivitysmääritys epäonnistui"
             },
             "site": {
-                "common": { "title": "Site" },
+                "common": { "title": "Paikka" },
                 "appName": {
-                    "title": "Nom du site",
-                    "shallow": "Utilisé pour afficher où le nom du site est requis.",
-                    "placeholder": "Nom du site"
+                    "title": "Sivuston nimi",
+                    "shallow": "Käytetään näyttämään, missä sivuston nimi vaaditaan.",
+                    "placeholder": "Sivuston nimi"
                 },
                 "appSubName": {
-                    "title": "Sous-titre du site",
-                    "shallow": "Généralement affiché sous le titre principal.",
-                    "placeholder": "sous-titre"
+                    "title": "Sivuston tekstitys",
+                    "shallow": "Yleensä pääotsikon alla.",
+                    "placeholder": "tekstitys"
                 },
                 "appDescription": {
-                    "title": "Description du site",
-                    "shallow": "Utilisé pour afficher où le site est requis.",
-                    "placeholder": "Description du site"
+                    "title": "Sivuston kuvaus",
+                    "shallow": "Käytetään näyttämään, missä sivusto vaaditaan.",
+                    "placeholder": "Sivuston kuvaus"
                 },
                 "appUrl": {
-                    "title": "URL du site",
-                    "shallow": "La dernière adresse de site Web sera affichée à l'URL si vous en avez besoin.",
-                    "placeholder": "URL du site"
+                    "title": "Sivuston URL",
+                    "shallow": "Viimeisin verkkosivustoosoite näkyy URL -osoitteessa, jos tarvitset sitä.",
+                    "placeholder": "Sivuston URL"
                 },
                 "forceHttps": {
-                    "title": "Forcer https",
-                    "shallow": "Lorsque le site n'utilise pas HTTPS, CDN ou anti-génération pour activer les HTTP forcés."
+                    "title": "Force Https",
+                    "shallow": "Kun sivusto ei käytä HTTP: tä, CDN: tä tai sukupolven vastaista pakotettujen HTTP: ien mahdollistamiseksi."
                 },
                 "logoUrl": {
                     "title": "LOGO",
-                    "shallow": "Utilisé pour afficher où le logo est requis.",
-                    "placeholder": "L'adresse URL du logo"
+                    "shallow": "Käytetään näyttämään, missä logo vaaditaan.",
+                    "placeholder": "Logon URL -osoite"
                 },
                 "subscribeUrl": {
-                    "title": "URL abonné",
-                    "shallow": "Utilisé pour l'abonnement, laissez vide comme URL du site. Si vous avez besoin de plusieurs URL d'abonnement pour être récupéré au hasard, veuillez utiliser des virgules pour les diviser.",
-                    "placeholder": "URL abonné"
+                    "title": "Tilaa URL -osoite",
+                    "shallow": "Käytetään tilaamiseen, jätä tyhjä sivuston URL -osoitteeksi. Jos tarvitset useita tilaus -URL -osoitteita satunnaisesti hakeaksesi, jaa pilkkuja.",
+                    "placeholder": "Tilaa URL -osoite"
                 },
                 "tosUrl": {
-                    "title": "URL des termes de l'utilisateur (TOS)",
-                    "shallow": "Utilisé pour passer aux termes de l'utilisateur (TOS)",
-                    "placeholder": "Adresse des conditions générales de l'utilisateur"
+                    "title": "Käyttäjän ehdot (TOS)",
+                    "shallow": "Käytetään hyppäämään käyttäjän termeihin (TOS)",
+                    "placeholder": "Käyttäjän ehdot Osoite"
                 },
                 "stopRegister": {
-                    "title": "Arrêter une nouvelle inscription à l'utilisateur",
-                    "shallow": "Personne ne pourra s'inscrire une fois qu'il a été allumé."
+                    "title": "Lopeta uusi käyttäjän rekisteröinti",
+                    "shallow": "Kukaan ei voi rekisteröidä sen jälkeen, kun se on kytketty päälle."
                 },
                 "inviteRequire": {
-                    "title": "Invitation forcée",
-                    "shallow": "Après l'ouverture, vous devez remplir le code d'invitation lors de votre inscription auprès d'un nouvel utilisateur."
+                    "title": "Pakkokutsu",
+                    "shallow": "Avaamisen jälkeen sinun on täytettävä kutsukoodi rekisteröidyt uuteen käyttäjälle."
                 },
                 "trialSubscribe": {
-                    "title": "S'inscrire au procès",
-                    "shallow": "Sélectionnez l'abonnement que vous souhaitez essayer."
+                    "title": "Rekisteröidy oikeudenkäyntiin",
+                    "shallow": "Valitse Tilaus, jonka haluat kokeilla."
                 },
                 "trialTime": {
-                    "title": "Heure du procès (heures)",
-                    "shallow": "Abonnez-vous à l'heure d'essai lorsque les nouveaux utilisateurs s'inscrivent."
+                    "title": "Koeaika (tuntia)",
+                    "shallow": "Tilaa kokeiluaika, kun uudet käyttäjät kirjautuvat sisään."
                 },
                 "currency": {
-                    "title": "Unité monétaire",
-                    "shallow": "Il est uniquement utilisé pour l'utilisation de l'affichage, et après la modification, toutes les unités de devises du système changeront.",
-                    "placeholder": "Cny"
+                    "title": "Valuuttayksikkö",
+                    "shallow": "Sitä käytetään vain näytön käyttöön, ja muutoksen jälkeen kaikki järjestelmän valuuttayksiköt muuttuvat.",
+                    "placeholder": "CNY"
                 },
                 "currencySymbol": {
-                    "title": "Symbole de devise",
-                    "shallow": "Il est uniquement utilisé pour l'utilisation de l'affichage, et après la modification, toutes les unités de devises du système changeront.",
+                    "title": "Valuutan symboli",
+                    "shallow": "Sitä käytetään vain näytön käyttöön, ja muutoksen jälkeen kaikki järjestelmän valuuttayksiköt muuttuvat.",
                     "placeholder": "¥"
                 }
             },
             "security": {
-                "common": { "title": "Paramètres de sécurité" },
+                "common": { "title": "Suojausasetukset" },
                 "emailVerify": {
-                    "title": "Vérification par e-mail",
-                    "description": "Après l'ouverture, l'utilisateur devra effectuer une vérification par e-mail."
+                    "title": "Sähköpostivahvistus",
+                    "description": "Avaamisen jälkeen käyttäjän on suoritettava sähköpostin varmennus."
                 },
                 "gmailAlias": {
-                    "title": "Interdire gmail multiple alias",
-                    "description": "Après l'ouverture, plusieurs alias Gmail ne seront pas enregistrés."
+                    "title": "Kielletä Gmail -useita aliaksia",
+                    "description": "Avaamisen jälkeen useita Gmail -aliasia ei rekisteröidä."
                 },
                 "safeMode": {
-                    "title": "Mode sûr",
-                    "description": "Après ouverture, l'accès au nom de domaine à ce site, sauf l'URL du site, sera 403."
+                    "title": "Turvatila",
+                    "description": "Avaamisen jälkeen verkkotunnuksen pääsy tähän sivustoon paitsi sivuston URL -osoite on 403."
                 },
                 "adminPath": {
-                    "title": "Chemin de fond",
-                    "description": "Le chemin de gestion de l'arrière-plan modifiera le chemin d'administration d'origine après modification.",
+                    "title": "Taustatie",
+                    "description": "Taustahallintapolku muuttaa alkuperäistä järjestelmänvalvojan polkua muutoksen jälkeen.",
                     "placeholder": "https://x.com/logo.jpeg"
                 },
                 "emailWhitelist": {
-                    "title": "Liste blanche du suffixe par e-mail",
-                    "description": "L'inscription n'est autorisée qu'après avoir ouvert le suffixe de boîte aux lettres dans la liste."
+                    "title": "Sähköposti jälkiliitteen sallintaluettelo",
+                    "description": "Rekisteröinti on sallittua vasta sen jälkeen, kun se on avannut postilaatikon jälkiliitteen luettelossa."
                 },
                 "recaptcha": {
-                    "title": "Anti-robot",
-                    "description": "Lorsqu'il est activé, HCAPTCHA sera activé pour empêcher le robot."
+                    "title": "Anti-robotti",
+                    "description": "Kun HCaptcha on käytössä, se otetaan käyttöön robotin estämiseksi."
                 },
                 "hCaptchaSiteKey": {
-                    "title": "HCAPTCHA SITEKEKEY",
-                    "description": "Le SiteKey est utilisé pour demander au serveur HCAPTCHA d'identifier le numéro de site Web",
+                    "title": "HCaptcha SiteKey",
+                    "description": "SiteKey: tä käytetään pyytämään HCaptcha -palvelinta verkkosivuston numeron tunnistamiseen",
                     "placeholder": "A3CA066C-0EA0-42FE-BCD2-23F4AB48D528"
                 },
                 "ipRegisterLimit": {
-                    "title": "Restrictions d'enregistrement IP",
-                    "description": "Après l'ouverture, si le compte d'enregistrement IP répond aux exigences des règles, l'enregistrement sera restreint."
+                    "title": "IP -rekisteröintirajoitukset",
+                    "description": "Avaamisen jälkeen, jos IP-rekisteröintitili täyttää sääntöjen vaatimukset, rekisteröinti on rajoitettu."
                 },
                 "registerTimes": {
-                    "title": "fréquence",
-                    "description": "La punition sera activée après le nombre d'inscriptions.",
-                    "placeholder": "Veuillez entrer"
+                    "title": "taajuus",
+                    "description": "Rangaistus aktivoituu rekisteröintien lukumäärän saavuttamisen jälkeen.",
+                    "placeholder": "Ole hyvä ja kirjoita"
                 },
                 "lockTime": {
-                    "title": "Temps de punition (minutes)",
-                    "description": "Vous devez attendre que le temps de pénalité se soit écoulé avant de pouvoir vous inscrire.",
-                    "placeholder": "Veuillez entrer"
+                    "title": "Rangaistusaika (minuutteja)",
+                    "description": "Sinun on odotettava, kunnes rangaistusaika on kulunut ennen kuin voit rekisteröityä uudelleen.",
+                    "placeholder": "Ole hyvä ja kirjoita"
                 }
             },
             "frontend": {
-                "common": { "title": "Personnalisation" },
+                "common": { "title": "Persoonallisuus" },
                 "themePropColor": {
-                    "default": "défaut",
-                    "darkBlueDay": "Bleu foncé",
-                    "milkGreenDay": "Vert lait",
-                    "bambooGreen": "Ruozhu",
-                    "mistyPine": "Brouillard",
-                    "glacierBlue": "Glacier bleu",
-                    "grayTheme": "gris"
+                    "default": "laiminlyönti",
+                    "darkBlueDay": "Tummansininen",
+                    "milkGreenDay": "Maitovihreä",
+                    "bambooGreen": "Ruzhu",
+                    "mistyPine": "Mänty",
+                    "glacierBlue": "Jäätikön sininen",
+                    "grayTheme": "harmaa"
                 },
                 "sidebarStyle": {
-                    "title": "Style latérale",
-                    "shallow": "Réglez la couleur de la barre latérale."
+                    "title": "Sivupalkkityyli",
+                    "shallow": "Aseta sivupalkin väri."
                 },
                 "headerStyle": {
-                    "title": "Style de tête",
-                    "shallow": "Réglez la couleur en haut."
+                    "title": "Päätyyli",
+                    "shallow": "Aseta väri yläosaan."
                 },
                 "themeColor": {
-                    "title": "Couleur du thème",
-                    "shallow": "Définissez la couleur du thème de toute la page Web."
+                    "title": "Teemaväri",
+                    "shallow": "Aseta koko verkkosivun teeman väri."
                 },
                 "background": {
-                    "title": "arrière-plan",
-                    "shallow": "Il sera affiché sur la page de connexion en arrière-plan.",
+                    "title": "tausta",
+                    "shallow": "Se näytetään taustan kirjautumissivulla.",
                     "placeholder": "https://x.com/logo.jpeg"
                 }
             },
             "inviteAndRebate": {
-                "common": { "title": "Paiement et remise" },
+                "common": { "title": "Maksu ja alennus" },
                 "inviteRebateEnable": {
-                    "title": "Activer les rabais utilisateurs",
-                    "description": "S'il est activé, lorsque l'utilisateur invité recharge, l'utilisateur sera remise en fonction du rapport de recharge ci-dessous."
+                    "title": "Ota käyttäjän alennukset käyttöön",
+                    "description": "Jos kutsuttu käyttäjä latautuu käytössä, käyttäjä palautetaan alla olevan ladattavan suhteen mukaisesti."
                 },
                 "inviteRebateRate": {
-                    "title": "Ratio de rabais",
-                    "description": "Définissez le rapport du montant de la remise.",
-                    "placeholder": "Veuillez saisir le ratio des remises"
+                    "title": "Alennussuhde",
+                    "description": "Aseta alennuksen määrän suhde.",
+                    "placeholder": "Anna alennussuhde"
                 },
                 "discountInfo": {
-                    "title": "Informations sur les réductions",
-                    "description": "Définissez les informations de l'offre et elle sera affichée en haut de la page de recharge.",
-                    "placeholder": "Configurer des informations de réduction"
+                    "title": "Alennustiedot",
+                    "description": "Aseta tarjoustiedot ja ne näytetään ylhäällä olevan sivun yläosassa.",
+                    "placeholder": "Aseta alennustiedot"
                 },
                 "inviteInfo": {
-                    "title": "Informations d'invitation",
-                    "description": "Définissez les informations d'invitation, elle sera affichée sur la page d'invitation utilisateur pour afficher le rapport de remise.",
-                    "placeholder": "Définir les informations de remise"
+                    "title": "Kutsutiedot",
+                    "description": "Aseta kutsutiedot, ne näytetään käyttäjän kutsusivulla alennussuhteen näyttämiseksi.",
+                    "placeholder": "Aseta alennustiedot"
                 }
             },
             "welcome": {
-                "common": { "title": "Informations sur la page d'accueil" },
+                "common": { "title": "Kotisivun tiedot" },
                 "homeDescription": {
-                    "title": "Description de la page d'accueil",
-                    "description": "Définissez une brève description de la page d'accueil.",
-                    "placeholder": "Veuillez saisir le contenu de description de la page d'accueil"
+                    "title": "Kotisivun kuvaus",
+                    "description": "Aseta lyhyt kuvaus kotisivusta.",
+                    "placeholder": "Kirjoita kotisivun kuvaus sisältö"
                 },
                 "whyChooseUs": {
-                    "title": "Pourquoi nous choisir",
-                    "description": "Configurez notre description de la raison pour laquelle nous avons sélectionné.",
-                    "placeholder": "Veuillez saisir une description détaillée"
+                    "title": "Miksi valita meidät",
+                    "description": "Määritä kuvauksemme siitä, miksi valitsimme.",
+                    "placeholder": "Anna yksityiskohtainen kuvaus"
                 },
                 "bilibiliLink": {
-                    "title": "Lien officiel de Bilibili",
-                    "description": "Définissez l'adresse de liaison du compte officiel de Bilibili.",
+                    "title": "Bilibili -virallinen linkki",
+                    "description": "Aseta Bilibili -virallisen tilin linkin osoite.",
                     "placeholder": "https://space.bilibili.com/xxxx"
                 },
                 "youtubeLink": {
-                    "title": "Lien officiel YouTube",
-                    "description": "Définissez l'adresse du lien du compte YouTube officiel.",
+                    "title": "YouTube -virallinen linkki",
+                    "description": "Aseta virallisen YouTube -tilin linkin osoite.",
                     "placeholder": "https://youtube.com/channel/xxxxx"
                 },
                 "instagramLink": {
-                    "title": "Lien officiel Instagram",
-                    "description": "Définissez l'adresse de lien de votre compte Instagram officiel.",
+                    "title": "Instagram -virallinen linkki",
+                    "description": "Aseta virallisen Instagram -tilisi linkin osoite.",
                     "placeholder": "https://instagram.com/xxxx"
                 },
                 "wechatLink": {
-                    "title": "Lien de compte public WeChat",
-                    "description": "Définissez l'adresse du lien du compte public WeChat.",
-                    "placeholder": "Veuillez saisir le lien public WeChat"
+                    "title": "WeChat Public Account Link",
+                    "description": "Aseta WeChat -julkisen tilin linkin osoite.",
+                    "placeholder": "Anna WeChat -julkinen linkki"
                 },
                 "filingNumber": {
-                    "title": "Numéro d'enregistrement",
-                    "description": "Configurez le numéro d'enregistrement du site.",
-                    "placeholder": "Par exemple: Guangdong ICP n ° 12345678"
+                    "title": "Rekisterinumero",
+                    "description": "Aseta sivuston rekisteröintinumero.",
+                    "placeholder": "Esimerkiksi: Guangdong ICP nro 12345678"
                 },
                 "pageSuffix": {
-                    "title": "Suffixe de site",
-                    "description": "Définissez le suffixe du nom du site pour l'affichage du titre.",
-                    "placeholder": "Par exemple: - Nom de votre site"
+                    "title": "Sivuston jälki",
+                    "description": "Aseta sivuston nimi.",
+                    "placeholder": "Esimerkiksi:- Sivustosi nimi"
                 }
             },
             "sendMail": {
                 "common": {
-                    "title": "Paramètres de messagerie",
-                    "warning": "Si vous modifiez la configuration de cette page, vous devez redémarrer le service de file d'attente et la direction inversée. De plus, la priorité de configuration de cette page est supérieure à la configuration du courrier dans .env.",
-                    "sendTestMailTitle": "Envoyer un e-mail de test",
-                    "sendTestMailShallow": "L'e-mail sera envoyé à l'adresse e-mail de l'administrateur actuel actuel",
-                    "sendTestMailTo": "Envoyer un e-mail de test à",
-                    "sending": "Envoyer un e-mail",
-                    "success": "succès",
-                    "receiverAddr": "Adresse reçue",
-                    "senderHost": "Serveur de livraison",
-                    "senderPort": "Envoyer un port",
-                    "senderEncrypt": "Méthode de chiffrement pour envoyer des messages",
-                    "senderUsername": "Nom de crédit",
-                    "sendErr": "Envoyer l'échec de l'e-mail"
+                    "title": "Postiasetukset",
+                    "warning": "Jos muutat tämän sivun kokoonpanoa, sinun on käynnistettävä jonopalvelu ja käänteinen suunta. Lisäksi tämän sivun kokoonpanoprioriteetti on korkeampi kuin .Env -postin kokoonpano.",
+                    "sendTestMailTitle": "Lähetä testiviesti",
+                    "sendTestMailShallow": "Sähköposti lähetetään nykyisen kirjautuneen järjestelmänvalvojan sähköpostiosoitteeseen",
+                    "sendTestMailTo": "Lähetä testiposti osoitteeseen",
+                    "sending": "Lähettää sähköposti",
+                    "success": "menestys",
+                    "receiverAddr": "Vastaanotettu osoite",
+                    "senderHost": "Toimituspalvelin",
+                    "senderPort": "Lähettää satama",
+                    "senderEncrypt": "Salausmenetelmä viestien lähettämiseen",
+                    "senderUsername": "Luottotunnus",
+                    "sendErr": "Lähetä sähköpostin epäonnistuminen"
                 },
                 "smtpServerAddress": {
-                    "title": "Adresse du serveur SMTP",
-                    "shallow": "Adresse de service fournie par le fournisseur de services de messagerie",
-                    "placeholder": "Veuillez saisir l'adresse du serveur"
+                    "title": "SMTP -palvelimen osoite",
+                    "shallow": "Sähköpostipalveluntarjoajan toimittama palveluosoite",
+                    "placeholder": "Anna palvelimen osoite"
                 },
                 "smtpServerPort": {
-                    "title": "Port de service SMTP",
-                    "shallow": "Les ports communs sont de 25, 465, 587",
-                    "placeholder": "Veuillez saisir le numéro de port"
+                    "title": "SMTP -palveluportti",
+                    "shallow": "Yleiset satamat ovat 25, 465, 587",
+                    "placeholder": "Anna portinumero"
                 },
                 "smtpEncryption": {
-                    "title": "Méthode de cryptage SMTP",
-                    "shallow": "La méthode de chiffrement 465 port est généralement SSL, et la méthode de chiffrement du port 587 est généralement TLS.",
-                    "placeholder": "Veuillez saisir la méthode de chiffrement"
+                    "title": "SMTP -salausmenetelmä",
+                    "shallow": "465 Portin salausmenetelmä on yleensä SSL, ja 587 portin salausmenetelmä on yleensä TLS.",
+                    "placeholder": "Anna salausmenetelmä"
                 },
                 "smtpAccount": {
-                    "title": "Compte SMTP",
-                    "shallow": "Compte fourni par le fournisseur de services de messagerie",
-                    "placeholder": "Veuillez saisir votre numéro de compte"
+                    "title": "SMTP -tili",
+                    "shallow": "Sähköpostipalveluntarjoajan toimittama tili",
+                    "placeholder": "Anna tilinumero"
                 },
                 "smtpPassword": {
-                    "title": "Mot de passe SMTP",
-                    "shallow": "Mot de passe fourni par le fournisseur de services de messagerie",
-                    "placeholder": "Veuillez saisir votre mot de passe"
+                    "title": "SMTP -salasana",
+                    "shallow": "Sähköpostipalveluntarjoaja toimittaa salasana",
+                    "placeholder": "Anna salasanasi"
                 },
                 "senderAddress": {
-                    "title": "Envoyer une adresse",
-                    "shallow": "L'adresse d'envoi fournie par le fournisseur de services de messagerie",
-                    "placeholder": "Veuillez saisir l'adresse d'envoi"
+                    "title": "Lähettää osoite",
+                    "shallow": "Postipalveluntarjoajan toimittama lähetysosoite",
+                    "placeholder": "Anna lähetysosoite"
                 },
                 "emailTemplate": {
-                    "title": "Modèle de messagerie",
-                    "shallow": "Vous pouvez voir comment personnaliser le modèle de messagerie dans le document",
-                    "placeholder": "Veuillez sélectionner le modèle de messagerie"
+                    "title": "Sähköpostipohja",
+                    "shallow": "Voit tarkastella, miten asiakirjan sähköpostimallia voidaan mukauttaa",
+                    "placeholder": "Valitse sähköpostimalli"
                 }
             },
             "notice": {
-                "common": { "title": "Paramètres de notification" },
+                "common": { "title": "Ilmoitusasetukset" },
                 "displayName": {
-                    "title": "nom d'affichage",
-                    "shallow": "Pour afficher la page frontale uniquement",
-                    "placeholder": "Interface de notification générale 1"
+                    "title": "näytönimi",
+                    "shallow": "Vain etusivun näytölle",
+                    "placeholder": "Yleinen ilmoitusrajapinta 1"
                 },
                 "barkEndpoint": {
-                    "title": "Point d'accès à l'écorce",
-                    "shallow": "Adresse API backend du serveur d'écorce",
-                    "placeholder": "https: // <p>: <port> / <cret-key>"
+                    "title": "Kuoren tukiasema",
+                    "shallow": "Bark Server Bacend API -osoite",
+                    "placeholder": "https: // <IP>: <port>/<cript-Key>"
                 },
                 "barkGroup": {
-                    "title": "Groupe d'écorce",
-                    "shallow": "Le nom de groupe affiché par le client",
-                    "placeholder": "web"
+                    "title": "Haukaryhmä",
+                    "shallow": "Ryhmän nimi, jonka asiakkaan näyttää",
+                    "placeholder": "verkko"
                 }
             },
             "appDownload": {
                 "common": {
-                    "title": "Appliquer",
-                    "hint": "Pour la gestion de la version et la mise à jour des propres clients (applications)"
+                    "title": "Soveltaa",
+                    "hint": "Omien asiakkaiden versionhallinta- ja päivitys (sovellukset)"
                 },
                 "enabled": {
-                    "title": "Ouvrez et déposez la charge",
-                    "shallow": "Si vous êtes activé, permettez aux utilisateurs d'accéder à la page de téléchargement"
+                    "title": "Avaa ja pudota kuorma",
+                    "shallow": "Jos käytössä on, anna käyttäjien käyttää lataussivua"
                 },
                 "windows": {
-                    "title": "Fenêtre",
-                    "shallow": "Numéro de version Windows et adresse de téléchargement",
+                    "title": "Ikkunat",
+                    "shallow": "Windows -versionumero ja lataa osoite",
                     "placeholder": "https://xxxx.com/xxx.exe"
                 },
                 "macos": {
                     "title": "macos",
-                    "shallow": "numéro de version macOS et adresse de téléchargement",
+                    "shallow": "MacOS -versionumero ja lataa osoite",
                     "placeholder": "https://xxxx.com/xxx.dmg"
                 },
                 "linux": {
                     "title": "Linux",
-                    "shallow": "Numéro de version Linux et adresse de téléchargement",
+                    "shallow": "Linux -versionumero ja lataa osoite",
                     "placeholder": "https://xxxx.com/xxx.deb"
                 },
                 "android": {
-                    "title": "Androïde",
-                    "shallow": "Numéro de version Android et adresse de téléchargement",
+                    "title": "Androidi",
+                    "shallow": "Android -versionumero ja lataa osoite",
                     "placeholder": "https://xxxx.com/xxx.apk"
                 },
                 "ios": {
-                    "title": "Ios",
-                    "shallow": "Numéro de version iOS et adresse de téléchargement",
+                    "title": "IOS",
+                    "shallow": "IOS -versionumero ja lataa osoite",
                     "placeholder": "https://xxxx.com/xxx.ipk"
                 }
             }
         },
         "payConfig": {
-            "title": "Paramètres de paiement",
-            "description": "Tous les méthodes de paiement prises en charge peuvent être gérées ici.",
+            "title": "Maksuasetukset",
+            "description": "Kaikkia tuettuja maksutapoja voidaan hallita. Tällä hetkellä vain maksutapa on tuettu, mutta voit ensin määrittää muut maksutavat.",
             "attention": {
-                "title": "Choses à noter",
-                "point1": "Il est vraiment important de configurer les informations du mode de paiement avant de les activer.",
-                "point2": "Lors de la modification de la configuration de la méthode de paiement, si elle est affichée comme \"---\", cela signifie que l'option a été définie et n'est pas vide."
+                "title": "Asiat huomataan",
+                "point1": "On todella tärkeää määrittää maksutapatiedot ennen sen käyttöönottoa.",
+                "point2": "Kun muokkaat maksutavan kokoonpanoa, jos se näytetään \"---\", se tarkoittaa, että vaihtoehto on asetettu eikä ole tyhjä."
             },
             "common": {
-                "detail": "{méthode} Configuration",
-                "fillAttention": "Pour garantir la sécurité, aucune information détaillée n'est affichée, le remplissage pour créer ou écraser les configurations existantes.",
-                "discountAmount": "Montant de réduction (les informations de l'invite de l'utilisateur peuvent être définies dans le \"paiement et remise\" définis par le système)",
-                "saveConfigBtnHint": "sauvegarder",
-                "cancelBtnHint": "Annuler",
-                "saveSuccess": "Configuration enregistrée avec succès",
-                "alterSuccess": "La modification de la configuration a réussi",
-                "discountPlaceholder": "Montant de réduction (si le montant de recharge est supérieur au montant de remise)",
-                "saveOrAlterFailure": "Erreur inconnue"
+                "detail": "{menetelmä} kokoonpano",
+                "fillAttention": "Turvallisuuden varmistamiseksi ei näytetä yksityiskohtaisia ​​tietoja, jotka täyttyvät olemassa olevien kokoonpanojen luomiseksi tai korvaamiseksi.",
+                "discountAmount": "Alennussumma (käyttäjän kehotetiedot voidaan asettaa järjestelmän asettamassa \"maksu ja alennus\")",
+                "saveConfigBtnHint": "tallentaa",
+                "cancelBtnHint": "Peruuttaa",
+                "saveSuccess": "Kokoonpano tallennetaan onnistuneesti",
+                "alterSuccess": "Konfiguraatiomuutos oli onnistunut",
+                "discountPlaceholder": "Alennusmäärä (jos latausmäärä on suurempi kuin alennusmäärä)",
+                "saveOrAlterFailure": "Tuntematon virhe"
             },
             "alipay": {
-                "title": "Paiement",
+                "title": "Maksu",
                 "config": {
-                    "appId": "ID de demande",
-                    "appPublicKeyCertContent": "Contenu du certificat de clé d'application",
-                    "appPrivateKey": "Clé de confidentialité de l'application",
-                    "alipayRootCert": "Livre de certificat de sac de paiement",
-                    "alipayPublicKeyCertContent": "Contenu du certificat de trésor de paiement"
+                    "appId": "Sovellustunnus",
+                    "appPublicKeyCertContent": "Sovellusavaimen varmenteen sisältö",
+                    "appPrivateKey": "Sovelluksen tietosuoja -avain",
+                    "alipayRootCert": "Maksupuskikirja",
+                    "alipayPublicKeyCertContent": "Maksun aartetodistuksen sisältö"
                 }
             },
             "wechat": {
-                "title": "Paiement WeChat",
+                "title": "WeChat -maksu",
                 "config": {
-                    "mchId": "ID marchand",
-                    "mchCertSerial": "Numéro de série du certificat marchand",
-                    "apiV3Key": "Clé API V3",
-                    "privateKey": "Clé de confidentialité"
+                    "mchId": "Kauppiastunnus",
+                    "mchCertSerial": "Kauppiasvarmenteen sarjanumero",
+                    "apiV3Key": "API V3 -näppäin",
+                    "privateKey": "Tietosuoja -avain"
                 }
             },
             "apple": {
-                "title": "Pomme",
+                "title": "Apple Pay",
                 "config": {
-                    "issuerId": "ID d'émetteur",
-                    "bundleId": "Paquet",
-                    "privateKeyId": "ID de clé privée",
-                    "privateKeyContent": "Contenu de confidentialité"
+                    "issuerId": "Liikkeeseenlaskijan tunnus",
+                    "bundleId": "Nipputunnus",
+                    "privateKeyId": "Yksityinen avaintunnus",
+                    "privateKeyContent": "Yksityisyydensisällön sisältö"
                 }
             },
-            "addPaymentMethod": "Ajouter le mode de paiement",
-            "enableBtnHint": "Commencer",
-            "disableBtnHint": "Désactivé",
-            "setupPaymentMethod": "Configuration"
+            "addPaymentMethod": "Lisää maksutapa",
+            "enableBtnHint": "Alkaa",
+            "disableBtnHint": "Vammainen",
+            "setupPaymentMethod": "Kokoonpano"
         },
         "themeConfig": {
-            "title": "Configuration du sujet",
-            "using": "utiliser,",
+            "title": "Aiheen kokoonpano",
+            "using": "käyttää,",
             "setAsCurrent": ""
         },
         "groupMgr": {
-            "title": "Gestion des autorités",
-            "description": "Le bon groupe est utilisé pour marquer différents niveaux d'abonnement, et vous pouvez vous abonner au même niveau mais différentes tailles dans un bon groupe pour une gestion facile.",
+            "title": "Viranomaisen hallinta",
+            "description": "Oikeaa ryhmää käytetään erilaisten tilaustasojen merkitsemiseen, ja voit tilata saman tason, mutta erikokoiset oikeat ryhmät helpon hallinnan saavuttamiseksi.",
             "common": {
-                "addNewGroup": "Nouveau groupe d'autorisation",
-                "alterGroupName": "Modifier le nom du groupe d'autorisation",
-                "addConfirmed": "Confirmer pour ajouter",
-                "alterConfirmed": "Confirmer la modification",
-                "cancel": "Annuler",
-                "addSuccess": "Ajouté avec succès",
-                "addFailure": "Ajouter une défaillance",
-                "alterSuccess": "Le groupe d'autorisation de modification a réussi",
-                "alterFailure": "Le groupe d'autorisation de modification a échoué",
-                "delSuccess": "Suppression avec succès",
-                "delFailure": "La suppression a échoué",
-                "delMention": "La liste sera supprimée immédiatement et vous ne pouvez pas révoquer cette opération. Les groupes pertinents pour les plans d'abonnement doivent être supprimés avec prudence.",
-                "delNotAllowed": "Ce bon groupe dispose de ressources connexes et ne peut pas être supprimée."
+                "addNewGroup": "Uusi luparyhmä",
+                "alterGroupName": "Muokkaa luparyhmän nimeä",
+                "addConfirmed": "Vahvista lisää",
+                "alterConfirmed": "Vahvista muutos",
+                "cancel": "Peruuttaa",
+                "addSuccess": "Lisätty onnistuneesti",
+                "addFailure": "Lisätä epäonnistumisia",
+                "alterSuccess": "Muutosluparyhmä oli onnistunut",
+                "alterFailure": "Muutosluparyhmä epäonnistui",
+                "delSuccess": "Poisto onnistuneesti",
+                "delFailure": "Poisto epäonnistui",
+                "delMention": "Luettelo poistetaan välittömästi, etkä voi peruuttaa tätä operaatiota. Tilaussuunnitelmien asiaankuuluvat ryhmät olisi poistettava varoen.",
+                "delNotAllowed": "Tällä oikealla ryhmällä on liittyviä resursseja, eikä sitä voida poistaa."
             },
-            "groupId": "ID du groupe de droits",
-            "groupName": "Nom du groupe d'autorisation",
-            "groupPlaceholder": "Entrez le nom du groupe d'autorisation",
-            "userCount": "Nombre d'utilisateurs",
-            "planCount": "Quantité d'abonnement",
-            "operate": "fonctionner",
-            "editBtnHint": "Modifier",
-            "deleteBtnHint": "supprimer"
+            "groupId": "Oikeusryhmän henkilöllisyystodistus",
+            "groupName": "Luvan nimi",
+            "groupPlaceholder": "Syötä luparyhmän nimi",
+            "userCount": "Käyttäjien lukumäärä",
+            "planCount": "Tilausmäärä",
+            "operate": "toimia",
+            "editBtnHint": "Muokata",
+            "deleteBtnHint": "poistaa"
         },
         "docMgr": {
-            "title": "Gestion de la base de données des connaissances",
-            "description": "Ici, vous pouvez écrire un fichier de description à votre utilisateur.",
-            "addDoc": "Ajouter un nouveau document",
-            "addSuccess": "Ajouter un nouveau document avec succès",
-            "addFailure": "L'ajout de fichier a échoué",
-            "titleNotEmpty": "Le titre du document ne peut pas être vide",
+            "title": "Tietotietokannan hallinta",
+            "description": "Täällä voit kirjoittaa kuvaustiedoston käyttäjällesi.",
+            "addDoc": "Lisää uusi asiakirja",
+            "addSuccess": "Uuden asiakirjan lisääminen onnistuneesti",
+            "addFailure": "Tiedoston lisääminen epäonnistui",
+            "titleNotEmpty": "Asiakirjan otsikko ei voi olla tyhjä",
             "table": {
-                "docId": "#",
-                "isShow": "S'il faut afficher",
-                "sortAs": "Trier",
-                "lang": "Langue",
-                "category": "Catégorie",
-                "title": "Titre",
-                "createdAt": "Temps de création",
-                "updatedAt": "Mettre à jour l'heure",
-                "operate": "fonctionner",
-                "edit": "Modifier",
-                "delete": "supprimer"
+                "docId": "Hio",
+                "isShow": "Näyttääkö",
+                "sortAs": "Järjestellä",
+                "lang": "Kieli",
+                "category": "Luokka",
+                "title": "Otsikko",
+                "createdAt": "Luomisaika",
+                "updatedAt": "Päivitysaika",
+                "operate": "toimia",
+                "edit": "Muokata",
+                "delete": "poistaa"
             },
             "form": {
-                "add": "Ajouter un document",
-                "edit": "Modifier le document",
-                "cancel": "Annuler",
-                "confirm": "Confirmer",
-                "addBtn": "Ajouter à",
-                "editBtn": "Réviser",
+                "add": "Lisää asiakirja",
+                "edit": "Muokkaa asiakirjaa",
+                "cancel": "Peruuttaa",
+                "confirm": "Vahvistaa",
+                "addBtn": "Lisätä jtk",
+                "editBtn": "Tarkistaa",
                 "title": {
-                    "title": "Titre de fichier",
-                    "placeholder": "Entrez le titre du fichier"
+                    "title": "Tiedoston otsikko",
+                    "placeholder": "Kirjoita tiedoston otsikko"
                 },
                 "sort": {
-                    "title": "Trier",
-                    "placeholder": "Le niveau de commande du fichier d'entrée est plus élevé. Plus la valeur représente plus la priorité."
+                    "title": "Järjestellä",
+                    "placeholder": "Tulotiedoston tilaus on korkeampi."
                 },
                 "category": {
-                    "title": "Catégorie",
-                    "placeholder": "Le document sera affiché dans les catégories en fonction de ce champ"
+                    "title": "Luokka",
+                    "placeholder": "Asiakirja näytetään tämän kentän mukaan luokissa"
                 },
                 "lang": {
-                    "title": "Document Language",
-                    "placeholder": "Sélectionnez une langue de document"
+                    "title": "Asiakirjakieli",
+                    "placeholder": "Valitse asiakirjan kieli"
                 }
             }
         },
         "planMgr": {
-            "title": "Gestion de l'abonnement",
-            "description": "Ici, vous pouvez ajouter de nouveaux plans d'abonnement, modifier la description, le prix, le solde, le groupe d'autorisation auquel les plans d'abonnement sont déjà inclus, etc.",
-            "addNewPlan": "Ajouter un nouvel abonnement",
+            "title": "Tilauksen hallinta",
+            "description": "Täällä voit lisätä uusia tilaussuunnitelmia, muuttaa kuvausta, hintaa, saldoa, luvan ryhmää, johon tilaussuunnitelmat ovat jo mukana jne.",
+            "addNewPlan": "Lisää uusi tilaus",
             "table": {
-                "id": "#",
-                "isSale": "Activer les ventes",
-                "isRenew": "Autoriser les frais continus",
-                "sort": "Niveau de tri",
-                "group": "Le soi-disant groupe de droits",
-                "name": "Nom",
-                "nums": "quantité",
-                "residue": "Montant",
-                "operate": "fonctionner",
-                "operateBtn": { "update": "Réviser", "delete": "supprimer" }
+                "id": "Hio",
+                "isSale": "Ota myynti käyttöön",
+                "isRenew": "Salli jatkuva maksu",
+                "sort": "Lajitella",
+                "group": "Ns. Oikeusryhmä",
+                "name": "Nimi",
+                "nums": "määrä",
+                "residue": "Määrä",
+                "operate": "toimia",
+                "operateBtn": { "update": "Tarkistaa", "delete": "poistaa" }
             },
             "mention": {
                 "common": {
-                    "success": "succès",
-                    "failure": "Échouer",
-                    "delMention": "Si le plan d'abonnement est déjà en vente, veillez à le supprimer."
+                    "success": "menestys",
+                    "failure": "Epäonnistuminen",
+                    "delMention": "Jos tilaussuunnitelma on jo myynnissä, poista se varovaisesti."
                 }
             },
             "form": {
-                "title": "Ajouter un abonnement",
+                "title": "Lisää tilaus",
                 "items": {
                     "name": {
-                        "title": "Nom d'abonnement",
-                        "placeholder": "Entrez le nom du plan d'abonnement"
+                        "title": "Tilauksen nimi",
+                        "placeholder": "Kirjoita tilaussuunnitelman nimi"
                     },
                     "describe": {
-                        "title": "Description de l'abonnement",
-                        "placeholder": "Entrez une description de l'abonnement (support Markdown)"
+                        "title": "Tilauskuvaus",
+                        "placeholder": "Kirjoita tilauksen kuvaus (tukikerros)"
                     },
-                    "isSale": { "title": "Activer les ventes" },
-                    "isRenew": { "title": "Activer les frais continus" },
+                    "isSale": { "title": "Ota myynti käyttöön" },
+                    "isRenew": { "title": "Ota jatkamismaksu käyttöön" },
                     "group": {
-                        "title": "Le soi-disant groupe de droits",
-                        "placeholder": "Sélectionnez le groupe légitime"
+                        "title": "Ns. Oikeusryhmä",
+                        "placeholder": "Valitse oikea ryhmä"
                     },
                     "capacityLimit": {
-                        "title": "Nombre maximum d'utilisateurs autorisés",
-                        "placeholder": "Nombre maximum d'utilisateurs autorisés"
+                        "title": "Enimmäismäärä sallittuja käyttäjiä",
+                        "placeholder": "Enimmäismäärä sallittuja käyttäjiä"
                     },
                     "planResidue": {
-                        "title": "Le montant restant",
-                        "placeholder": "Le montant restant"
+                        "title": "Jäljellä oleva määrä",
+                        "placeholder": "Jäljellä oleva määrä"
                     },
-                    "sort": { "title": "Trier", "placeholder": "Pour le tri frontal" },
+                    "sort": {
+                        "title": "Järjestellä",
+                        "placeholder": "Etuosan lajittelu"
+                    },
                     "periodPlaceholder": {
-                        "month": "Entrez le prix de paiement mensuel",
-                        "quarter": "Entrez le prix trimestriel payé",
-                        "halfYear": "Entrez le prix de paiement semestriel",
-                        "year": "Entrez le prix de paiement annuel"
+                        "month": "Syötä kuukausimaksuhinta",
+                        "quarter": "Syötä neljännesvuosittain maksettu hinta",
+                        "halfYear": "Syötä puolivuotinen maksuhinta",
+                        "year": "Syötä vuotuinen maksuhinta"
                     }
                 }
             }
         },
         "couponMgr": {
-            "title": "Gestion des coupons",
-            "description": "Ici, vous pouvez ajouter des coupons pour certains festivals, etc., qui permettent aux utilisateurs de les utiliser lors de la mise en place de commandes et offrent des remises en fonction de la proportion que vous définissez.",
-            "fetchErr": "Réessayer si les données sont échouées",
-            "fetchPlanKvFailurese": "Obtenir l'échec de la liste des plans d'abonnement",
+            "title": "Kuponginhallinta",
+            "description": "Täällä voit lisätä joitain kuponkeja tietyille festivaaleille jne., Joiden avulla käyttäjät voivat käyttää niitä tilauksia ja tarjota alennuksia asettamasi osuuden mukaan.",
+            "fetchErr": "Uudelleen, jos tiedot epäonnistuvat",
+            "fetchPlanKvFailurese": "Hanki tilaussuunnitelmaluettelo epäonnistui",
             "table": {
-                "id": "#",
-                "enabled": "De l'activer",
-                "name": "Nom",
-                "code": "Coupon",
-                "percentOff": "Informations sur les réductions",
-                "capacity": "Quantité totale",
-                "residue": "Le montant restant",
-                "startTime": "Permettre le temps",
-                "endTime": "Heure de fin",
-                "actions": "fonctionner",
-                "edit": "Modifier",
-                "delete": "supprimer"
+                "id": "Hio",
+                "enabled": "Onko mahdollista",
+                "name": "Nimi",
+                "code": "Kuponki",
+                "percentOff": "Alennustiedot",
+                "capacity": "Kokonaismäärä",
+                "residue": "Jäljellä oleva määrä",
+                "startTime": "Ottaa käyttöön aika",
+                "endTime": "Päätysaika",
+                "actions": "toimia",
+                "edit": "Muokata",
+                "delete": "poistaa"
             },
             "modal": {
-                "newCoupon": "Ajouter un nouveau coupon",
-                "editCoupon": "Modifier les informations de coupon",
-                "confirmAdd": "Confirmer pour ajouter",
-                "confirmEdit": "Confirmer la modification",
-                "emptyNotAllow": "Cet article est requis",
-                "delMention": "Le coupon sera invalide immédiatement après la suppression de l'entrée et que vous ne pouvez pas retirer cette opération.",
-                "cancel": "Annuler",
+                "newCoupon": "Lisää uusi kuponki",
+                "editCoupon": "Muokkaa kuponkitietoja",
+                "confirmAdd": "Vahvista lisää",
+                "confirmEdit": "Vahvista muutos",
+                "emptyNotAllow": "Tätä kohdetta vaaditaan",
+                "delMention": "Kuponki on virheellinen heti, kun merkintä on poistettu, etkä voi peruuttaa tätä operaatiota.",
+                "cancel": "Peruuttaa",
                 "name": {
-                    "title": "Nom de coupon",
-                    "placeholder": "Veuillez saisir le nom du coupon"
+                    "title": "Kupongin nimi",
+                    "placeholder": "Kirjoita kupongin nimi"
                 },
                 "code": {
-                    "title": "Coupon",
-                    "placeholder": "Personnalisez le code de coupon (laissez-le vide et générez-le dès que possible)"
+                    "title": "Kuponki",
+                    "placeholder": "Mukauta kuponkikoodia (jätä se tyhjäksi ja luo se mahdollisimman pian)"
                 },
                 "percentOff": {
-                    "title": "Offrir des informations (pourcentage)",
-                    "placeholder": "Entrez le pourcentage de remise (tel que -12% de réduction)"
+                    "title": "Tarjoa tietoja (prosenttiosuus)",
+                    "placeholder": "Syötä alennusprosentti (kuten -12%alennus)"
                 },
-                "activeRange": { "title": "Gamme d'exemption de coupons disponibles" },
+                "activeRange": {
+                    "title": "Saatavilla olevien kuponkejen poikkeusvalikoima"
+                },
                 "capacity": {
-                    "title": "Nombre maximum de coupons utilisés",
-                    "placeholder": "Limiter la limite d'utilisation maximale (pas de limite si vide)"
+                    "title": "Käytettyjen kuponkien enimmäismäärä",
+                    "placeholder": "Rajoita enimmäiskäyttöraja (ei rajaa, jos tyhjä)"
                 },
                 "residue": {
-                    "title": "Le nombre de coupons restants utilisés",
-                    "placeholder": "Définir le nombre de fois que le coupon est utilisé restant"
+                    "title": "Käytettyjen jäljellä olevien kuponkien lukumäärä",
+                    "placeholder": "Aseta kuinka monta kertaa kuponkia käytetään jäljellä"
                 },
                 "perUserLimit": {
-                    "title": "Le nombre de fois que chaque utilisateur peut utiliser un coupon",
-                    "placeholder": "Limiter le nombre de fois que chaque utilisateur peut utiliser (pas de limite sur l'espace)"
+                    "title": "Kuinka monta kertaa kukin käyttäjä voi käyttää kuponkia",
+                    "placeholder": "Rajoita kuinka monta kertaa käyttäjä voi käyttää (ei rajaa tilaa)"
                 },
                 "planLimit": {
-                    "title": "Spécifiez un plan d'abonnement",
-                    "placeholder": "Restrictions sur le plan d'abonnement spécifié pour utiliser l'offre (pas de limite sur l'espace)"
+                    "title": "Määritä tilaussuunnitelma",
+                    "placeholder": "Määritetyn tilaussuunnitelman rajoitukset tarjouksen käyttämiseksi (ei rajaa tilaa varten)"
                 }
             }
         },
         "orderMgr": {
-            "title": "Gestion des commandes",
-            "description": "Ici, vous pouvez afficher toutes les commandes planifiées par abonnement, filtrer les commandes pour différents utilisateurs, gérer manuellement les commandes pour les utilisateurs, etc.",
+            "title": "Tilauksen hallinta",
+            "description": "Täällä voit tarkastella kaikkia tilauksen suunnittelijoita tilauksia, suodattimien tilauksia eri käyttäjille, käsitellä käyttäjien tilauksia manuaalisesti ja paljon muuta.",
             "table": {
-                "id": "#",
-                "orderId": "Numéro de commande",
-                "email": "Boîte aux lettres d'utilisateur",
+                "id": "Hio",
+                "orderId": "Tilausnumero",
+                "email": "Käyttäjän postilaatikko",
                 "status": {
-                    "title": "Taper",
-                    "t1": "Nouvellement acheté",
-                    "t2": "Continuer les frais",
-                    "t3": "Modifier"
+                    "title": "Tyyppi",
+                    "t1": "Äskettäin ostettu",
+                    "t2": "Jatkaa maksua",
+                    "t3": "Muokata"
                 },
-                "planName": "Nom de plan",
-                "period": "Faire du vélo",
-                "group": "Groupe de droits",
-                "amount": "Montant de paiement réel",
-                "price": "Prix ​​d'origine",
+                "planName": "Suunnitella",
+                "period": "Kiertää",
+                "group": "Oikeusryhmä",
+                "amount": "Todellinen maksu",
+                "price": "Alkuperäinen hinta",
                 "isSuccess": {
-                    "title": "Statut de commande",
-                    "cancelOrder": "Annuler une commande",
-                    "passOrder": "Par ordre"
+                    "title": "Tilaustila",
+                    "cancelOrder": "Peruuta tilaus",
+                    "passOrder": "Tilapäisesti"
                 },
-                "createdAt": "Temps de création de commande",
-                "action": {
-                    "title": "fonctionner",
-                    "showDetail": "Montrer les détails"
-                }
+                "createdAt": "Tilan luomisaika",
+                "action": { "title": "toimia", "showDetail": "Näyttää yksityiskohdat" }
             },
-            "search": "Ordres de demande",
-            "resetSearch": "Réinitialiser la requête",
-            "failureReason": "Cause de défaillance",
-            "couponId": "ID de coupon",
-            "couponName": "Nom de coupon",
-            "noEntry": "sans",
-            "orderDetail": "Détails de la commande",
+            "search": "Tiedustelumääräys",
+            "resetSearch": "Palauttaa kysely",
+            "failureReason": "Epäonnistumisen syy",
+            "couponId": "Kuponkitunnus",
+            "couponName": "Kupongin nimi",
+            "noEntry": "-a",
+            "orderDetail": "Tilaustiedot",
             "searchModal": {
                 "email": {
-                    "title": "Boîte aux lettres d'utilisateur",
-                    "placeholder": "Entrez l'e-mail utilisateur (recherche floue)"
+                    "title": "Käyttäjän postilaatikko",
+                    "placeholder": "Kirjoita käyttäjän sähköposti (sumea haku)"
                 },
                 "sort": {
-                    "title": "Algorithme de tri",
-                    "placeholder": "Sélectionnez l'algorithme de tri",
-                    "ASC": "Commande ascendante",
-                    "DESC": "Ordre descendant"
+                    "title": "Lajittelualgoritmi",
+                    "placeholder": "Valitse lajittelualgoritmi",
+                    "ASC": "Nouseva järjestys",
+                    "DESC": "laskeva järjestys"
                 }
             },
-            "tradeWaiting": "Non payé",
-            "tradeFailure": "Échec de la transaction",
-            "tradeSuccess": "succès"
+            "tradeWaiting": "Ei maksettu",
+            "tradeFailure": "Kauppa epäonnistui",
+            "tradeSuccess": "menestys"
         },
         "userMgr": {
-            "userManager": "Gestion des utilisateurs",
-            "description": "Vous pouvez gérer tous les utilisateurs ici, y compris les employés et les administrateurs, la subvention ou l'annulation des droits de gestion, définir les soldes des utilisateurs, réinitialiser les mots de passe, ajouter de nouveaux utilisateurs manuellement, etc.",
-            "enterEmail": "Veuillez saisir votre e-mail",
-            "enterValidEmail": "Veuillez saisir le format de messagerie correct",
-            "enterPassword": "Veuillez saisir votre mot de passe",
-            "passwordMinLength": "La longueur du mot de passe ne peut pas être inférieure à 6 chiffres",
-            "passwordMaxLength": "La longueur du mot de passe ne peut pas dépasser 20 chiffres",
-            "passwordStrength": "Les mots de passe doivent contenir des lettres, des chiffres et des caractères spéciaux",
-            "validationSuccess": "Vérification a été adoptée",
-            "validationFailed": "Échec de la vérification du formulaire, veuillez vérifier l'élément d'entrée",
-            "editProfile": "Modifier les informations",
-            "banUser": "Désactiver la connexion",
-            "unbanUser": "Débloquer l'utilisateur",
-            "noRecord": "Non enregistré",
-            "normal": "normale",
-            "banned": "Interdit",
-            "deleted": "Déconnecter",
-            "nullContent": "NUL",
-            "balance": "Montant",
-            "orderCount": "Quantité de commande",
-            "planCount": "Plans",
-            "actions": "fonctionner",
-            "updateSuccess": "Mettre à jour avec succès",
-            "addUserSuccess": "Ajout d'un nouvel utilisateur avec succès",
-            "unknownError": "Erreur inconnue",
-            "email": "E-mail",
-            "registerDate": "Date d'inscription",
-            "isAdmin": "Administrateur",
-            "isStaff": "personnel",
-            "accountStatus": "Statut de compte",
-            "inviteCode": "Code d'invitation",
-            "query": "Requête",
-            "reset": "Réinitialiser",
-            "addNewUser": "Utilisateur ajouté",
-            "searchUser": "Utilisateur de demande",
-            "cancel": "Annuler",
-            "submit": "soumettre",
-            "userEmail": "Boîte aux lettres d'utilisateur",
-            "inputUserEmail": "Entrez l'e-mail utilisateur (recherche floue)",
-            "inputEmail": "Entrer le courrier électronique",
-            "password": "mot de passe",
-            "inputPassword": "Entrez le mot de passe",
-            "editUser": "Modifier l'utilisateur",
-            "no": "Non",
-            "yes": "Oui",
+            "userManager": "Käyttäjän hallinta",
+            "description": "Voit hallita kaikkia täällä olevia käyttäjiä, mukaan lukien työntekijät ja järjestelmänvalvojat, myöntää tai peruuttaa hallintaoikeudet, asettaa käyttäjän saldot, palauttaa salasanat, lisätä uusia käyttäjiä manuaalisesti ja paljon muuta.",
+            "enterEmail": "Anna sähköpostiosoitteesi",
+            "enterValidEmail": "Anna oikea sähköpostimuoto",
+            "enterPassword": "Anna salasanasi",
+            "passwordMinLength": "Salasanan pituus ei voi olla alle 6 numeroa",
+            "passwordMaxLength": "Salasanan pituus ei voi ylittää 20 numeroa",
+            "passwordStrength": "Salasanojen on oltava kirjaimia, numeroita ja erikoismerkkejä",
+            "validationSuccess": "Vahvistus ohi",
+            "validationFailed": "Lomakkeen varmennus epäonnistui, tarkista syöttökohde",
+            "editProfile": "Muokkaa tietoja",
+            "banUser": "Poista kirjautuminen käytöstä",
+            "unbanUser": "Poista käyttäjä",
+            "noRecord": "Tallentamaton",
+            "normal": "normaali",
+            "banned": "Kielletty",
+            "deleted": "Kirjautua sisään",
+            "nullContent": "Tyhjä",
+            "balance": "Määrä",
+            "orderCount": "Tilausmäärä",
+            "planCount": "Suunnitelmat",
+            "actions": "toimia",
+            "updateSuccess": "Päivitä onnistuneesti",
+            "addUserSuccess": "Uuden käyttäjän lisääminen onnistuneesti",
+            "unknownError": "Tuntematon virhe",
+            "email": "Sähköposti",
+            "registerDate": "Rekisteröintipäivä",
+            "isAdmin": "Ylläpitäjä",
+            "isStaff": "henkilökunta",
+            "accountStatus": "Tilin tila",
+            "inviteCode": "Kutsukoodi",
+            "query": "Kysely",
+            "reset": "Nollata",
+            "addNewUser": "Lisätty käyttäjä",
+            "searchUser": "Kyselyn käyttäjä",
+            "cancel": "Peruuttaa",
+            "submit": "lähettää",
+            "userEmail": "Käyttäjän postilaatikko",
+            "inputUserEmail": "Kirjoita käyttäjän sähköposti (sumea haku)",
+            "inputEmail": "Kirjoittaa sähköposti",
+            "password": "salasana",
+            "inputPassword": "Syötä salasana",
+            "editUser": "Muokkaa käyttäjää",
+            "no": "ei",
+            "yes": "kyllä",
             "mention": {
-                "title": "Êtes-vous sûr de vouloir désactiver votre compte?",
-                "content": "Si l'utilisateur est bloqué, l'utilisateur ne pourra pas se connecter à {appname} et toutes les ressources qui y sont associées deviendront indisponibles."
+                "title": "Haluatko varmasti poistaa tilisi käytöstä?",
+                "content": "Jos käyttäjä on estetty, käyttäjä ei voi kirjautua sisään {AppName} ja kaikki siihen liittyvät resurssit eivät ole käytettävissä."
             }
         },
         "activation": {
-            "activateLog": "Activer l'enregistrement",
-            "description": "Vous pouvez afficher l'état d'activation spécifique de toutes les clés vendues, afficher le code d'identification du client, le temps d'activation, etc.",
-            "click2getKey": "Cliquez pour obtenir du contenu clé",
-            "createdAt": "Temps de création",
-            "turn2keyPage": "Se transformer en clé",
-            "showKey": "Montrer la clé",
-            "email": "E-mail",
-            "key": "Clé",
-            "search": "Recherche",
-            "filter": "Dépistage",
-            "filterAll": "tous",
-            "filterActive": "Seulement efficace",
-            "sortAlgorithm": "Algorithme de tri",
-            "sortASC": "Commande ascendante",
-            "sortDESC": "Ordre descendant"
+            "activateLog": "Aktivoi tietue",
+            "description": "Voit tarkastella kaikkien myytyjen avaimien erityistä aktivointitilaa, tarkastella asiakkaan tunnistuskoodia, aktivointiaikaa jne.",
+            "click2getKey": "Napsauta saadaksesi avainsisällön",
+            "createdAt": "Luomisaika",
+            "turn2keyPage": "Kääntyä avaimeen",
+            "showKey": "Näytä avain",
+            "email": "Sähköposti",
+            "key": "Avain",
+            "search": "Haku",
+            "filter": "Seulonta",
+            "filterAll": "kaikki",
+            "filterActive": "Vain tehokas",
+            "sortAlgorithm": "Lajittelualgoritmi",
+            "sortASC": "Nouseva järjestys",
+            "sortDESC": "laskeva järjestys"
         },
         "keysMgr": {
-            "keyMgr": "Gestion clé",
-            "description": "Vous pouvez vérifier tous les contenus de clé générés et leur statut d'utilisation, la période de validité, etc. Vous pouvez également désactiver une clé.",
-            "enableKey": "Activer la clé",
-            "disableKey": "Désactiver les clés",
+            "keyMgr": "Avainhallinta",
+            "description": "Voit tarkistaa kaikki luodut avainsisällöt ja niiden käyttötilan, voimassaolon ajan jne. Voit myös poistaa avaimen käytöstä.",
+            "enableKey": "Ota avain käyttöön",
+            "disableKey": "Poista avaimet käytöstä",
             "table": {
-                "email": "Adresse email",
-                "key": "Contenu clé",
-                "isValid": "Est-ce valable ou non",
-                "isUsed": "Que ce soit l'utiliser",
-                "isExpired": "Si ça expire",
-                "active": "actif",
-                "inactive": "Expiré",
-                "yes": "efficace",
-                "no": "Expiré",
-                "ok": "normale",
-                "blocked": "Désactiver le statut",
-                "unUsed": "Non utilisé",
-                "used": "Utilisé",
-                "showDetail": "Montrer les détails",
-                "blockKey": "Désactiver les clés",
-                "unblockKey": "Non."
+                "email": "Sähköpostiosoite",
+                "key": "Avainsisältö",
+                "isValid": "Onko se voimassa vai ei",
+                "isUsed": "Käytetäänkö sitä",
+                "isExpired": "Onko se vanhentunut",
+                "active": "aktiivinen",
+                "inactive": "Vanhentunut",
+                "yes": "tehokas",
+                "no": "Vanhentunut",
+                "ok": "normaali",
+                "blocked": "Poista asema käytöstä",
+                "unUsed": "Ei käytetty",
+                "used": "Käytetty",
+                "showDetail": "Näyttää yksityiskohdat",
+                "blockKey": "Poista avaimet käytöstä",
+                "unblockKey": "Kiilto-"
             },
             "searchModal": {
-                "searchMethod": "Méthode d'enquête",
-                "byId": "Requête par id",
-                "byContent": "Enquête via les clés (flou)",
-                "keyId": "ID clé",
-                "idPlaceholder": "Entrez l'ID de la clé ici",
-                "keyContent": "Mot-clé",
-                "contentPlaceholder": "Entrez une partie de la clé ici"
+                "searchMethod": "Tutkimusmenetelmä",
+                "byId": "Kysely henkilötodistuksella",
+                "byContent": "Kysely näppäinten kautta (sumea)",
+                "keyId": "Avaintunnus",
+                "idPlaceholder": "Kirjoita avaimen tunnus täältä",
+                "keyContent": "Avainsana",
+                "contentPlaceholder": "Kirjoita osa avaimesta tähän"
             },
             "mention": {
-                "blockOk": "Désactivation de la clé ID avec succès: {id}",
-                "title": "Êtes-vous sûr de vouloir désactiver la clé?",
-                "content": "Pour assurer l'expérience utilisateur, veuillez confirmer à nouveau le contenu de la clé."
+                "blockOk": "Avaimen poistaminen onnistuneesti ID: {id}",
+                "title": "Haluatko varmasti poistaa avaimen käytöstä?",
+                "content": "Varmista käyttäjäkokemuksen varmistamalla avaimen sisältö uudelleen. Kun avain on poistettu käytöstä, sitä ei enää käytetä asiakkaan puolella."
             },
             "detailModal": {
-                "title": "Détails clés",
-                "userId": "ID de l'utilisateur",
-                "planName": "Nom du plan d'abonnement",
-                "expiredAt": "Date d'expiration",
-                "keyGeneratedAt": "Date de génération de clés",
-                "clientId": "ID client"
+                "title": "Tärkeimmät yksityiskohdat",
+                "userId": "Käyttäjätunnus",
+                "planName": "Tilaussuunnitelman nimi",
+                "expiredAt": "Voimassaolopäivä",
+                "keyGeneratedAt": "Tärkein sukupolven päivämäärä",
+                "clientId": "Asiakastunnus"
             }
         },
         "noticeMgr": {
-            "title": "Gestion de l'annonce",
-            "description": "Les annonces peuvent être gérées ici.",
-            "addNotice": "Ajouter une annonce",
+            "title": "Ilmoituksen hallinta",
+            "description": "Ilmoituksia voi hallita täällä.",
+            "addNotice": "Lisää ilmoitus",
             "table": {
-                "id": "#",
-                "show": "S'il faut afficher",
-                "title": "Titre",
-                "createdAt": "Temps de création",
-                "action": {
-                    "title": "fonctionner",
-                    "edit": "Modifier",
-                    "delete": "supprimer"
-                }
+                "id": "Hio",
+                "show": "Näyttääkö",
+                "title": "Otsikko",
+                "createdAt": "Luomisaika",
+                "action": { "title": "toimia", "edit": "Muokata", "delete": "poistaa" }
             },
             "mention": {
-                "title": "Savez-vous que vous souhaitez le supprimer?",
-                "content": "L'annonce sera supprimée immédiatement et vous ne pouvez pas retirer cette action."
+                "title": "Tiedätkö, että haluat poistaa sen?",
+                "content": "Ilmoitus poistetaan välittömästi, etkä voi peruuttaa tätä kannetta."
             },
             "modal": {
-                "addNew": "Nouvelle annonce",
+                "addNew": "Uusi ilmoitus",
                 "title": {
-                    "title": "Titre d'annonce",
-                    "placeholder": "Spectacle comme un grand titre dans le casting de roue"
+                    "title": "Ilmoituksen otsikko",
+                    "placeholder": "Näytä suurena otsikkona pyörän valettuna"
                 },
                 "content": {
-                    "title": "Contenu d'annonce",
-                    "placeholder": "Le contenu principal de la rédaction d'une annonce"
+                    "title": "Ilmoitussisältö",
+                    "placeholder": "Ilmoituksen kirjoittamisen päähenkilö"
                 },
                 "tag": {
-                    "title": "Étiquettes d'annonce",
-                    "placeholder": "Entrez la balise de l'annonce"
+                    "title": "Ilmoitustunnisteet",
+                    "placeholder": "Kirjoita ilmoituksen tunniste"
                 },
                 "img": {
-                    "title": "URL de l'image d'arrière-plan",
-                    "placeholder": "Utilisez l'arrière-plan par défaut si vous ne remplissez pas"
+                    "title": "Taustakuvan URL -osoite",
+                    "placeholder": "Käytä oletustausta, jos et täytä"
                 }
             }
         },
         "adminTicket": {
-            "ticketMgr": "Gestion des bons de travail",
-            "description": "Vous pouvez consulter tous les utilisateurs soumis ici.",
-            "pendingTicket": "Les bons de travail à traiter",
-            "finishedTicket": "Ordonnance de travail terminée",
+            "ticketMgr": "Työjärjestyksen hallinta",
+            "description": "Voit tarkastella kaikkia käyttäjiä, jotka ovat lähettäneet työtilauksia.",
+            "pendingTicket": "Työmääräykset käsitellään",
+            "finishedTicket": "Suoritettu työtilaus",
             "type": {
-                "pendingDescription": "Ordre de travail en direct, c'est le bon de travail que vous devez d'abord traiter.",
-                "finishedDescription": "Ordonnances terminées, vous pouvez les voir ici."
+                "pendingDescription": "Live -työjärjestys, tämä on työjärjestys, joka sinun tulee käsitellä. Jos työjärjestys vahvistetaan valmistuvan, sulje se.",
+                "finishedDescription": "Suoritetut työtilaukset, voit tarkastella niitä täällä."
             },
-            "chooseOneNecessary": "Vous devez choisir au moins un article",
+            "chooseOneNecessary": "Sinun tulisi valita vähintään yksi kohde",
             "mention": {
-                "title": "Êtes-vous sûr de vouloir fermer le billet?",
-                "content": "La commande sera archivée dans la commande terminée une fois clôturé."
+                "title": "Haluatko varmasti sulkea lipun?",
+                "content": "Tilaus arkistoidaan täytetylle tilaukselle sen sulkemisen jälkeen."
             }
         }
     },
     "userLogin": {
-        "loginToContinue": "Connectez-vous pour continuer",
-        "email": "Adresse email",
-        "password": "mot de passe",
-        "haveNoAccount": "Vous n'avez pas encore votre compte?",
-        "login": "se connecter",
-        "reg": "Inscrivez-vous maintenant",
-        "otherMethods": "Ou utilisez d'autres méthodes pour continuer",
-        "github": "Continuez avec le compte GitHub",
-        "microsoft": "Continuez avec le compte Microsoft",
-        "apple": "Continuez avec le compte Apple",
-        "google": "Continuez avec le compte Google",
-        "backHomePage": "Retour à la page d'accueil",
+        "loginToContinue": "Kirjaudu sisään jatkaaksesi",
+        "email": "Sähköpostiosoite",
+        "password": "salasana",
+        "haveNoAccount": "Eikö sinulla ole vielä tiliäsi?",
+        "login": "sisäänkirjautuminen",
+        "reg": "Ilmoittautua nyt",
+        "otherMethods": "Tai käytä muita menetelmiä jatkaaksesi",
+        "github": "Jatka GitHub -tilillä",
+        "microsoft": "Jatka Microsoft -tiliä",
+        "apple": "Jatka Apple -tiliä",
+        "google": "Jatka Google -tiliä",
+        "backHomePage": "Takaisin kotisivulle",
         "form": {
-            "emailRequire": "L'adresse e-mail est requise",
-            "passwordRequire": "Vous n'avez pas encore saisi votre mot de passe"
+            "emailRequire": "Sähköpostiosoite vaaditaan",
+            "passwordRequire": "Et ole vielä syöttänyt salasanasi"
         },
-        "authPass": "Vérification a été adoptée",
-        "loginFailure": "La connexion a échoué",
-        "checkForm": "Veuillez vérifier le formulaire",
-        "if2FaEnabledHint": "Si vous avez activé une vérification en deux étapes (non requise)",
-        "reqErr": "Veuillez réessayer plus tard s'il y a une erreur",
-        "accountLocked": "Votre compte peut être enregistré ou interdit et ne peut pas être utilisé pour le moment.",
-        "tokenNotExist": "Veuillez fournir un jeton"
+        "authPass": "Vahvistus ohi",
+        "loginFailure": "Kirjautuminen epäonnistui",
+        "checkForm": "Tarkista lomake",
+        "if2FaEnabledHint": "Jos olet ottanut käyttöön kaksivaiheisen varmennuksen (ei vaadita)",
+        "reqErr": "Yritä myöhemmin uudelleen, jos virhe on",
+        "accountLocked": "Tilisi voidaan rekisteröidä tai kieltää, eikä sitä voida käyttää tällä hetkellä.",
+        "tokenNotExist": "Anna tunnusmerkki"
     },
     "userRegister": {
-        "backHomePage": "Retour à la page d'accueil",
-        "newAccount": "Préparez votre nouveau compte",
-        "email": "Adresse email",
-        "verifyCode": "Code de vérification par e-mail",
-        "invalidEmailFormat": "Le format de messagerie est illégal",
-        "sendVerifyCode": "Envoyer le code de vérification par e-mail",
-        "sendSuccess": "L'e-mail a été envoyé avec succès, veuillez vérifier l'e-mail.",
-        "pwd": "mot de passe",
-        "pwdAgain": "Confirmez le mot de passe",
-        "inviteCode": "Code d'invitation (facultatif)",
-        "agreement": "J'ai lu et convenu",
-        "terminalUserAgreement": "Conditions utilisateur",
-        "reg": "registre",
-        "infoIncomplete": "Informations incomplètes",
-        "pwdIncorrect": "Mot de passe incohérent",
-        "regSuccess": "L'inscription est réussie et revient à la connexion",
-        "regFailure": "L'inscription a échoué",
-        "success": "succès",
-        "failure": "Échouer",
-        "unknownErr": "Erreur inconnue",
-        "verifyCodeErr": "Erreur de code de vérification",
-        "verifyCodeExpireErr": "Le code de vérification est incorrect ou a expiré.",
-        "thisMailAlreadyExist": "L'e-mail a été enregistré",
-        "pageConfigFetchFailure": "Si l'acquisition de configuration échoue, veuillez actualiser et réessayer",
-        "stopRegisterTitle": "L'inscription a été arrêtée",
-        "stopRegisterHint": "Désolé, la fonction d'enregistrement a été suspendue. Si vous en avez besoin, veuillez réessayer plus tard ou contacter notre équipe d'assistance pour plus d'informations. Merci pour votre compréhension et votre soutien.",
-        "passwordComplexRequirePart1": "* Les mots de passe doivent être conformes",
-        "passwordComplexRequirePart2": "Exigences de complexité",
-        "passwordComplexHint1": "1. Trois types ou plus de grosses lettres, de petites lettres, de chiffres, de symboles spéciaux sont nécessaires.",
-        "passwordComplexHint2": "2. La longueur est à plus de 10 chiffres",
+        "backHomePage": "Takaisin kotisivulle",
+        "newAccount": "Valmista uusi tilisi",
+        "email": "Sähköpostiosoite",
+        "verifyCode": "Sähköpostivahvistuskoodi",
+        "invalidEmailFormat": "Sähköpostimuoto on laiton",
+        "sendVerifyCode": "Lähetä sähköpostin vahvistuskoodi",
+        "sendSuccess": "Sähköposti on lähetetty onnistuneesti, tarkista sähköposti.",
+        "pwd": "salasana",
+        "pwdAgain": "Vahvista salasana",
+        "inviteCode": "Kutsikoodi (valinnainen)",
+        "agreement": "Olen lukenut ja suostunut",
+        "terminalUserAgreement": "Käyttäjän ehdot",
+        "reg": "rekisteröidä",
+        "infoIncomplete": "Epätäydelliset tiedot",
+        "pwdIncorrect": "Salasana epäjohdonmukainen",
+        "regSuccess": "Rekisteröinti on onnistunut ja palaa kirjautumiseen",
+        "regFailure": "Rekisteröinti epäonnistui",
+        "success": "menestys",
+        "failure": "Epäonnistuminen",
+        "unknownErr": "Tuntematon virhe",
+        "verifyCodeErr": "Varmennuskoodivirhe",
+        "verifyCodeExpireErr": "Vahvistuskoodi on väärä tai on vanhentunut.",
+        "thisMailAlreadyExist": "Sähköposti on rekisteröity",
+        "pageConfigFetchFailure": "Jos kokoonpanon hankinta epäonnistuu, päivitä ja yritä uudelleen",
+        "stopRegisterTitle": "Rekisteröinti on lopetettu",
+        "stopRegisterHint": "Valitettavasti rekisteröintitoiminto on keskeytetty. Jos tarvitset sitä, yritä myöhemmin uudelleen tai ota yhteyttä tukitiimiin saadaksesi lisätietoja. Kiitos ymmärryksestäsi ja tuestasi.",
+        "passwordComplexRequirePart1": "* Salasanojen on oltava vaatimusten mukaisia",
+        "passwordComplexRequirePart2": "Monimutkaisuusvaatimukset",
+        "passwordComplexHint1": "1. Vaaditaan kolme tai enemmän suuria kirjaimia, pieniä kirjaimia, numeroita, erityisiä symboleja.",
+        "passwordComplexHint2": "2. Pituus on yli 10 numeroa",
         "form": {
-            "checkForm": "Veuillez vérifier le contenu du formulaire",
-            "emailFormatErr": "Le format d'adresse e-mail est incorrect",
-            "gmailLimitErr": "Gmail plusieurs noms ne sont pas autorisés",
-            "gmailDotNotAllowed": "\".\" n'est pas autorisé dans l'adresse Gmail. \"",
-            "gmailPartLowerForced": "La partie locale de l'adresse Gmail doit être tous les lecteurs",
-            "googlemailNotAllowed": "L'adresse Googlemail n'est pas prise en charge",
-            "verifyCodeRequire": "Veuillez saisir le code de vérification",
-            "verifyCodeFormatErr": "Le format de code de vérification est incorrect",
-            "passwordRequire": "Veuillez saisir votre mot de passe",
-            "passwordLengthRequire": "La longueur du mot de passe doit être supérieure ou égale à 10 chiffres",
-            "passwordComplexRequire": "Le mot de passe doit contenir au moins trois types de grosses lettres, de petites lettres, de chiffres et de symboles spéciaux.",
-            "passwordAgainNotMatch": "Mots de passe entrés deux fois décalage",
-            "passwordAgainRequire": "Veuillez saisir le mot de passe Confirmer",
-            "inviteCodeRequire": "Le code d'invitation est requis"
+            "checkForm": "Tarkista lomakkeen sisältö",
+            "emailFormatErr": "Sähköpostiosoitteen muoto on väärä",
+            "gmailLimitErr": "Gmail -useita nimiä ei sallita",
+            "gmailDotNotAllowed": "\".\"",
+            "gmailPartLowerForced": "Gmail -osoitteen paikallisen osan on oltava kaikki lukijat",
+            "googlemailNotAllowed": "GoogleMail -osoitetta ei tueta",
+            "verifyCodeRequire": "Anna varmennuskoodi",
+            "verifyCodeFormatErr": "Vahvistuskoodimuoto on väärä",
+            "passwordRequire": "Anna salasanasi",
+            "passwordLengthRequire": "Salasanan pituuden on oltava suurempi tai yhtä suuri kuin 10 numeroa",
+            "passwordComplexRequire": "Salasanassa on oltava vähintään kolme tyyppiä suuria kirjaimia, pieniä kirjaimia, numeroita ja erityisiä symboleja.",
+            "passwordAgainNotMatch": "Salasanat syötetään kahdesti epäsuhta",
+            "passwordAgainRequire": "Anna vahvista salasana",
+            "inviteCodeRequire": "Kutsukoodi vaaditaan"
         },
         "hCaptcha": {
-            "passed": "La vérification de la machine humaine a réussi",
-            "expired": "Veuillez réessayer après l'expiration",
-            "challengeExpired": "La vérification dépasse le temps",
-            "err": "Autres erreurs"
+            "passed": "Ihmisen ja koneen todentaminen ohi",
+            "expired": "Yritä uudelleen vanhentuneen jälkeen",
+            "challengeExpired": "Vahvistus ylittää ajan",
+            "err": "Muut virheet"
         },
-        "allRightsReserved": "Tous droits réservés",
-        "securityAndLaws": "Le site Web est protégé et vérifié par HCAPTCHA et est soumis à des lois locales."
+        "allRightsReserved": "Kaikki oikeudet pidätetään",
+        "securityAndLaws": "HCaptcha on suojattu ja vahvistettu verkkosivustolla, ja se on paikallisten lakien soveltamisessa."
     },
     "userSummary": {
-        "title": "L'instrument",
-        "myPlan": "Mon abonnement",
-        "shortcut": "Raccourcis",
-        "timeLeft": "L'abonnement est valide et expirera dans {msg}.",
-        "toPurchase": "Acheter l'abonnement",
+        "title": "Instrumentti",
+        "myPlan": "Tilaukseni",
+        "shortcut": "Pikakuvakkeet",
+        "timeLeft": "Tilaus on kelvollinen ja vanhenee {msg}.",
+        "toPurchase": "Ostaa tilaus",
         "tutorial": {
-            "title": "Afficher le tutoriel",
-            "content": "Apprenez à utiliser {nom}"
+            "title": "Katso opetusohjelma",
+            "content": "Opi käyttämään {nime}"
         },
         "checkKey": {
-            "title": "Afficher les clés",
-            "content": "Introduire rapidement les clés au client pour une utilisation"
+            "title": "Näytä avaimet",
+            "content": "Esittele nopeasti avaimet asiakkaalle käytettäväksi"
         },
         "renewPlan": {
-            "title": "Continuer l'abonnement",
-            "content": "Effectuer un paiement continu pour votre abonnement actuel"
+            "title": "Jatka tilausta",
+            "content": "Suorita jatkuva maksu nykyisestä tilauksestasi"
         },
         "appDown": {
-            "title": "Téléchargement de l'application",
-            "content": "Téléchargez nos applications à partir de différentes plateformes pour une meilleure expérience physique"
+            "title": "Sovelluksen lataus",
+            "content": "Lataa sovelluksemme eri alustoilta paremman fyysisen kokemuksen saavuttamiseksi"
         },
         "support": {
-            "title": "Rencontré avec un problème",
-            "content": "Si vous rencontrez des problèmes, vous pouvez communiquer avec nos employés par le biais de l'ordre de travail."
+            "title": "Ongelman kanssa",
+            "content": "Jos kohtaat ongelmia, voit kommunikoida ihmisten kanssa työjärjestyksen kautta."
         },
-        "haveTicket": "Vous avez le {comte} afin d'être traité",
-        "toCheckTicket": "Allez le vérifier",
-        "showAllKeys": "Afficher toutes les clés"
+        "haveTicket": "Sinulla on {kreivi} käsitettävä käsitettävä",
+        "toCheckTicket": "Mene ja tarkista se",
+        "showAllKeys": "Näytä kaikki avaimet"
     },
     "userDocument": {
-        "title": "Utilisez le document",
-        "description": "Vous pouvez consulter différents documents ici, y compris, mais sans s'y limiter, les méthodes d'utilisation du site Web, les précautions, les procédures de fonctionnement, etc. Si vous trouvez des erreurs dans l'article, veuillez soumettre le bon de travail.",
-        "searchPlaceholder": "Veuillez saisir le contenu que vous souhaitez rechercher (recherche floue)",
-        "searchBtn": "recherche",
-        "noContentTitle": "Aucun résultat",
-        "noContentTitleHint": "Il n'y a pas de document qui correspond à vos résultats de recherche ou à votre langue, essayez de passer à un mot-clé."
+        "title": "Käytä asiakirjaa",
+        "description": "Voit tarkistaa täällä erilaisia ​​asiakirjoja, mukaan lukien, mutta rajoittumatta verkkosivuston käyttömenetelmiin, varotoimenpiteisiin, toimintamenettelyihin jne. Jos löydät artikkelista virheitä, lähetä työtilaus.",
+        "searchPlaceholder": "Kirjoita hakujen sisältö (sumea haku)",
+        "searchBtn": "haku",
+        "noContentTitle": "Ei tuloksia",
+        "noContentTitleHint": "Ei ole asiakirjaa, joka vastaa hakutuloksia tai kieltä, yritä vaihtaa avainsanaan."
     },
     "newPurchase": {
-        "title": "Acheter l'abonnement",
-        "description": "Vous pouvez choisir le plan d'abonnement qui vous convient le mieux ici.",
-        "headerPlaceholder": "Choisissez le plan qui vous convient le mieux",
-        "purchaseBtn": "Commande",
-        "noLeft": "Une quantité insuffisante de respect",
-        "monthPay": "Paiement mensuel",
-        "moreMethod": "Plus d'options"
+        "title": "Ostaa tilaus",
+        "description": "Voit valita täältä parhaiten sopivan tilaussuunnitelman. Jos saldo on riittävä, lataa ensin tilaus.",
+        "headerPlaceholder": "Valitse sinulle sopiva suunnitelma",
+        "purchaseBtn": "Tilata",
+        "noLeft": "Riittämätön määrä jäljellä olevaa",
+        "monthPay": "Kuukausimaksu",
+        "moreMethod": "Lisää vaihtoehtoja"
     },
     "newSettlement": {
-        "err": "Erreur",
-        "monthPay": "Paiement mensuel",
-        "quarterPay": "Paiement trimestriel",
-        "halfYearPay": "Paiement d'une demi-année",
-        "yearPay": "Paiement annuel",
-        "payCycle": "Cycle de paiement",
-        "couponPlaceholder": "Vous avez un coupon?",
-        "verifyBtn": "Vérification",
-        "orderTotalTitle": "Montant total de la commande",
-        "total": "Total",
-        "submitOrder": "Soumettre une commande",
-        "coupon": "Coupons",
+        "err": "Virhe",
+        "monthPay": "Kuukausimaksu",
+        "quarterPay": "Neljännesvuosittainen maksu",
+        "halfYearPay": "Puolen vuoden maksu",
+        "yearPay": "Vuotuinen maksu",
+        "payCycle": "Maksusykli",
+        "couponPlaceholder": "Onko sinulla kuponki?",
+        "verifyBtn": "Varmennus",
+        "orderTotalTitle": "Tilauksen kokonaismäärä",
+        "total": "Kokonais",
+        "submitOrder": "Antaa tilaus",
+        "coupon": "Kupongit",
         "notify": {
-            "passTitle": "Vérification a été adoptée",
-            "couponVerified": "Coupon valide",
-            "couponInvalid": "Le coupon n'est pas valide",
-            "couponIsNull": "Le code de coupon entré ne peut pas être vide"
+            "passTitle": "Vahvistus ohi",
+            "couponVerified": "Kuponki voimassa oleva",
+            "couponInvalid": "Kuponki on virheellinen",
+            "couponIsNull": "Syötetty kuponkikoodi ei voi olla tyhjä"
         }
     },
     "userProfile": {
-        "title": "Centre personnel",
-        "myWallet": "Mon sac d'argent",
-        "walletSub": "Solde du compte (utilisé uniquement pour la consommation)",
-        "alertPwd": "Modifier la clé",
-        "oldPwd": "Vieille clé",
-        "oldPwdSub": "Veuillez saisir l'ancien mot de passe",
-        "newPwd": "Nouvelle clé",
-        "newPwdSub": "Veuillez saisir une nouvelle clé",
-        "newPwdAgain": "Confirmer la clé",
-        "newPwdAgainSub": "Veuillez saisir à nouveau une nouvelle clé",
-        "saveBtn": "sauvegarder",
-        "notify": "aviser",
-        "enableNotify": "Activer un avis d'expiration",
-        "deleteAccount": "Enregistrer le compte",
-        "deleteAccountSub": "Votre compte sera étiqueté comme supprimé, si vous devez réutiliser nos services, veuillez vous réinscrire",
-        "deleteBtn": "Enregistrez mon compte",
-        "oldPwdVerifiedFailure": "Ancienne vérification du mot de passe a échoué",
-        "alertFailure": "Échec de la modification de la clé",
-        "alertSuccess": "La modification a réussi",
-        "alertSuccessSub": "Veuillez vous connecter avec votre nouveau mot de passe",
-        "errorPwdFormat": "Erreur de format de mot de passe",
-        "pwdNotMatch": "Les entrées de mot de passe sont incohérentes",
-        "oldPwdNotNull": "L'ancien mot de passe ne peut pas être vide",
-        "toTopUp": "Se recharger",
-        "deleteMyTitle": "avertir",
-        "deleteMyContent": "Êtes-vous sûr de supprimer votre compte? Si vous avez besoin d'utiliser le service, veuillez vous réinscrire.",
-        "deleteMyPositiveText": "Confirmer la suppression",
-        "deleteMyNegativeText": "Annuler",
-        "deletedSuccessMsg": "Le compte a été supprimé et il y aura une période plus tard.",
-        "deleteErrOccur": "Une erreur rencontrée",
-        "faAuth": "Vérification en deux étapes 2FA",
-        "faAuthHint": "La vérification en deux étapes est un mécanisme de sécurité qui ajoute des niveaux de protection pour vous connecter à votre compte. Après avoir saisi le mot de passe, l'utilisateur doit terminer la deuxième étape de la vérification de l'identité, comme la saisie du code de vérification envoyé au téléphone, en utilisant l'application de vérification d'identité pour générer le code dynamique ou le confirmer par des caractéristiques biologiques telles que les empreintes digitales.",
-        "faAuthStatus": "Statut de vérification en deux étapes",
-        "faEnabled": "Redémarré",
-        "faNotEnabled": "Non activé",
-        "setup2Fa": "Configuration de la vérification en deux étapes",
-        "disable2Fa": "Annuler la vérification en deux étapes",
-        "unknownErr": "Erreur inconnue",
-        "disable2FaCancelled": "Annulé",
-        "closed2FaHint": "La vérification en deux étapes a été fermée, veuillez l'ajouter à nouveau si nécessaire.",
+        "title": "Henkilökohtainen keskus",
+        "myWallet": "Rahalaukku",
+        "walletSub": "Tilin saldo (käytetään vain kulutukseen)",
+        "alertPwd": "Muokkaa avainta",
+        "oldPwd": "Vanha avain",
+        "oldPwdSub": "Anna vanha salasana",
+        "newPwd": "Uusi avain",
+        "newPwdSub": "Anna uusi avain",
+        "newPwdAgain": "Vahvista avain",
+        "newPwdAgainSub": "Anna uusi avain uudelleen",
+        "saveBtn": "tallentaa",
+        "notify": "ilmoittaa",
+        "enableNotify": "Ota voimassa oleva ilmoitus",
+        "deleteAccount": "Rekisteröidä tili",
+        "deleteAccountSub": "Tilisi merkitään poistetuksi, jos sinun on käytettävä palveluita uudelleen, rekisteröidy uudelleen",
+        "deleteBtn": "Rekisteröi tilini",
+        "oldPwdVerifiedFailure": "Vanha salasanan tarkistus epäonnistui",
+        "alertFailure": "Avaimen muokkaaminen epäonnistui",
+        "alertSuccess": "Muutos oli onnistunut",
+        "alertSuccessSub": "Kirjaudu sisään uudella salasanallasi",
+        "errorPwdFormat": "Salasanamuotovirhe",
+        "pwdNotMatch": "Salasanan tulot ovat epäjohdonmukaisia",
+        "oldPwdNotNull": "Vanha salasana ei voi olla tyhjä",
+        "toTopUp": "Mennä lataamaan",
+        "deleteMyTitle": "varoittaa",
+        "deleteMyContent": "Oletko varma, että poistat tilisi? Jos sinun on käytettävä palvelua, rekisteröi uudelleen.",
+        "deleteMyPositiveText": "Vahvista deleetio",
+        "deleteMyNegativeText": "Peruuttaa",
+        "deletedSuccessMsg": "Tili on poistettu ja aika on aika myöhemmin.",
+        "deleteErrOccur": "Kohtattu virhe",
+        "faAuth": "Kaksivaiheinen varmennus 2FA",
+        "faAuthHint": "Kaksivaiheinen varmennus on tietoturvamekanismi, joka lisää suojaustasoja kirjautumiseen tilillesi. Salasanan syöttämisen jälkeen käyttäjän on suoritettava identiteettivahvistuksen toinen vaihe, kuten puhelimeen lähetetyn varmennuskoodin syöttäminen, identiteettivahvistussovelluksen avulla dynaamisen koodin luomiseksi tai sen vahvistaminen biologisten ominaisuuksien, kuten sormenjälkien, avulla.",
+        "faAuthStatus": "Kaksivaiheinen varmennustila",
+        "faEnabled": "Uudelleenkäytetty",
+        "faNotEnabled": "Ei aktivoitu",
+        "setup2Fa": "Kaksivaiheinen varmennus",
+        "disable2Fa": "Peruuta kaksivaiheinen varmennus",
+        "unknownErr": "Tuntematon virhe",
+        "disable2FaCancelled": "Peruutettu",
+        "closed2FaHint": "Kaksivaiheinen varmennus on suljettu, lisää se tarvittaessa uudelleen.",
         "setup2FaModal": {
-            "followStep": "Ajoutez-le à votre appareil de vérification en fonction des invites",
-            "step1Title": "Suivez les étapes ci-dessous pour activer la vérification 2FA",
-            "step1Context1": "1. Vous devez avoir un appareil de vérification universel sur votre appareil mobile",
-            "step1Context2": "2. Cliquez sur le bouton Scan sur le périphérique de vérification pour scanner le code QR ici",
-            "step1Context3": "3. Ce code QR contient vos informations de vérification et vos clés uniques.",
-            "step2Context1": "Afin de garantir que votre dispositif de vérification peut être utilisé normalement, nous devons effectuer un test.",
-            "test2Fa": "Test",
-            "cancel": "Annuler"
+            "followStep": "Lisää se tarkistuslaitteeseesi kehotusten mukaisesti",
+            "step1Title": "Noudata alla olevia vaiheita ottaaksesi 2FA: n varmennuksen",
+            "step1Context1": "1. Sinulla on oltava yleinen varmennuslaite mobiililaitteessasi",
+            "step1Context2": "2.",
+            "step1Context3": "3. Tämä QR -koodi sisältää varmennustiedot ja ainutlaatuiset avaimet.",
+            "step2Context1": "Jotta varmistetaan, että varmennuslaitetta voidaan käyttää normaalisti, meidän on suoritettava testi.",
+            "test2Fa": "Testata",
+            "cancel": "Peruuttaa"
         },
         "deleteMyAccountModal": {
-            "title": "Enregistrer le compte",
-            "contentLine1": "La comptabilité est une opération irréversible. Une fois que vous avez confirmé qu'il est supprimé, vous perdrez en permanence l'accès au compte, ce qui signifie que vous ne pourrez pas vous connecter à nouveau et toutes les données liées à ce compte, y compris, mais sans s'y limiter, votre historique, l'historique, le contenu de la collection, les enregistrements d'achat, etc., ne pourront pas y accéder à nouveau.",
-            "contentLine2": "Si vous avez des affaires en cours sur notre plateforme, telles que les commandes inachevées, les activités en cours de participation, les services d'abonnement, etc., ceux-ci seront résiliés ou annulés avec la suppression de votre compte, ce qui peut vous entraîner des pertes correspondantes. Dans le même temps, les informations de contact et d'interaction que vous et d'autres utilisateurs via cette plate-forme n'existeront plus.",
-            "contentLine3": "Veuillez confirmer à nouveau votre décision. Si vous souhaitez toujours supprimer votre compte, cliquez sur le bouton Confirmer Supprimer.",
-            "inputHint1": "Entrer \"",
-            "inputHint2": "\" Continuer.",
-            "confirmDelete": "Confirmer la suppression"
+            "title": "Rekisteröidä tili",
+            "contentLine1": "Kirjanpito on peruuttamaton toimenpide. Kun olet vahvistanut, että se on poistettu, menetät pysyvästi pääsyn tilille, mikä tarkoittaa, että et voi kirjautua sisään uudelleen ja kaikki tähän tilille liittyvät tiedot, mukaan lukien, mutta rajoittumatta henkilökohtaisiin tietoihisi, historiaan, keräyssisältöön, ostotietueisiin jne., Ei voi käyttää sitä uudelleen.",
+            "contentLine2": "Jos sinulla on jatkuvaa liiketoimintaa alustallamme, kuten keskeneräiset tilaukset, osallistuminen, tilauspalvelut jne., Ne lopetetaan tai peruutetaan tilisi poistamisella, mikä saattaa tuoda sinulle vastaavat tappiot. Samanaikaisesti yhteystiedot ja vuorovaikutustiedot sinua ja muita käyttäjiä tämän alustan kautta ei enää ole.",
+            "contentLine3": "Vahvista päätöksesi uudelleen. Jos sinulla on kysymyksiä tai kysymyksiä, ota yhteyttä asiakaspalveluun ja vastaamme siihen vilpittömästi. Jos haluat silti poistaa tilisi, napsauta Vahvista Poista -painiketta.",
+            "inputHint1": "Tulla \"",
+            "inputHint2": "\"Jatka.",
+            "confirmDelete": "Vahvista poista"
         },
-        "failure": "Rencontré une erreur",
-        "notLatestHint": "La mise à jour des informations personnelles a échoué et les données actuelles peuvent ne pas être les dernières.",
+        "failure": "Kohtasi virheen",
+        "notLatestHint": "Henkilötietojen päivitys epäonnistui, ja nykyiset tiedot eivät välttämättä ole viimeisin.",
         "resetPassword": {
-            "previousPasswordRequire": "Veuillez saisir l'ancien mot de passe",
-            "previousPasswordVerifiedFailure": "Ancienne vérification du mot de passe a échoué",
-            "passwordRequire": "Veuillez saisir votre mot de passe",
-            "passwordConflict": "Le nouveau mot de passe ne peut pas être le même que le mot de passe précédent",
-            "passwordLengthRequire": "La longueur du mot de passe doit être supérieure ou égale à 10 chiffres",
-            "passwordComplexRequire": "Le mot de passe doit contenir au moins trois types de grosses lettres, de petites lettres, de chiffres et de symboles spéciaux.",
-            "passwordAgainNotMatch": "Mots de passe entrés deux fois décalage",
-            "passwordAgainRequire": "Veuillez saisir le mot de passe Confirmer",
-            "updatePasswordFailure": "Une erreur s'est produite lors de la mise à jour du mot de passe"
+            "previousPasswordRequire": "Anna vanha salasana",
+            "previousPasswordVerifiedFailure": "Vanha salasanan tarkistus epäonnistui",
+            "passwordRequire": "Anna salasanasi",
+            "passwordConflict": "Uusi salasana ei voi olla sama kuin edellinen salasana",
+            "passwordLengthRequire": "Salasanan pituuden on oltava suurempi tai yhtä suuri kuin 10 numeroa",
+            "passwordComplexRequire": "Salasanassa on oltava vähintään kolme tyyppiä suuria kirjaimia, pieniä kirjaimia, numeroita ja erityisiä symboleja.",
+            "passwordAgainNotMatch": "Salasanat syötetään kahdesti epäsuhta",
+            "passwordAgainRequire": "Anna vahvista salasana",
+            "updatePasswordFailure": "Salasanan päivittämisessä tapahtui virhe"
         },
         "secondary": {
-            "title": "Informations de base",
+            "title": "Perustiedot",
             "card": {
-                "avatar": "Image de la tête de l'utilisateur",
-                "name": "Nom d'utilisateur",
-                "lastLoginAt": "Dernière heure de connexion",
-                "accountStatus": "Statut de compte"
+                "avatar": "Käyttäjän pään kuva",
+                "name": "Käyttäjänimi",
+                "lastLoginAt": "Viimeinen kirjautumisaika",
+                "accountStatus": "Tilin tila"
             },
             "modify": {
-                "uploadIconHint": "Télécharger",
-                "alterAvatar": "Ajouter / modifier les images de tête",
-                "alterShallow": "* Cliquez sur l'image de tête ou le nom d'utilisateur pour ajouter ou modifier (la compensation n'est pas autorisée après le réglage)",
-                "alterName": "Modifier le nom d'utilisateur",
+                "uploadIconHint": "Ladata",
+                "alterAvatar": "Lisää/muokkaa pääkuvia",
+                "alterShallow": "* Napsauta pääkuvaa tai käyttäjänimi lisätäksesi tai muokataksesi (tyhjentäminen ei ole sallittua asetuksen jälkeen)",
+                "alterName": "Muokkaa käyttäjänimeä",
                 "input": {
-                    "label": "nom d'utilisateur",
-                    "placeholder": "Entrez le nom d'utilisateur",
-                    "spaceIsNotAllowed": "La vérification du nom d'utilisateur ne passe pas",
+                    "label": "käyttäjänimi",
+                    "placeholder": "Kirjoita käyttäjänimi",
+                    "spaceIsNotAllowed": "Käyttäjätunnuksen varmennus ei ohita",
                     "require": {
-                        "p1": "Les nombres purs ne sont pas autorisés et les nombres sont ouverts",
-                        "p2": "Aucun espace autorisé",
-                        "p3": "Plus de trois"
+                        "p1": "Puhdas numerot eivät ole sallittuja ja numerot avataan",
+                        "p2": "Tilaa ei sallittu",
+                        "p3": "Yli kolme"
                     }
                 }
             },
             "mention": {
-                "alterNameSuccess": "La modification du nom d'utilisateur a réussi",
-                "alterNameErr": "Si le nom d'utilisateur échoue, veuillez réessayer plus tard",
-                "newNameIsNotValid": "Nom d'utilisateur illégal",
-                "click2SetName": "Cliquez pour définir le nom d'utilisateur",
-                "fetchAvatarErr": "Si les données de l'image de tête échouent, veuillez réessayer plus tard",
-                "alterAvatarErr": "Si l'image de tête échoue, veuillez réessayer plus tard",
-                "success": "succès",
-                "alterAvatarSuccess": "L'image de tête a été modifiée avec succès.",
-                "uploadImageHint": "Vous pouvez télécharger des images comme nouveau titre",
+                "alterNameSuccess": "Käyttäjätunnuksen muutos oli onnistunut",
+                "alterNameErr": "Jos käyttäjänimi epäonnistuu, yritä myöhemmin uudelleen",
+                "newNameIsNotValid": "Laiton käyttäjänimi",
+                "click2SetName": "Napsauta Aseta käyttäjätunnus",
+                "fetchAvatarErr": "Jos pääkuvat tiedot epäonnistuvat, yritä uudelleen myöhemmin",
+                "alterAvatarErr": "Jos pääkuva epäonnistuu, yritä uudelleen myöhemmin",
+                "success": "menestys",
+                "alterAvatarSuccess": "修改頭像成功，",
+                "uploadImageHint": "Voit ladata kuvia uutena otsikkosi",
                 "imageRequire": {
-                    "title": "Avis",
-                    "p1": "Vous pouvez télécharger des formats traditionnels tels que * .jpg (jpeg), * .png, * .webp, etc.",
-                    "p2": "Le rapport longueur de l'image est de 1: 1 (carré), s'il s'agit d'un rapport différent, il sera coupé en carré au centre et l'excès sera supprimé.",
-                    "p3": "La taille de l'image que vous téléchargez sera définie sur 160px."
+                    "title": "Huomautus",
+                    "p1": "Voit ladata valtamuodot, kuten *.jpg (jpeg), *.png, *.webp jne.",
+                    "p2": "Kuvan pituussuhde on 1: 1 (neliö), jos se on erilainen suhde, se leikataan keskustan neliöksi ja ylimääräinen poistetaan.",
+                    "p3": "Lähettämäsi kuvan koko asetetaan arvoon 160px."
                 },
-                "click2Upload": "Cliquez ou faites glisser le fichier vers la zone pour télécharger",
-                "uploadWarn": "* Veuillez ne pas télécharger de données sensibles, telles que votre carte bancaire, votre carte de crédit, votre mot de passe et votre code de sécurité."
+                "click2Upload": "Napsauta tai vedä tiedostoa alueelle ladataksesi",
+                "uploadWarn": "*Älä lataa arkaluontoisia tietoja, kuten pankkikorttia, luottokorttia, salasanaa ja turvakoodia."
             }
         }
     },
     "userKeys": {
-        "myKeys": "Ma clé",
-        "description": "Vous pouvez afficher l'état de l'événement, la date d'expiration, etc. pour toutes vos clés.",
-        "noKeys": "Vous n'avez pas encore d'enregistrement d'achat valide",
-        "keyDetail": "Détails clés",
-        "keyId": "ID clé",
-        "orderId": "ID de commande de liaison",
-        "clientId": "Activer l'ID client",
-        "active": "Pendant la période de validité",
-        "inActive": "Expiré",
-        "valid": "La condition clé est normale",
-        "invalid": "La clé a été désactivée",
-        "isUsed": "Activé pour utiliser",
-        "noUsed": "Pas encore utilisé",
-        "releaseData": "Date de génération de clés",
-        "expirationData": "Date d'expiration",
-        "none": "sans",
-        "authorizationFor": "Autorisation clé",
-        "hoverClickMention": "Cliquez pour copier dans le presse-papiers",
-        "copiedSuccessMessage": "La copie clé a été copiée avec succès.",
-        "copyFailure": "Copie d'échec",
-        "hoverCopiedSuccessMention": "Copier avec succès"
+        "myKeys": "Minun avain",
+        "description": "Voit tarkastella tapahtuman tilaa, vanhenemispäivää jne. Kaikille avaimille.",
+        "noKeys": "Sinulla ei ole vielä voimassa olevaa ostotietuetta",
+        "keyDetail": "Tärkeimmät yksityiskohdat",
+        "keyId": "Avaintunnus",
+        "orderId": "Linkkitilaustunnus",
+        "clientId": "Aktivoi asiakastunnus",
+        "active": "Pätevyyden aikana",
+        "inActive": "Vanhentunut",
+        "valid": "Avain ehto on normaali",
+        "invalid": "Avain on poistettu käytöstä",
+        "isUsed": "Aktivoitu",
+        "noUsed": "Ei vielä käytetty",
+        "releaseData": "Tärkein sukupolven päivämäärä",
+        "expirationData": "Voimassaolopäivä",
+        "none": "-a",
+        "authorizationFor": "Avainlupa",
+        "hoverClickMention": "Napsauta kopioidaksesi leikepöydälle",
+        "copiedSuccessMessage": "Avainkopio on kopioitu onnistuneesti.",
+        "copyFailure": "Kopiointi epäonnistuminen",
+        "hoverCopiedSuccessMention": "Kopioida onnistuneesti"
     },
     "userOrders": {
-        "myOrders": "Ma commande",
-        "description": "Toutes vos commandes seront affichées ici, si vous avez des commandes impayées, vous pouvez cliquer sur Continuer le paiement ou annuler la commande, et que vous pouvez consulter les détails de la commande après les commandes terminées.",
-        "orderId": "#",
-        "planName": "Nom d'abonnement",
-        "planCycle": "Cycle d'abonnement",
-        "orderPrice": "Montant de commande",
-        "orderStatus": "Statut de commande",
-        "createdAt": "Temps de création",
-        "operate": "fonctionner",
-        "showDetail": "Détails de la commande",
-        "cancelOrder": "Annuler une commande",
-        "canceled": "Annulé",
+        "myOrders": "Minun tilaukseni",
+        "description": "Kaikki tilauksesi näytetään täällä, jos sinulla on maksamattomia tilauksia, voit napsauttaa jatkaa maksua tai peruuttaa tilauksen ja voit tarkastella tilauksen yksityiskohtia täytettyjen tilausten jälkeen.",
+        "orderId": "Hio",
+        "planName": "Tilauksen nimi",
+        "planCycle": "Tilausjakso",
+        "orderPrice": "Tilausmäärä",
+        "orderStatus": "Tilaustila",
+        "createdAt": "Luomisaika",
+        "operate": "toimia",
+        "showDetail": "Tilaustiedot",
+        "cancelOrder": "Peruuta tilaus",
+        "canceled": "Peruutettu",
         "period": {
-            "monthPay": "Paiement mensuel",
-            "quarterPay": "Paiement trimestriel",
-            "halfYearPay": "Paiement d'une demi-année",
-            "yearPay": "Paiement annuel"
+            "monthPay": "Kuukausimaksu",
+            "quarterPay": "Neljännesvuosittainen maksu",
+            "halfYearPay": "Puolen vuoden maksu",
+            "yearPay": "Vuotuinen maksu"
         },
         "orderStatusTags": {
-            "success": "succès",
-            "cancelled": "Échouer",
-            "notPay": "Non payé"
+            "success": "menestys",
+            "cancelled": "Epäonnistuminen",
+            "notPay": "Ei maksettu"
         },
-        "orderCancelled": "Commande annulée",
-        "unknownErr": "Erreur inconnue"
+        "orderCancelled": "Tilaus peruutettu",
+        "unknownErr": "Tuntematon virhe"
     },
     "userTopUp": {
-        "topUp": "Recharge du compte",
-        "description": "Vous pouvez recharger votre compte ici, prendre en charge les montants de recharge personnalisés, et vous pouvez également prêter attention à savoir s'il y a des informations de réduction affichées ci-dessous et utiliser la méthode de paiement mentionnée pour obtenir des remises.",
-        "chooseTopUpAmount": "Sélectionnez le montant de la recharge",
-        "quickSelect": "Choisissez rapidement",
-        "customAmount": "Montant personnalisé",
-        "maxAmount": "Montant maximum: 10 000 000",
-        "amountInputPlaceHolder": "Entrez le montant à recharger",
-        "otherAmount": "Autres quantités",
-        "payMethod": "Mode de paiement",
-        "wechat": "Paiement WeChat",
-        "alipay": "Paiement",
-        "apple": "Pomme",
-        "yourAmount": "Votre montant",
-        "discount": "Offres",
-        "accountBalance": "Solde du compte",
-        "balanceResult": "Bilan",
-        "commitTopUp": "soumettre",
-        "payMethodNotAllow": "La méthode de paiement n'est pas disponible.",
-        "topUpIssueOccur": "Vous avez du mal à recharger?",
-        "payIssueOccur": "Vous avez des problèmes avec le paiement?",
-        "chatWithUs": "Contacter le service client",
-        "pay": "Payer",
-        "qrCodeScannedSuccess": "Scan de code QR avec succès",
-        "orClickToApp": "Ou cliquez sur la barre et tournez-vous vers l'application et continuez",
-        "topUpSuccess": "Recharger avec succès",
-        "thankU": "Merci pour votre soutien"
+        "topUp": "Tili ladata",
+        "description": "Voit ladata tilisi täältä, tukea räätälöityjä latausmääriä, ja voit myös kiinnittää huomiota siihen, onko alla näkyviä alennustietoja ja käyttää mainitulla maksutapa alennuksilla.",
+        "chooseTopUpAmount": "Valitse latausmäärä",
+        "quickSelect": "Nopeasti valita",
+        "customAmount": "Räätälöity määrä",
+        "maxAmount": "Enimmäismäärä: 10 000 000",
+        "amountInputPlaceHolder": "Syötä ladattava määrä",
+        "otherAmount": "Muut määrät",
+        "payMethod": "Maksutapa",
+        "wechat": "WeChat -maksu",
+        "alipay": "Maksu",
+        "apple": "Apple Pay",
+        "yourAmount": "Sinun summasi",
+        "discount": "Tarjoukset",
+        "accountBalance": "Tilin saldo",
+        "balanceResult": "Tasapainon määrä",
+        "commitTopUp": "lähettää",
+        "payMethodNotAllow": "Maksutapa ei ole käytettävissä.",
+        "topUpIssueOccur": "Onko sinulla ongelmia lataus?",
+        "payIssueOccur": "Onko sinulla ongelmia maksun kanssa?",
+        "chatWithUs": "Ota yhteyttä asiakaspalveluun",
+        "pay": "Maksaa",
+        "qrCodeScannedSuccess": "QR -koodin skannaus onnistuneesti",
+        "orClickToApp": "Tai napsauta palkkia ja käänny sovellukseen ja jatka",
+        "topUpSuccess": "Lataus onnistuneesti",
+        "thankU": "Kiitos tuestasi"
     },
     "userConfirmOrder": {
-        "switchPlan": "Passer pour vous abonner",
-        "cancelOrder": "Annuler une commande",
-        "yourPrice": "Votre prix",
-        "couponOffset": "Remise des coupons",
-        "price": "Prix",
-        "submit": "soumettre",
-        "monthPay": "Paiement mensuel",
-        "quarterPay": "Paiement trimestriel",
-        "halfYearPay": "Paiement d'une demi-année",
-        "yearPay": "Paiement annuel",
-        "goodInfo": "Informations sur le produit",
-        "cycleOrType": "Cycle / type",
-        "orderNumber": "Numéro de commande",
-        "createdAt": "Date de création",
-        "orderExpired": "La commande a dépassé",
-        "paySuccessfully": "Le paiement a réussi, merci pour votre soutien.",
-        "balanceNotEnough": "Si votre solde est insuffisant, veuillez d'abord recharger.",
-        "orderErrorOccur": "Une erreur s'est produite lors de la commande",
-        "orderCancelled": "Commande annulée"
+        "switchPlan": "Vaihtaa",
+        "cancelOrder": "Peruuta tilaus",
+        "yourPrice": "Sinun hinta",
+        "couponOffset": "Kuponki -alennus",
+        "price": "Hinta",
+        "submit": "lähettää",
+        "monthPay": "Kuukausimaksu",
+        "quarterPay": "Neljännesvuosittainen maksu",
+        "halfYearPay": "Puolen vuoden maksu",
+        "yearPay": "Vuotuinen maksu",
+        "goodInfo": "Tuotetiedot",
+        "cycleOrType": "Sykli/tyyppi",
+        "orderNumber": "Tilausnumero",
+        "createdAt": "Luomispäivä",
+        "orderExpired": "Tilaus on ylittänyt",
+        "paySuccessfully": "Maksu oli onnistunut, kiitos tuestasi.",
+        "balanceNotEnough": "Jos saldo on riittämätön, lataa ensin tilaus.",
+        "orderErrorOccur": "Tilauksen aikana tapahtui virhe",
+        "orderCancelled": "Tilaus peruutettu"
     },
     "paymentResultParts": {
-        "goodInfoView": { "goodInfo": "Informations sur le produit" },
-        "orderInfoView": { "orderInfo": "Informations sur les commandes" }
+        "goodInfoView": { "goodInfo": "Tuotetiedot" },
+        "orderInfoView": { "orderInfo": "Tilata tiedot" }
     },
     "orderPartUniversal": {
         "period": {
-            "monthPay": "Paiement mensuel",
-            "quarterPay": "Paiement trimestriel",
-            "halfYearPay": "Paiement d'une demi-année",
-            "yearPay": "Paiement annuel"
+            "monthPay": "Kuukausimaksu",
+            "quarterPay": "Neljännesvuosittainen maksu",
+            "halfYearPay": "Puolen vuoden maksu",
+            "yearPay": "Vuotuinen maksu"
         },
         "orderDataHex": {
-            "goodInfo": "Informations sur le produit",
-            "orderInfo": "Informations sur les commandes",
-            "cycleOrType": "Cycle / type",
-            "orderNumber": "Numéro de commande",
-            "createdAt": "Date de création",
-            "amount": "Montant de paiement",
-            "paidAt": "Temps de paiement"
+            "goodInfo": "Tuotetiedot",
+            "orderInfo": "Tilata tiedot",
+            "cycleOrType": "Sykli/tyyppi",
+            "orderNumber": "Tilausnumero",
+            "createdAt": "Luomispäivä",
+            "amount": "Maksu",
+            "paidAt": "Maksuaika"
         }
     },
     "orderDetail": {
-        "finished": "Complété",
-        "finishedAndSuccessDescription": "L'ordre a été payé avec succès et ouvert",
-        "useManual": "Afficher le tutoriel",
-        "payPending": "Pas encore payé",
-        "pendingDescription": "Les commandes sont conservées à intervalles réguliers et vous pouvez cliquer sur le bouton ci-dessous pour poursuivre le paiement.",
-        "toPay": "Aller payer",
-        "outDate": "Avoir expiré",
-        "outDateDescription": "Depuis que vous avez annulé la commande ou ne avez pas effectué le paiement dans le délai spécifié, la commande a été annulée et vous pouvez resélectionner votre abonnement.",
-        "chooseNewPlan": "Choisissez un nouveau plan d'abonnement"
+        "finished": "Valmis",
+        "finishedAndSuccessDescription": "Tilaus on maksettu ja avattu",
+        "useManual": "Katso opetusohjelma",
+        "payPending": "Ei vielä maksettu",
+        "pendingDescription": "訂單暫時保留，可以點擊下面的按鈕以繼續支付。",
+        "toPay": "Mennä maksamaan",
+        "outDate": "Ovat vanhentuneet",
+        "outDateDescription": "Koska olet peruuttanut tilauksen tai et suorittanut maksua määritettyyn aikaan, tilaus on peruutettu ja voit valita tilauksesi uudelleen.",
+        "chooseNewPlan": "Valitse uusi tilaussuunnitelma"
     },
     "userInvite": {
-        "myInvite": "Mon invitation",
-        "unit": "Nombre de personnes",
-        "inviteCodeMgr": "Votre code d'invitation",
-        "generateInviteCode": "Générer des codes d'invitation aléatoires",
-        "faCodeManage": "Gestion du code d'invitation",
-        "email": "E-mail",
-        "createdAt": "Temps d'inscription",
-        "createFaCodeFailure": "La création a échoué",
-        "linkCopiedSuccess": "Lien copié avec succès",
-        "generateFaCode": "Générer un code d'invitation",
-        "flushFaCode": "Actualiser le code d'invitation",
-        "faCode": "Code d'invitation",
-        "noFaCode": "Vous n'avez pas encore de code d'invitation, veuillez le faire.",
-        "faLink": "Lien d'invitation",
-        "generateFaCodePlease": "Veuillez créer un code d'invitation",
-        "usersMyInvited": "Utilisateurs que j'invite",
-        "generateCodeConfirm": "Confirmer générer / actualiser",
-        "generateCodeHint": "Veuillez noter que le code d'invitation ne peut pas être fermé après la création.",
-        "positiveClick": "Confirmer",
-        "negativeClick": "Annuler"
+        "myInvite": "Kutsuni",
+        "unit": "Ihmisten lukumäärä",
+        "inviteCodeMgr": "Kutsumasi",
+        "generateInviteCode": "Luo satunnaisia ​​kutsukoodeja",
+        "faCodeManage": "Kutsukäyttö",
+        "email": "Sähköposti",
+        "createdAt": "Rekisteröintiaika",
+        "createFaCodeFailure": "Luominen epäonnistui",
+        "linkCopiedSuccess": "Linkki kopioitu onnistuneesti",
+        "generateFaCode": "Luo kutsukoodi",
+        "flushFaCode": "Päivitä kutsukoodi",
+        "faCode": "Kutsukoodi",
+        "noFaCode": "Sinulla ei ole vielä kutsukäkkiä, tee se.",
+        "faLink": "Kutsulinkki",
+        "generateFaCodePlease": "Luo kutsukoodi",
+        "usersMyInvited": "Kutsun käyttäjät",
+        "generateCodeConfirm": "Vahvista Luo/virkistä",
+        "generateCodeHint": "Huomaa, että kutsukoodia ei voida sulkea luomisen jälkeen.",
+        "positiveClick": "Vahvistaa",
+        "negativeClick": "Peruuttaa"
     },
     "userTickets": {
-        "description": "Si vous rencontrez des problèmes d'utilisation, veuillez soumettre le bon de travail ici.",
-        "ticketId": "#",
-        "ticketSubject": "Thème de l'ordre de travail",
-        "ticketUrgency": "Note de travail",
-        "ticketContent": "Contenu de bon de travail",
-        "ticketUrgencyLevel": { "low": "Faible", "med": "milieu", "high": "haut" },
-        "ticketStatus": "État de travail",
-        "ticketCreatedAt": "Temps de création",
-        "lastResponse": "Dernière réponse",
-        "operate": "fonctionner",
-        "checkTicket": "Afficher le bon de travail",
-        "closeTicket": "Fermez le bon de travail",
-        "userTickets": "Travaux d'histoire",
-        "addTicket": "Nouveau ordre de construction",
-        "ticketActive": "Non fermé",
-        "ticketInActive": "Fermé",
-        "form": {
-            "ticketSubjectDescription": "Veuillez saisir le sujet du bon de travail",
-            "ticketUrgencyDescription": "Veuillez sélectionner l'urgence du bon de travail",
-            "ticketBody": "Veuillez saisir le problème que vous souhaitez résoudre, le plus possible que possible.",
-            "ticketNotFinished": "Veuillez essayer les informations sur le bon de travail complet"
+        "description": "Jos kohtaat käytön ongelmat, lähetä työtilaus täällä.",
+        "ticketId": "Hio",
+        "ticketSubject": "Työtilausteema",
+        "ticketUrgency": "Työtilausluokka",
+        "ticketContent": "Työtilauksen sisältö",
+        "ticketUrgencyLevel": {
+            "low": "Matala",
+            "med": "keskimmäinen",
+            "high": "korkea"
         },
-        "checkForm": "Veuillez vérifier si le formulaire est terminé",
-        "cancel": "Annuler",
-        "submit": "soumettre",
-        "commitNewTicketSuccess": "Soumettre un nouveau bon de travail avec succès",
-        "commitNewTicketFailure": "Soumettre une nouvelle erreur de commande de travail",
-        "noReply": "Aucune réponse encore",
-        "noTickets": "Vous n'avez pas encore soumis de bon de travail",
-        "ticketCloseSuccess": "Le bon de travail fermé avec succès",
-        "ticketCloseFailure": "La clôture du bon de travail a échoué",
+        "ticketStatus": "Työjärjestyksen tila",
+        "ticketCreatedAt": "Luomisaika",
+        "lastResponse": "Viimeinen vastaus",
+        "operate": "toimia",
+        "checkTicket": "Näytä työtilaus",
+        "closeTicket": "Sulkea työjärjestys",
+        "userTickets": "Historia toimii",
+        "addTicket": "Uusi rakennustilaus",
+        "ticketActive": "Ei suljettu",
+        "ticketInActive": "Suljettu",
+        "form": {
+            "ticketSubjectDescription": "Kirjoita työtilausaihe",
+            "ticketUrgencyDescription": "Valitse työjärjestyksen kiireellisyys",
+            "ticketBody": "Syötä ratkaistava ongelma mahdollisimman kattavasti.",
+            "ticketNotFinished": "Kokeile täydellisen työtilauksen tietoja"
+        },
+        "checkForm": "Tarkista, onko lomake valmis",
+        "cancel": "Peruuttaa",
+        "submit": "lähettää",
+        "commitNewTicketSuccess": "Lähetä uusi työtilaus onnistuneesti",
+        "commitNewTicketFailure": "Lähetä uusi työtilausvirhe",
+        "noReply": "Ei vielä vastausta",
+        "noTickets": "Et ole vielä lähettänyt työtilausta",
+        "ticketCloseSuccess": "Työtilaus suljettiin onnistuneesti",
+        "ticketCloseFailure": "Työjärjestyksen sulkeminen epäonnistui",
         "chatDialog": {
             "input": {
-                "finished": "Le bon état de travail a été conclu",
-                "inputHere": "Entrez le message à envoyer"
+                "finished": "Työmääräys on tehty",
+                "inputHere": "Kirjoita lähetettävä viesti"
             },
-            "send": "Envoyer",
-            "missingToken": "La connexion WebSocket ne peut pas être créée car les jetons sont manquants.",
-            "msgEmptyNotAllowed": "Le contenu du message ne peut pas être vide",
-            "accessNotPermit": "Visite illégale",
-            "sendSuccess": "Envoyez le message avec succès"
+            "send": "Lähettää",
+            "missingToken": "WebSocket -yhteyttä ei voida luoda, koska rahakkeet puuttuvat.",
+            "msgEmptyNotAllowed": "Viestin sisältö ei voi olla tyhjä",
+            "accessNotPermit": "Laiton vierailu",
+            "sendSuccess": "Lähetä viesti onnistuneesti"
         }
     },
     "userActivation": {
-        "activateLog": "Activer l'enregistrement",
-        "description": "Ici, vous pouvez afficher votre enregistrement d'activation et définir le périphérique indéterminé, ou configurer les informations de note pour chaque clé et enregistrement d'activation.",
-        "id": "#",
-        "orderId": "Numéro de commande",
-        "orderStatus": "Commande",
-        "createdAt": "Temps de création",
-        "operate": "fonctionner",
-        "userId": "ID de l'utilisateur",
-        "email": "E-mail",
-        "keyId": "ID clé",
-        "isBind": "SO ACTIVATE",
-        "active": "efficace",
-        "inactive": "Inefficace",
-        "requestAt": "Demander l'heure",
-        "clientVersion": "Côté client",
-        "osType": "Système opérateur",
-        "remark": "Note",
-        "noRemark": "Pas de note",
-        "showDetail": "Afficher les détails",
-        "actions": "fonctionner",
-        "details": "Détails",
-        "keyContent": "Contenu clé",
-        "keyGeneratedAt": "Temps de génération de clés",
-        "activateRequestAt": "Activer l'heure de demande",
-        "useIssueOccur": "Vous avez du mal à l'utiliser?",
-        "chatWithUs": "Contactez-nous",
-        "cancelBind": "Annuler le décret",
-        "alterRemark": "Modifier les notes",
-        "commitRemark": "soumettre",
-        "updateSuccess": "Mettre à jour avec succès",
-        "setRemark": "Configurez les informations de la note ici"
+        "activateLog": "Aktivoi tietue",
+        "description": "Täällä voit tarkastella aktivointitietueesi ja asettaa määrittelemättömän laitteen tai määrittää kunkin avaimen ja aktivointitietueen muistiinpanot.",
+        "id": "Hio",
+        "orderId": "Tilausnumero",
+        "orderStatus": "Tilata",
+        "createdAt": "Luomisaika",
+        "operate": "toimia",
+        "userId": "Käyttäjätunnus",
+        "email": "Sähköposti",
+        "keyId": "Avaintunnus",
+        "isBind": "Aktivoida",
+        "active": "tehokas",
+        "inactive": "Tehoton",
+        "requestAt": "Pyyntöaika",
+        "clientVersion": "Asiakaspuoli",
+        "osType": "Käyttöjärjestelmä",
+        "remark": "Huomautus",
+        "noRemark": "Ei muistiinpano",
+        "showDetail": "Katso yksityiskohdat",
+        "actions": "toimia",
+        "details": "Yksityiskohdat",
+        "keyContent": "Avainsisältö",
+        "keyGeneratedAt": "Tärkein sukupolven aika",
+        "activateRequestAt": "Aktivoi pyyntöaika",
+        "useIssueOccur": "Onko sinulla vaikeuksia käyttää sitä?",
+        "chatWithUs": "Ota yhteyttä",
+        "cancelBind": "Peruuta asetus",
+        "alterRemark": "Muokkaa muistiinpanoja",
+        "commitRemark": "lähettää",
+        "updateSuccess": "Päivitä onnistuneesti",
+        "setRemark": "Määritä muistiinpanot täältä"
     },
     "userAppDownload": {
-        "title": "Téléchargement de l'application",
+        "title": "Sovelluslataus",
         "description": "",
         "common": {
-            "title": "Téléchargez notre application",
-            "shallow2": "Obtenez nos applications pour différents clients",
-            "shallow": "En utilisant notre application, vous pouvez accéder plus facilement à nos services, éliminant le fonctionnement compliqué du navigateur à chaque fois;",
-            "noDownload": "Nous sommes désolés qu'il n'y ait pas encore de téléchargement disponible."
+            "title": "Lataa sovelluksemme",
+            "shallow2": "Hanki sovelluksemme eri asiakkaille",
+            "shallow": "Sovelluksemme avulla voit käyttää palveluitamme helpommin, poistamalla selaimen monimutkaisen toiminnan joka kerta;",
+            "noDownload": "Olemme pahoillamme, että latausta ei ole vielä saatavilla. Yritä myöhemmin uudelleen."
         },
         "suffix": {
-            "p1": "* Pour les applications sur la plate-forme MacOS, veuillez utiliser MacOS14 et supérieur et coopérer avec les puces Apple (M1 ou plus).",
-            "p2": "Les informations et l'utilisation affichées par cette application doivent se conformer aux réglementations d'utilisation locales."
+            "p1": "*Käytä MacOS -alustalla sovelluksia MacOS14: llä ja yllä ja tee yhteistyötä Apple -sirujen kanssa (M1 tai korkeampi).",
+            "p2": "Tämän sovelluksen esittämien tietojen ja käytön tulisi noudattaa paikallisia käyttömääräyksiä."
         },
         "card": {
-            "common": { "welcome": "Accueillir" },
+            "common": { "welcome": "Tervetuloa" },
             "mobile": {
-                "designFor": "Conception pour le terminal mobile",
-                "designShallow": "Vous pouvez obtenir notre application mobile ici",
-                "iosDownloadShallow": "Télécharger le client iOS",
-                "androidDownloadShallow": "Télécharger le client Android"
+                "designFor": "Suunnittelu mobiililaitteelle",
+                "designShallow": "Voit saada mobiilisovelluksemme täältä",
+                "iosDownloadShallow": "Lataa iOS -asiakas",
+                "androidDownloadShallow": "Lataa Android -asiakas"
             },
             "desktop": {
-                "designFor": "Conception pour le bureau",
-                "designShallow": "Vous pouvez obtenir notre application mobile de bureau ici",
-                "windowsDownloadShallow": "Télécharger le client Windows",
-                "osxDownloadShallow": "Télécharger le client macOS",
-                "linuxDownloadShallow": "Télécharger le client Linux"
+                "designFor": "Työpöydän suunnittelu",
+                "designShallow": "Voit saada työpöydän mobiilisovelluksen täältä",
+                "windowsDownloadShallow": "Lataa Windows -asiakas",
+                "osxDownloadShallow": "Lataa MacOS -asiakas",
+                "linuxDownloadShallow": "Lataa Linux -asiakas"
             }
         },
-        "downloadDisabledHint": "Désolé, le téléchargement de l'application est temporairement indisponible ou désactivé par l'administrateur.",
+        "downloadDisabledHint": "Valitettavasti järjestelmänvalvoja ei ole väliaikaisesti käytettävissä tai vammaisia. Jos tarvitset sitä, ota yhteyttä tekniikkaan.",
         "windows": {
             "title": "Windows NT",
-            "shallow": "Ce client convient aux systèmes d'exploitation Windows avec les noyaux NT, veuillez consulter la page de documentation pour le support de compatibilité."
+            "shallow": "Tämä asiakas sopii Windows -käyttöjärjestelmille, joissa on NT -ytimet, tarkista dokumentointisivu yhteensopivuustuki."
         },
         "osx": {
-            "title": "macOS (OSX)",
-            "shallow": "Ce client convient au système d'exploitation MacOS (OSX) du noyau Darwin, veuillez consulter la page de documentation pour le support de compatibilité."
+            "title": "MacOS (OSX)",
+            "shallow": "Tämä asiakas sopii Darwin -ytimen MacOS (OSX) -käyttöjärjestelmään, tarkista dokumentaatiosivu yhteensopivuustuki."
         },
         "linux": {
             "title": "Linux",
-            "shallow": "Ce client convient à diverses distributions du noyau Linux."
+            "shallow": "Tämä asiakas sopii Linux -ytimen erilaisiin jakeluihin. Eri jakelusarjojen vuoksi tarkista dokumentointisivu yhteensopivuuden tueksi."
         },
         "android": {
-            "title": "Androïde",
-            "shallow": "Ce client convient aux appareils mobiles équipés du système d'exploitation Google Android, veuillez consulter la page de documentation pour le support de compatibilité."
+            "title": "Androidi",
+            "shallow": "Tämä asiakas sopii mobiililaitteille, jotka on varustettu Google Android -käyttöjärjestelmällä, tarkista asiakirja -sivulta yhteensopivuustuki."
         },
         "ios": {
-            "title": "Ios",
-            "shallow": "Ce client convient aux appareils mobiles équipés du système d'exploitation Apple iOS, veuillez consulter la page de documentation pour le support de compatibilité."
+            "title": "IOS",
+            "shallow": "Tämä asiakas sopii mobiililaitteisiin, jotka on varustettu Apple IOS -käyttöjärjestelmällä, tarkista dokumentointisivu yhteensopivuustuki."
         }
     },
     "welcome": {
         "A": {
-            "aboutUs": "À propos de nous",
-            "pricing": "Prix ​​de commande",
-            "login": "Se connecter",
-            "register": "Enregistrer le compte",
-            "welcomeTo": "Accueillir",
-            "welcomeToSub": "Passer par le long tunnel sur le comté est le pays des neiges. Sous le ciel nocturne, la terre était blanche et le train s'arrêta devant la station de signalisation. «Ici, Kawabata Yasunari a lancé le country de neige avec un texte très avare.",
-            "startingUse": "Commencer",
-            "whyUs": "Pourquoi nous choisir",
-            "whyUsSub": "\"En passant par le long tunnel dans la préfecture, c'est le pays de neige. Sous le ciel nocturne, la Terre est blanche, et le train s'arrête devant la station de signalisation.\"",
-            "browseSafe": "Parcourir",
-            "browseSafeSub": "L'excellent système de filtre à pare-feu peut prévenir efficacement les poissons en ligne et les sites Web malveillants",
-            "encrypt": "Cryptage de bout en bout",
-            "encryptSub": "Le SSL à double voie et le chiffrement de bout en bout protègent votre confidentialité et votre sécurité, même les serveurs ne peuvent pas lire vos informations",
-            "mgr": "Gestion efficace",
-            "mgrSub": "Une interface utilisateur gère toutes les clés, avec des fonctions de gestion complètes et riches, et pas besoin de s'inquiéter de s'abonner à l'éjaculat",
-            "fast": "Pratique et rapide",
-            "fastSub": "Fournir des fichiers API complets pour WebApps ou intégrés dans des logiciels tiers",
-            "fastLink": "Lien rapide",
-            "subscribeUs": "Suivez-nous",
-            "filingsCode": "Numéro de fichier {code}"
+            "aboutUs": "Meistä",
+            "pricing": "Tilaushinta",
+            "login": "Kirjautua sisään",
+            "register": "Rekisteröidä tili",
+            "welcomeTo": "Tervetuloa",
+            "welcomeToSub": "Pitkän tunnelin läpi läänissä on lumimaassa. Yötaivaan alla maa oli valkoinen ja juna pysähtyi signaaliaseman edessä. \"Kawabata Yasunari aloitti täällä lumimaasta erittäin kivellä ytimekäs teksti.",
+            "startingUse": "Aloittaa",
+            "whyUs": "Miksi valita meidät",
+            "whyUsSub": "\"Prefektuurin pitkän tunnelin läpi se on lumimaa. Yötaivaan alla maa on valkoinen ja juna pysähtyy signaaliaseman edessä.\"",
+            "browseSafe": "Selata",
+            "browseSafeSub": "Erinomainen palomuurisuodatinjärjestelmä voi tehokkaasti estää online -kaloja ja haitallisia verkkosivustoja",
+            "encrypt": "Päähän -salaus",
+            "encryptSub": "Kaksisuuntainen SSL ja päähän -salaus suojaavat yksityisyyttäsi ja turvallisuuttasi, jopa palvelimet eivät voi lukea tietojasi",
+            "mgr": "Tehokas hallinta",
+            "mgrSub": "Yksi käyttöliittymä hallitsee kaikkia avaimia täydellisillä ja rikkailla hallintatoiminnoilla, eikä sinun tarvitse huolehtia siemensyöksyn ongelmien tilaamisesta",
+            "fast": "Kätevä ja nopea",
+            "fastSub": "Anna täydelliset API-tiedostot WebAppeille tai upotettu kolmansien osapuolien ohjelmistoihin",
+            "fastLink": "Pikayhteys",
+            "subscribeUs": "Seurata meitä",
+            "filingsCode": "Tiedostonumero {koodi}"
         }
     },
     "pagination": {
-        "perPage10": "10 données / page",
-        "perPage20": "20 données / page",
-        "perPage50": "50 données / page",
-        "perPage100": "100 données / page"
+        "perPage10": "10 data/sivu",
+        "perPage20": "20 data/sivu",
+        "perPage50": "50 data/sivu",
+        "perPage100": "100 data/sivu"
     },
-    "modal": { "cancel": "Annuler", "confirm": "confirmer" },
+    "modal": { "cancel": "Peruuttaa", "confirm": "vahvistaa" },
     "week": {
-        "monday": "Lundi",
-        "tuesday": "Mardi",
-        "wednesday": "Mercredi",
-        "thursday": "Jeudi",
-        "friday": "Vendredi",
-        "saturday": "Samedi",
-        "sunday": "Dimanche"
+        "monday": "maanantai",
+        "tuesday": "tiistai",
+        "wednesday": "keskiviikko",
+        "thursday": "torstai",
+        "friday": "perjantai",
+        "saturday": "Lauantai",
+        "sunday": "sunnuntai"
     },
     "period": {
-        "month": "Paiement mensuel",
-        "quarter": "Paiement trimestriel",
-        "halfYear": "Paiement d'une demi-année",
-        "year": "Paiement annuel"
+        "month": "Kuukausimaksu",
+        "quarter": "Neljännesvuosittainen maksu",
+        "halfYear": "Puolen vuoden maksu",
+        "year": "Vuotuinen maksu"
     },
     "operate": {
-        "cancel": "Annuler",
-        "confirm": "confirmer",
-        "update": "renouveler",
-        "add": "Ajouter à"
+        "cancel": "Peruuttaa",
+        "confirm": "vahvistaa",
+        "update": "uudistaa",
+        "add": "Lisätä jtk"
     },
     "notFound": {
-        "title": "404 La page n'existe pas",
-        "description": "Nous ne pouvons pas trouver la page que vous avez demandée, elle peut avoir été supprimée ou liée à des erreurs. Si vous pensez qu'il s'agit d'une erreur, veuillez soumettre l'ordre de travail pour nous contacter.",
-        "p1": "Il reviendra à la page d'accueil après {SEC}, et si votre navigateur ne répond pas, cliquez sur le bouton ci-dessous.",
-        "manualBack": "Retour à la page d'accueil"
+        "title": "404 Sivua ei ole olemassa",
+        "description": "Emme löydä pyytämääsi sivua, se on ehkä poistettu tai linkitetty virheisiin. Jos luulet tämän olevan virhe, lähetä työtilaus ottaaksesi yhteyttä.",
+        "p1": "Se palaa kotisivulle {s.} S: n jälkeen, ja jos selaimesi ei vastaa, napsauta alla olevaa painiketta.",
+        "manualBack": "Palaa kotisivulle"
     },
     "forbidden": {
-        "title": "403 Pas de droits",
-        "description": "Vous n'avez peut-être pas une autorisation suffisante pour accéder à cette page. Si vous pensez qu'il s'agit d'une erreur, veuillez soumettre l'ordre de travail pour nous contacter."
+        "title": "403 Ei oikeuksia",
+        "description": "Sinulla ei ehkä ole riittävää lupaa käyttää tätä sivua. Jos luulet tämän olevan virhe, lähetä työtilaus ottaaksesi yhteyttä."
     }
 }

@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import SnowFall from "@/views/utils/SnowFall.vue";
-// import {useI18n} from "vue-i18n";
+import {useI18n} from "vue-i18n";
 import {onBeforeMount, onMounted, ref} from "vue"
 import HeaderA from "@/views/Welcome/A/HeaderA.vue";
 import ContentA from "@/views/Welcome/A/ContentA.vue";
 import FooterA from "@/views/Welcome/A/FooterA.vue";
 // import instance from "@/axios/authInstance"
 import {handleFetchWelcomeInfo} from "@/api/common/env";
+import {useMessage} from "naive-ui"
 
-// const {t} = useI18n()
-
+const {t} = useI18n()
+const message = useMessage()
 let getConfigSuccess = ref<boolean>(false)
 
 interface WelcomeSettings {
@@ -36,9 +37,11 @@ let settings = ref<WelcomeSettings>({
 
 let callHandleGetConfig = async () => {
   let data = await handleFetchWelcomeInfo('en')
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     getConfigSuccess.value = true
     Object.assign(settings.value, data.config)
+  } else {
+    message.error(t('adminViews.common.fetchDataFailure'))
   }
 }
 

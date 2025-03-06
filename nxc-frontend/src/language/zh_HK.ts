@@ -1,1644 +1,1581 @@
 export default {
     "commonHeader": {
-        "menuTxt": "menu",
-        "userData": "Informations sur l'utilisateur",
-        "editUserData": "Modifier les informations utilisateur",
-        "logout": "Déconnecter"
+        "menuTxt": "菜單",
+        "userData": "用戶資料",
+        "editUserData": "編輯用戶資料",
+        "logout": "退出登陸"
     },
     "commonAside": {
         "admin": {
-            "dashboard": "Panneau de table",
-            "queueMonit": "Surveillance côté service",
-            "settings": "Paramètres",
-            "systemConfig": "Paramètres du système",
-            "paymentConfig": "Paramètres de paiement",
-            "themeConfig": "Paramètres de thème",
-            "server": "Serveur",
-            "privilege": "Gestion des autorités",
-            "finance": "Finance",
-            "subscription": "Gestion de l'abonnement",
-            "coupon": "Gestion des coupons",
-            "order": "Gestion des commandes",
-            "activate": "Activer l'enregistrement",
-            "key": "Gestion clé",
-            "user": "Utilisateur",
-            "userMgr": "Gestion des utilisateurs",
-            "notice": "Gestion de l'annonce",
-            "ticket": "Gestion des bons de travail",
-            "doc": "Gestion de la base de données des connaissances"
+            "dashboard": "儀表板",
+            "queueMonit": "服務端監控",
+            "settings": "設置",
+            "systemConfig": "系統設置",
+            "paymentConfig": "支付設置",
+            "themeConfig": "主題設置",
+            "server": "服務器",
+            "privilege": "權限組管理",
+            "finance": "財務",
+            "subscription": "訂閱管理",
+            "coupon": "優惠券管理",
+            "order": "訂單管理",
+            "activate": "激活紀錄",
+            "key": "密鑰管理",
+            "user": "用戶",
+            "userMgr": "用戶管理",
+            "notice": "公告管理",
+            "ticket": "工單管理",
+            "doc": "知識庫管理"
         },
         "user": {
-            "dashboard": "Panneau de table",
-            "document": "Utilisez le document",
-            "app": "Téléchargement de l'application",
-            "subscription": "S'abonner",
-            "purchase": "Acheter l'abonnement",
-            "surplus": "Ma clé",
-            "fiance": "Finance",
-            "topUp": "se débarrasser de",
-            "myOrder": "Ma commande",
-            "myInvite": "Mon invitation",
-            "user": "Utilisateur",
-            "profile": "Centre personnel",
-            "support": "Mon bon de travail",
-            "activateLog": "Activer l'enregistrement"
+            "dashboard": "儀表板",
+            "document": "使用文檔",
+            "app": "APP下載",
+            "subscription": "訂閱",
+            "purchase": "購買訂閱",
+            "surplus": "我的密鑰",
+            "fiance": "財務",
+            "topUp": "儲值",
+            "myOrder": "我的訂單",
+            "myInvite": "我的邀請",
+            "user": "用戶",
+            "profile": "個人中心",
+            "support": "我的工單",
+            "activateLog": "激活紀錄"
         }
     },
     "adminViews": {
         "common": {
-            "fetchDataSuccess": "Acquisition de données avec succès",
-            "fetchDataFailure": "Si les données échouent, veuillez réessayer plus tard",
-            "addSuccess": "Ajouté avec succès",
-            "addFailure": "Si l'ajout échoue, veuillez essayer plus tard",
-            "updateSuccess": "La modification a réussi",
-            "updateFailure": "Si la modification échoue, veuillez réessayer plus tard",
-            "deleteSuccess": "Suppression avec succès",
-            "deleteFailure": "Veuillez réessayer si la suppression a échoué",
-            "confirm": "Confirmer",
-            "cancel": "Annuler",
-            "success": "L'opération est réussie",
-            "failure": "L'opération a échoué",
-            "NotAllowed": "Format illégal",
-            "checkForm": "Veuillez vérifier le formulaire",
-            "unknownErr": "Erreur inconnue",
-            "dialog": { "delete": "Savez-vous que vous souhaitez le supprimer?" },
-            "yes": "Oui",
-            "no": "Non"
+            "fetchDataSuccess": "獲取數據成功",
+            "fetchDataFailure": "獲取數據失敗請稍後再試",
+            "addSuccess": "添加成功",
+            "addFailure": "添加失敗請稍後嘗試",
+            "updateSuccess": "修改成功",
+            "updateFailure": "修改失敗請稍後再試",
+            "deleteSuccess": "刪除成功",
+            "deleteFailure": "刪除失敗請稍後再試",
+            "confirm": "確認",
+            "cancel": "取消",
+            "success": "操作成功",
+            "failure": "操作失敗",
+            "NotAllowed": "非法格式",
+            "checkForm": "請檢查表單",
+            "unknownErr": "未知錯誤",
+            "dialog": { "delete": "您確認要刪除嗎" },
+            "yes": "是",
+            "no": "否"
         },
         "login": {
             "secureCard": {
-                "title": "Inspection de la sécurité",
-                "securePath": "Chemin sûr",
-                "hint": "Pour assurer la sécurité du système, vous devez saisir le chemin de sécurité avant de pouvoir entrer la page de connexion de l'administrateur. Veuillez saisir le chemin de sécurité dans la zone d'entrée ci-dessous.",
-                "placeholder": "Veuillez saisir un chemin sûr",
-                "checkBtn": "examiner",
-                "rememberPath": "Souviens-toi du chemin sûr"
+                "title": "安全檢查",
+                "securePath": "安全路徑",
+                "hint": "為保障系統安全，您需輸入安全路徑方可進入管理員登錄頁面。 請在下方輸入框中輸入安全路徑，成功驗證安全路徑後您可選擇選擇保存，以便後續快捷登錄。",
+                "placeholder": "請輸入安全路徑",
+                "checkBtn": "檢查",
+                "rememberPath": "記住安全路徑"
             },
             "card": {
-                "back": "Retour à la page d'accueil",
-                "toAdminCenter": "Connectez-vous au centre d'administration",
-                "emailAddr": "E-mail administrateur",
-                "emailInputArea": {
-                    "title": "E-mail administrateur",
-                    "placeholder": "Adresse email"
-                },
-                "passwordInputArea": {
-                    "title": "Mot de passe administrateur",
-                    "placeholder": "mot de passe"
-                },
-                "login": "se connecter",
-                "forgetPassword": "Oubliez le mot de passe",
-                "formNotPassed": "La vérification du formulaire échoue"
+                "back": "返回首頁",
+                "toAdminCenter": "登錄到管理中心",
+                "emailAddr": "管理員郵箱",
+                "emailInputArea": { "title": "管理員郵箱", "placeholder": "郵箱地址" },
+                "passwordInputArea": { "title": "管理員密碼", "placeholder": "密碼" },
+                "login": "登入",
+                "forgetPassword": "忘記密碼",
+                "formNotPassed": "表單驗證不通過"
             },
             "mention": {
-                "title": "indice",
-                "description": "Cette page est une page d'administrateur, qui ne peut être accessible que par les administrateurs."
+                "title": "提示",
+                "description": "此頁面是管理員頁面，只有管理員才能訪問，如果您沒有管理員權限或意外來到此處，請點擊下面的鏈接返回主頁。"
             },
             "message": {
-                "passwordErr": "Mot de passe incorrect",
-                "adminNotExist": "L'administrateur n'existe pas",
-                "noPrivilege": "Accès sans autorisation",
-                "authPassed": "Vérification a été adoptée",
-                "authFailure": "Échec de la vérification",
-                "otherErr": "Autres erreurs",
-                "pathCheckPassed": "Le contrôle du chemin de sécurité est passé",
-                "pathCheckFailure": "Chemin de sécurité incorrect",
-                "rememberSecureMention": "Pour assurer la sécurité de la gestion backend, ne le vérifiez pas s'il ne s'agit pas de votre ordinateur privé."
+                "passwordErr": "密碼不正確",
+                "adminNotExist": "管理員不存在",
+                "noPrivilege": "無權限訪問",
+                "authPassed": "驗證通過",
+                "authFailure": "驗證失敗",
+                "otherErr": "其他錯誤",
+                "pathCheckPassed": "安全路徑檢查通過",
+                "pathCheckFailure": "安全路徑不正確",
+                "rememberSecureMention": "為了保證後台管理的安全性，如果這不是您的私人電腦請不要勾選。"
             }
         },
         "summary": {
-            "cockpit": "Panneau de table",
-            "systemConfig": "Paramètres du système",
-            "paymentConfig": "Paramètres de paiement",
-            "planMgr": "Gestion de l'abonnement",
-            "userMgr": "Gestion des utilisateurs",
-            "orderMgr": "Gestion des commandes",
-            "keyMgr": "Gestion clé",
-            "incomeText": "Revenu d'hier / revenu mensuel",
-            "pendingTicket": "Vous avez {nums} ordres à traiter",
-            "toHandle": "Allez le vérifier",
-            "apiAccessCard": "Nombre de visites d'interface API dans une semaine",
-            "apiAccessCardHint": "Ces données sont seulement pour que vous compreniez l'accès actuel de l'API et ne représente pas les performances de votre serveur.",
-            "incomeWeek": "Montant de revenu dans une semaine",
-            "incomeCardHint": "Voici un tableau des montants de revenus sur une semaine, ce qui entraînera un affichage inexact si le cache est effacé.",
-            "core": "cœur",
-            "reqErr": "Rencontré une erreur",
-            "reqErrHint": "Une erreur a été rencontrée lors de l'obtention des informations sur la vue d'ensemble, ce qui a provoqué la fin de cette demande, de sorte que le graphique ne peut pas être affiché.",
+            "cockpit": "儀表板",
+            "systemConfig": "系統設置",
+            "paymentConfig": "支付設置",
+            "planMgr": "訂閱管理",
+            "userMgr": "用戶管理",
+            "orderMgr": "訂單管理",
+            "keyMgr": "密鑰管理",
+            "incomeText": "昨日收入 / 當月收入",
+            "pendingTicket": "您有 {nums} 條待處理工單",
+            "toHandle": "去查看",
+            "apiAccessCard": "一週內API接口訪問次數",
+            "apiAccessCardHint": "此數據僅供您了解當前的API訪問情況，並不代表您的服務器性能。",
+            "incomeWeek": "一週內收入金額",
+            "incomeCardHint": "這裡展示了一週內的收入金額圖表，如果緩存被清空則會導致顯示不準確。",
+            "core": "核心",
+            "reqErr": "遇到錯誤",
+            "reqErrHint": "在獲取概覽信息時遇到錯誤，導致本次請求無法完成，因此圖表暫不能顯示，請您稍後再試。",
             "userCard": {
-                "title": "Aperçu de l'utilisateur",
-                "allRegisteredUsers": "Utilisateur d'enregistrement général",
-                "activeUsers": "Utilisateurs en direct",
-                "inactiveUsers": "Utilisateurs inactifs",
-                "blockedUsers": "Interdiction ou remboursement"
+                "title": "用戶概覽",
+                "allRegisteredUsers": "總註冊用戶",
+                "activeUsers": "活躍用戶",
+                "inactiveUsers": "非活躍用戶",
+                "blockedUsers": "封禁或註銷"
             },
             "general": {
-                "title": "en général",
-                "localTime": "Temps de navigateur",
-                "osType": "Type de système d'exploitation",
-                "appName": "Nom de candidature",
-                "appUrl": "URL d'application",
-                "currency": "Monnaie",
-                "allowRegister": "Autoriser l'inscription"
+                "title": "一般",
+                "localTime": "瀏覽器時間",
+                "osType": "操作系統類型",
+                "appName": "應用名稱",
+                "appUrl": "應用網址",
+                "currency": "貨幣單位",
+                "allowRegister": "允許註冊"
             },
             "system": {
-                "title": "Configuration du système",
-                "axiosAddr": "Adresse backend http",
-                "wsAddr": "Adresse backend WebSocket",
-                "serverTime": "Heure du serveur",
-                "uptime": "Temps de fonctionnement",
-                "gatewayStatus": "État du réseau API",
-                "dbStatus": "État de la base de données",
-                "redisStatus": "Statut redis",
-                "serverOsType": "Type de système d'exploitation du serveur",
-                "serverOsArch": "Architecture du système d'exploitation du serveur",
-                "runMode": "Mode de course",
-                "cpuNums": "Nombre de cœurs CPU pour les serveurs réseau",
-                "numCgoCall": "Nombre de collections de déchets",
-                "time": "De premier ordre",
-                "paymentMethods": "Activer le mode de paiement",
-                "runOK": "Courir normalement",
-                "runErr": "Comportement anormal",
-                "checkServer": "Veuillez vérifier la configuration de l'environnement de votre serveur backend",
-                "stopRegisterHint": "Vous semblez avoir désactivé une nouvelle inscription utilisateur",
-                "toSetting": "Se tourner vers les paramètres"
+                "title": "系統配置",
+                "axiosAddr": "HTTP後端地址",
+                "wsAddr": "Websocket後端地址",
+                "serverTime": "服務器時間",
+                "uptime": "運行時長",
+                "gatewayStatus": "API網關狀態",
+                "dbStatus": "數據庫狀態",
+                "redisStatus": "Redis狀態",
+                "serverOsType": "服務器操作系統類型",
+                "serverOsArch": "服務器操作系統架構",
+                "runMode": "運行模式",
+                "cpuNums": "網關服務器CPU核心數",
+                "numCgoCall": "垃圾回收次數",
+                "time": "次",
+                "paymentMethods": "啟用的支付方式",
+                "runOK": "運行正常",
+                "runErr": "運行異常",
+                "checkServer": "請檢查您後端服務器的環境配置",
+                "stopRegisterHint": "您似乎禁用了新用戶註冊",
+                "toSetting": "轉到設置"
             }
         },
         "queueMonit": {
-            "title": "Surveillance côté service",
-            "headerHint": "Veuillez ne pas rester sur cette page pendant longtemps.",
+            "title": "服務端監控",
+            "headerHint": "請勿長時間停留在此頁面，在網絡高峰時段頻繁查詢將些許影響網關性能和數據庫吞吐量。",
             "latency": {
-                "title": "Retard de serveur",
-                "retry": "Tester à nouveau",
-                "hint": "* La demande ici fait référence au temps requis pour une réponse réussie au client après que le client a envoyé une demande au serveur.",
-                "unit": "millisecondes",
+                "title": "服務器延遲",
+                "retry": "再次測試",
+                "hint": "*這裡的請求指的是客戶端發送請求到服務器後，服務器給予成功響應到客戶端所需要的時間。",
+                "unit": "毫秒",
                 "level": {
                     "l1": {
-                        "title": "Excellent",
-                        "description": "Il s'agit d'une très bonne situation de réseau et vous ne vous sentirez guère retardé."
+                        "title": "優秀",
+                        "description": "這是很優秀的網絡情況，幾乎不會感覺到延遲。"
                     },
                     "l2": {
-                        "title": "normale",
-                        "description": "C'est la situation du réseau la plupart du temps, et les utilisateurs pensent presque qu'ils ne se sentent pas retardés."
+                        "title": "正常",
+                        "description": "這是大多數時候的網絡情況，用戶幾乎感覺不到延遲。"
                     },
                     "l3": {
-                        "title": "Pauvre",
-                        "description": "Dans ce cas, l'utilisateur peut ressentir un léger décalage ou un retard."
+                        "title": "較差",
+                        "description": "在在此情況下用戶可能感覺到輕微卡頓或延遲。"
                     },
                     "l4": {
-                        "title": "Différence",
-                        "description": "Vous pouvez ressentir le retard évident et affecter l'expérience utilisateur."
+                        "title": "差",
+                        "description": "可以感受到明顯的延遲，有影響用戶體驗。"
                     },
                     "l5": {
-                        "title": "Très mauvais",
-                        "description": "Il y a un retard évident et la vitesse de chargement est plus lente ou même incapable de se rafraîchir, ce qui affecte sérieusement l'interaction et l'expérience des utilisateurs."
+                        "title": "非常差",
+                        "description": "出現明顯的延遲並且加載速度變慢甚至無法刷新，嚴重影響用戶互動和體驗。"
                     },
                     "offline": {
-                        "title": "Servir",
-                        "description": "Impossible de se connecter au serveur ou de gérer les erreurs de demande, veuillez vérifier si la configuration est correcte."
+                        "title": "服務器離線",
+                        "description": "無法連接到服務器或處理請求錯誤，請檢查是否配置正確。"
                     }
                 }
             },
             "api": {
-                "title": "Statut de demande d'API au cours des 7 derniers jours",
+                "title": "最近7天API請求狀態",
                 "items": {
-                    "ok": { "title": "Succès (StatusOk)", "unit": "De premier ordre" },
-                    "notFound": {
-                        "title": "Erreur de chemin d'état (404)",
-                        "unit": "De premier ordre"
-                    },
-                    "unAuthorized": {
-                        "title": "Accès non autorisé (401)",
-                        "unit": "De premier ordre"
-                    },
-                    "login2reg": {
-                        "title": "Connexion / enregistrement",
-                        "unit": "De premier ordre"
-                    }
+                    "ok": { "title": "成功 (StatusOK)", "unit": "次" },
+                    "notFound": { "title": "狀態路徑錯誤 (404)", "unit": "次" },
+                    "unAuthorized": { "title": "未授權訪問 (401)", "unit": "次" },
+                    "login2reg": { "title": "登錄 / 註冊", "unit": "次" }
                 }
             },
             "log": {
-                "title": "Enregistrement de journal",
-                "deleteLogMsg": "Supprimer le journal {nums}",
-                "deleteLogErr": "Supprimer le journal a échoué",
-                "logTableRows": "Records du journal total",
-                "logTableSize": "Les tables de blog occupent l'espace",
-                "unit": { "lines": "D'ACCORD", "mb": "Méga-personnage" },
-                "deleteLog": "Supprimer le journal",
-                "exportCsv": "Exporter CSV",
-                "deleteLogHint": "Cela exécutera la suppression de toutes les revues il y a une semaine.",
+                "title": "日誌記錄",
+                "deleteLogMsg": "刪除日誌 {nums} 條",
+                "deleteLogErr": "刪除日誌失敗",
+                "logTableRows": "日誌表總記錄數",
+                "logTableSize": "日誌表佔用空間",
+                "unit": { "lines": "行", "mb": "兆字節" },
+                "deleteLog": "刪除日誌",
+                "exportCsv": "導出CSV",
+                "deleteLogHint": "這將執行刪除前一周前所有的日誌，刪除方式為硬刪除，所有被刪除的日誌將無法恢復，建議先保存備份。",
                 "warn": {
-                    "title": "Savez-vous que vous souhaitez supprimer votre journal?",
-                    "description": "La liste sera supprimée immédiatement et vous ne pouvez pas révoquer cette opération."
+                    "title": "您確認要刪除日誌嗎？",
+                    "description": "將立即刪除條目，您不能撤銷此操作。"
                 },
                 "export": {
-                    "title": "Exporter le fichier CSV",
-                    "description": "Cela exportera le tableau suivant en tant que fichier CSV et le téléchargez localement."
+                    "title": "導出csv文件",
+                    "description": "這將會導出下面的表格為csv文件並下載到本地，如果您沒有開啟下載權限，下載有可能會失敗，點擊確認按鈕以執行導出。"
                 },
                 "table": {
                     "id": "#",
-                    "method": "Méthode de demande",
-                    "path": "Veuillez demander un itinéraire",
-                    "code": "Code d'état",
-                    "clientIp": "IP du client",
-                    "responseTime": "Temps de traitement",
-                    "requestAt": "Demander l'heure"
+                    "method": "請求方式",
+                    "path": "請求路徑",
+                    "code": "狀態碼",
+                    "clientIp": "客戶端IP",
+                    "responseTime": "處理時間",
+                    "requestAt": "請求時間"
                 }
             }
         },
         "systemConfig": {
-            "title": "Paramètres du système",
-            "common": {
-                "success": "Configuration mise à jour avec succès",
-                "err": "Mise à jour de la configuration Échec"
-            },
+            "title": "系統設置",
+            "common": { "success": "更新配置成功", "err": "更新配置失敗" },
             "site": {
-                "common": { "title": "Site" },
+                "common": { "title": "站點" },
                 "appName": {
-                    "title": "Nom du site",
-                    "shallow": "Utilisé pour afficher où le nom du site est requis.",
-                    "placeholder": "Nom du site"
+                    "title": "站點名稱",
+                    "shallow": "用於顯示需要站點名稱的地方。",
+                    "placeholder": "站點名稱"
                 },
                 "appSubName": {
-                    "title": "Sous-titre du site",
-                    "shallow": "Généralement affiché sous le titre principal.",
-                    "placeholder": "sous-titre"
+                    "title": "站點副標題",
+                    "shallow": "一般顯示在主要標題的下面。",
+                    "placeholder": "副標題"
                 },
                 "appDescription": {
-                    "title": "Description du site",
-                    "shallow": "Utilisé pour afficher où le site est requis.",
-                    "placeholder": "Description du site"
+                    "title": "站點描述",
+                    "shallow": "用於顯示需要站點描述的地方。",
+                    "placeholder": "站點描述"
                 },
                 "appUrl": {
-                    "title": "URL du site",
-                    "shallow": "La dernière adresse de site Web sera affichée à l'URL si vous en avez besoin.",
-                    "placeholder": "URL du site"
+                    "title": "站點網址",
+                    "shallow": "當前網站最新網址，將會在郵件等需要用於網址處體現。",
+                    "placeholder": "站點網址"
                 },
                 "forceHttps": {
-                    "title": "Forcer https",
-                    "shallow": "Lorsque le site n'utilise pas HTTPS, CDN ou anti-génération pour activer les HTTP forcés."
+                    "title": "強制 HTTPS",
+                    "shallow": "當站點沒有使用 HTTPS，CDN 或反代開啟強制 HTTPS 時需要開啟。"
                 },
                 "logoUrl": {
                     "title": "LOGO",
-                    "shallow": "Utilisé pour afficher où le logo est requis.",
-                    "placeholder": "L'adresse URL du logo"
+                    "shallow": "用於顯示需要 LOGO 的地方。",
+                    "placeholder": "logo 的 url 地址"
                 },
                 "subscribeUrl": {
-                    "title": "URL abonné",
-                    "shallow": "Utilisé pour l'abonnement, laissez vide comme URL du site. Si vous avez besoin de plusieurs URL d'abonnement pour être récupéré au hasard, veuillez utiliser des virgules pour les diviser.",
-                    "placeholder": "URL abonné"
+                    "title": "訂閱 URL",
+                    "shallow": "用於訂閱所使用，留空則為站點 URL。 如需多個訂閱 URL 隨機獲取請使用逗號進行分割。",
+                    "placeholder": "訂閱 url"
                 },
                 "tosUrl": {
-                    "title": "URL des termes de l'utilisateur (TOS)",
-                    "shallow": "Utilisé pour passer aux termes de l'utilisateur (TOS)",
-                    "placeholder": "Adresse des conditions générales de l'utilisateur"
+                    "title": "用戶條款(TOS)URL",
+                    "shallow": "用於跳轉到用戶條款(TOS)",
+                    "placeholder": "用戶條款地址"
                 },
                 "stopRegister": {
-                    "title": "Arrêter une nouvelle inscription à l'utilisateur",
-                    "shallow": "Personne ne pourra s'inscrire une fois qu'il a été allumé."
+                    "title": "停止新用戶註冊",
+                    "shallow": "開啟後任何人都將無法進行註冊。"
                 },
                 "inviteRequire": {
-                    "title": "Invitation forcée",
-                    "shallow": "Après l'ouverture, vous devez remplir le code d'invitation lors de votre inscription auprès d'un nouvel utilisateur."
+                    "title": "強制邀請",
+                    "shallow": "開啟後當新用戶註冊時必需填寫邀請碼。"
                 },
                 "trialSubscribe": {
-                    "title": "S'inscrire au procès",
-                    "shallow": "Sélectionnez l'abonnement que vous souhaitez essayer."
+                    "title": "註冊試用",
+                    "shallow": "選擇需要試用的訂閱，如果沒有選項請先前往訂閱管理添加。"
                 },
                 "trialTime": {
-                    "title": "Heure du procès (heures)",
-                    "shallow": "Abonnez-vous à l'heure d'essai lorsque les nouveaux utilisateurs s'inscrivent."
+                    "title": "試用時間(小時)",
+                    "shallow": "新用戶註冊時訂閱試用時間。"
                 },
                 "currency": {
-                    "title": "Unité monétaire",
-                    "shallow": "Il est uniquement utilisé pour l'utilisation de l'affichage, et après la modification, toutes les unités de devises du système changeront.",
-                    "placeholder": "Cny"
+                    "title": "貨幣單位",
+                    "shallow": "僅用於展示使用，更改後系統中所有的貨幣單位都將發生變更。",
+                    "placeholder": "CNY"
                 },
                 "currencySymbol": {
-                    "title": "Symbole de devise",
-                    "shallow": "Il est uniquement utilisé pour l'utilisation de l'affichage, et après la modification, toutes les unités de devises du système changeront.",
+                    "title": "貨幣符號",
+                    "shallow": "僅用於展示使用，更改後系統中所有的貨幣單位都將發生變更。",
                     "placeholder": "¥"
                 }
             },
             "security": {
-                "common": { "title": "Paramètres de sécurité" },
+                "common": { "title": "安全設置" },
                 "emailVerify": {
-                    "title": "Vérification par e-mail",
-                    "description": "Après l'ouverture, l'utilisateur devra effectuer une vérification par e-mail."
+                    "title": "郵箱驗證",
+                    "description": "開啟後將會強制要求用戶進行郵箱驗證。"
                 },
                 "gmailAlias": {
-                    "title": "Interdire gmail multiple alias",
-                    "description": "Après l'ouverture, plusieurs alias Gmail ne seront pas enregistrés."
+                    "title": "禁止使用Gmail多別名",
+                    "description": "開啟後Gmail多別名將無法註冊。"
                 },
                 "safeMode": {
-                    "title": "Mode sûr",
-                    "description": "Après ouverture, l'accès au nom de domaine à ce site, sauf l'URL du site, sera 403."
+                    "title": "安全模式",
+                    "description": "開啟後除了站點URL以外的綁定本站點的域名訪問都將會被403。"
                 },
                 "adminPath": {
-                    "title": "Chemin de fond",
-                    "description": "Le chemin de gestion de l'arrière-plan modifiera le chemin d'administration d'origine après modification.",
+                    "title": "後台路徑",
+                    "description": "後台管理路徑，修改後將會改變原有的admin路徑。",
                     "placeholder": "https://x.com/logo.jpeg"
                 },
                 "emailWhitelist": {
-                    "title": "Liste blanche du suffixe par e-mail",
-                    "description": "L'inscription n'est autorisée qu'après avoir ouvert le suffixe de boîte aux lettres dans la liste."
+                    "title": "郵箱後綴白名單",
+                    "description": "開啟後在名單中的郵箱後綴才允許進行註冊。"
                 },
                 "recaptcha": {
-                    "title": "Anti-robot",
-                    "description": "Lorsqu'il est activé, HCAPTCHA sera activé pour empêcher le robot."
+                    "title": "防機器人",
+                    "description": "開啟後將會啟用hCaptcha防止機器人。"
                 },
                 "hCaptchaSiteKey": {
-                    "title": "HCAPTCHA SITEKEKEY",
-                    "description": "Le SiteKey est utilisé pour demander au serveur HCAPTCHA d'identifier le numéro de site Web",
-                    "placeholder": "A3CA066C-0EA0-42FE-BCD2-23F4AB48D528"
+                    "title": "hCaptcha SiteKey",
+                    "description": "該SiteKey用於請求hCaptcha服務器來標識網站編號",
+                    "placeholder": "a3ca066c-0ea0-42fe-bcd2-23f4ab48d528"
                 },
                 "ipRegisterLimit": {
-                    "title": "Restrictions d'enregistrement IP",
-                    "description": "Après l'ouverture, si le compte d'enregistrement IP répond aux exigences des règles, l'enregistrement sera restreint."
+                    "title": "IP註冊限制",
+                    "description": "開啟後如果IP註冊賬戶達到規則要求將會被限制註冊，請注意IP判斷可能因為CDN或前置代理導致問題。"
                 },
                 "registerTimes": {
-                    "title": "fréquence",
-                    "description": "La punition sera activée après le nombre d'inscriptions.",
-                    "placeholder": "Veuillez entrer"
+                    "title": "次數",
+                    "description": "達到註冊次數後開啟懲罰。",
+                    "placeholder": "請輸入"
                 },
                 "lockTime": {
-                    "title": "Temps de punition (minutes)",
-                    "description": "Vous devez attendre que le temps de pénalité se soit écoulé avant de pouvoir vous inscrire.",
-                    "placeholder": "Veuillez entrer"
+                    "title": "懲罰時間(分鐘)",
+                    "description": "需要等待懲罰時間過後才可以再次註冊。",
+                    "placeholder": "請輸入"
                 }
             },
             "frontend": {
-                "common": { "title": "Personnalisation" },
+                "common": { "title": "個性化" },
                 "themePropColor": {
-                    "default": "défaut",
-                    "darkBlueDay": "Bleu foncé",
-                    "milkGreenDay": "Vert lait",
-                    "bambooGreen": "Ruozhu",
-                    "mistyPine": "Brouillard",
-                    "glacierBlue": "Glacier bleu",
-                    "grayTheme": "gris"
+                    "default": "預設",
+                    "darkBlueDay": "深藍色",
+                    "milkGreenDay": "奶綠色",
+                    "bambooGreen": "若竹",
+                    "mistyPine": "霧松",
+                    "glacierBlue": "冰川藍",
+                    "grayTheme": "灰色"
                 },
                 "sidebarStyle": {
-                    "title": "Style latérale",
-                    "shallow": "Réglez la couleur de la barre latérale."
+                    "title": "邊欄風格",
+                    "shallow": "設置側邊欄的顏色。"
                 },
-                "headerStyle": {
-                    "title": "Style de tête",
-                    "shallow": "Réglez la couleur en haut."
-                },
+                "headerStyle": { "title": "頭部風格", "shallow": "設置頂部的顏色。" },
                 "themeColor": {
-                    "title": "Couleur du thème",
-                    "shallow": "Définissez la couleur du thème de toute la page Web."
+                    "title": "主題色",
+                    "shallow": "設置整個網頁的主題色。"
                 },
                 "background": {
-                    "title": "arrière-plan",
-                    "shallow": "Il sera affiché sur la page de connexion en arrière-plan.",
+                    "title": "背景",
+                    "shallow": "將會在後台登錄頁面進行展示。",
                     "placeholder": "https://x.com/logo.jpeg"
                 }
             },
             "inviteAndRebate": {
-                "common": { "title": "Paiement et remise" },
+                "common": { "title": "支付和返利" },
                 "inviteRebateEnable": {
-                    "title": "Activer les rabais utilisateurs",
-                    "description": "S'il est activé, lorsque l'utilisateur invité recharge, l'utilisateur sera remise en fonction du rapport de recharge ci-dessous."
+                    "title": "啟用用戶返利",
+                    "description": "如果啟用則在被邀請的用戶充值時，按照下面設置的充值比例給予用戶返利。"
                 },
                 "inviteRebateRate": {
-                    "title": "Ratio de rabais",
-                    "description": "Définissez le rapport du montant de la remise.",
-                    "placeholder": "Veuillez saisir le ratio des remises"
+                    "title": "返利比例",
+                    "description": "設置返利的金額比例。",
+                    "placeholder": "請輸入返利比例"
                 },
                 "discountInfo": {
-                    "title": "Informations sur les réductions",
-                    "description": "Définissez les informations de l'offre et elle sera affichée en haut de la page de recharge.",
-                    "placeholder": "Configurer des informations de réduction"
+                    "title": "優惠信息",
+                    "description": "設置優惠信息，它將會展示在充值頁面頂部。",
+                    "placeholder": "設置優惠信息"
                 },
                 "inviteInfo": {
-                    "title": "Informations d'invitation",
-                    "description": "Définissez les informations d'invitation, elle sera affichée sur la page d'invitation utilisateur pour afficher le rapport de remise.",
-                    "placeholder": "Définir les informations de remise"
+                    "title": "邀請信息",
+                    "description": "設置邀請信息，它將會展示在用戶邀請頁面，用於顯示返利比例。",
+                    "placeholder": "設置返利信息"
                 }
             },
             "welcome": {
-                "common": { "title": "Informations sur la page d'accueil" },
+                "common": { "title": "首頁信息" },
                 "homeDescription": {
-                    "title": "Description de la page d'accueil",
-                    "description": "Définissez une brève description de la page d'accueil.",
-                    "placeholder": "Veuillez saisir le contenu de description de la page d'accueil"
+                    "title": "首頁描述",
+                    "description": "設置首頁的簡要描述內容。",
+                    "placeholder": "請輸入首頁描述內容"
                 },
                 "whyChooseUs": {
-                    "title": "Pourquoi nous choisir",
-                    "description": "Configurez notre description de la raison pour laquelle nous avons sélectionné.",
-                    "placeholder": "Veuillez saisir une description détaillée"
+                    "title": "為什麼選擇我們",
+                    "description": "設置關於為什麼選擇我們的描述。",
+                    "placeholder": "請輸入詳細描述"
                 },
                 "bilibiliLink": {
-                    "title": "Lien officiel de Bilibili",
-                    "description": "Définissez l'adresse de liaison du compte officiel de Bilibili.",
+                    "title": "Bilibili 官方鏈接",
+                    "description": "設置 Bilibili 官方賬號的鏈接地址。",
                     "placeholder": "https://space.bilibili.com/xxxx"
                 },
                 "youtubeLink": {
-                    "title": "Lien officiel YouTube",
-                    "description": "Définissez l'adresse du lien du compte YouTube officiel.",
-                    "placeholder": "https://youtube.com/channel/xxxxx"
+                    "title": "YouTube 官方鏈接",
+                    "description": "設置 YouTube 官方賬號的鏈接地址。",
+                    "placeholder": "https://youtube.com/channel/xxxx"
                 },
                 "instagramLink": {
-                    "title": "Lien officiel Instagram",
-                    "description": "Définissez l'adresse de lien de votre compte Instagram officiel.",
+                    "title": "Instagram 官方鏈接",
+                    "description": "設置 Instagram 官方賬號的鏈接地址。",
                     "placeholder": "https://instagram.com/xxxx"
                 },
                 "wechatLink": {
-                    "title": "Lien de compte public WeChat",
-                    "description": "Définissez l'adresse du lien du compte public WeChat.",
-                    "placeholder": "Veuillez saisir le lien public WeChat"
+                    "title": "微信公眾賬號鏈接",
+                    "description": "設置微信公眾賬號的鏈接地址。",
+                    "placeholder": "請輸入微信公眾鏈接"
                 },
                 "filingNumber": {
-                    "title": "Numéro d'enregistrement",
-                    "description": "Configurez le numéro d'enregistrement du site.",
-                    "placeholder": "Par exemple: Guangdong ICP n ° 12345678"
+                    "title": "備案號",
+                    "description": "設置站點的備案號。",
+                    "placeholder": "如：粵ICP備12345678號"
                 },
                 "pageSuffix": {
-                    "title": "Suffixe de site",
-                    "description": "Définissez le suffixe du nom du site pour l'affichage du titre.",
-                    "placeholder": "Par exemple: - Nom de votre site"
+                    "title": "站點後綴",
+                    "description": "設置站點名稱後綴，用於標題顯示。",
+                    "placeholder": "如：- 你的站點名稱"
                 }
             },
             "sendMail": {
                 "common": {
-                    "title": "Paramètres de messagerie",
-                    "warning": "Si vous modifiez la configuration de cette page, vous devez redémarrer le service de file d'attente et la direction inversée. De plus, la priorité de configuration de cette page est supérieure à la configuration du courrier dans .env.",
-                    "sendTestMailTitle": "Envoyer un e-mail de test",
-                    "sendTestMailShallow": "L'e-mail sera envoyé à l'adresse e-mail de l'administrateur actuel actuel",
-                    "sendTestMailTo": "Envoyer un e-mail de test à",
-                    "sending": "Envoyer un e-mail",
-                    "success": "succès",
-                    "receiverAddr": "Adresse reçue",
-                    "senderHost": "Serveur de livraison",
-                    "senderPort": "Envoyer un port",
-                    "senderEncrypt": "Méthode de chiffrement pour envoyer des messages",
-                    "senderUsername": "Nom de crédit",
-                    "sendErr": "Envoyer l'échec de l'e-mail"
+                    "title": "郵件設置",
+                    "warning": "如果您更改了本頁面的配置，需要對隊列服務及逆行重啟。 另外本頁配置優先級高於.env中的郵件配置。",
+                    "sendTestMailTitle": "發送測試郵件",
+                    "sendTestMailShallow": "郵件將會發送到當前登錄管理員的郵箱",
+                    "sendTestMailTo": "發送測試郵件到",
+                    "sending": "發送郵件中",
+                    "success": "成功",
+                    "receiverAddr": "收信地址",
+                    "senderHost": "發信服務器",
+                    "senderPort": "發信端口",
+                    "senderEncrypt": "發信加密方式",
+                    "senderUsername": "發信用戶名",
+                    "sendErr": "發送郵件失敗"
                 },
                 "smtpServerAddress": {
-                    "title": "Adresse du serveur SMTP",
-                    "shallow": "Adresse de service fournie par le fournisseur de services de messagerie",
-                    "placeholder": "Veuillez saisir l'adresse du serveur"
+                    "title": "SMTP 服務器地址",
+                    "shallow": "由郵件服務商提供的服務地址",
+                    "placeholder": "請輸入服務器地址"
                 },
                 "smtpServerPort": {
-                    "title": "Port de service SMTP",
-                    "shallow": "Les ports communs sont de 25, 465, 587",
-                    "placeholder": "Veuillez saisir le numéro de port"
+                    "title": "SMTP 服務端口",
+                    "shallow": "常見的端口有 25, 465, 587",
+                    "placeholder": "請輸入端口號"
                 },
                 "smtpEncryption": {
-                    "title": "Méthode de cryptage SMTP",
-                    "shallow": "La méthode de chiffrement 465 port est généralement SSL, et la méthode de chiffrement du port 587 est généralement TLS.",
-                    "placeholder": "Veuillez saisir la méthode de chiffrement"
+                    "title": "SMTP 加密方式",
+                    "shallow": "465 端口加密方式一般為 SSL，587 端口加密方式一般為 TLS",
+                    "placeholder": "請輸入加密方式"
                 },
                 "smtpAccount": {
-                    "title": "Compte SMTP",
-                    "shallow": "Compte fourni par le fournisseur de services de messagerie",
-                    "placeholder": "Veuillez saisir votre numéro de compte"
+                    "title": "SMTP 賬號",
+                    "shallow": "由郵件服務商提供的賬號",
+                    "placeholder": "請輸入賬號"
                 },
                 "smtpPassword": {
-                    "title": "Mot de passe SMTP",
-                    "shallow": "Mot de passe fourni par le fournisseur de services de messagerie",
-                    "placeholder": "Veuillez saisir votre mot de passe"
+                    "title": "SMTP 密碼",
+                    "shallow": "由郵件服務商提供的密碼",
+                    "placeholder": "請輸入密碼"
                 },
                 "senderAddress": {
-                    "title": "Envoyer une adresse",
-                    "shallow": "L'adresse d'envoi fournie par le fournisseur de services de messagerie",
-                    "placeholder": "Veuillez saisir l'adresse d'envoi"
+                    "title": "發件地址",
+                    "shallow": "由郵件服務商提供的發件地址",
+                    "placeholder": "請輸入發件地址"
                 },
                 "emailTemplate": {
-                    "title": "Modèle de messagerie",
-                    "shallow": "Vous pouvez voir comment personnaliser le modèle de messagerie dans le document",
-                    "placeholder": "Veuillez sélectionner le modèle de messagerie"
+                    "title": "郵件模版",
+                    "shallow": "你可以在文檔查看如何自定義郵件模板",
+                    "placeholder": "請選擇郵件模板"
                 }
             },
             "notice": {
-                "common": { "title": "Paramètres de notification" },
+                "common": { "title": "通知設置" },
                 "displayName": {
-                    "title": "nom d'affichage",
-                    "shallow": "Pour afficher la page frontale uniquement",
-                    "placeholder": "Interface de notification générale 1"
+                    "title": "顯示名稱",
+                    "shallow": "僅用於前端頁面顯示",
+                    "placeholder": "通用通知接口1"
                 },
                 "barkEndpoint": {
-                    "title": "Point d'accès à l'écorce",
-                    "shallow": "Adresse API backend du serveur d'écorce",
-                    "placeholder": "https: // <p>: <port> / <cret-key>"
+                    "title": "Bark 接入點",
+                    "shallow": "Bark 服務器後端 API 地址",
+                    "placeholder": "https://<ip>:<port>/<secret-key>"
                 },
                 "barkGroup": {
-                    "title": "Groupe d'écorce",
-                    "shallow": "Le nom de groupe affiché par le client",
+                    "title": "Bark 群組",
+                    "shallow": "客戶端顯示的群組名稱",
                     "placeholder": "web"
                 }
             },
             "appDownload": {
                 "common": {
-                    "title": "Appliquer",
-                    "hint": "Pour la gestion de la version et la mise à jour des propres clients (applications)"
+                    "title": "APP",
+                    "hint": "用於自有客戶端(APP)的版本管理及更新"
                 },
                 "enabled": {
-                    "title": "Ouvrez et déposez la charge",
-                    "shallow": "Si vous êtes activé, permettez aux utilisateurs d'accéder à la page de téléchargement"
+                    "title": "開放下載",
+                    "shallow": "如果啟用則允許用戶訪問下載頁面"
                 },
                 "windows": {
-                    "title": "Fenêtre",
-                    "shallow": "Numéro de version Windows et adresse de téléchargement",
+                    "title": "Windows",
+                    "shallow": "Windows 端版本號及下載地址",
                     "placeholder": "https://xxxx.com/xxx.exe"
                 },
                 "macos": {
-                    "title": "macos",
-                    "shallow": "numéro de version macOS et adresse de téléchargement",
+                    "title": "macOS",
+                    "shallow": "macOS 端版本號及下載地址",
                     "placeholder": "https://xxxx.com/xxx.dmg"
                 },
                 "linux": {
                     "title": "Linux",
-                    "shallow": "Numéro de version Linux et adresse de téléchargement",
+                    "shallow": "Linux 端版本號及下載地址",
                     "placeholder": "https://xxxx.com/xxx.deb"
                 },
                 "android": {
-                    "title": "Androïde",
-                    "shallow": "Numéro de version Android et adresse de téléchargement",
+                    "title": "Android",
+                    "shallow": "Android 端版本號及下載地址",
                     "placeholder": "https://xxxx.com/xxx.apk"
                 },
                 "ios": {
-                    "title": "Ios",
-                    "shallow": "Numéro de version iOS et adresse de téléchargement",
+                    "title": "IOS",
+                    "shallow": "IOS 端版本號及下載地址",
                     "placeholder": "https://xxxx.com/xxx.ipk"
                 }
             }
         },
         "payConfig": {
-            "title": "Paramètres de paiement",
-            "description": "Tous les méthodes de paiement prises en charge peuvent être gérées ici.",
+            "title": "支付設置",
+            "description": "在這裡可以管理所有支持的付款方式，目前僅支持支付寶支付，但是您也可以先行配置其他支付方式，如沒有符合您的支付流程，可以等待項目進一步完善後在更新日誌中查看是否支持。",
             "attention": {
-                "title": "Choses à noter",
-                "point1": "Il est vraiment important de configurer les informations du mode de paiement avant de les activer.",
-                "point2": "Lors de la modification de la configuration de la méthode de paiement, si elle est affichée comme \"---\", cela signifie que l'option a été définie et n'est pas vide."
+                "title": "注意事項",
+                "point1": "務必先配置支付方式的信息再進行啟用，這真的很重要。",
+                "point2": "修改付款方式配置時，如果顯示為\"---\"則代表該選項已經被設置且非空，如果需要重新修改直接輸入新值保存即可。"
             },
             "common": {
-                "detail": "{méthode} Configuration",
-                "fillAttention": "Pour garantir la sécurité, aucune information détaillée n'est affichée, le remplissage pour créer ou écraser les configurations existantes.",
-                "discountAmount": "Montant de réduction (les informations de l'invite de l'utilisateur peuvent être définies dans le \"paiement et remise\" définis par le système)",
-                "saveConfigBtnHint": "sauvegarder",
-                "cancelBtnHint": "Annuler",
-                "saveSuccess": "Configuration enregistrée avec succès",
-                "alterSuccess": "La modification de la configuration a réussi",
-                "discountPlaceholder": "Montant de réduction (si le montant de recharge est supérieur au montant de remise)",
-                "saveOrAlterFailure": "Erreur inconnue"
+                "detail": "{method} 配置",
+                "fillAttention": "為確保安全，不顯示詳細信息，重新填寫以創建或覆蓋已有配置。",
+                "discountAmount": "優惠金額（可以在系統設置的 \"支付和返利\" 中設置用戶提示信息）",
+                "saveConfigBtnHint": "保存",
+                "cancelBtnHint": "取消",
+                "saveSuccess": "配置保存成功",
+                "alterSuccess": "配置修改成功",
+                "discountPlaceholder": "優惠金額（充值金額大於優惠金額時應用優惠）",
+                "saveOrAlterFailure": "未知錯誤"
             },
             "alipay": {
-                "title": "Paiement",
+                "title": "支付寶",
                 "config": {
-                    "appId": "ID de demande",
-                    "appPublicKeyCertContent": "Contenu du certificat de clé d'application",
-                    "appPrivateKey": "Clé de confidentialité de l'application",
-                    "alipayRootCert": "Livre de certificat de sac de paiement",
-                    "alipayPublicKeyCertContent": "Contenu du certificat de trésor de paiement"
+                    "appId": "應用Id",
+                    "appPublicKeyCertContent": "應用公鑰證書內容",
+                    "appPrivateKey": "應用私鑰",
+                    "alipayRootCert": "支付寶根證書",
+                    "alipayPublicKeyCertContent": "支付寶公鑰證書內容"
                 }
             },
             "wechat": {
-                "title": "Paiement WeChat",
+                "title": "微信支付",
                 "config": {
-                    "mchId": "ID marchand",
-                    "mchCertSerial": "Numéro de série du certificat marchand",
-                    "apiV3Key": "Clé API V3",
-                    "privateKey": "Clé de confidentialité"
+                    "mchId": "商戶Id",
+                    "mchCertSerial": "商戶證書序列號",
+                    "apiV3Key": "API v3 Key",
+                    "privateKey": "私鑰"
                 }
             },
             "apple": {
-                "title": "Pomme",
+                "title": "Apple Pay",
                 "config": {
-                    "issuerId": "ID d'émetteur",
-                    "bundleId": "Paquet",
-                    "privateKeyId": "ID de clé privée",
-                    "privateKeyContent": "Contenu de confidentialité"
+                    "issuerId": "Issuer Id",
+                    "bundleId": "Bundle Id",
+                    "privateKeyId": "Private Key Id",
+                    "privateKeyContent": "私鑰內容"
                 }
             },
-            "addPaymentMethod": "Ajouter le mode de paiement",
-            "enableBtnHint": "Commencer",
-            "disableBtnHint": "Désactivé",
-            "setupPaymentMethod": "Configuration"
+            "addPaymentMethod": "添加支付方式",
+            "enableBtnHint": "啟用",
+            "disableBtnHint": "禁用",
+            "setupPaymentMethod": "配置"
         },
         "themeConfig": {
-            "title": "Configuration du sujet",
-            "using": "utiliser,",
+            "title": "主題配置",
+            "using": "使用，",
             "setAsCurrent": ""
         },
         "groupMgr": {
-            "title": "Gestion des autorités",
-            "description": "Le bon groupe est utilisé pour marquer différents niveaux d'abonnement, et vous pouvez vous abonner au même niveau mais différentes tailles dans un bon groupe pour une gestion facile.",
+            "title": "權限組管理",
+            "description": "權限組是用來標示不同的訂閱等級，您可以將同等級別但是額度等有細微區別的訂閱計畫歸納在一個權限組中方便管理。",
             "common": {
-                "addNewGroup": "Nouveau groupe d'autorisation",
-                "alterGroupName": "Modifier le nom du groupe d'autorisation",
-                "addConfirmed": "Confirmer pour ajouter",
-                "alterConfirmed": "Confirmer la modification",
-                "cancel": "Annuler",
-                "addSuccess": "Ajouté avec succès",
-                "addFailure": "Ajouter une défaillance",
-                "alterSuccess": "Le groupe d'autorisation de modification a réussi",
-                "alterFailure": "Le groupe d'autorisation de modification a échoué",
-                "delSuccess": "Suppression avec succès",
-                "delFailure": "La suppression a échoué",
-                "delMention": "La liste sera supprimée immédiatement et vous ne pouvez pas révoquer cette opération. Les groupes pertinents pour les plans d'abonnement doivent être supprimés avec prudence.",
-                "delNotAllowed": "Ce bon groupe dispose de ressources connexes et ne peut pas être supprimée."
+                "addNewGroup": "新建權限組",
+                "alterGroupName": "修改權限組名稱",
+                "addConfirmed": "確認添加",
+                "alterConfirmed": "確認修改",
+                "cancel": "取消",
+                "addSuccess": "添加成功",
+                "addFailure": "添加失敗",
+                "alterSuccess": "修改權限組成功",
+                "alterFailure": "修改權限組失敗",
+                "delSuccess": "刪除成功",
+                "delFailure": "刪除失敗",
+                "delMention": "將立即刪除條目，您不能撤銷此操作。 已經關聯訂閱計畫的權限組謹慎刪除。",
+                "delNotAllowed": "該權限組有關聯資源，不可以刪除。"
             },
-            "groupId": "ID du groupe de droits",
-            "groupName": "Nom du groupe d'autorisation",
-            "groupPlaceholder": "Entrez le nom du groupe d'autorisation",
-            "userCount": "Nombre d'utilisateurs",
-            "planCount": "Quantité d'abonnement",
-            "operate": "fonctionner",
-            "editBtnHint": "Modifier",
-            "deleteBtnHint": "supprimer"
+            "groupId": "權限組ID",
+            "groupName": "權限組名稱",
+            "groupPlaceholder": "輸入權限組名稱",
+            "userCount": "用戶數量",
+            "planCount": "訂閱數量",
+            "operate": "操作",
+            "editBtnHint": "編輯",
+            "deleteBtnHint": "刪除"
         },
         "docMgr": {
-            "title": "Gestion de la base de données des connaissances",
-            "description": "Ici, vous pouvez écrire un fichier de description à votre utilisateur.",
-            "addDoc": "Ajouter un nouveau document",
-            "addSuccess": "Ajouter un nouveau document avec succès",
-            "addFailure": "L'ajout de fichier a échoué",
-            "titleNotEmpty": "Le titre du document ne peut pas être vide",
+            "title": "知識庫管理",
+            "description": "在這裡您可以編寫給用戶的說明文檔，它可以是軟件的設計說明書、使用教程或註意事項等，其文檔的內容支持Markdown格式。",
+            "addDoc": "添加新文檔",
+            "addSuccess": "添加新文檔成功",
+            "addFailure": "添加文檔失敗",
+            "titleNotEmpty": "文檔的標題不能為空",
             "table": {
                 "docId": "#",
-                "isShow": "S'il faut afficher",
-                "sortAs": "Trier",
-                "lang": "Langue",
-                "category": "Catégorie",
-                "title": "Titre",
-                "createdAt": "Temps de création",
-                "updatedAt": "Mettre à jour l'heure",
-                "operate": "fonctionner",
-                "edit": "Modifier",
-                "delete": "supprimer"
+                "isShow": "是否顯示",
+                "sortAs": "排序",
+                "lang": "語言",
+                "category": "分類",
+                "title": "標題",
+                "createdAt": "創建時間",
+                "updatedAt": "更新時間",
+                "operate": "操作",
+                "edit": "編輯",
+                "delete": "刪除"
             },
             "form": {
-                "add": "Ajouter un document",
-                "edit": "Modifier le document",
-                "cancel": "Annuler",
-                "confirm": "Confirmer",
-                "addBtn": "Ajouter à",
-                "editBtn": "Réviser",
-                "title": {
-                    "title": "Titre de fichier",
-                    "placeholder": "Entrez le titre du fichier"
-                },
+                "add": "添加文檔",
+                "edit": "編輯文檔",
+                "cancel": "取消",
+                "confirm": "確認",
+                "addBtn": "添加",
+                "editBtn": "修改",
+                "title": { "title": "文檔標題", "placeholder": "輸入文檔的標題" },
                 "sort": {
-                    "title": "Trier",
-                    "placeholder": "Le niveau de commande du fichier d'entrée est plus élevé. Plus la valeur représente plus la priorité."
+                    "title": "排序",
+                    "placeholder": "輸入文檔的排序級別 越高的數值代表優先級越高"
                 },
                 "category": {
-                    "title": "Catégorie",
-                    "placeholder": "Le document sera affiché dans les catégories en fonction de ce champ"
+                    "title": "分類",
+                    "placeholder": "文檔將按照該字段進行分類展示"
                 },
-                "lang": {
-                    "title": "Document Language",
-                    "placeholder": "Sélectionnez une langue de document"
-                }
+                "lang": { "title": "文檔語言", "placeholder": "選擇文檔語言" }
             }
         },
         "planMgr": {
-            "title": "Gestion de l'abonnement",
-            "description": "Ici, vous pouvez ajouter de nouveaux plans d'abonnement, modifier la description, le prix, le solde, le groupe d'autorisation auquel les plans d'abonnement sont déjà inclus, etc.",
-            "addNewPlan": "Ajouter un nouvel abonnement",
+            "title": "訂閱管理",
+            "description": "在這裡可以添加新的訂閱計畫、修改已有訂閱計畫的描述、價格、餘糧、其所屬的權限組等。",
+            "addNewPlan": "添加新訂閱",
             "table": {
                 "id": "#",
-                "isSale": "Activer les ventes",
-                "isRenew": "Autoriser les frais continus",
-                "sort": "Niveau de tri",
-                "group": "Le soi-disant groupe de droits",
-                "name": "Nom",
-                "nums": "quantité",
-                "residue": "Montant",
-                "operate": "fonctionner",
-                "operateBtn": { "update": "Réviser", "delete": "supprimer" }
+                "isSale": "啟用銷售",
+                "isRenew": "允許續費",
+                "sort": "排序等級",
+                "group": "所屬權限組",
+                "name": "名稱",
+                "nums": "數量",
+                "residue": "餘量",
+                "operate": "操作",
+                "operateBtn": { "update": "修改", "delete": "刪除" }
             },
             "mention": {
                 "common": {
-                    "success": "succès",
-                    "failure": "Échouer",
-                    "delMention": "Si le plan d'abonnement est déjà en vente, veillez à le supprimer."
+                    "success": "成功",
+                    "failure": "失敗",
+                    "delMention": "如果訂閱計畫已經處於銷售中，謹慎刪除。"
                 }
             },
             "form": {
-                "title": "Ajouter un abonnement",
+                "title": "添加訂閱",
                 "items": {
-                    "name": {
-                        "title": "Nom d'abonnement",
-                        "placeholder": "Entrez le nom du plan d'abonnement"
-                    },
+                    "name": { "title": "訂閱名稱", "placeholder": "輸入訂閱計畫的名稱" },
                     "describe": {
-                        "title": "Description de l'abonnement",
-                        "placeholder": "Entrez une description de l'abonnement (support Markdown)"
+                        "title": "訂閱描述",
+                        "placeholder": "輸入訂閱的描述（支持Markdown）"
                     },
-                    "isSale": { "title": "Activer les ventes" },
-                    "isRenew": { "title": "Activer les frais continus" },
-                    "group": {
-                        "title": "Le soi-disant groupe de droits",
-                        "placeholder": "Sélectionnez le groupe légitime"
-                    },
+                    "isSale": { "title": "啟用銷售" },
+                    "isRenew": { "title": "啟用續費" },
+                    "group": { "title": "所屬權限組", "placeholder": "選擇所屬權限組" },
                     "capacityLimit": {
-                        "title": "Nombre maximum d'utilisateurs autorisés",
-                        "placeholder": "Nombre maximum d'utilisateurs autorisés"
+                        "title": "最大允許用戶數目",
+                        "placeholder": "最大允許用戶數目"
                     },
                     "planResidue": {
-                        "title": "Le montant restant",
-                        "placeholder": "Le montant restant"
+                        "title": "剩餘數量",
+                        "placeholder": "目前剩餘的數量"
                     },
-                    "sort": { "title": "Trier", "placeholder": "Pour le tri frontal" },
+                    "sort": { "title": "排序", "placeholder": "用於前端排序" },
                     "periodPlaceholder": {
-                        "month": "Entrez le prix de paiement mensuel",
-                        "quarter": "Entrez le prix trimestriel payé",
-                        "halfYear": "Entrez le prix de paiement semestriel",
-                        "year": "Entrez le prix de paiement annuel"
+                        "month": "輸入月付價格",
+                        "quarter": "輸入季付價格",
+                        "halfYear": "輸入半年付價格",
+                        "year": "輸入年付價格"
                     }
                 }
             }
         },
         "couponMgr": {
-            "title": "Gestion des coupons",
-            "description": "Ici, vous pouvez ajouter des coupons pour certains festivals, etc., qui permettent aux utilisateurs de les utiliser lors de la mise en place de commandes et offrent des remises en fonction de la proportion que vous définissez.",
-            "fetchErr": "Réessayer si les données sont échouées",
-            "fetchPlanKvFailurese": "Obtenir l'échec de la liste des plans d'abonnement",
+            "title": "優惠券管理",
+            "description": "在這裡您可以為一些特定的節日等添加一些優惠券，它允許用戶在下單的時候使用並按照您設置的比例進行抵折優惠。",
+            "fetchErr": "獲取數據失敗請重試",
+            "fetchPlanKvFailurese": "獲取訂閱計畫列表失敗",
             "table": {
                 "id": "#",
-                "enabled": "De l'activer",
-                "name": "Nom",
-                "code": "Coupon",
-                "percentOff": "Informations sur les réductions",
-                "capacity": "Quantité totale",
-                "residue": "Le montant restant",
-                "startTime": "Permettre le temps",
-                "endTime": "Heure de fin",
-                "actions": "fonctionner",
-                "edit": "Modifier",
-                "delete": "supprimer"
+                "enabled": "是否啟用",
+                "name": "名稱",
+                "code": "券碼",
+                "percentOff": "優惠信息",
+                "capacity": "總數量",
+                "residue": "剩餘數量",
+                "startTime": "啟用時間",
+                "endTime": "結束時間",
+                "actions": "操作",
+                "edit": "編輯",
+                "delete": "刪除"
             },
             "modal": {
-                "newCoupon": "Ajouter un nouveau coupon",
-                "editCoupon": "Modifier les informations de coupon",
-                "confirmAdd": "Confirmer pour ajouter",
-                "confirmEdit": "Confirmer la modification",
-                "emptyNotAllow": "Cet article est requis",
-                "delMention": "Le coupon sera invalide immédiatement après la suppression de l'entrée et que vous ne pouvez pas retirer cette opération.",
-                "cancel": "Annuler",
-                "name": {
-                    "title": "Nom de coupon",
-                    "placeholder": "Veuillez saisir le nom du coupon"
-                },
+                "newCoupon": "添加新優惠券",
+                "editCoupon": "修改優惠券信息",
+                "confirmAdd": "確認添加",
+                "confirmEdit": "確認修改",
+                "emptyNotAllow": "該項目是必填的",
+                "delMention": "條目刪除後優惠券將會立即失效，您不能撤銷此操作。",
+                "cancel": "取消",
+                "name": { "title": "優惠券名稱", "placeholder": "請輸入優惠券名稱" },
                 "code": {
-                    "title": "Coupon",
-                    "placeholder": "Personnalisez le code de coupon (laissez-le vide et générez-le dès que possible)"
+                    "title": "券碼",
+                    "placeholder": "自定義優惠券碼（留空隨即生成）"
                 },
                 "percentOff": {
-                    "title": "Offrir des informations (pourcentage)",
-                    "placeholder": "Entrez le pourcentage de remise (tel que -12% de réduction)"
+                    "title": "優惠信息（百分比）",
+                    "placeholder": "輸入優惠百分比（如-12%OFF）"
                 },
-                "activeRange": { "title": "Gamme d'exemption de coupons disponibles" },
+                "activeRange": { "title": "優惠券可使用的有效期範圍" },
                 "capacity": {
-                    "title": "Nombre maximum de coupons utilisés",
-                    "placeholder": "Limiter la limite d'utilisation maximale (pas de limite si vide)"
+                    "title": "優惠券最大使用次數",
+                    "placeholder": "限制最大使用限制（為空則不限制）"
                 },
                 "residue": {
-                    "title": "Le nombre de coupons restants utilisés",
-                    "placeholder": "Définir le nombre de fois que le coupon est utilisé restant"
+                    "title": "優惠券剩餘使用次數",
+                    "placeholder": "設置優惠券剩餘使用的次數"
                 },
                 "perUserLimit": {
-                    "title": "Le nombre de fois que chaque utilisateur peut utiliser un coupon",
-                    "placeholder": "Limiter le nombre de fois que chaque utilisateur peut utiliser (pas de limite sur l'espace)"
+                    "title": "每個用戶可使用優惠券的次數",
+                    "placeholder": "限制每個用戶可使用的次數（為空則不限制）"
                 },
                 "planLimit": {
-                    "title": "Spécifiez un plan d'abonnement",
-                    "placeholder": "Restrictions sur le plan d'abonnement spécifié pour utiliser l'offre (pas de limite sur l'espace)"
+                    "title": "指定訂閱計畫",
+                    "placeholder": "限制指定訂閱計畫可以使用優惠（為空則不限制）"
                 }
             }
         },
         "orderMgr": {
-            "title": "Gestion des commandes",
-            "description": "Ici, vous pouvez afficher toutes les commandes planifiées par abonnement, filtrer les commandes pour différents utilisateurs, gérer manuellement les commandes pour les utilisateurs, etc.",
+            "title": "訂單管理",
+            "description": "在這裡您可以檢視所有訂閱計畫的訂單，篩選不同用戶的訂單、手動對用戶的訂單處理通過等。",
             "table": {
                 "id": "#",
-                "orderId": "Numéro de commande",
-                "email": "Boîte aux lettres d'utilisateur",
-                "status": {
-                    "title": "Taper",
-                    "t1": "Nouvellement acheté",
-                    "t2": "Continuer les frais",
-                    "t3": "Modifier"
-                },
-                "planName": "Nom de plan",
-                "period": "Faire du vélo",
-                "group": "Groupe de droits",
-                "amount": "Montant de paiement réel",
-                "price": "Prix ​​d'origine",
+                "orderId": "訂單號",
+                "email": "用戶郵箱",
+                "status": { "title": "類型", "t1": "新購", "t2": "續費", "t3": "編輯" },
+                "planName": "計畫名稱",
+                "period": "週期",
+                "group": "權限組",
+                "amount": "實付金額",
+                "price": "原始價格",
                 "isSuccess": {
-                    "title": "Statut de commande",
-                    "cancelOrder": "Annuler une commande",
-                    "passOrder": "Par ordre"
+                    "title": "訂單狀態",
+                    "cancelOrder": "取消訂單",
+                    "passOrder": "通過訂單"
                 },
-                "createdAt": "Temps de création de commande",
-                "action": {
-                    "title": "fonctionner",
-                    "showDetail": "Montrer les détails"
-                }
+                "createdAt": "訂單創建時間",
+                "action": { "title": "操作", "showDetail": "顯示細節" }
             },
-            "search": "Ordres de demande",
-            "resetSearch": "Réinitialiser la requête",
-            "failureReason": "Cause de défaillance",
-            "couponId": "ID de coupon",
-            "couponName": "Nom de coupon",
-            "noEntry": "sans",
-            "orderDetail": "Détails de la commande",
+            "search": "查詢訂單",
+            "resetSearch": "重置查詢",
+            "failureReason": "失敗原因",
+            "couponId": "優惠券ID",
+            "couponName": "優惠券名稱",
+            "noEntry": "無",
+            "orderDetail": "訂單詳情",
             "searchModal": {
                 "email": {
-                    "title": "Boîte aux lettres d'utilisateur",
-                    "placeholder": "Entrez l'e-mail utilisateur (recherche floue)"
+                    "title": "用戶郵箱",
+                    "placeholder": "輸入用戶郵箱（模糊搜索）"
                 },
                 "sort": {
-                    "title": "Algorithme de tri",
-                    "placeholder": "Sélectionnez l'algorithme de tri",
-                    "ASC": "Commande ascendante",
-                    "DESC": "Ordre descendant"
+                    "title": "排序算法",
+                    "placeholder": "選擇排序算法",
+                    "ASC": "升序",
+                    "DESC": "降序"
                 }
             },
-            "tradeWaiting": "Non payé",
-            "tradeFailure": "Échec de la transaction",
-            "tradeSuccess": "succès"
+            "tradeWaiting": "未支付",
+            "tradeFailure": "交易失敗",
+            "tradeSuccess": "成功"
         },
         "userMgr": {
-            "userManager": "Gestion des utilisateurs",
-            "description": "Vous pouvez gérer tous les utilisateurs ici, y compris les employés et les administrateurs, la subvention ou l'annulation des droits de gestion, définir les soldes des utilisateurs, réinitialiser les mots de passe, ajouter de nouveaux utilisateurs manuellement, etc.",
-            "enterEmail": "Veuillez saisir votre e-mail",
-            "enterValidEmail": "Veuillez saisir le format de messagerie correct",
-            "enterPassword": "Veuillez saisir votre mot de passe",
-            "passwordMinLength": "La longueur du mot de passe ne peut pas être inférieure à 6 chiffres",
-            "passwordMaxLength": "La longueur du mot de passe ne peut pas dépasser 20 chiffres",
-            "passwordStrength": "Les mots de passe doivent contenir des lettres, des chiffres et des caractères spéciaux",
-            "validationSuccess": "Vérification a été adoptée",
-            "validationFailed": "Échec de la vérification du formulaire, veuillez vérifier l'élément d'entrée",
-            "editProfile": "Modifier les informations",
-            "banUser": "Désactiver la connexion",
-            "unbanUser": "Débloquer l'utilisateur",
-            "noRecord": "Non enregistré",
-            "normal": "normale",
-            "banned": "Interdit",
-            "deleted": "Déconnecter",
-            "nullContent": "NUL",
-            "balance": "Montant",
-            "orderCount": "Quantité de commande",
-            "planCount": "Plans",
-            "actions": "fonctionner",
-            "updateSuccess": "Mettre à jour avec succès",
-            "addUserSuccess": "Ajout d'un nouvel utilisateur avec succès",
-            "unknownError": "Erreur inconnue",
-            "email": "E-mail",
-            "registerDate": "Date d'inscription",
-            "isAdmin": "Administrateur",
-            "isStaff": "personnel",
-            "accountStatus": "Statut de compte",
-            "inviteCode": "Code d'invitation",
-            "query": "Requête",
-            "reset": "Réinitialiser",
-            "addNewUser": "Utilisateur ajouté",
-            "searchUser": "Utilisateur de demande",
-            "cancel": "Annuler",
-            "submit": "soumettre",
-            "userEmail": "Boîte aux lettres d'utilisateur",
-            "inputUserEmail": "Entrez l'e-mail utilisateur (recherche floue)",
-            "inputEmail": "Entrer le courrier électronique",
-            "password": "mot de passe",
-            "inputPassword": "Entrez le mot de passe",
-            "editUser": "Modifier l'utilisateur",
-            "no": "Non",
-            "yes": "Oui",
+            "userManager": "用戶管理",
+            "description": "你可以在這裡管理所有的用戶，包括員工和管理員，授予或取消管理權限、設定用戶餘額、重置密碼、手動添加新用戶等操作。",
+            "enterEmail": "請輸入郵箱",
+            "enterValidEmail": "請輸入正確的郵箱格式",
+            "enterPassword": "請輸入密碼",
+            "passwordMinLength": "密碼長度不能少於 6 位",
+            "passwordMaxLength": "密碼長度不能超過 20 位",
+            "passwordStrength": "密碼必須包含字母、數字和特殊字符",
+            "validationSuccess": "驗證通過",
+            "validationFailed": "表單驗證失敗，請檢查輸入項",
+            "editProfile": "編輯資料",
+            "banUser": "封禁用戶",
+            "unbanUser": "解封用戶",
+            "noRecord": "無記錄",
+            "normal": "正常",
+            "banned": "封禁",
+            "deleted": "註銷",
+            "nullContent": "NULL",
+            "balance": "餘額",
+            "orderCount": "訂單數量",
+            "planCount": "計劃數",
+            "actions": "操作",
+            "updateSuccess": "更新成功",
+            "addUserSuccess": "添加新用戶成功",
+            "unknownError": "未知錯誤",
+            "email": "郵箱",
+            "registerDate": "註冊日期",
+            "isAdmin": "管理員",
+            "isStaff": "員工",
+            "accountStatus": "帳戶狀態",
+            "inviteCode": "邀請碼",
+            "query": "查詢",
+            "reset": "重置",
+            "addNewUser": "新增用戶",
+            "searchUser": "查詢用戶",
+            "cancel": "取消",
+            "submit": "提交",
+            "userEmail": "用戶郵箱",
+            "inputUserEmail": "輸入用戶郵箱（模糊搜索）",
+            "inputEmail": "輸入郵箱",
+            "password": "密碼",
+            "inputPassword": "輸入密碼",
+            "editUser": "編輯用戶",
+            "no": "否",
+            "yes": "是",
             "mention": {
-                "title": "Êtes-vous sûr de vouloir désactiver votre compte?",
-                "content": "Si l'utilisateur est bloqué, l'utilisateur ne pourra pas se connecter à {appname} et toutes les ressources qui y sont associées deviendront indisponibles."
+                "title": "您確定要封禁用戶嗎？",
+                "content": "如果封禁該用戶，那麼該用戶將無法登錄到{appName}，並且與其相關的所有資源將變為不可用。"
             }
         },
         "activation": {
-            "activateLog": "Activer l'enregistrement",
-            "description": "Vous pouvez afficher l'état d'activation spécifique de toutes les clés vendues, afficher le code d'identification du client, le temps d'activation, etc.",
-            "click2getKey": "Cliquez pour obtenir du contenu clé",
-            "createdAt": "Temps de création",
-            "turn2keyPage": "Se transformer en clé",
-            "showKey": "Montrer la clé",
-            "email": "E-mail",
-            "key": "Clé",
-            "search": "Recherche",
-            "filter": "Dépistage",
-            "filterAll": "tous",
-            "filterActive": "Seulement efficace",
-            "sortAlgorithm": "Algorithme de tri",
-            "sortASC": "Commande ascendante",
-            "sortDESC": "Ordre descendant"
+            "activateLog": "激活紀錄",
+            "description": "您可以檢視所有售出密鑰的具體激活情況，查看客戶端的識別碼、激活時間等。",
+            "click2getKey": "點擊以獲取密鑰內容",
+            "createdAt": "創建時間",
+            "turn2keyPage": "轉到密鑰",
+            "showKey": "顯示密鑰",
+            "email": "郵箱",
+            "key": "密鑰",
+            "search": "搜尋",
+            "filter": "篩選",
+            "filterAll": "全部",
+            "filterActive": "僅有效",
+            "sortAlgorithm": "排序算法",
+            "sortASC": "升序",
+            "sortDESC": "降序"
         },
         "keysMgr": {
-            "keyMgr": "Gestion clé",
-            "description": "Vous pouvez vérifier tous les contenus de clé générés et leur statut d'utilisation, la période de validité, etc. Vous pouvez également désactiver une clé.",
-            "enableKey": "Activer la clé",
-            "disableKey": "Désactiver les clés",
+            "keyMgr": "密鑰管理",
+            "description": "您可以查詢到所有生成的密鑰內容和他們的使用情況、有效期等等，您也可以執行禁用某一個密鑰。",
+            "enableKey": "啟用密鑰",
+            "disableKey": "禁用密鑰",
             "table": {
-                "email": "Adresse email",
-                "key": "Contenu clé",
-                "isValid": "Est-ce valable ou non",
-                "isUsed": "Que ce soit l'utiliser",
-                "isExpired": "Si ça expire",
-                "active": "actif",
-                "inactive": "Expiré",
-                "yes": "efficace",
-                "no": "Expiré",
-                "ok": "normale",
-                "blocked": "Désactiver le statut",
-                "unUsed": "Non utilisé",
-                "used": "Utilisé",
-                "showDetail": "Montrer les détails",
-                "blockKey": "Désactiver les clés",
-                "unblockKey": "Non."
+                "email": "郵箱地址",
+                "key": "密鑰內容",
+                "isValid": "是否有效",
+                "isUsed": "是否使用",
+                "isExpired": "是否到期",
+                "active": "活躍",
+                "inactive": "已過期",
+                "yes": "有效",
+                "no": "過期",
+                "ok": "正常",
+                "blocked": "禁用狀態",
+                "unUsed": "未使用",
+                "used": "已使用",
+                "showDetail": "顯示細節",
+                "blockKey": "禁用密鑰",
+                "unblockKey": "解除禁用"
             },
             "searchModal": {
-                "searchMethod": "Méthode d'enquête",
-                "byId": "Requête par id",
-                "byContent": "Enquête via les clés (flou)",
-                "keyId": "ID clé",
-                "idPlaceholder": "Entrez l'ID de la clé ici",
-                "keyContent": "Mot-clé",
-                "contentPlaceholder": "Entrez une partie de la clé ici"
+                "searchMethod": "查詢方式",
+                "byId": "通過ID進行查詢",
+                "byContent": "通過密鑰進行查詢（模糊）",
+                "keyId": "密鑰ID",
+                "idPlaceholder": "在這裡輸入密鑰的ID",
+                "keyContent": "密鑰碼",
+                "contentPlaceholder": "在這裡輸入密鑰的部分內容"
             },
             "mention": {
-                "blockOk": "Désactivation de la clé ID avec succès: {id}",
-                "title": "Êtes-vous sûr de vouloir désactiver la clé?",
-                "content": "Pour assurer l'expérience utilisateur, veuillez confirmer à nouveau le contenu de la clé."
+                "blockOk": "禁用密鑰成功 ID:{id}",
+                "title": "您確定要禁用密鑰嗎",
+                "content": "為保證用戶體驗，請再一次確認密鑰內容，密鑰一旦禁用後，在客戶端將不能再繼續使用。"
             },
             "detailModal": {
-                "title": "Détails clés",
-                "userId": "ID de l'utilisateur",
-                "planName": "Nom du plan d'abonnement",
-                "expiredAt": "Date d'expiration",
-                "keyGeneratedAt": "Date de génération de clés",
-                "clientId": "ID client"
+                "title": "密鑰細節",
+                "userId": "用戶ID",
+                "planName": "訂閱計畫名稱",
+                "expiredAt": "到期日期",
+                "keyGeneratedAt": "密鑰生成日期",
+                "clientId": "客戶端ID"
             }
         },
         "noticeMgr": {
-            "title": "Gestion de l'annonce",
-            "description": "Les annonces peuvent être gérées ici.",
-            "addNotice": "Ajouter une annonce",
+            "title": "公告管理",
+            "description": "在這裡可以對公告進行管理，啟用的公告將展示在用戶首頁的輪播圖中，可以設置的公告有優惠活動、節日通知、注意事項等。",
+            "addNotice": "添加公告",
             "table": {
                 "id": "#",
-                "show": "S'il faut afficher",
-                "title": "Titre",
-                "createdAt": "Temps de création",
-                "action": {
-                    "title": "fonctionner",
-                    "edit": "Modifier",
-                    "delete": "supprimer"
-                }
+                "show": "是否顯示",
+                "title": "標題",
+                "createdAt": "創建時間",
+                "action": { "title": "操作", "edit": "編輯", "delete": "刪除" }
             },
             "mention": {
-                "title": "Savez-vous que vous souhaitez le supprimer?",
-                "content": "L'annonce sera supprimée immédiatement et vous ne pouvez pas retirer cette action."
+                "title": "您確認要刪除嗎？",
+                "content": "將立即刪除該公告，您不能撤銷此操作。"
             },
             "modal": {
-                "addNew": "Nouvelle annonce",
+                "addNew": "新建公告",
                 "title": {
-                    "title": "Titre d'annonce",
-                    "placeholder": "Spectacle comme un grand titre dans le casting de roue"
+                    "title": "公告標題",
+                    "placeholder": "作為大標題顯示在輪播圖中"
                 },
-                "content": {
-                    "title": "Contenu d'annonce",
-                    "placeholder": "Le contenu principal de la rédaction d'une annonce"
-                },
-                "tag": {
-                    "title": "Étiquettes d'annonce",
-                    "placeholder": "Entrez la balise de l'annonce"
-                },
-                "img": {
-                    "title": "URL de l'image d'arrière-plan",
-                    "placeholder": "Utilisez l'arrière-plan par défaut si vous ne remplissez pas"
-                }
+                "content": { "title": "公告內容", "placeholder": "編寫公告的主要內容" },
+                "tag": { "title": "公告標籤", "placeholder": "輸入公告的標籤" },
+                "img": { "title": "背景圖片URL", "placeholder": "不填寫則使用默認背景" }
             }
         },
         "adminTicket": {
-            "ticketMgr": "Gestion des bons de travail",
-            "description": "Vous pouvez consulter tous les utilisateurs soumis ici.",
-            "pendingTicket": "Les bons de travail à traiter",
-            "finishedTicket": "Ordonnance de travail terminée",
+            "ticketMgr": "工單管理",
+            "description": "您可以在此處檢視到所有用戶提交的工單，工單有三個緊急程度，推薦您從緊急工單開始處理。",
+            "pendingTicket": "待處理工單",
+            "finishedTicket": "已完成工單",
             "type": {
-                "pendingDescription": "Ordre de travail en direct, c'est le bon de travail que vous devez d'abord traiter.",
-                "finishedDescription": "Ordonnances terminées, vous pouvez les voir ici."
+                "pendingDescription": "活躍的工單，這是您應該先進行處理的工單，如果工單確認已經完成請關閉，如不關閉則該工單將始終置於此處。",
+                "finishedDescription": "已經完成的工單，您可以在這裡檢視它們。"
             },
-            "chooseOneNecessary": "Vous devez choisir au moins un article",
+            "chooseOneNecessary": "您應該至少選擇一個項目",
             "mention": {
-                "title": "Êtes-vous sûr de vouloir fermer le billet?",
-                "content": "La commande sera archivée dans la commande terminée une fois clôturé."
+                "title": "您確定要關閉該工單嗎？",
+                "content": "該工單在關閉後將會歸檔至已完成工單中，您可以再次檢視他們的內容，但是再也無法回复此工單。"
             }
         }
     },
     "userLogin": {
-        "loginToContinue": "Connectez-vous pour continuer",
-        "email": "Adresse email",
-        "password": "mot de passe",
-        "haveNoAccount": "Vous n'avez pas encore votre compte?",
-        "login": "se connecter",
-        "reg": "Inscrivez-vous maintenant",
-        "otherMethods": "Ou utilisez d'autres méthodes pour continuer",
-        "github": "Continuez avec le compte GitHub",
-        "microsoft": "Continuez avec le compte Microsoft",
-        "apple": "Continuez avec le compte Apple",
-        "google": "Continuez avec le compte Google",
-        "backHomePage": "Retour à la page d'accueil",
+        "loginToContinue": "登入以繼續",
+        "email": "郵件地址",
+        "password": "密碼",
+        "haveNoAccount": "還沒有您的帳戶？",
+        "login": "登入",
+        "reg": "立即註冊",
+        "otherMethods": "或使用其他方式繼續",
+        "github": "以Github帳戶繼續",
+        "microsoft": "以Microsoft帳戶繼續",
+        "apple": "以Apple帳戶繼續",
+        "google": "以Google帳戶繼續",
+        "backHomePage": "回到首頁",
         "form": {
-            "emailRequire": "L'adresse e-mail est requise",
-            "passwordRequire": "Vous n'avez pas encore saisi votre mot de passe"
+            "emailRequire": "郵箱地址是必填的",
+            "passwordRequire": "你還沒有輸入密碼"
         },
-        "authPass": "Vérification a été adoptée",
-        "loginFailure": "La connexion a échoué",
-        "checkForm": "Veuillez vérifier le formulaire",
-        "if2FaEnabledHint": "Si vous avez activé une vérification en deux étapes (non requise)",
-        "reqErr": "Veuillez réessayer plus tard s'il y a une erreur",
-        "accountLocked": "Votre compte peut être enregistré ou interdit et ne peut pas être utilisé pour le moment.",
-        "tokenNotExist": "Veuillez fournir un jeton"
+        "authPass": "驗證通過",
+        "loginFailure": "登錄失敗",
+        "checkForm": "請檢查表單",
+        "if2FaEnabledHint": "如果您啟用了兩步驗證（非必填）",
+        "reqErr": "請求出現錯誤請稍後再試",
+        "accountLocked": "您的帳戶可能被註銷或封禁，暫時無法繼續使用，如你仍然認為這是一個錯誤，請聯繫我們的技術支持。",
+        "tokenNotExist": "請提供Token"
     },
     "userRegister": {
-        "backHomePage": "Retour à la page d'accueil",
-        "newAccount": "Préparez votre nouveau compte",
-        "email": "Adresse email",
-        "verifyCode": "Code de vérification par e-mail",
-        "invalidEmailFormat": "Le format de messagerie est illégal",
-        "sendVerifyCode": "Envoyer le code de vérification par e-mail",
-        "sendSuccess": "L'e-mail a été envoyé avec succès, veuillez vérifier l'e-mail.",
-        "pwd": "mot de passe",
-        "pwdAgain": "Confirmez le mot de passe",
-        "inviteCode": "Code d'invitation (facultatif)",
-        "agreement": "J'ai lu et convenu",
-        "terminalUserAgreement": "Conditions utilisateur",
-        "reg": "registre",
-        "infoIncomplete": "Informations incomplètes",
-        "pwdIncorrect": "Mot de passe incohérent",
-        "regSuccess": "L'inscription est réussie et revient à la connexion",
-        "regFailure": "L'inscription a échoué",
-        "success": "succès",
-        "failure": "Échouer",
-        "unknownErr": "Erreur inconnue",
-        "verifyCodeErr": "Erreur de code de vérification",
-        "verifyCodeExpireErr": "Le code de vérification est incorrect ou a expiré.",
-        "thisMailAlreadyExist": "L'e-mail a été enregistré",
-        "pageConfigFetchFailure": "Si l'acquisition de configuration échoue, veuillez actualiser et réessayer",
-        "stopRegisterTitle": "L'inscription a été arrêtée",
-        "stopRegisterHint": "Désolé, la fonction d'enregistrement a été suspendue. Si vous en avez besoin, veuillez réessayer plus tard ou contacter notre équipe d'assistance pour plus d'informations. Merci pour votre compréhension et votre soutien.",
-        "passwordComplexRequirePart1": "* Les mots de passe doivent être conformes",
-        "passwordComplexRequirePart2": "Exigences de complexité",
-        "passwordComplexHint1": "1. Trois types ou plus de grosses lettres, de petites lettres, de chiffres, de symboles spéciaux sont nécessaires.",
-        "passwordComplexHint2": "2. La longueur est à plus de 10 chiffres",
+        "backHomePage": "回到首頁",
+        "newAccount": "準備您的新帳戶",
+        "email": "郵箱地址",
+        "verifyCode": "郵箱驗證碼",
+        "invalidEmailFormat": "郵箱格式不合法",
+        "sendVerifyCode": "發送郵箱驗證碼",
+        "sendSuccess": "郵件發送成功，請查看郵箱。",
+        "pwd": "密碼",
+        "pwdAgain": "確認密碼",
+        "inviteCode": "邀請碼（選填）",
+        "agreement": "我已閱讀並同意",
+        "terminalUserAgreement": "用戶條款",
+        "reg": "註冊",
+        "infoIncomplete": "信息不完整",
+        "pwdIncorrect": "密碼不一致",
+        "regSuccess": "註冊成功返回登錄",
+        "regFailure": "註冊失敗",
+        "success": "成功",
+        "failure": "失敗",
+        "unknownErr": "未知錯誤",
+        "verifyCodeErr": "驗證碼錯誤",
+        "verifyCodeExpireErr": "驗證碼錯誤或已過期，請重試或獲取新驗證碼。",
+        "thisMailAlreadyExist": "該郵箱已經被註冊",
+        "pageConfigFetchFailure": "配置獲取失敗請刷新重試",
+        "stopRegisterTitle": "已停止註冊",
+        "stopRegisterHint": "很抱歉，目前註冊功能已暫停。 如閣下有需要，請稍後再試或聯繫我們的支持團隊獲取更多信息。 感謝您的理解與支持。",
+        "passwordComplexRequirePart1": "* 密碼需要符合",
+        "passwordComplexRequirePart2": "複雜度要求",
+        "passwordComplexHint1": "1. 需要使用大寫字母、小寫字母、數字、特殊符號中的三種及以上",
+        "passwordComplexHint2": "2. 長度再10位以上",
         "form": {
-            "checkForm": "Veuillez vérifier le contenu du formulaire",
-            "emailFormatErr": "Le format d'adresse e-mail est incorrect",
-            "gmailLimitErr": "Gmail plusieurs noms ne sont pas autorisés",
-            "gmailDotNotAllowed": "\".\" n'est pas autorisé dans l'adresse Gmail. \"",
-            "gmailPartLowerForced": "La partie locale de l'adresse Gmail doit être tous les lecteurs",
-            "googlemailNotAllowed": "L'adresse Googlemail n'est pas prise en charge",
-            "verifyCodeRequire": "Veuillez saisir le code de vérification",
-            "verifyCodeFormatErr": "Le format de code de vérification est incorrect",
-            "passwordRequire": "Veuillez saisir votre mot de passe",
-            "passwordLengthRequire": "La longueur du mot de passe doit être supérieure ou égale à 10 chiffres",
-            "passwordComplexRequire": "Le mot de passe doit contenir au moins trois types de grosses lettres, de petites lettres, de chiffres et de symboles spéciaux.",
-            "passwordAgainNotMatch": "Mots de passe entrés deux fois décalage",
-            "passwordAgainRequire": "Veuillez saisir le mot de passe Confirmer",
-            "inviteCodeRequire": "Le code d'invitation est requis"
+            "checkForm": "請檢查表單內容",
+            "emailFormatErr": "郵箱地址格式不正確",
+            "gmailLimitErr": "不允許使用Gmail多別名",
+            "gmailDotNotAllowed": "Gmail地址中不允許有\".\"",
+            "gmailPartLowerForced": "Gmail地址的本地部分必須全部小寫",
+            "googlemailNotAllowed": "不支持使用googlemail地址",
+            "verifyCodeRequire": "請輸入驗證碼",
+            "verifyCodeFormatErr": "驗證碼格式不正確",
+            "passwordRequire": "請輸入密碼",
+            "passwordLengthRequire": "密碼長度必須大於或等於10位",
+            "passwordComplexRequire": "密碼必須包含大寫字母、小寫字母、數字、特殊符號中的至少三種",
+            "passwordAgainNotMatch": "兩次輸入的密碼不匹配",
+            "passwordAgainRequire": "請輸入確認密碼",
+            "inviteCodeRequire": "邀請碼是必填的"
         },
         "hCaptcha": {
-            "passed": "La vérification de la machine humaine a réussi",
-            "expired": "Veuillez réessayer après l'expiration",
-            "challengeExpired": "La vérification dépasse le temps",
-            "err": "Autres erreurs"
+            "passed": "人機驗證通過",
+            "expired": "已過期請重試",
+            "challengeExpired": "驗證超時",
+            "err": "其他錯誤"
         },
-        "allRightsReserved": "Tous droits réservés",
-        "securityAndLaws": "Le site Web est protégé et vérifié par HCAPTCHA et est soumis à des lois locales."
+        "allRightsReserved": "版權所有",
+        "securityAndLaws": "該網站受hCaptcha保護和驗證，請遵守當地法律。"
     },
     "userSummary": {
-        "title": "L'instrument",
-        "myPlan": "Mon abonnement",
-        "shortcut": "Raccourcis",
-        "timeLeft": "L'abonnement est valide et expirera dans {msg}.",
-        "toPurchase": "Acheter l'abonnement",
-        "tutorial": {
-            "title": "Afficher le tutoriel",
-            "content": "Apprenez à utiliser {nom}"
-        },
+        "title": "儀表盤",
+        "myPlan": "我的訂閱",
+        "shortcut": "捷徑",
+        "timeLeft": "訂閱有效，將在 {msg} 過期。",
+        "toPurchase": "購買訂閱",
+        "tutorial": { "title": "查看教程", "content": "學習如何使用 {name}" },
         "checkKey": {
-            "title": "Afficher les clés",
-            "content": "Introduire rapidement les clés au client pour une utilisation"
+            "title": "查看密鑰",
+            "content": "快速將密鑰導入對應客戶端進行使用"
         },
-        "renewPlan": {
-            "title": "Continuer l'abonnement",
-            "content": "Effectuer un paiement continu pour votre abonnement actuel"
-        },
+        "renewPlan": { "title": "續費訂閱", "content": "對您當前的訂閱進行續費" },
         "appDown": {
-            "title": "Téléchargement de l'application",
-            "content": "Téléchargez nos applications à partir de différentes plateformes pour une meilleure expérience physique"
+            "title": "應用下載",
+            "content": "下載我們不同平台的應用程序以獲得更好的體驗"
         },
         "support": {
-            "title": "Rencontré avec un problème",
-            "content": "Si vous rencontrez des problèmes, vous pouvez communiquer avec nos employés par le biais de l'ordre de travail."
+            "title": "遇到問題",
+            "content": "遇到問題可以通過工單與我們的人機溝通"
         },
-        "haveTicket": "Vous avez le {comte} afin d'être traité",
-        "toCheckTicket": "Allez le vérifier",
-        "showAllKeys": "Afficher toutes les clés"
+        "haveTicket": "您有 {count} 條待處理的工單",
+        "toCheckTicket": "去查看",
+        "showAllKeys": "查看所有密鑰"
     },
     "userDocument": {
-        "title": "Utilisez le document",
-        "description": "Vous pouvez consulter différents documents ici, y compris, mais sans s'y limiter, les méthodes d'utilisation du site Web, les précautions, les procédures de fonctionnement, etc. Si vous trouvez des erreurs dans l'article, veuillez soumettre le bon de travail.",
-        "searchPlaceholder": "Veuillez saisir le contenu que vous souhaitez rechercher (recherche floue)",
-        "searchBtn": "recherche",
-        "noContentTitle": "Aucun résultat",
-        "noContentTitleHint": "Il n'y a pas de document qui correspond à vos résultats de recherche ou à votre langue, essayez de passer à un mot-clé."
+        "title": "使用文檔",
+        "description": "您可以在這裡查閱不同的文檔，包括但不限於網站的使用方法、注意事項、操作流程等，如果您發現文章中有錯誤，請提交工單。",
+        "searchPlaceholder": "請輸入要搜索的內容（模糊搜索）",
+        "searchBtn": "搜尋",
+        "noContentTitle": "無結果",
+        "noContentTitleHint": "沒有符合您搜索結果或語言的文檔，嘗試換一個關鍵詞吧。"
     },
     "newPurchase": {
-        "title": "Acheter l'abonnement",
-        "description": "Vous pouvez choisir le plan d'abonnement qui vous convient le mieux ici.",
-        "headerPlaceholder": "Choisissez le plan qui vous convient le mieux",
-        "purchaseBtn": "Commande",
-        "noLeft": "Une quantité insuffisante de respect",
-        "monthPay": "Paiement mensuel",
-        "moreMethod": "Plus d'options"
+        "title": "購買訂閱",
+        "description": "您可以在這裡選擇最適合您的訂閱計畫，如果您的餘額不足請先充值，訂單將為您保留5分鐘。",
+        "headerPlaceholder": "選擇最適合您的計畫",
+        "purchaseBtn": "訂購",
+        "noLeft": "剩餘數量不足",
+        "monthPay": "月付",
+        "moreMethod": "更多選擇"
     },
     "newSettlement": {
-        "err": "Erreur",
-        "monthPay": "Paiement mensuel",
-        "quarterPay": "Paiement trimestriel",
-        "halfYearPay": "Paiement d'une demi-année",
-        "yearPay": "Paiement annuel",
-        "payCycle": "Cycle de paiement",
-        "couponPlaceholder": "Vous avez un coupon?",
-        "verifyBtn": "Vérification",
-        "orderTotalTitle": "Montant total de la commande",
-        "total": "Total",
-        "submitOrder": "Soumettre une commande",
-        "coupon": "Coupons",
+        "err": "錯誤",
+        "monthPay": "月付",
+        "quarterPay": "季付",
+        "halfYearPay": "半年付",
+        "yearPay": "年付",
+        "payCycle": "付款週期",
+        "couponPlaceholder": "有優惠券 ？",
+        "verifyBtn": "驗證",
+        "orderTotalTitle": "訂單總額",
+        "total": "總計",
+        "submitOrder": "提交訂單",
+        "coupon": "優惠券",
         "notify": {
-            "passTitle": "Vérification a été adoptée",
-            "couponVerified": "Coupon valide",
-            "couponInvalid": "Le coupon n'est pas valide",
-            "couponIsNull": "Le code de coupon entré ne peut pas être vide"
+            "passTitle": "驗證通過",
+            "couponVerified": "優惠券有效",
+            "couponInvalid": "優惠券無效",
+            "couponIsNull": "輸入的優惠券碼不能為空"
         }
     },
     "userProfile": {
-        "title": "Centre personnel",
-        "myWallet": "Mon sac d'argent",
-        "walletSub": "Solde du compte (utilisé uniquement pour la consommation)",
-        "alertPwd": "Modifier la clé",
-        "oldPwd": "Vieille clé",
-        "oldPwdSub": "Veuillez saisir l'ancien mot de passe",
-        "newPwd": "Nouvelle clé",
-        "newPwdSub": "Veuillez saisir une nouvelle clé",
-        "newPwdAgain": "Confirmer la clé",
-        "newPwdAgainSub": "Veuillez saisir à nouveau une nouvelle clé",
-        "saveBtn": "sauvegarder",
-        "notify": "aviser",
-        "enableNotify": "Activer un avis d'expiration",
-        "deleteAccount": "Enregistrer le compte",
-        "deleteAccountSub": "Votre compte sera étiqueté comme supprimé, si vous devez réutiliser nos services, veuillez vous réinscrire",
-        "deleteBtn": "Enregistrez mon compte",
-        "oldPwdVerifiedFailure": "Ancienne vérification du mot de passe a échoué",
-        "alertFailure": "Échec de la modification de la clé",
-        "alertSuccess": "La modification a réussi",
-        "alertSuccessSub": "Veuillez vous connecter avec votre nouveau mot de passe",
-        "errorPwdFormat": "Erreur de format de mot de passe",
-        "pwdNotMatch": "Les entrées de mot de passe sont incohérentes",
-        "oldPwdNotNull": "L'ancien mot de passe ne peut pas être vide",
-        "toTopUp": "Se recharger",
-        "deleteMyTitle": "avertir",
-        "deleteMyContent": "Êtes-vous sûr de supprimer votre compte? Si vous avez besoin d'utiliser le service, veuillez vous réinscrire.",
-        "deleteMyPositiveText": "Confirmer la suppression",
-        "deleteMyNegativeText": "Annuler",
-        "deletedSuccessMsg": "Le compte a été supprimé et il y aura une période plus tard.",
-        "deleteErrOccur": "Une erreur rencontrée",
-        "faAuth": "Vérification en deux étapes 2FA",
-        "faAuthHint": "La vérification en deux étapes est un mécanisme de sécurité qui ajoute des niveaux de protection pour vous connecter à votre compte. Après avoir saisi le mot de passe, l'utilisateur doit terminer la deuxième étape de la vérification de l'identité, comme la saisie du code de vérification envoyé au téléphone, en utilisant l'application de vérification d'identité pour générer le code dynamique ou le confirmer par des caractéristiques biologiques telles que les empreintes digitales.",
-        "faAuthStatus": "Statut de vérification en deux étapes",
-        "faEnabled": "Redémarré",
-        "faNotEnabled": "Non activé",
-        "setup2Fa": "Configuration de la vérification en deux étapes",
-        "disable2Fa": "Annuler la vérification en deux étapes",
-        "unknownErr": "Erreur inconnue",
-        "disable2FaCancelled": "Annulé",
-        "closed2FaHint": "La vérification en deux étapes a été fermée, veuillez l'ajouter à nouveau si nécessaire.",
+        "title": "個人中心",
+        "myWallet": "我的錢包",
+        "walletSub": "帳戶餘額（僅用於消費）",
+        "alertPwd": "修改密鑰",
+        "oldPwd": "舊密鑰",
+        "oldPwdSub": "請輸入舊密碼",
+        "newPwd": "新密鑰",
+        "newPwdSub": "請輸入新的密鑰",
+        "newPwdAgain": "確認密鑰",
+        "newPwdAgainSub": "請再輸入一遍新的密鑰",
+        "saveBtn": "保存",
+        "notify": "通知",
+        "enableNotify": "啟用到期通知",
+        "deleteAccount": "註銷帳戶",
+        "deleteAccountSub": "您的帳戶將被標記為刪除，如果需要重新使用我們的服務，請重新註冊",
+        "deleteBtn": "註銷我的帳戶",
+        "oldPwdVerifiedFailure": "舊密碼驗證失敗",
+        "alertFailure": "密鑰修改失敗",
+        "alertSuccess": "修改成功",
+        "alertSuccessSub": "請使用新密碼登錄",
+        "errorPwdFormat": "密碼格式錯誤",
+        "pwdNotMatch": "兩次密碼輸入不一致",
+        "oldPwdNotNull": "舊密碼不能為空",
+        "toTopUp": "去充值",
+        "deleteMyTitle": "警告",
+        "deleteMyContent": "確定刪除您的賬戶嗎？ 如需要使用服務請重新註冊。",
+        "deleteMyPositiveText": "確認刪除",
+        "deleteMyNegativeText": "取消",
+        "deletedSuccessMsg": "賬戶已刪除，後會有期。",
+        "deleteErrOccur": "遇到錯誤",
+        "faAuth": "兩步驗證2FA",
+        "faAuthHint": "兩步驗證是一種安全機制，增加了登入帳戶的保護層。 用戶在輸入密碼後，還需完成第二步身份驗證，如輸入發送到手機的驗證碼、使用身份驗證應用程序生成的動態碼，或通過指紋等生物特徵確認。",
+        "faAuthStatus": "兩步驗證狀態",
+        "faEnabled": "已啟用",
+        "faNotEnabled": "未啟用",
+        "setup2Fa": "設置兩步驗證",
+        "disable2Fa": "取消兩步驗證",
+        "unknownErr": "未知錯誤",
+        "disable2FaCancelled": "已取消",
+        "closed2FaHint": "已經關閉兩步驗證，如有需要請重新添加。",
         "setup2FaModal": {
-            "followStep": "Ajoutez-le à votre appareil de vérification en fonction des invites",
-            "step1Title": "Suivez les étapes ci-dessous pour activer la vérification 2FA",
-            "step1Context1": "1. Vous devez avoir un appareil de vérification universel sur votre appareil mobile",
-            "step1Context2": "2. Cliquez sur le bouton Scan sur le périphérique de vérification pour scanner le code QR ici",
-            "step1Context3": "3. Ce code QR contient vos informations de vérification et vos clés uniques.",
-            "step2Context1": "Afin de garantir que votre dispositif de vérification peut être utilisé normalement, nous devons effectuer un test.",
-            "test2Fa": "Test",
-            "cancel": "Annuler"
+            "followStep": "根據提示在您的驗證器上加入",
+            "step1Title": "按照以下步驟以啟2FA驗證",
+            "step1Context1": "1. 您的移動設備上需要有一個通用的驗證器",
+            "step1Context2": "2. 點擊驗證器上的Scan按鈕來掃描此處的QR碼",
+            "step1Context3": "3. 該QR Code中包含有您的驗證信息和唯一密鑰，請妥善保存",
+            "step2Context1": "為了確保您的驗證器能夠正常使用，我們需要進行測試。",
+            "test2Fa": "測試",
+            "cancel": "取消"
         },
         "deleteMyAccountModal": {
-            "title": "Enregistrer le compte",
-            "contentLine1": "La comptabilité est une opération irréversible. Une fois que vous avez confirmé qu'il est supprimé, vous perdrez en permanence l'accès au compte, ce qui signifie que vous ne pourrez pas vous connecter à nouveau et toutes les données liées à ce compte, y compris, mais sans s'y limiter, votre historique, l'historique, le contenu de la collection, les enregistrements d'achat, etc., ne pourront pas y accéder à nouveau.",
-            "contentLine2": "Si vous avez des affaires en cours sur notre plateforme, telles que les commandes inachevées, les activités en cours de participation, les services d'abonnement, etc., ceux-ci seront résiliés ou annulés avec la suppression de votre compte, ce qui peut vous entraîner des pertes correspondantes. Dans le même temps, les informations de contact et d'interaction que vous et d'autres utilisateurs via cette plate-forme n'existeront plus.",
-            "contentLine3": "Veuillez confirmer à nouveau votre décision. Si vous souhaitez toujours supprimer votre compte, cliquez sur le bouton Confirmer Supprimer.",
-            "inputHint1": "Entrer \"",
-            "inputHint2": "\" Continuer.",
-            "confirmDelete": "Confirmer la suppression"
+            "title": "註銷帳戶",
+            "contentLine1": "帳號註銷是一個不可逆的操作。 一旦您確認刪除，您將永久失去該帳號的訪問權限，這意味著您將無法再次登入，且與此帳號相關的所有數據，包括但不限於您的個人資訊、歷史記錄、收藏內容、購買記錄等，都將無法再訪問。",
+            "contentLine2": "如果您在我們的平台上有正在進行的業務，例如未完成的訂單、正在參與的活動、訂閱服務等，這些都將隨著帳號刪除而終止或取消，可能會給您帶來相應的損失。 同時，您與其他用戶之間通過本平台建立的聯繫、互動資訊等也都將不復存在。",
+            "contentLine3": "請再次確認您的決定，如果您還有任何疑慮或問題，歡迎聯繫我們的客服，我們將竭誠為您解答。 若您仍然希望刪除帳號，請點擊「確認刪除」按鈕。",
+            "inputHint1": "輸入 \"",
+            "inputHint2": "\" 以繼續。",
+            "confirmDelete": "確認刪除"
         },
-        "failure": "Rencontré une erreur",
-        "notLatestHint": "La mise à jour des informations personnelles a échoué et les données actuelles peuvent ne pas être les dernières.",
+        "failure": "遇到錯誤",
+        "notLatestHint": "個人信息更新失敗，當前的數據可能不是最新的。",
         "resetPassword": {
-            "previousPasswordRequire": "Veuillez saisir l'ancien mot de passe",
-            "previousPasswordVerifiedFailure": "Ancienne vérification du mot de passe a échoué",
-            "passwordRequire": "Veuillez saisir votre mot de passe",
-            "passwordConflict": "Le nouveau mot de passe ne peut pas être le même que le mot de passe précédent",
-            "passwordLengthRequire": "La longueur du mot de passe doit être supérieure ou égale à 10 chiffres",
-            "passwordComplexRequire": "Le mot de passe doit contenir au moins trois types de grosses lettres, de petites lettres, de chiffres et de symboles spéciaux.",
-            "passwordAgainNotMatch": "Mots de passe entrés deux fois décalage",
-            "passwordAgainRequire": "Veuillez saisir le mot de passe Confirmer",
-            "updatePasswordFailure": "Une erreur s'est produite lors de la mise à jour du mot de passe"
+            "previousPasswordRequire": "請輸入舊密碼",
+            "previousPasswordVerifiedFailure": "舊密碼驗證失敗",
+            "passwordRequire": "請輸入密碼",
+            "passwordConflict": "新密碼不能與先前的密碼相同",
+            "passwordLengthRequire": "密碼長度必須大於或等於10位",
+            "passwordComplexRequire": "密碼必須包含大寫字母、小寫字母、數字、特殊符號中的至少三種",
+            "passwordAgainNotMatch": "兩次輸入的密碼不匹配",
+            "passwordAgainRequire": "請輸入確認密碼",
+            "updatePasswordFailure": "更新密碼出錯"
         },
         "secondary": {
-            "title": "Informations de base",
+            "title": "基礎資料",
             "card": {
-                "avatar": "Image de la tête de l'utilisateur",
-                "name": "Nom d'utilisateur",
-                "lastLoginAt": "Dernière heure de connexion",
-                "accountStatus": "Statut de compte"
+                "avatar": "用戶頭像",
+                "name": "用戶名",
+                "lastLoginAt": "上一次登錄時間",
+                "accountStatus": "帳戶狀態"
             },
             "modify": {
-                "uploadIconHint": "Télécharger",
-                "alterAvatar": "Ajouter / modifier les images de tête",
-                "alterShallow": "* Cliquez sur l'image de tête ou le nom d'utilisateur pour ajouter ou modifier (la compensation n'est pas autorisée après le réglage)",
-                "alterName": "Modifier le nom d'utilisateur",
+                "uploadIconHint": "上傳",
+                "alterAvatar": "新增/修改頭像",
+                "alterShallow": "* 點擊頭像或用戶名以添加或修改（設置後均不允許清除）",
+                "alterName": "修改用戶名",
                 "input": {
-                    "label": "nom d'utilisateur",
-                    "placeholder": "Entrez le nom d'utilisateur",
-                    "spaceIsNotAllowed": "La vérification du nom d'utilisateur ne passe pas",
+                    "label": "使用者名稱",
+                    "placeholder": "輸入用戶名",
+                    "spaceIsNotAllowed": "用戶名驗證不通過",
                     "require": {
-                        "p1": "Les nombres purs ne sont pas autorisés et les nombres sont ouverts",
-                        "p2": "Aucun espace autorisé",
-                        "p3": "Plus de trois"
+                        "p1": "不允許純數字且數字開頭",
+                        "p2": "不允許有空格",
+                        "p3": "長度大於三位"
                     }
                 }
             },
             "mention": {
-                "alterNameSuccess": "La modification du nom d'utilisateur a réussi",
-                "alterNameErr": "Si le nom d'utilisateur échoue, veuillez réessayer plus tard",
-                "newNameIsNotValid": "Nom d'utilisateur illégal",
-                "click2SetName": "Cliquez pour définir le nom d'utilisateur",
-                "fetchAvatarErr": "Si les données de l'image de tête échouent, veuillez réessayer plus tard",
-                "alterAvatarErr": "Si l'image de tête échoue, veuillez réessayer plus tard",
-                "success": "succès",
-                "alterAvatarSuccess": "L'image de tête a été modifiée avec succès.",
-                "uploadImageHint": "Vous pouvez télécharger des images comme nouveau titre",
+                "alterNameSuccess": "修改用戶名成功",
+                "alterNameErr": "修改用戶名失敗請稍後再試",
+                "newNameIsNotValid": "用戶名不合法",
+                "click2SetName": "點擊以設置用戶名",
+                "fetchAvatarErr": "獲取頭像數據失敗請稍後再試",
+                "alterAvatarErr": "修改頭像失敗請稍後再試",
+                "success": "成功",
+                "alterAvatarSuccess": "修改頭像成功，",
+                "uploadImageHint": "您可以上傳圖像作為您的新頭像",
                 "imageRequire": {
-                    "title": "Avis",
-                    "p1": "Vous pouvez télécharger des formats traditionnels tels que * .jpg (jpeg), * .png, * .webp, etc.",
-                    "p2": "Le rapport longueur de l'image est de 1: 1 (carré), s'il s'agit d'un rapport différent, il sera coupé en carré au centre et l'excès sera supprimé.",
-                    "p3": "La taille de l'image que vous téléchargez sera définie sur 160px."
+                    "title": "注意",
+                    "p1": "您可以上傳 *.jpg(jpeg), *.png, *.webp 等主流格式。",
+                    "p2": "圖像的長寬比為1:1（正方形），如果為其他比例，將會被居中裁切為正方形，多餘的部分將會被刪除。",
+                    "p3": "您上傳的圖像的大小將會被設置為160px。"
                 },
-                "click2Upload": "Cliquez ou faites glisser le fichier vers la zone pour télécharger",
-                "uploadWarn": "* Veuillez ne pas télécharger de données sensibles, telles que votre carte bancaire, votre carte de crédit, votre mot de passe et votre code de sécurité."
+                "click2Upload": "點擊或拖動文件到該區域來上傳",
+                "uploadWarn": "*請不要上傳敏感數據，比如您的銀行卡、信用卡、密碼和安全碼等。"
             }
         }
     },
     "userKeys": {
-        "myKeys": "Ma clé",
-        "description": "Vous pouvez afficher l'état de l'événement, la date d'expiration, etc. pour toutes vos clés.",
-        "noKeys": "Vous n'avez pas encore d'enregistrement d'achat valide",
-        "keyDetail": "Détails clés",
-        "keyId": "ID clé",
-        "orderId": "ID de commande de liaison",
-        "clientId": "Activer l'ID client",
-        "active": "Pendant la période de validité",
-        "inActive": "Expiré",
-        "valid": "La condition clé est normale",
-        "invalid": "La clé a été désactivée",
-        "isUsed": "Activé pour utiliser",
-        "noUsed": "Pas encore utilisé",
-        "releaseData": "Date de génération de clés",
-        "expirationData": "Date d'expiration",
-        "none": "sans",
-        "authorizationFor": "Autorisation clé",
-        "hoverClickMention": "Cliquez pour copier dans le presse-papiers",
-        "copiedSuccessMessage": "La copie clé a été copiée avec succès.",
-        "copyFailure": "Copie d'échec",
-        "hoverCopiedSuccessMention": "Copier avec succès"
+        "myKeys": "我的密鑰",
+        "description": "您可以檢視您的所有密鑰的活動情況、到期日期等，如需要為密鑰設置備注，請前往激活紀錄頁面。",
+        "noKeys": "您還沒有有效的購買紀錄",
+        "keyDetail": "密鑰細節",
+        "keyId": "密鑰ID",
+        "orderId": "鏈接訂單ID",
+        "clientId": "激活客戶端ID",
+        "active": "在有效期內",
+        "inActive": "已過期",
+        "valid": "密鑰狀態正常",
+        "invalid": "密鑰已被禁用",
+        "isUsed": "已激活使用",
+        "noUsed": "還未使用",
+        "releaseData": "密鑰生成日期",
+        "expirationData": "到期日期",
+        "none": "無",
+        "authorizationFor": "密鑰授權給",
+        "hoverClickMention": "點擊可以複製到剪貼板",
+        "copiedSuccessMessage": "密鑰複製成功，請參照文檔說明繼續操作。",
+        "copyFailure": "複製失敗",
+        "hoverCopiedSuccessMention": "複製成功"
     },
     "userOrders": {
-        "myOrders": "Ma commande",
-        "description": "Toutes vos commandes seront affichées ici, si vous avez des commandes impayées, vous pouvez cliquer sur Continuer le paiement ou annuler la commande, et que vous pouvez consulter les détails de la commande après les commandes terminées.",
+        "myOrders": "我的訂單",
+        "description": "您所有的訂單將在此處展示，如果您有未支付的訂單將會展示在頂部，您可以點擊繼續支付或取消訂單，已經完成的訂單您可以在此處檢視訂單細節。",
         "orderId": "#",
-        "planName": "Nom d'abonnement",
-        "planCycle": "Cycle d'abonnement",
-        "orderPrice": "Montant de commande",
-        "orderStatus": "Statut de commande",
-        "createdAt": "Temps de création",
-        "operate": "fonctionner",
-        "showDetail": "Détails de la commande",
-        "cancelOrder": "Annuler une commande",
-        "canceled": "Annulé",
+        "planName": "訂閱名稱",
+        "planCycle": "訂閱週期",
+        "orderPrice": "訂單金額",
+        "orderStatus": "訂單狀態",
+        "createdAt": "創建時間",
+        "operate": "操作",
+        "showDetail": "訂單細節",
+        "cancelOrder": "取消訂單",
+        "canceled": "已取消",
         "period": {
-            "monthPay": "Paiement mensuel",
-            "quarterPay": "Paiement trimestriel",
-            "halfYearPay": "Paiement d'une demi-année",
-            "yearPay": "Paiement annuel"
+            "monthPay": "月付",
+            "quarterPay": "季付",
+            "halfYearPay": "半年付",
+            "yearPay": "年付"
         },
         "orderStatusTags": {
-            "success": "succès",
-            "cancelled": "Échouer",
-            "notPay": "Non payé"
+            "success": "成功",
+            "cancelled": "失敗",
+            "notPay": "未支付"
         },
-        "orderCancelled": "Commande annulée",
-        "unknownErr": "Erreur inconnue"
+        "orderCancelled": "訂單已取消",
+        "unknownErr": "未知錯誤"
     },
     "userTopUp": {
-        "topUp": "Recharge du compte",
-        "description": "Vous pouvez recharger votre compte ici, prendre en charge les montants de recharge personnalisés, et vous pouvez également prêter attention à savoir s'il y a des informations de réduction affichées ci-dessous et utiliser la méthode de paiement mentionnée pour obtenir des remises.",
-        "chooseTopUpAmount": "Sélectionnez le montant de la recharge",
-        "quickSelect": "Choisissez rapidement",
-        "customAmount": "Montant personnalisé",
-        "maxAmount": "Montant maximum: 10 000 000",
-        "amountInputPlaceHolder": "Entrez le montant à recharger",
-        "otherAmount": "Autres quantités",
-        "payMethod": "Mode de paiement",
-        "wechat": "Paiement WeChat",
-        "alipay": "Paiement",
-        "apple": "Pomme",
-        "yourAmount": "Votre montant",
-        "discount": "Offres",
-        "accountBalance": "Solde du compte",
-        "balanceResult": "Bilan",
-        "commitTopUp": "soumettre",
-        "payMethodNotAllow": "La méthode de paiement n'est pas disponible.",
-        "topUpIssueOccur": "Vous avez du mal à recharger?",
-        "payIssueOccur": "Vous avez des problèmes avec le paiement?",
-        "chatWithUs": "Contacter le service client",
-        "pay": "Payer",
-        "qrCodeScannedSuccess": "Scan de code QR avec succès",
-        "orClickToApp": "Ou cliquez sur la barre et tournez-vous vers l'application et continuez",
-        "topUpSuccess": "Recharger avec succès",
-        "thankU": "Merci pour votre soutien"
+        "topUp": "帳戶充值",
+        "description": "您可以在這裡進行帳戶充值，支持自定義充值金額，您也可以關注下方是否有優惠信息展示，使用提及的支付方式以獲得優惠。",
+        "chooseTopUpAmount": "選擇充值金額",
+        "quickSelect": "快速選擇",
+        "customAmount": "自定義金額",
+        "maxAmount": "最大金額: 10,000,000",
+        "amountInputPlaceHolder": "輸入要充值的金額",
+        "otherAmount": "其他金額",
+        "payMethod": "支付方式",
+        "wechat": "微信支付",
+        "alipay": "支付寶",
+        "apple": "Apple Pay",
+        "yourAmount": "您的金額",
+        "discount": "優惠",
+        "accountBalance": "帳戶餘額",
+        "balanceResult": "餘額合計",
+        "commitTopUp": "提交",
+        "payMethodNotAllow": "支付方式不可用請選擇其他",
+        "topUpIssueOccur": "充值遇到問題？",
+        "payIssueOccur": "支付遇到問題？",
+        "chatWithUs": "聯繫客服",
+        "pay": "支付",
+        "qrCodeScannedSuccess": "QR碼掃描成功",
+        "orClickToApp": "或點擊條轉到App繼續",
+        "topUpSuccess": "充值成功",
+        "thankU": "感謝您的支持"
     },
     "userConfirmOrder": {
-        "switchPlan": "Passer pour vous abonner",
-        "cancelOrder": "Annuler une commande",
-        "yourPrice": "Votre prix",
-        "couponOffset": "Remise des coupons",
-        "price": "Prix",
-        "submit": "soumettre",
-        "monthPay": "Paiement mensuel",
-        "quarterPay": "Paiement trimestriel",
-        "halfYearPay": "Paiement d'une demi-année",
-        "yearPay": "Paiement annuel",
-        "goodInfo": "Informations sur le produit",
-        "cycleOrType": "Cycle / type",
-        "orderNumber": "Numéro de commande",
-        "createdAt": "Date de création",
-        "orderExpired": "La commande a dépassé",
-        "paySuccessfully": "Le paiement a réussi, merci pour votre soutien.",
-        "balanceNotEnough": "Si votre solde est insuffisant, veuillez d'abord recharger.",
-        "orderErrorOccur": "Une erreur s'est produite lors de la commande",
-        "orderCancelled": "Commande annulée"
+        "switchPlan": "切換訂閱",
+        "cancelOrder": "取消訂單",
+        "yourPrice": "您的價格",
+        "couponOffset": "優惠券抵折",
+        "price": "價格",
+        "submit": "提交",
+        "monthPay": "月付",
+        "quarterPay": "季付",
+        "halfYearPay": "半年付",
+        "yearPay": "年付",
+        "goodInfo": "商品信息",
+        "cycleOrType": "週期/類型",
+        "orderNumber": "訂單號",
+        "createdAt": "創建日期",
+        "orderExpired": "訂單已超時",
+        "paySuccessfully": "支付成功，感謝您的支持。",
+        "balanceNotEnough": "您的餘額不足請先充值，該訂單保留五分鐘。",
+        "orderErrorOccur": "訂單遇到錯誤",
+        "orderCancelled": "訂單已取消"
     },
     "paymentResultParts": {
-        "goodInfoView": { "goodInfo": "Informations sur le produit" },
-        "orderInfoView": { "orderInfo": "Informations sur les commandes" }
+        "goodInfoView": { "goodInfo": "商品信息" },
+        "orderInfoView": { "orderInfo": "訂單信息" }
     },
     "orderPartUniversal": {
         "period": {
-            "monthPay": "Paiement mensuel",
-            "quarterPay": "Paiement trimestriel",
-            "halfYearPay": "Paiement d'une demi-année",
-            "yearPay": "Paiement annuel"
+            "monthPay": "月付",
+            "quarterPay": "季付",
+            "halfYearPay": "半年付",
+            "yearPay": "年付"
         },
         "orderDataHex": {
-            "goodInfo": "Informations sur le produit",
-            "orderInfo": "Informations sur les commandes",
-            "cycleOrType": "Cycle / type",
-            "orderNumber": "Numéro de commande",
-            "createdAt": "Date de création",
-            "amount": "Montant de paiement",
-            "paidAt": "Temps de paiement"
+            "goodInfo": "商品信息",
+            "orderInfo": "訂單信息",
+            "cycleOrType": "週期/類型",
+            "orderNumber": "訂單號",
+            "createdAt": "創建日期",
+            "amount": "支付金額",
+            "paidAt": "支付時間"
         }
     },
     "orderDetail": {
-        "finished": "Complété",
-        "finishedAndSuccessDescription": "L'ordre a été payé avec succès et ouvert",
-        "useManual": "Afficher le tutoriel",
-        "payPending": "Pas encore payé",
-        "pendingDescription": "Les commandes sont conservées à intervalles réguliers et vous pouvez cliquer sur le bouton ci-dessous pour poursuivre le paiement.",
-        "toPay": "Aller payer",
-        "outDate": "Avoir expiré",
-        "outDateDescription": "Depuis que vous avez annulé la commande ou ne avez pas effectué le paiement dans le délai spécifié, la commande a été annulée et vous pouvez resélectionner votre abonnement.",
-        "chooseNewPlan": "Choisissez un nouveau plan d'abonnement"
+        "finished": "已完成",
+        "finishedAndSuccessDescription": "訂單已成功支付並開通",
+        "useManual": "查看使用教程",
+        "payPending": "尚未支付",
+        "pendingDescription": "訂單暫時保留，可以點擊下面的按鈕以繼續支付。",
+        "toPay": "去支付",
+        "outDate": "已失效",
+        "outDateDescription": "由於您取消了訂單或未在指定時間內完成支付，因此該訂單已被取消，您可以重新選取訂閱。",
+        "chooseNewPlan": "選擇新的訂閱計畫"
     },
     "userInvite": {
-        "myInvite": "Mon invitation",
-        "unit": "Nombre de personnes",
-        "inviteCodeMgr": "Votre code d'invitation",
-        "generateInviteCode": "Générer des codes d'invitation aléatoires",
-        "faCodeManage": "Gestion du code d'invitation",
-        "email": "E-mail",
-        "createdAt": "Temps d'inscription",
-        "createFaCodeFailure": "La création a échoué",
-        "linkCopiedSuccess": "Lien copié avec succès",
-        "generateFaCode": "Générer un code d'invitation",
-        "flushFaCode": "Actualiser le code d'invitation",
-        "faCode": "Code d'invitation",
-        "noFaCode": "Vous n'avez pas encore de code d'invitation, veuillez le faire.",
-        "faLink": "Lien d'invitation",
-        "generateFaCodePlease": "Veuillez créer un code d'invitation",
-        "usersMyInvited": "Utilisateurs que j'invite",
-        "generateCodeConfirm": "Confirmer générer / actualiser",
-        "generateCodeHint": "Veuillez noter que le code d'invitation ne peut pas être fermé après la création.",
-        "positiveClick": "Confirmer",
-        "negativeClick": "Annuler"
+        "myInvite": "我的邀請",
+        "unit": "人數",
+        "inviteCodeMgr": "您的邀請碼",
+        "generateInviteCode": "生成隨機邀請碼",
+        "faCodeManage": "邀請碼管理",
+        "email": "郵箱",
+        "createdAt": "註冊時間",
+        "createFaCodeFailure": "創建失敗",
+        "linkCopiedSuccess": "鏈接複製成功",
+        "generateFaCode": "生成邀請碼",
+        "flushFaCode": "刷新邀請碼",
+        "faCode": "邀請碼",
+        "noFaCode": "你還沒有邀請碼，請先生成。",
+        "faLink": "邀請連結",
+        "generateFaCodePlease": "請先生成邀請碼",
+        "usersMyInvited": "我邀請的用戶",
+        "generateCodeConfirm": "確認生成/刷新",
+        "generateCodeHint": "請注意，邀請碼創建後不可關閉。",
+        "positiveClick": "確認",
+        "negativeClick": "取消"
     },
     "userTickets": {
-        "description": "Si vous rencontrez des problèmes d'utilisation, veuillez soumettre le bon de travail ici.",
+        "description": "如果您遇到使用上的問題，請在此處提交工單，我們的技術支持和客服看到後將會進行回覆並在下方表格處標出具體的回覆時間，您可以點擊查看工單和我們交流。",
         "ticketId": "#",
-        "ticketSubject": "Thème de l'ordre de travail",
-        "ticketUrgency": "Note de travail",
-        "ticketContent": "Contenu de bon de travail",
-        "ticketUrgencyLevel": { "low": "Faible", "med": "milieu", "high": "haut" },
-        "ticketStatus": "État de travail",
-        "ticketCreatedAt": "Temps de création",
-        "lastResponse": "Dernière réponse",
-        "operate": "fonctionner",
-        "checkTicket": "Afficher le bon de travail",
-        "closeTicket": "Fermez le bon de travail",
-        "userTickets": "Travaux d'histoire",
-        "addTicket": "Nouveau ordre de construction",
-        "ticketActive": "Non fermé",
-        "ticketInActive": "Fermé",
+        "ticketSubject": "工單主題",
+        "ticketUrgency": "工單級別",
+        "ticketContent": "工單內容",
+        "ticketUrgencyLevel": { "low": "低", "med": "中", "high": "高" },
+        "ticketStatus": "工單狀態",
+        "ticketCreatedAt": "創建時間",
+        "lastResponse": "最後回覆",
+        "operate": "操作",
+        "checkTicket": "查看工單",
+        "closeTicket": "關閉工單",
+        "userTickets": "歷史工單",
+        "addTicket": "新建工單",
+        "ticketActive": "未關閉",
+        "ticketInActive": "已關閉",
         "form": {
-            "ticketSubjectDescription": "Veuillez saisir le sujet du bon de travail",
-            "ticketUrgencyDescription": "Veuillez sélectionner l'urgence du bon de travail",
-            "ticketBody": "Veuillez saisir le problème que vous souhaitez résoudre, le plus possible que possible.",
-            "ticketNotFinished": "Veuillez essayer les informations sur le bon de travail complet"
+            "ticketSubjectDescription": "請輸入工單主題",
+            "ticketUrgencyDescription": "請選擇工單緊急程度",
+            "ticketBody": "請輸入你想要解決的問題，盡量全面。",
+            "ticketNotFinished": "請補全工單的信息再試"
         },
-        "checkForm": "Veuillez vérifier si le formulaire est terminé",
-        "cancel": "Annuler",
-        "submit": "soumettre",
-        "commitNewTicketSuccess": "Soumettre un nouveau bon de travail avec succès",
-        "commitNewTicketFailure": "Soumettre une nouvelle erreur de commande de travail",
-        "noReply": "Aucune réponse encore",
-        "noTickets": "Vous n'avez pas encore soumis de bon de travail",
-        "ticketCloseSuccess": "Le bon de travail fermé avec succès",
-        "ticketCloseFailure": "La clôture du bon de travail a échoué",
+        "checkForm": "請檢查表單是否完整",
+        "cancel": "取消",
+        "submit": "提交",
+        "commitNewTicketSuccess": "提交新的工單成功",
+        "commitNewTicketFailure": "提交新的工單錯誤",
+        "noReply": "還沒有回覆",
+        "noTickets": "您還沒有提交過工單",
+        "ticketCloseSuccess": "工單關閉成功",
+        "ticketCloseFailure": "工單關閉失敗",
         "chatDialog": {
             "input": {
-                "finished": "Le bon état de travail a été conclu",
-                "inputHere": "Entrez le message à envoyer"
+                "finished": "該工單已經結束",
+                "inputHere": "輸入要發送的消息"
             },
-            "send": "Envoyer",
-            "missingToken": "La connexion WebSocket ne peut pas être créée car les jetons sont manquants.",
-            "msgEmptyNotAllowed": "Le contenu du message ne peut pas être vide",
-            "accessNotPermit": "Visite illégale",
-            "sendSuccess": "Envoyez le message avec succès"
+            "send": "發送",
+            "missingToken": "不可以創建Websocket連接，因為缺少Token。",
+            "msgEmptyNotAllowed": "消息的內容不可以為空",
+            "accessNotPermit": "非法訪問",
+            "sendSuccess": "發送消息成功"
         }
     },
     "userActivation": {
-        "activateLog": "Activer l'enregistrement",
-        "description": "Ici, vous pouvez afficher votre enregistrement d'activation et définir le périphérique indéterminé, ou configurer les informations de note pour chaque clé et enregistrement d'activation.",
+        "activateLog": "激活紀錄",
+        "description": "在此處您可以查看您的激活紀錄並設置解除綁定設備，也可以對每一個密鑰和激活紀錄設置備注信息。",
         "id": "#",
-        "orderId": "Numéro de commande",
-        "orderStatus": "Commande",
-        "createdAt": "Temps de création",
-        "operate": "fonctionner",
-        "userId": "ID de l'utilisateur",
-        "email": "E-mail",
-        "keyId": "ID clé",
-        "isBind": "SO ACTIVATE",
-        "active": "efficace",
-        "inactive": "Inefficace",
-        "requestAt": "Demander l'heure",
-        "clientVersion": "Côté client",
-        "osType": "Système opérateur",
-        "remark": "Note",
-        "noRemark": "Pas de note",
-        "showDetail": "Afficher les détails",
-        "actions": "fonctionner",
-        "details": "Détails",
-        "keyContent": "Contenu clé",
-        "keyGeneratedAt": "Temps de génération de clés",
-        "activateRequestAt": "Activer l'heure de demande",
-        "useIssueOccur": "Vous avez du mal à l'utiliser?",
-        "chatWithUs": "Contactez-nous",
-        "cancelBind": "Annuler le décret",
-        "alterRemark": "Modifier les notes",
-        "commitRemark": "soumettre",
-        "updateSuccess": "Mettre à jour avec succès",
-        "setRemark": "Configurez les informations de la note ici"
+        "orderId": "訂單編號",
+        "orderStatus": "訂單",
+        "createdAt": "創建時間",
+        "operate": "操作",
+        "userId": "用戶Id",
+        "email": "郵箱",
+        "keyId": "密鑰Id",
+        "isBind": "是否激活",
+        "active": "有效",
+        "inactive": "無效",
+        "requestAt": "請求時間",
+        "clientVersion": "客戶端",
+        "osType": "操作系統",
+        "remark": "備注",
+        "noRemark": "無備注",
+        "showDetail": "查看詳情",
+        "actions": "操作",
+        "details": "細節",
+        "keyContent": "密鑰內容",
+        "keyGeneratedAt": "密鑰生成時間",
+        "activateRequestAt": "激活請求時間",
+        "useIssueOccur": "使用遇到問題？",
+        "chatWithUs": "聯繫我們",
+        "cancelBind": "取消綁定",
+        "alterRemark": "修改備注",
+        "commitRemark": "提交",
+        "updateSuccess": "更新成功",
+        "setRemark": "在這裡設置備注信息"
     },
     "userAppDownload": {
-        "title": "Téléchargement de l'application",
+        "title": "APP下載",
         "description": "",
         "common": {
-            "title": "Téléchargez notre application",
-            "shallow2": "Obtenez nos applications pour différents clients",
-            "shallow": "En utilisant notre application, vous pouvez accéder plus facilement à nos services, éliminant le fonctionnement compliqué du navigateur à chaque fois;",
-            "noDownload": "Nous sommes désolés qu'il n'y ait pas encore de téléchargement disponible."
+            "title": "下載我們的應用程序",
+            "shallow2": "為不同的客戶端獲取我們的應用程序",
+            "shallow": "使用我們的應用程序您可以更便捷地訪問我們的服務，免去每次在瀏覽器繁瑣的操作；您可在在文檔中找到詳盡的安裝需求和使用教程，包括運行環境、報錯解決等，如果您遇到了其他問題請聯繫我們的技術支持。",
+            "noDownload": "很抱歉暫時還沒有提供下載，請您稍後再試，如有問題請提交工單以聯繫我們的支持服務。"
         },
         "suffix": {
-            "p1": "* Pour les applications sur la plate-forme MacOS, veuillez utiliser MacOS14 et supérieur et coopérer avec les puces Apple (M1 ou plus).",
-            "p2": "Les informations et l'utilisation affichées par cette application doivent se conformer aux réglementations d'utilisation locales."
+            "p1": "*macOS平台的應用程序請使用macOS14及以上並配合Apple晶片（M1或更高）。",
+            "p2": "該App所展示的信息和使用請遵守當地的使用法規，是否允許使用該App也應該取決於您公司的IT規範。"
         },
         "card": {
-            "common": { "welcome": "Accueillir" },
+            "common": { "welcome": "歡迎來到" },
             "mobile": {
-                "designFor": "Conception pour le terminal mobile",
-                "designShallow": "Vous pouvez obtenir notre application mobile ici",
-                "iosDownloadShallow": "Télécharger le client iOS",
-                "androidDownloadShallow": "Télécharger le client Android"
+                "designFor": "為移動端設計",
+                "designShallow": "您可以在這裡獲取我們的移動端應用程序",
+                "iosDownloadShallow": "下載 IOS 客戶端",
+                "androidDownloadShallow": "下載 Android 客戶端"
             },
             "desktop": {
-                "designFor": "Conception pour le bureau",
-                "designShallow": "Vous pouvez obtenir notre application mobile de bureau ici",
-                "windowsDownloadShallow": "Télécharger le client Windows",
-                "osxDownloadShallow": "Télécharger le client macOS",
-                "linuxDownloadShallow": "Télécharger le client Linux"
+                "designFor": "為桌面端設計",
+                "designShallow": "您可以在這裡獲取我們的桌面動端應用程序",
+                "windowsDownloadShallow": "下載 Windows 客戶端",
+                "osxDownloadShallow": "下載 macOS 客戶端",
+                "linuxDownloadShallow": "下載 Linux 客戶端"
             }
         },
-        "downloadDisabledHint": "Désolé, le téléchargement de l'application est temporairement indisponible ou désactivé par l'administrateur.",
+        "downloadDisabledHint": "很抱歉，App下載暫時不可用或被管理員禁用，如您有需要請在工單處聯繫我們的技術已獲取支持。",
         "windows": {
             "title": "Windows NT",
-            "shallow": "Ce client convient aux systèmes d'exploitation Windows avec les noyaux NT, veuillez consulter la page de documentation pour le support de compatibilité."
+            "shallow": "該客戶端適用於NT內核的Windows操作系統，請查看文檔頁面以獲取兼容性支持。"
         },
         "osx": {
             "title": "macOS (OSX)",
-            "shallow": "Ce client convient au système d'exploitation MacOS (OSX) du noyau Darwin, veuillez consulter la page de documentation pour le support de compatibilité."
+            "shallow": "該客戶端適用於Darwin內核的macOS(OSX)操作系統，請查看文檔頁面以獲取兼容性支持。"
         },
         "linux": {
             "title": "Linux",
-            "shallow": "Ce client convient à diverses distributions du noyau Linux."
+            "shallow": "該客戶端適用於Linux內核的各類發行版，由於發行版系列不同請查看文檔頁面以獲取兼容性支持。"
         },
         "android": {
-            "title": "Androïde",
-            "shallow": "Ce client convient aux appareils mobiles équipés du système d'exploitation Google Android, veuillez consulter la page de documentation pour le support de compatibilité."
+            "title": "Android",
+            "shallow": "該客戶端適用於搭載了Google Android操作系統的移動設備，請查看文檔頁面以獲取兼容性支持。"
         },
         "ios": {
-            "title": "Ios",
-            "shallow": "Ce client convient aux appareils mobiles équipés du système d'exploitation Apple iOS, veuillez consulter la page de documentation pour le support de compatibilité."
+            "title": "IOS",
+            "shallow": "該客戶端適用於搭載了Apple IOS操作系統的移動設備，請查看文檔頁面以獲取兼容性支持。"
         }
     },
     "welcome": {
         "A": {
-            "aboutUs": "À propos de nous",
-            "pricing": "Prix ​​de commande",
-            "login": "Se connecter",
-            "register": "Enregistrer le compte",
-            "welcomeTo": "Accueillir",
-            "welcomeToSub": "Passer par le long tunnel sur le comté est le pays des neiges. Sous le ciel nocturne, la terre était blanche et le train s'arrêta devant la station de signalisation. «Ici, Kawabata Yasunari a lancé le country de neige avec un texte très avare.",
-            "startingUse": "Commencer",
-            "whyUs": "Pourquoi nous choisir",
-            "whyUsSub": "\"En passant par le long tunnel dans la préfecture, c'est le pays de neige. Sous le ciel nocturne, la Terre est blanche, et le train s'arrête devant la station de signalisation.\"",
-            "browseSafe": "Parcourir",
-            "browseSafeSub": "L'excellent système de filtre à pare-feu peut prévenir efficacement les poissons en ligne et les sites Web malveillants",
-            "encrypt": "Cryptage de bout en bout",
-            "encryptSub": "Le SSL à double voie et le chiffrement de bout en bout protègent votre confidentialité et votre sécurité, même les serveurs ne peuvent pas lire vos informations",
-            "mgr": "Gestion efficace",
-            "mgrSub": "Une interface utilisateur gère toutes les clés, avec des fonctions de gestion complètes et riches, et pas besoin de s'inquiéter de s'abonner à l'éjaculat",
-            "fast": "Pratique et rapide",
-            "fastSub": "Fournir des fichiers API complets pour WebApps ou intégrés dans des logiciels tiers",
-            "fastLink": "Lien rapide",
-            "subscribeUs": "Suivez-nous",
-            "filingsCode": "Numéro de fichier {code}"
+            "aboutUs": "關於我們",
+            "pricing": "定價",
+            "login": "登錄",
+            "register": "註冊帳號",
+            "welcomeTo": "歡迎來到",
+            "welcomeToSub": "穿過縣境上長長的隧道，便是雪國。 夜空下，大地一片瑩白，火車在信號所前停下來。 \"在這裡川端康成用幾近吝嗇的簡潔文字，拉開了《雪國》的序幕。",
+            "startingUse": "開始使用",
+            "whyUs": "為什麼選擇我們",
+            "whyUsSub": "\"穿過縣境上長長的隧道，便是雪國。夜空下，大地一片瑩白，火車在信號所前停下來。\"在這裡川端康成用幾近吝嗇的簡潔文字，拉開了《雪國》的序幕。",
+            "browseSafe": "瀏覽安全",
+            "browseSafeSub": "優秀的防火牆過濾系統能有效防禦網路釣魚和惡意網站",
+            "encrypt": "端到端加密",
+            "encryptSub": "雙向 SSL 和端對端加密保護您的隱私安全，即使是服務器也無法讀取您的信息",
+            "mgr": "高效管理",
+            "mgrSub": "一個用戶介面管理所有密鑰，管理功能完善豐富，無須擔心訂閱洩露問題",
+            "fast": "方便快捷",
+            "fastSub": "提供完整的 API 文檔供 WebApp 或是嵌入到第三方軟件中",
+            "fastLink": "快速連結",
+            "subscribeUs": "關注我們",
+            "filingsCode": "備案號 {code}"
         }
     },
     "pagination": {
-        "perPage10": "10 données / page",
-        "perPage20": "20 données / page",
-        "perPage50": "50 données / page",
-        "perPage100": "100 données / page"
+        "perPage10": "10 條數據/頁",
+        "perPage20": "20 條數據/頁",
+        "perPage50": "50 條數據/頁",
+        "perPage100": "100 條數據/頁"
     },
-    "modal": { "cancel": "Annuler", "confirm": "confirmer" },
+    "modal": { "cancel": "取消", "confirm": "確認" },
     "week": {
-        "monday": "Lundi",
-        "tuesday": "Mardi",
-        "wednesday": "Mercredi",
-        "thursday": "Jeudi",
-        "friday": "Vendredi",
-        "saturday": "Samedi",
-        "sunday": "Dimanche"
+        "monday": "週一",
+        "tuesday": "週二",
+        "wednesday": "週三",
+        "thursday": "週四",
+        "friday": "週五",
+        "saturday": "週六",
+        "sunday": "週日"
     },
     "period": {
-        "month": "Paiement mensuel",
-        "quarter": "Paiement trimestriel",
-        "halfYear": "Paiement d'une demi-année",
-        "year": "Paiement annuel"
+        "month": "月付",
+        "quarter": "季付",
+        "halfYear": "半年付",
+        "year": "年付"
     },
     "operate": {
-        "cancel": "Annuler",
-        "confirm": "confirmer",
-        "update": "renouveler",
-        "add": "Ajouter à"
+        "cancel": "取消",
+        "confirm": "確認",
+        "update": "更新",
+        "add": "添加"
     },
     "notFound": {
-        "title": "404 La page n'existe pas",
-        "description": "Nous ne pouvons pas trouver la page que vous avez demandée, elle peut avoir été supprimée ou liée à des erreurs. Si vous pensez qu'il s'agit d'une erreur, veuillez soumettre l'ordre de travail pour nous contacter.",
-        "p1": "Il reviendra à la page d'accueil après {SEC}, et si votre navigateur ne répond pas, cliquez sur le bouton ci-dessous.",
-        "manualBack": "Retour à la page d'accueil"
+        "title": "404 頁面不存在",
+        "description": "我們無法找到您請求的頁面，它可能已經被刪除或連結有誤。 如果您認為這是一個錯誤，請提交工單以聯繫我們。",
+        "p1": "將在 {sec}s 後返回主頁，如果您的瀏覽器沒有響應，請點擊以下按鈕。",
+        "manualBack": "返回主頁"
     },
     "forbidden": {
-        "title": "403 Pas de droits",
-        "description": "Vous n'avez peut-être pas une autorisation suffisante pour accéder à cette page. Si vous pensez qu'il s'agit d'une erreur, veuillez soumettre l'ordre de travail pour nous contacter."
+        "title": "403 無權限",
+        "description": "您可能沒有足夠的權限來訪問本頁面。 如果您認為這是一個錯誤，請提交工單以聯繫我們。"
     }
 }

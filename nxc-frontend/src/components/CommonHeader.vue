@@ -20,6 +20,7 @@ import type {DrawerPlacement} from 'naive-ui'
 import useUserInfoStore from "@/stores/useUserInfoStore";
 import CommonAside from "@/components/CommonAside.vue";
 import renderIcon from "@/utils/iconFormator";
+import {langOptions} from "@/language";
 
 const {t, locale} = useI18n()
 
@@ -35,6 +36,7 @@ const theme = themeStore.getTheme;
 // const active = ref(false)
 const placement = ref<DrawerPlacement>('right')
 
+let showModal = ref<boolean>(false)
 // let options = userInfoStore.thisUser.isAdmin ? userDropdownStore.admin_options : userDropdownStore.user_options;
 
 const router = useRouter();
@@ -65,28 +67,53 @@ let handleSelect = (key: string | number) => {
   }
 }
 
-let langOptions = ref([
-  {
-    label: '简体中文',
-    key: 'zh_CN',
-    disabled: false
-  },
-  {
-    label: '繁體中文',
-    key: 'zh_HK',
-    disabled: false
-  },
-  {
-    label: 'English',
-    key: 'en_US',
-    disabled: false
-  },
-  {
-    label: '日本語',
-    key: 'ja_JP',
-    disabled: false
-  },
-])
+// let langOptions = ref([
+//   {
+//     label: 'English', // 英文
+//     key: 'en_US',
+//     disabled: false
+//   },
+//   {
+//     label: '简体中文',  // 中文简体
+//     key: 'zh_CN',
+//     disabled: false
+//   },
+//   {
+//     label: '繁體中文',  // 中文繁体
+//     key: 'zh_HK',
+//     disabled: false
+//   },
+//   {
+//     label: '日本語', // 日语
+//     key: 'ja_JP',
+//     disabled: false
+//   },
+//   {
+//     label: '한국인', // 韩语
+//     key: 'ko_KR',
+//     disabled: false
+//   },
+//   {
+//     label: 'Français',  // 法语
+//     key: 'fr_FR',
+//     disabled: false
+//   },
+//   {
+//     label: 'suomalainen', // 芬兰语
+//     key: 'fi_FI',
+//     disabled: false
+//   },
+//   {
+//     label: 'Русский', // 俄语
+//     key: 'ru_RU',
+//     disabled: false
+//   },
+//   {
+//     label: 'Deutsch', // 德语
+//     key: 'de_DE',
+//     disabled: false
+//   },
+// ])
 
 let user_options = reactive([
   {
@@ -117,12 +144,13 @@ let admin_options = ref([
 
 // 设置切换语言
 let handleSelectLang = (lang: string) => {
-  console.log(lang)
-  // lang: en_US, zh_CN, zh_HK, ja_JP
   // const { locale } = useI18n()
-  // 动态切换语言
-  locale.value = lang
-  localStorage.setItem('locale', lang)  // 保存语言到 localStorage
+  if (lang !== 'other') {
+    locale.value = lang
+    localStorage.setItem('locale', lang)  // 保存语言到 localStorage
+  } else {
+    console.log('other')
+  }
 }
 
 const activateMenu = (place: DrawerPlacement) => {
@@ -137,8 +165,11 @@ let handleChangeTheme = () => {
   themeStore.saveEnableDarkMode();
 }
 
+let getFontColor = computed(() => {
+
+})
+
 onMounted(() => {
-  // dropDownWidth.value = dropDownBtn.value.getBoundingClientRect().width || dropDownBtn.value.offsetWidth;
   if (dropDownBtn.value) {
     dropDownWidth.value = dropDownBtn.value.getBoundingClientRect().width || dropDownBtn.value.offsetWidth;
   } else {
@@ -203,7 +234,7 @@ export default {
             class="dd"
             :width="themeStore.menuCollapsed?'100%':dropDownWidth"
         >
-          <n-button quaternary style="font-size: 1rem; color: white; align-items: center">
+          <n-button quaternary style="font-size: 1rem; color: white; align-items: center; padding-right: 40px">
             <n-icon size="20" style="padding-right: 10px"><userIcon/></n-icon>
             <n-p
                 v-if="!themeStore.menuCollapsed"

@@ -10,7 +10,7 @@ export const handleFetchRootRuntimeEnvConfig = async () => {
                 lang: 'en',
             }
         })
-        if (data.code === 200) {
+        if (data && data.code === 200) {
             Object.assign(appInfos.appCommonConfig, data.config)
             return true
         }
@@ -29,7 +29,7 @@ export const handleFetchRegisterConfig = async (lang: string) => {
                 lang: lang,
             }
         })
-        if (data.code === 200) {
+        if (data && data.code === 200) {
             Object.assign(appInfos.registerPageConfig, data.config)
             return true
         }
@@ -50,5 +50,6 @@ export const handleFetchWelcomeInfo = async (lang: string) => {
         return data
     } catch (err: any) {
         console.log(err + '')
+        return false
     }
 }

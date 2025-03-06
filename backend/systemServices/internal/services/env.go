@@ -47,6 +47,7 @@ func (s *SettingServices) GetBasicRuntimeEnvConfig(ctx context.Context, request 
 	frontendKeys := []string{
 		"frontend_theme",
 		"frontend_background_url",
+		"frontend_theme_header",
 	}
 	securityKeys := []string{
 		"secure_path",

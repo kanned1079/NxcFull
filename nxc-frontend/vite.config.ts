@@ -49,5 +49,18 @@ export default defineConfig({
     server: {
         host: '0.0.0.0',
         port: 5174,
-    }
+    },
+    // build: {
+    //     rollupOptions: {
+    //         output: {
+    //             manualChunks(id) {
+    //                 // 如果第三方库的大小超过一定限制，可以单独拆分成 chunk
+    //                 if (id.includes('node_modules')) {
+    //                     return id.split('node_modules/')[1].split('/')[0]; // 将第三方库拆分为独立的 chunk
+    //                 }
+    //             },
+    //         },
+    //     },
+    // },
+
 })

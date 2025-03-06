@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import {onBeforeUnmount, onMounted, ref, computed} from "vue";
 import useApiAddrStore from "@/stores/useApiAddrStore";
 import useAppInfosStore from "@/stores/useAppInfosStore";
 import {useRouter} from "vue-router";
@@ -14,8 +14,7 @@ import {
 
 } from '@vicons/ionicons5'
 import renderIcon from "@/utils/iconFormator";
-
-
+import {langOptions} from "@/language";
 const {t, locale} = useI18n()
 
 const router = useRouter();
@@ -25,51 +24,51 @@ const appInfoStore = useAppInfosStore();
 // let dropDownBtn = ref(null)
 let windowWidth = ref<number>(0)
 
-let langOptions = ref([
-  {
-    label: '简体中文 zh_CN',
-    key: 'zh_CN',
-    disabled: false
-  },
-  {
-    label: '繁體中文 zh_HK',
-    key: 'zh_HK',
-    disabled: false
-  },
-  {
-    label: 'English en_US',
-    key: 'en_US',
-    disabled: false
-  },
-  {
-    label: '日本語 ja_JP',
-    key: 'ja_JP',
-    disabled: false
-  },
-])
+// let langOptions = ref([
+//   {
+//     label: '简体中文 zh_CN',
+//     key: 'zh_CN',
+//     disabled: false
+//   },
+//   {
+//     label: '繁體中文 zh_HK',
+//     key: 'zh_HK',
+//     disabled: false
+//   },
+//   {
+//     label: 'English en_US',
+//     key: 'en_US',
+//     disabled: false
+//   },
+//   {
+//     label: '日本語 ja_JP',
+//     key: 'ja_JP',
+//     disabled: false
+//   },
+// ])
 
-let collapsedMenuOptions = ref([
+let collapsedMenuOptions = computed(() => [
+  // {
+  //   label: '关于我们',
+  //   key: 'about-us',
+  //   disabled: false,
+  //   icon: renderIcon(aboutIcon)
+  //
+  // },
+  // {
+  //   label: '定价',
+  //   key: 'pricing',
+  //   disabled: false,
+  //   icon: renderIcon(pricingIcon)
+  // },
   {
-    label: '关于我们',
-    key: 'about-us',
-    disabled: false,
-    icon: renderIcon(aboutIcon)
-
-  },
-  {
-    label: '定价',
-    key: 'pricing',
-    disabled: false,
-    icon: renderIcon(pricingIcon)
-  },
-  {
-    label: '登录',
+    label: t('welcome.A.login'),
     key: 'login',
     disabled: false,
     icon: renderIcon(loginIcon)
   },
   {
-    label: '注册',
+    label: t('welcome.A.register'),
     key: 'register',
     disabled: false,
     icon: renderIcon(registerIcon)

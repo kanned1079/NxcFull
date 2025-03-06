@@ -29,6 +29,7 @@ export interface AppCommonConfig {
     logo_url: string;
     user_bg: string;
     frontend_background_url: string;
+    frontend_theme_header: boolean;
     frontend_theme: string;
     currency: string;
     currency_symbol: string;
@@ -59,6 +60,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
         logo_url: '',
         user_bg: '',
         frontend_background_url: '',
+        frontend_theme_header: false,
         frontend_theme: '',
         currency: '',
         currency_symbol: '',
@@ -84,7 +86,7 @@ const useAppInfosStore = defineStore('appInfosStore', () => {
 
     return {
         registerPageConfig,
-        appCommonConfig,
+            appCommonConfig,
         appVersion,
         defaultTablePagination,
         updatePaginationSize,

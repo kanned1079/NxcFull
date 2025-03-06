@@ -332,7 +332,7 @@ const columns = computed<DataTableColumns<Coupon>>(() => [
     title: t(`${i18nTablePrefix}.endTime`),
     key: 'end_time',
     render(row: Coupon) {
-      return h('p', {}, {default: () => formatDate(row.end_time as string)});
+      return h('p', {}, {default: () => formatDate(`${row.end_time}`)});
     }
   },
   {

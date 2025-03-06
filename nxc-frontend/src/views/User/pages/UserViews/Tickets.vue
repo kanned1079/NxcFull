@@ -406,10 +406,10 @@ export default {
           </n-form-item>
         </n-form>
         <div style="display: flex; flex-direction: row; justify-content: right">
-          <n-button style="width: 80px; margin-right: 10px;" :bordered="false" secondary type="primary"
+          <n-button style="margin-right: 10px;" :bordered="false" secondary type="primary"
                     @click="cancelCreateNewTicket">{{ t('userTickets.cancel') }}
           </n-button>
-          <n-button style="width: 80px" :bordered="false" type="primary" @click="callCommitNewTicket">
+          <n-button style="" :bordered="false" type="primary" @click="callCommitNewTicket">
             {{ t('userTickets.submit') }}
           </n-button>
 

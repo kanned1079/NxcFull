@@ -77,9 +77,6 @@ onMounted(() => {
   themeStore.userPath = '/dashboard/purchase'
   animated.value = true
 })
-
-
-
 </script>
 
 <script lang="ts">
@@ -89,10 +86,6 @@ export default {
 </script>
 
 <template>
-<!--  <n-p style="font-size: 1.2rem; margin: 20px 0 0 25px; font-weight: 550; opacity: 0.7">-->
-<!--    {{ t('newPurchase.headerPlaceholder') }}-->
-<!--  </n-p>-->
-
   <div style="margin: 20px 20px 0 20px">
     <PageHead
         :title="t('newPurchase.title')"
@@ -129,7 +122,6 @@ export default {
               </div>
               <p class="pay-method">{{ item.month_price ? t('newPurchase.monthPay') : t('newPurchase.moreMethod') }}</p>
             </div>
-
             <MdPreview
                 style="background-color: rgba(0,0,0,0)"
                 :theme="themeStore.enableDarkMode?'dark':'light'"

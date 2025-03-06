@@ -159,15 +159,8 @@ let callVerifyTicket = async () => {
 let discountPrice = computed(() => couponInfo.value.verified ? ((couponInfo.value.percent_off / 100) * resultPrice.value) : 0)
 
 let callSaveOrder = async () => {
-  // try {
-  //   let {data} = await instance.post('/api/user/v1/order', {
-  //     plan_id: plan.id,
-  //     user_id: userInfoStore.thisUser.id,
-  //     coupon_id: couponInfo.value.id || null,
-  //     period: period.value || 'month',
-  //   })
   let data = await saveOrder(plan.id, userInfoStore.thisUser.id, couponInfo.value.id, period.value || 'month')
-  if (data.code === 200) {
+  if (data && data.code === 200) {
     console.log('订单创建成功')
     // Object.assign(data, paymentStore.confirmOrder)
     // paymentStore.confirmOrder = data
@@ -177,12 +170,9 @@ let callSaveOrder = async () => {
     setTimeout(async () => {
       await router.push({path: '/dashboard/purchase/confirm'})
     }, 500) // 延迟500ms
-
+  } else {
+    message.error(t('userConfirmOrder.orderErrorOccur') + data.msg || '')
   }
-  // } catch (error: any) {
-  //   console.log(error)
-  //   message.error(error)
-  // }
 }
 
 let notify = (type: NotificationType, title: string, meta: string) => {

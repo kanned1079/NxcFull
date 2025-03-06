@@ -6,7 +6,7 @@ import {config} from "@/config";
 const instance = axios.create( {
     baseURL: config.apiAddr.axiosAddr,
     // baseURL: 'http://gateway.orb.local:8081',
-    timeout: 4000 // 设置超时时间
+    timeout: 10000 // 设置超时时间
 });
 
 

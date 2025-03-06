@@ -30,7 +30,7 @@ interface TicketItem {
   last_reply: string // 最后一次回复
 }
 
-let typeChooseCheckVal = ref<CheckboxProps<string>[]>(['pending'])
+let typeChooseCheckVal = ref<any[]>(['pending'])
 // typeChooseCheckVal.value.push('pending')
 
 const [dataSizePending, pageCountPending] = useTablePagination();
