@@ -43,12 +43,12 @@ export const langOptions: LangOption[] = [
         disabled: false
     },
     {
-        label: '日本語 Japan', // 日语
+        label: '日本語', // 日语
         key: 'ja_JP',
         disabled: false
     },
     {
-        label: '한국인 Koria', // 韩语
+        label: '한국인', // 韩语
         key: 'ko_KR',
         disabled: false
     },
