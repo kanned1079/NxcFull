@@ -672,6 +672,7 @@ export default {
             "title": "订阅管理",
             "description": "在这里可以添加新的订阅计画、修改已有订阅计画的描述、价格、余粮、其所属的权限组等。",
             "addNewPlan": "添加新订阅",
+            "alterPlan": "修改订阅信息",
             "table": {
                 "id": "#",
                 "isSale": "启用销售",

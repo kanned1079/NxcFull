@@ -12,6 +12,7 @@ export interface Plan {
     is_sale?: boolean
     name: string
     capacity_limit: number
+    sort: number,
     residue: number
     describe?: string
     month_price?: number

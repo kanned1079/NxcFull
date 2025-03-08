@@ -175,6 +175,7 @@ let handleAddSubscribe = () => {
     year_price: null,
     sort: null,
   })
+  formValue.value.plan.sort = paymentStore.plan_list[paymentStore.plan_list.length - 1].sort + 1
   getAllGroups()  // 拉取群组信息
   active.value = true // 打开模态框
 }
@@ -501,7 +502,7 @@ export default {
       />
 
       <n-drawer v-model:show="active" width="40%" :placement="placement">
-        <n-drawer-content :title="t('adminViews.planMgr.addNewPlan')">
+        <n-drawer-content :title="editType==='add'?t('adminViews.planMgr.addNewPlan'):t('adminViews.planMgr.alterPlan')">
           <n-form
               ref="formRef"
               :model="formValue"

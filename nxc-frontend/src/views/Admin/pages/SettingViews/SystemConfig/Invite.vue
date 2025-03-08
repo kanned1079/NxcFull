@@ -54,7 +54,7 @@ const paymentSettings: PaymentSetting[] = [
 
 const saveFiled = async (k: string, v: any) => {
   let updateResponse = await settingStore.saveOption('invite', k, v)
-  if (updateResponse.code === 200)
+  if (data && updateResponse.code === 200)
     message.success(t('adminViews.systemConfig.common.success'))
   else
     message.error(t('adminViews.systemConfig.common.err') + updateResponse.msg || '')
