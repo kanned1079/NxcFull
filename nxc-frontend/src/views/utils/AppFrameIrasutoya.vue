@@ -191,7 +191,7 @@ export default {
       align-items: center;
 
       .img-body {
-        width: 60%;
+        width: 54%;
         height: auto;
         //filter: brightness(0.5);
       }
@@ -215,7 +215,7 @@ export default {
       align-items: center;
 
       .img-body {
-        width: 60%;
+        width: 54%;
         height: auto;
       }
     }
@@ -439,7 +439,7 @@ export default {
 //
 .card-bottom-platform-title {
   font-size: 1.6rem;
-  margin-top: 24px;
+  margin-top: 14px;
 
 }
 

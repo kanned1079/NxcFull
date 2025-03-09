@@ -16,11 +16,11 @@ func RegisterConfig2Etcd(configName, configData string) error {
 	// 将配置直接写入 etcd，而不使用租约
 	put, err := EtcdCli.Put(ctx, "/config/"+configName, configData)
 	if err != nil {
-		log.Printf("注册设置 %s 失败: %v\n", configName, err)
+		log.Printf("set [%s] failure: %v\n", configName, err)
 		return err
 	}
 
-	log.Println("注册设置成功 Revision:", put.Header.Revision)
+	log.Println("set config success Revision:", put.Header.Revision)
 	return nil
 }
 
@@ -33,7 +33,7 @@ func GetConfigFromEtcd(configName string) (string, error) {
 	// 从 etcd 中获取指定的配置
 	getResp, err := EtcdCli.Get(ctx, "/config/"+configName) // 此处已经有前缀
 	if err != nil {
-		log.Printf("获取设置 %s 失败: %v\n", configName, err)
+		log.Printf("get [%s] failure: %v\n", configName, err)
 		return "", err
 	}
 
@@ -44,6 +44,6 @@ func GetConfigFromEtcd(configName string) (string, error) {
 		return configValue, nil
 	}
 
-	log.Printf("未找到设置 %s\n", configName)
+	log.Printf("cannot get key of [%s]\n", configName)
 	return "", fmt.Errorf("config %s not found", configName)
 }

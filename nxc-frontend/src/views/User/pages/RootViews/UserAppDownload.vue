@@ -188,7 +188,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: 30px;
   .suffix-hint-inner {
     .suffix-font {
       font-size: 0.7rem;
