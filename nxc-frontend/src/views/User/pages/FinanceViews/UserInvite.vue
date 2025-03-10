@@ -94,7 +94,7 @@ let createMyCodeClick = () => {
 let callHandleCreateMyInviteCode = async () => {
   let data = await handleCreateMyInviteCode(userInfoStore.thisUser.id)
   if (data.code === 200) {
-    console.log('created ok.');
+    // console.log('created ok.');
     await callHandleGetMyInviteCode()
     await callHandleGetMyInvitedUserList()
     // showCreateInviteCodeMention.value = false
@@ -107,7 +107,7 @@ let callHandleCreateMyInviteCode = async () => {
 let callHandleGetInviteMsg = async () => {
   let data = await handleGetInviteMsg()
   if (data.code === 200) {
-    console.log(data)
+    // console.log(data)
     inviteMsg.value = data.invite_msg || ''
     // animated.value = true
   } else if (data.code === 404) {
@@ -119,7 +119,7 @@ let callHandleGetInviteMsg = async () => {
 let callHandleGetMyInviteCode = async () => {
   let data = await handleGetMyInviteCode(userInfoStore.thisUser.id)
   if (data.code === 200) {
-    console.log(data)
+    // console.log(data)
     myFaCode.value = data.my_invite_code
     animated.value = true
     showTableLoading.value = false

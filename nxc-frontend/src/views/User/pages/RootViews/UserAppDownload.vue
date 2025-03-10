@@ -25,8 +25,8 @@ let appDownloadList = ref<AppItem[]>([])
 
 let callFetchAllDownloadLink = async () => {
   let data = await handleFetchAllAppDownloadList('en')
-  if (data.code === 200) {
-    console.log(data)
+  if (data && data.code === 200) {
+    // console.log(data)
     downloadEnabled.value = data.download_enabled
     data.download_links.forEach((item: AppItem) => appDownloadList.value.push(item))
     animated.value = true
@@ -113,12 +113,14 @@ export default {
 
               <AppFrameIrasutoya
                   platform="mobile"
+                  :app-item-options="appDownloadList"
               ></AppFrameIrasutoya>
             </n-grid-item>
             <n-grid-item>
 
               <AppFrameIrasutoya
                   platform="desktop"
+                  :app-item-options="appDownloadList"
               ></AppFrameIrasutoya>
             </n-grid-item>
           </n-grid>

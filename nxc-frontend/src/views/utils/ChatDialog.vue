@@ -38,7 +38,7 @@ let socket: WebSocket | null = null;
 const createWebSocket = () => {
   if (socket) socket.close(); // 先关闭已有连接
 
-  socket = new WebSocket(`${config.apiAddr.wsAddr}/ws/user/v1/chat?token=${token.value}&user_id=${paramsData.value.userId}&ticket_id=${paramsData.value.ticketId}`);
+  socket = new WebSocket(`${config.apiAddr.wsAddr}/api/ws/user/v1/chat?token=${token.value}&user_id=${paramsData.value.userId}&ticket_id=${paramsData.value.ticketId}`);
 
   socket.onopen = () => {
     console.log("WebSocket connection established");

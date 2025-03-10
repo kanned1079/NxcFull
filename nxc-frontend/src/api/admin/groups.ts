@@ -11,7 +11,7 @@ export const a1 = async (page: number, size: number) => {
 
 export const handleGetAllGroups = async (page: number, size: number) => {
     try {
-        let {data} = await instance.get('http://localhost:8081/api/admin/v1/groups', {
+        let {data} = await instance.get('/api/admin/v1/groups', {
             params: {
                 page: page,
                 size: size,

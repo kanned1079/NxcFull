@@ -24,6 +24,13 @@ const {t} = useI18n();
 const message = useMessage();
 const themeStore = useThemeStore();
 const appInfoStore = useAppInfosStore()
+
+type AppItem = {
+  id?: number
+  platform: string
+  link: string
+}
+
 const props = defineProps<{
   platform: 'desktop' | 'mobile',
   iosAppLink?: string,
@@ -31,14 +38,27 @@ const props = defineProps<{
   windowsAppLink?: string,
   osxAppLink?: string,
   LinuxAppLink?: string,
+  appItemOptions: AppItem[]
 }>()
 
 let getDockBgColor = computed(() => themeStore.enableDarkMode ? 'rgba(37,37,37,0.3)' : 'rgba(255,255,255,0.3)')
 let getIconBgColor = computed(() => themeStore.enableDarkMode ? '#252525' : '#fff')
 
 let downloadClick = (platform: string) => {
-  message.info(platform);
-  window.open('https://ikanned.com:2444/d/R730xd_SSD/61256422_p0.jpg')
+  // 数据信息
+  console.log(props.appItemOptions)
+
+  // 查找对应平台的下载链接
+  const downloadOption = props.appItemOptions.find((item: AppItem) => item.platform === platform);
+
+  // 如果找到相应的下载链接，打开链接
+  if (downloadOption && downloadOption.link) {
+    window.open(downloadOption.link, '_blank');  // 打开链接到新标签页
+  } else {
+    // 如果没有找到对应的平台，显示提示
+    console.error(`No download link found for platform: ${platform}`);
+    message.error(t('userDocument.noContentTitle'));
+  }
 }
 
 </script>
@@ -74,7 +94,7 @@ export default {
             class="app-link"
             size="medium"
             icon-placement="right"
-            @click="downloadClick('android')"
+            @click="downloadClick('Android')"
         >
           {{ t('userAppDownload.card.mobile.androidDownloadShallow') }}
           <template #icon>
@@ -89,7 +109,7 @@ export default {
             class="app-link"
             size="medium"
             icon-placement="right"
-            @click="downloadClick('ios')"
+            @click="downloadClick('IOS')"
         >
           {{ t('userAppDownload.card.mobile.iosDownloadShallow') }}
           <template #icon>
@@ -125,7 +145,7 @@ export default {
             class="app-link"
             size="medium"
             icon-placement="right"
-            @click="downloadClick('windows')"
+            @click="downloadClick('Windows')"
         >
           {{ t('userAppDownload.card.desktop.windowsDownloadShallow') }}
           <template #icon>
@@ -140,7 +160,7 @@ export default {
             class="app-link"
             size="medium"
             icon-placement="right"
-            @click="downloadClick('osx')"
+            @click="downloadClick('OSX')"
         >
           {{ t('userAppDownload.card.desktop.osxDownloadShallow') }}
           <template #icon>
@@ -155,7 +175,7 @@ export default {
             class="app-link"
             size="medium"
             icon-placement="right"
-            @click="downloadClick('linux')"
+            @click="downloadClick('Linux')"
         >
           {{ t('userAppDownload.card.desktop.linuxDownloadShallow') }}
           <template #icon>

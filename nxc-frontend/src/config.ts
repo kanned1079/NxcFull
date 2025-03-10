@@ -9,11 +9,15 @@ type BasicEnv = {
 }
 
 export const config: BasicEnv = {
-    appVersion: 'v0.7.9_patch41',
+    appVersion: 'v0.8.1_patch7',
     codeGithub: `https://github.com/kanned1079/NxcFull`,
     author: 'kanned1079',
     apiAddr: {
-        axiosAddr: 'http://localhost:8081',
-        wsAddr: 'ws://localhost:8081'
+        // axiosAddr: 'http://localhost:8081',
+        // wsAddr: 'ws://localhost:8081',
+        // axiosAddr: 'https://192.168.0.243:8081',
+        // wsAddr: 'wss://192.168.0.243:8081',
+        axiosAddr: 'https://ikanned.com:27081',
+        wsAddr: 'wss://ikanned.com:27081'
     },
 }

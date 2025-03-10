@@ -45,7 +45,7 @@ func (s *MailServices) SendTestEmail(ctx context.Context, request *pb.SendTestEm
 	subject := "TestMail"
 
 	// 模板文件路径
-	templatePath := "./template/default/TestMail.html"
+	templatePath := s.FilePrefix + "/template/default/TestMail.html"
 
 	// 定义要替换的数据
 	emailData := TestEmailData{

@@ -33,7 +33,7 @@ let readDefaultPaginationFromStorage = () => {
   let pagination: {page: number, size: number} = {page: 1, size: 10}
   if (paginationDataStr) {
     pagination = JSON.parse(paginationDataStr)
-    console.log(pagination)
+    // console.log(pagination)
     appInfosStore.defaultTablePagination.page = pagination.page || 1
     appInfosStore.defaultTablePagination.size = pagination.size || 10
   } else {

@@ -213,7 +213,7 @@ const useSettingStore = defineStore('SettingStore', () => {
     const saveOption = async (category: string, key: string, value: any) => {
         // let apiAddrStore = useApiAddrStore()
         // console.log('保存单个键值到数据库', key, value)
-        let {data} = await instance.put('http://localhost:8081/api/admin/v1/setting', {
+        let {data} = await instance.put('/api/admin/v1/setting', {
             category,
             key,
             value
@@ -232,7 +232,7 @@ const useSettingStore = defineStore('SettingStore', () => {
         // let apiAddrStore = useApiAddrStore()
         try {
             console.log('从数据库读取配置')
-            let {data} = await instance.get('http://localhost:8081/api/admin/v1/setting')
+            let {data} = await instance.get('/api/admin/v1/setting')
             console.log(data)
             if (data.code == 200) {
                 Object.assign(settings, data.settings)

@@ -6,8 +6,11 @@ import (
 
 type MailServices struct {
 	pb.UnimplementedMailServiceServer
+	FilePrefix string
 }
 
 func NewMailServices() *MailServices {
-	return &MailServices{}
+	return &MailServices{
+		FilePrefix: "/app",
+	}
 }

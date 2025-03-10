@@ -6,7 +6,6 @@ import (
 	"gateway/internal/handler"
 	"gateway/internal/middleware"
 	"gateway/internal/utils"
-	//"github.com/gin-gonic/gin"
 	"log"
 	"strconv"
 )
@@ -190,13 +189,31 @@ func (inst *GatewayApp) StartApiGateways() {
 	}
 
 	// WebSocket 路由组
-	wsRoutes := inst.Router.Group("/ws")
+	wsRoutes := inst.Router.Group("/api/ws")
 	//wsRoutes.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware())
 	// 为 WebSocket 配置单独的用户路由
 	userWsRoutes := wsRoutes.Group("/user/v1")
 	userWsRoutes.GET("/chat", handler.HandleChatWs)
 
-	if err := inst.Router.Run(fmt.Sprintf("%s:%s", config.MyServerConfig.ListenAddr, strconv.Itoa(int(config.MyServerConfig.ListenPort)))); err != nil {
-		log.Println("启动服务器失败", err)
+	if config.MyServerConfig.SSL {
+		//config.MyServerConfig.Crt
+		//config.MyServerConfig.Key
+		// 启动启用 SSL 的服务器
+		if err := inst.Router.RunTLS(
+			fmt.Sprintf("%s:%s",
+				config.MyServerConfig.ListenAddr,
+				strconv.Itoa(int(config.MyServerConfig.ListenPort))),
+			"/app/config/cert/"+config.MyServerConfig.Crt,
+			"/app/config/cert/"+config.MyServerConfig.Key,
+		); err != nil {
+			log.Println("启动带SSL的服务器失败", err)
+			return
+		}
+
+	} else {
+		if err := inst.Router.Run(fmt.Sprintf("%s:%s", config.MyServerConfig.ListenAddr, strconv.Itoa(int(config.MyServerConfig.ListenPort)))); err != nil {
+			log.Println("启动服务器失败", err)
+			return
+		}
 	}
 }

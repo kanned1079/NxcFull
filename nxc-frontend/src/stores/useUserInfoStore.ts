@@ -51,7 +51,7 @@ const useUserInfoStore = defineStore('userInfoS',() => {
 
     // logout 登出 设置状态false 写入session 转回登陆页面
     let logout = () => {
-        console.log('logout')
+        // console.log('logout')
         setAndSaveAuthStatus(false)
         let isAdminBak = thisUser.value.isAdmin || thisUser.value.isStaff
         sessionStorage.removeItem('token')
@@ -87,13 +87,13 @@ const useUserInfoStore = defineStore('userInfoS',() => {
             if ((data.code as number) === 200) {
                 thisUser.value.balance = data.user_info.balance
                 thisUser.value.name = data.user_info.name
-                console.log('ok')
+                // console.log('ok')
                 return true
             } else {
                 return false
             }
         } catch (error: any) {
-            console.log(error)
+            // console.log(error)
             return false
         }
     }

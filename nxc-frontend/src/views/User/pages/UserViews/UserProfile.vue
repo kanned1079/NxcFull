@@ -422,7 +422,7 @@ onMounted(async () => {
 
   //
   let isUpdated = await userInfoStore.updateUserInfo()
-  console.log(isUpdated)
+  // console.log(isUpdated)
   !isUpdated ? notify('error', t('userProfile.failure'), t('userProfile.notLatestHint')) : null
   // await handleGet2FAStatus()
   await callHandleGet2FAStatus()

@@ -73,11 +73,11 @@ let MenuOption = computed<MenuOption[]>(() => [
         icon: renderIcon(paymentIcon),
         disabled: userInfoStore.thisUser.isStaff,
       },
-      {
-        label: t('commonAside.admin.themeConfig'),
-        key: 'theme-config',
-        icon: renderIcon(themeIcon),
-      },
+      // {
+      //   label: t('commonAside.admin.themeConfig'),
+      //   key: 'theme-config',
+      //   icon: renderIcon(themeIcon),
+      // },
     ]
   },
   {

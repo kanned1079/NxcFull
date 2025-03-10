@@ -85,6 +85,8 @@ services:
       - tickethandleservices
       - logservices
     restart: always
+    volumes:
+      - /opt/nxc/gateway/config:/app/config
 
 networks:
   default:

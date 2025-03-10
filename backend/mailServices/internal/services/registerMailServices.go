@@ -68,7 +68,7 @@ func (s *MailServices) SendRegisterVerifyCode2Email(context context.Context, req
 	}
 
 	// 渲染模板，替换占位符
-	renderedEmail, err := regMail.RenderEmailTemplate("./template/default/VerifyCode.html")
+	renderedEmail, err := regMail.RenderEmailTemplate(s.FilePrefix + "/template/default/VerifyCode.html")
 	if err != nil {
 		log.Println("渲染模版数据失败", err.Error())
 		return &pb.SendRegisterVerifyCode2EmailResponse{
