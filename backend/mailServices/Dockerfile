@@ -16,7 +16,7 @@ COPY ./build/${PLATFORM_DIR}/exec /app/
 
 # 复制配置文件到容器中
 COPY ./config/config.xml /app/config/config.xml
-COPY ./template /app/
+COPY ./template /app/config/template
 
 RUN ls -l .
 

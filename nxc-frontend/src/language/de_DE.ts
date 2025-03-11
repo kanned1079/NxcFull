@@ -1433,6 +1433,7 @@ export default {
     },
     "userInvite": {
         "myInvite": "Meine Einladung",
+        "description": "Wenn der Administrator Einladungsrabatte aktiviert hat, können Sie die spezifischen Rabattregeln hier sehen. Nachdem Sie einen Einladungslink generiert haben, geben Sie ihn zur Registrierung an andere weiter, und Sie können den Rabatt erhalten.",
         "unit": "Anzahl der Menschen",
         "inviteCodeMgr": "Ihr Einladungscode",
         "generateInviteCode": "Generieren Sie zufällige Einladungscodes",

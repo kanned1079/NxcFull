@@ -1421,6 +1421,7 @@ export default {
     },
     "userInvite": {
         "myInvite": "My invitation",
+        "description": "If the administrator has enabled invitation rebates, you can see the specific rebate rules here. After generating an invitation link, share it with others to register and you can get the rebate.",
         "unit": "Number of people",
         "inviteCodeMgr": "Your invitation code",
         "generateInviteCode": "Generate random invitation codes",

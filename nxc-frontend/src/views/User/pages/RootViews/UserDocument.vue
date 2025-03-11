@@ -73,11 +73,11 @@ let callGetAllDocuments = async () => {
       data.doc_list.forEach((category: CategoryDocuments) => {
         doc_list.value.push(category)
       })
-      animated.value = true
     }
   } else {
     message.error(data.msg)
   }
+  animated.value = true
 }
 
 watch(() => locale.value, async () => {

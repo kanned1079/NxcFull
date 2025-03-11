@@ -1418,6 +1418,7 @@ export default {
     },
     "userInvite": {
         "myInvite": "내 초대",
+        "description": "관리자가 초대 할인을 활성화한 경우, 여기에서 구체적인 할인 규칙을 확인할 수 있습니다. 초대 링크를 생성한 후, 다른 사람과 공유하여 등록하면 할인을 받을 수 있습니다.",
         "unit": "사람들의 수",
         "inviteCodeMgr": "초대장 코드",
         "generateInviteCode": "임의의 초대장 코드를 생성합니다",

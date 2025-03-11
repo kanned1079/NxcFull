@@ -59,7 +59,10 @@ echo "Exec file name: exec"
 
 # 第二步：构建 Docker 镜像
 echo "Step 2: Building the Docker image with tag ${APPNAME}:${SYSTEM}-${ARCH}..."
-docker build --build-arg PLATFORM_DIR=${PLATFORM_DIR} --build-arg PORT=${EXPORTPORT} -t ${APPNAME}:${SYSTEM}-${ARCH} .
+
+# 使用 docker buildx 来支持跨架构构建
+docker buildx build --platform linux/${ARCH} --build-arg PLATFORM_DIR=${PLATFORM_DIR} --build-arg PORT=${EXPORTPORT} -t ${APPNAME}:${SYSTEM}-${ARCH} .
+
 if [ $? -ne 0 ]; then
   echo "Error: Failed to build the Docker image."
   exit 1

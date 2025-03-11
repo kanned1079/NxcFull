@@ -203,11 +203,11 @@ export default {
 
   <PageHead
       :title="t('userInvite.myInvite')"
-      :description="t('userActivation.description')"
+      :description="t('userInvite.description')"
       style="margin: 20px 20px 0 20px"
   />
 
-  <div style="padding: 0px 20px 14px 20px">
+  <div style="padding: 0 20px 14px 20px">
 <!--    <n-card-->
 <!--        hoverable-->
 <!--        :embedded="true"-->

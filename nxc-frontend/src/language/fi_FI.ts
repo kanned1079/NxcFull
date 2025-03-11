@@ -1429,6 +1429,7 @@ export default {
     },
     "userInvite": {
         "myInvite": "Kutsuni",
+        "description": "Jos järjestelmänvalvoja on ottanut käyttöön kutsualennukset, voit nähdä erityiset alennussäännöt täältä. Kun olet luonut kutsulinkin, jaa se muiden kanssa rekisteröityäksesi ja saat alennuksen.",
         "unit": "Ihmisten lukumäärä",
         "inviteCodeMgr": "Kutsumasi",
         "generateInviteCode": "Luo satunnaisia ​​kutsukoodeja",

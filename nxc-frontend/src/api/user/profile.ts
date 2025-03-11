@@ -124,7 +124,7 @@ export const handleDeleteMyAccount = async (userId: number, confirmed: boolean) 
 
 export const handleUploadAvatar = async (userId: number, fileName: string, file: File) => {
     try {
-        let {data} = await instance.post('http://localhost:8081/api/user/v1/user/upload/avatar', {
+        let {data} = await instance.post('/api/user/v1/user/upload/avatar', {
             user_id: userId,
             file_name: fileName,
             file: file

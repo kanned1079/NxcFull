@@ -11,6 +11,6 @@ type MailServices struct {
 
 func NewMailServices() *MailServices {
 	return &MailServices{
-		FilePrefix: "/app",
+		FilePrefix: "./config",
 	}
 }

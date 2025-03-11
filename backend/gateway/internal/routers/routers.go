@@ -206,13 +206,13 @@ func (inst *GatewayApp) StartApiGateways() {
 			"/app/config/cert/"+config.MyServerConfig.Crt,
 			"/app/config/cert/"+config.MyServerConfig.Key,
 		); err != nil {
-			log.Println("启动带SSL的服务器失败", err)
+			log.Println("run server failure with ssl: ", err)
 			return
 		}
 
 	} else {
 		if err := inst.Router.Run(fmt.Sprintf("%s:%s", config.MyServerConfig.ListenAddr, strconv.Itoa(int(config.MyServerConfig.ListenPort)))); err != nil {
-			log.Println("启动服务器失败", err)
+			log.Println("run server failure: ", err)
 			return
 		}
 	}

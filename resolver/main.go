@@ -141,7 +141,7 @@ func StartDNSServer() {
 func main() {
 	go StartDNSServer()
 	for {
-		log.Println("当前偕程数 ", runtime.NumGoroutine())
+		log.Println("--------当前偕程数 ", runtime.NumGoroutine())
 		time.Sleep(time.Second * 5)
 	}
 }

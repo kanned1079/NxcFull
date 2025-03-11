@@ -1418,6 +1418,7 @@ export default {
 },
     "userInvite": {
     "myInvite": "私の招待",
+        "description": "管理者が招待リベートを有効にしている場合は、ここで具体的なリベート ルールを確認できます。招待リンクを生成したら、他のユーザーと共有して登録すると、リベートを受け取ることができます。",
         "unit": "人数",
         "inviteCodeMgr": "あなたの招待コード",
         "generateInviteCode": "ランダムな招待コードを生成します",

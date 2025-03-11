@@ -1,18 +1,45 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"mailServices/internal/config/local"
 	"mailServices/internal/config/remote"
 	"mailServices/internal/dao"
 	"mailServices/internal/etcd"
 	"mailServices/internal/handler"
+	"os"
 )
 
 var err error
 
+func listCurrentDirectory() {
+	// 获取当前工作目录
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// 打印当前工作目录
+	fmt.Println("Current directory:", dir)
+
+	// 打开当前目录
+	files, err := os.ReadDir(dir + "/config")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// 遍历并打印目录中的每一个文件/文件夹
+	fmt.Println("Contents of the current directory:")
+	for _, file := range files {
+		fmt.Println(file.Name())
+	}
+}
+
 func init() {
 	log.Println("读取配置文件")
+
+	listCurrentDirectory()
 
 	// 读取本地文件获取rpc地址和etcd连接信息
 	if err = local.MyLocalConfig.LoadConfigFromXml("./config/config.xml"); err != nil {

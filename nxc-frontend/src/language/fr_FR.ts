@@ -1431,6 +1431,7 @@ export default {
     },
     "userInvite": {
         "myInvite": "Mon invitation",
+        "description": "Si l'administrateur a activé les remises sur invitation, vous pouvez consulter les règles de remise spécifiques ici. Après avoir généré un lien d'invitation, partagez-le avec d'autres personnes pour vous inscrire et vous pourrez obtenir la remise.",
         "unit": "Nombre de personnes",
         "inviteCodeMgr": "Votre code d'invitation",
         "generateInviteCode": "Générer des codes d'invitation aléatoires",

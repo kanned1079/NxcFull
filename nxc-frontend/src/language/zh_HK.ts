@@ -1368,6 +1368,7 @@ export default {
     },
     "userInvite": {
         "myInvite": "我的邀請",
+        "description": "如果管理員開啟了邀請返利，您可以在這裡看到具體的返利規則，生成邀請連結後分享給其他人註冊後即可獲取到返利。",
         "unit": "人數",
         "inviteCodeMgr": "您的邀請碼",
         "generateInviteCode": "生成隨機邀請碼",
