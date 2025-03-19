@@ -67,7 +67,7 @@ func main() {
 
 	go handler.StartLogFlushLog(60)
 
-	MyApp1 := routers.NewGatewayApp(1, gin.TestMode)
+	MyApp1 := routers.NewGatewayApp(1, gin.ReleaseMode)
 
 	//routers.StartApiGateways()
 

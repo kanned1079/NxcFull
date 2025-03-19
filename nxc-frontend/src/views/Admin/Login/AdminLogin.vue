@@ -424,14 +424,10 @@ export default {
               :disabled="checkSecureBtnDisabled"
               @click="checkSecurePath"
           >
-            检查
+            {{ t('modal.confirm') }}
           </n-button>
         </n-form-item>
 
-
-        <!--        <template #footer>-->
-        <!--          <p style="font-weight: bold; opacity: 0.3">{{ appInfoStore.appCommonConfig.app_sub_name }}</p>-->
-        <!--        </template>-->
       </n-modal>
 
     </div>
