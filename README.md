@@ -1,5 +1,7 @@
 ## 这是一个测试的售卡系统
 
+中文 | [English](https://github.com/kanned1079/NxcFull/blob/main/README_en.md)
+
 ### 免责声明
 
 1. 本软件是由个人独立开发，旨在为用户提供特定的功能和服务。由于个人开发资源和能力有限，软件可能存在一些不完善之处。
@@ -39,12 +41,12 @@ make build || npm run build # 使用vite進行打包
 ./build_all linux amd64 #構建Linux平台amd64系統架構的可執行文件和Docker鏡像
 ```
 
-構建完成後再`backend/export/`下可以看到所有微服務的Docker鏡像包`*.tar.gz`以及
+構建完成後在`backend/export/`下可以看到所有微服務的Docker鏡像包`*.tar.gz`以及
 - `README.md` 在服務器環境中的安裝流程指南
 - `docker-compose.yaml` 在服務端使用docker compose運行的配置文件
 - `manage_docker_images.sh` 方便在服務端快速進行Docker鏡像導入和刪除的腳本
 
-至此已經打包好後所有的後端程序 接下來參照`backend/README.md`進行安裝和運行
+至此已經打包好後所有的後端程序 接下來參照`backend/INSTALL.md`進行安裝和運行
 
 #### 單獨構建
 
