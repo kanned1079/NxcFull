@@ -57,3 +57,26 @@ docker compose stop
 ```shell
 docker compose start
 ```
+
+### 使用SSL和WSS传输
+後端程序支持運行在SSL環境中 只需要配置好ssl證書並啟用即可 開啟服務的時候將會自動運行在對應端口並啟用SSL  
+假設網關微服務影射的目錄為 `/opt/<自定義的安裝目錄>/gateway`
+
+#### 新建目錄並進入
+```shell
+mkdir cert && cd cert #新建一個文件夾用於存放證書
+```
+#### 複製證書文件 
+證書文件應當為 `xxx.crt` 和 `xxx.key` 需要一個證書文件和一個密鑰文件
+```shell
+cp ~/exampledomain.com/example.crt . #複製證書文件
+cp ~/exampledomain.com/example.key . #複製密鑰文件
+```
+#### 註冊服務中心
+注意在配置證書文件後 還需要在為服務註冊中心`Etcd`中進行註冊  
+確保 `使用SSL` 是啟用狀態
+#### 重新啟動服務
+使用 `docker-compose` 啟動
+```shell
+TAG=linux-arm64 docker compose start
+```
