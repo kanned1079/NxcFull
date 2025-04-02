@@ -7,6 +7,8 @@ import (
 	"html/template"
 	"log"
 	pb "mailServices/api/proto"
+	"mailServices/internal/client"
+	settingsPb "mailServices/internal/client/api/settings/proto"
 	"mailServices/internal/dao"
 	"mailServices/internal/smtp"
 	"net/http"
@@ -38,15 +40,15 @@ func (r *RegisterMail) RenderEmailTemplate(templatePath string) (string, error) 
 }
 
 // SendRegisterVerifyCode2Email 注册的验证码
-func (s *MailServices) SendRegisterVerifyCode2Email(context context.Context, request *pb.SendRegisterVerifyCode2EmailRequest) (*pb.SendRegisterVerifyCode2EmailResponse, error) {
+func (s *MailServices) SendRegisterVerifyCode2Email(ctx context.Context, request *pb.SendRegisterVerifyCode2EmailRequest) (*pb.SendRegisterVerifyCode2EmailResponse, error) {
 	userMail := request.Email
 	generatedCode := RandCode()
-	generatedTime := time.Now()
-	log.Println("调用时间戳: ", generatedTime.Format("2006-01-02 15:04:05"))
+	//generatedTime := time.Now()
+	//log.Println("调用时间戳: ", generatedTime.Format("2006-01-02 15:04:05"))
 
 	// 存入 Redis
 	log.Println("存入redis")
-	err := dao.Rdb.HSet(context, "verify_codes", userMail, generatedCode).Err()
+	err := dao.Rdb.HSet(ctx, "verify_codes", userMail, generatedCode).Err()
 	if err != nil {
 		log.Println("存入 Redis 失败：", err)
 		return &pb.SendRegisterVerifyCode2EmailResponse{
@@ -55,16 +57,29 @@ func (s *MailServices) SendRegisterVerifyCode2Email(context context.Context, req
 		}, nil
 	}
 	// 设置过期时间
-	err = dao.Rdb.Expire(context, "verify_codes", time.Minute*5).Err()
+	err = dao.Rdb.Expire(ctx, "verify_codes", time.Minute*5).Err()
 	if err != nil {
 		log.Println("设置过期时间失败：", err)
 	}
 	// 发送邮件
 	//log.Println("发送邮件", vEmail)
-	var regMail RegisterMail = RegisterMail{
-		Name: request.Email,
+
+	var appName, appUrl string
+	sendMailTemplateResponse, err := client.GrpcClient.SystemServicesClient.GetSendMailTemplateFillContent(ctx, &settingsPb.GetSendMailTemplateFillContentRequest{})
+	if err != nil || sendMailTemplateResponse.Code != http.StatusOK {
+		log.Println("fetch app detail err, use default to process.")
+		appName = "App"
+		appUrl = "https://example.com"
+	} else {
+		appName = sendMailTemplateResponse.AppName
+		appUrl = sendMailTemplateResponse.AppUrl
+	}
+
+	var regMail = RegisterMail{
+		//Name: request.Email, // app_name
+		Name: appName, // app_name
 		Code: generatedCode,
-		URL:  "http://example.com",
+		URL:  appUrl, // app_url
 	}
 
 	// 渲染模板，替换占位符

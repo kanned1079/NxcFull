@@ -8,6 +8,8 @@ import (
 	"html/template"
 	"log"
 	pb "mailServices/api/proto"
+	"mailServices/internal/client"
+	settingsPb "mailServices/internal/client/api/settings/proto"
 	"mailServices/internal/smtp"
 	"net/http"
 )
@@ -47,10 +49,21 @@ func (s *MailServices) SendTestEmail(ctx context.Context, request *pb.SendTestEm
 	// 模板文件路径
 	templatePath := s.FilePrefix + "/template/default/TestMail.html"
 
+	var appName, appUrl string
+	sendMailTemplateResponse, err := client.GrpcClient.SystemServicesClient.GetSendMailTemplateFillContent(ctx, &settingsPb.GetSendMailTemplateFillContentRequest{})
+	if err != nil || sendMailTemplateResponse.Code != http.StatusOK {
+		log.Println("fetch app detail err, use default to process.")
+		appName = "App"
+		appUrl = "https://example.com"
+	} else {
+		appName = sendMailTemplateResponse.AppName
+		appUrl = sendMailTemplateResponse.AppUrl
+	}
+
 	// 定义要替换的数据
 	emailData := TestEmailData{
-		URL:  "https://example.com",
-		Name: "Nxc Networks",
+		URL:  appUrl,
+		Name: appName,
 	}
 
 	smtpConfig, err := smtp.GetSMTPConfig()

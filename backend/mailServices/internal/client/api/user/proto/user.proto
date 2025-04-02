@@ -1,0 +1,360 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto";
+
+//import "google/protobuf/timestamp.proto";
+
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
+
+service UserService {
+  // 定义用户登录 RPC 方法
+  rpc Login(UserLoginRequest) returns (UserLoginResponse);
+
+  // 定义用户注册 RPC 方法
+  rpc Register(UserRegisterRequest) returns (UserRegisterResponse);
+
+  // 验证旧密码
+  rpc CheckPreviousPassword(CheckPreviousPasswordRequest) returns (CheckPreviousPasswordResponse);
+
+  // 更新用户密码
+  rpc ApplyNewPassword(ApplyNewPasswordRequest) returns (ApplyNewPasswordResponse);
+
+  rpc Setup2FA(Setup2FARequest) returns (Setup2FAResponse);
+
+  rpc Test2FA(Test2FARequest) returns (Test2FAResponse);
+
+  rpc CancelSetup2FA(CancelSetup2FARequest) returns (CancelSetup2FAResponse);
+
+  rpc Get2FAStatus(Get2FAStatusRequest) returns (Get2FAStatusResponse);
+
+  rpc Disable2FA(Disable2FARequest) returns (Disable2FAResponse);
+
+  rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
+
+  rpc CreateNewTicket(CreateNewTicketRequest) returns (CreateNewTicketResponse);
+
+  rpc SendChatMessage(SendChatMessageRequest) returns (SendChatMessageResponse);
+
+  rpc DeleteMyAccount(DeleteMyAccountRequest) returns (DeleteMyAccountResponse);
+
+  rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
+
+  rpc AddUserManually(AddUserManuallyRequest) returns (AddUserManuallyResponse);
+
+  rpc UpdateUserInfoAdmin(UpdateUserInfoAdminRequest) returns (UpdateUserInfoAdminResponse);
+
+  rpc Block2UnblockUserById(Block2UnblockUserByIdRequest) returns (Block2UnblockUserByIdResponse);
+
+  rpc GetUserInviteCodeByUserId(GetUserInviteCodeByUserIdRequest) returns (GetUserInviteCodeByUserIdResponse);
+
+  rpc GetUserInvitedUserListByUserId(GetUserInvitedUserListByUserIdRequest) returns (GetUserInvitedUserListByUserIdResponse);
+
+  rpc CreateUserInviteCodeByUserId(CreateUserInviteCodeByUserIdRequest) returns (CreateUserInviteCodeByUserIdResponse);
+
+  rpc CheckUserAuthInternal(CheckUserAuthInternalRequest) returns (CheckUserAuthInternalResponse);
+
+}
+
+
+// 定义用户登录请求消息
+message UserLoginRequest {
+  string email = 1;
+  string password = 2;
+  string two_fa_code = 3;
+  string role = 4;
+}
+
+
+
+// 定义用户数据消息
+message User {
+  int64 id = 1;
+  string invite_user_id = 2;
+  int64 group_id = 3;
+  string name = 4;
+  string email = 5;
+  bool is_admin = 6;
+  bool is_staff = 7;
+  float balance = 8;
+  Timestamp last_login = 9;
+  string last_login_ip = 10;
+  Timestamp created_at = 11;
+  Timestamp updated_at = 12;
+  Timestamp deleted_at = 13;
+}
+
+// 定义用户登录响应消息
+message UserLoginResponse {
+  int32 code = 1;
+  bool isAuthed = 2;
+  string msg = 3;
+  string token = 4;
+  //  bytes user_data2 = 5;
+  //  User user_data = 6;
+  bytes user_data = 5;
+}
+
+// 定义用户注册请求消息
+message UserRegisterRequest {
+  string email = 1;
+  string password = 2;
+  string name = 3;
+  string invite_user_id = 4;  // 邀请人ID（可选）
+}
+
+// 定义用户注册响应消息
+message UserRegisterResponse {
+  int32 code = 1;
+  bool isRegistered = 2;
+  string msg = 3;
+  User user_data = 4;
+}
+
+message CheckPreviousPasswordRequest {
+  string email = 1;
+  string old_password = 2; // 哈希后的旧密码
+}
+
+message CheckPreviousPasswordResponse {
+  int64 code = 1;
+  bool verified = 2; // 密码是否验证通过
+  string msg = 3;    // 消息提示
+}
+
+message ApplyNewPasswordRequest {
+  string email = 1;
+  string new_password = 2; // 哈希后的新密码
+}
+
+message ApplyNewPasswordResponse {
+  int64 code = 1;
+  bool updated = 2; // 密码是否更新成功
+  string msg = 3;   // 消息提示
+}
+
+// -----------------
+
+message Setup2FARequest {
+  int64 id = 1;
+  string email = 2;
+}
+
+message Setup2FAResponse {
+  int32 code = 1;
+  string msg = 2;
+  string url = 3;
+}
+
+// -----------
+
+message Test2FARequest {
+  int64 id = 1;
+  string email = 2;
+  string two_fa_code = 3;
+}
+
+message Test2FAResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// ----------
+
+message CancelSetup2FARequest {
+  int64 id = 1;
+  string email = 2;
+}
+
+message CancelSetup2FAResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// ---------
+
+message Get2FAStatusRequest {
+  int64 id = 1;
+  string email = 2;
+}
+
+message Get2FAStatusResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool enabled = 3;
+}
+
+// ---------------
+
+message Disable2FARequest {
+  int64 id = 1;
+  string email = 2;
+}
+
+message Disable2FAResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool disabled = 3;
+}
+
+// UpdateUserInfo
+
+message UpdateUserInfoRequest {
+  int64 user_id = 1;
+}
+
+message UpdateUserInfoResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes user_info = 3;
+}
+
+// -----------------------
+
+message CreateNewTicketRequest {
+  int64 user_id = 1;
+  string subject = 2;
+  int32 urgency = 3;
+  string content = 4;
+}
+
+message CreateNewTicketResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool created = 3;
+}
+
+// --------------
+
+message SendChatMessageRequest {
+  int64 user_id = 1;
+  int64 ticket_id = 2;
+  string role = 3;
+  string content = 4;
+}
+
+message SendChatMessageResponse {
+  int32 code = 1;
+  string msg = 2;
+  bool sent = 3;
+}
+
+//
+
+message GetAllUsersRequest {
+  int64 page = 1;
+  int64 size = 2;
+  string search_email = 3;
+}
+
+message GetAllUsersResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes users = 3;
+  int64 page_count = 4;
+}
+
+//
+
+message AddUserManuallyRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message AddUserManuallyResponse {
+  int32 code = 1;
+  bool created = 2;
+  string msg = 3;
+}
+
+//
+
+message UpdateUserInfoAdminRequest {
+  int64 id = 1;
+  string email = 2;
+  string password = 3;
+  string invite_code = 4;
+  bool is_admin = 5;
+  bool is_staff = 6;
+  float balance = 7;
+}
+
+message UpdateUserInfoAdminResponse {
+  int32 code = 1;
+  bool success = 2;
+  string msg = 3;
+}
+
+//
+
+message Block2UnblockUserByIdRequest {
+  int64 user_id = 1;
+  bool status = 2;
+}
+
+message Block2UnblockUserByIdResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+//
+message DeleteMyAccountRequest {
+  int64 user_id = 1;
+}
+
+message DeleteMyAccountResponse {
+  int32 code = 1;
+  bool deleted = 2;
+  string msg = 3;
+}
+
+//
+
+message GetUserInviteCodeByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetUserInviteCodeByUserIdResponse {
+  int32 code = 1;
+  string my_invite_code = 2;
+  string msg = 3;
+}
+
+message CreateUserInviteCodeByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message CreateUserInviteCodeByUserIdResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message GetUserInvitedUserListByUserIdRequest {
+  int64 user_id = 1;
+  int64 page = 2;
+  int64 size = 3;
+}
+
+message GetUserInvitedUserListByUserIdResponse {
+  int32 code = 1;
+  string msg = 2;
+  bytes user_list = 3;
+  int64 page_count = 4;
+}
+
+//
+
+message CheckUserAuthInternalRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message CheckUserAuthInternalResponse {
+  int32 code = 1;
+  string msg = 2;
+  int64 user_id = 3;
+}

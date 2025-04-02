@@ -67,6 +67,9 @@ service SettingsService {
   rpc GetAdminDashboardShowMessage(GetAdminDashboardShowMessageRequest) returns (GetAdminDashboardShowMessageResponse);
 
   rpc GetServerSystemPartConfig(GetServerSystemPartConfigRequest) returns (GetServerSystemPartConfigResponse);
+
+  // Mail服务
+  rpc GetSendMailTemplateFillContent(GetSendMailTemplateFillContentRequest) returns (GetSendMailTemplateFillContentResponse);
 }
 
 // 更新单个设置项的请求
@@ -401,4 +404,14 @@ message GetServerSystemPartConfigResponse {
   string os_type = 7;
   string os_arch = 8;
   repeated string pay_methods = 9;
+}
+
+message GetSendMailTemplateFillContentRequest {
+
+}
+
+message GetSendMailTemplateFillContentResponse {
+  int32 code = 1;
+  string app_name = 2;
+  string app_url = 3;
 }

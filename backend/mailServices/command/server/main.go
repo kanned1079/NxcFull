@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	rpcClient "mailServices/internal/client"
 	"mailServices/internal/config/local"
 	"mailServices/internal/config/remote"
 	"mailServices/internal/dao"
@@ -58,6 +59,8 @@ func init() {
 	if err := remote.MyRedisConfig.Get(); err != nil {
 		panic(err)
 	}
+
+	rpcClient.GrpcClient = rpcClient.NewClients()
 
 	dao.InitMysqlServer() // 初始化主数据库
 	dao.InitRedisServer() // 初始化Redis
